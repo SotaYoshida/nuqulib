@@ -1152,7 +1152,7 @@ def set_op_list_from_op_dict_3b(
     ]
 
     # Use multiprocessing Pool with a context manager
-    nproc = multiprocessing.cpu_count() - 2
+    nproc = max([multiprocessing.cpu_count() - 2, 1])
     with get_context("fork").Pool(processes=nproc) as pool:
         results = list(tqdm(pool.imap(process_op, tasks), total=len(tasks)))
 
