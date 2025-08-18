@@ -1,20 +1,19 @@
-name: CI
+name: Document build and deploy
 
 on:
-  pull_request:
-    branches: [ "main", "dev"] # "main" to be removed
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  test:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
+  strategy:
       matrix:
         python-version: ["3.12"]
 
-    steps:
+  steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
@@ -37,5 +36,11 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Run pytest
-        run: poetry run pytest -s
+      - name: Build documentation
+        run: poetry run sphinx-build -b html docs/source/ docs/_build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build
