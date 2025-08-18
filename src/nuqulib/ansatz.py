@@ -308,19 +308,39 @@ def pair_ansatz_pennylane(
 
 
 def circuit_XXYY(
-    adopted,
-    params,
-    Nq,
-    Nocc,
-    method_ansatz,
-    decent_order=True,
-    methods_XXYY="Google",
-    backend=None,
+    adopted: bool,
+    params: list[float],
+    Nq: int,
+    Nocc: int,
+    method_ansatz: str,
+    decent_order: bool = True,
+    methods_XXYY: str = "Google",
+    backend:str | None = None,
     opt_level=3,
-    pseudo_DD=False,
-    verbose=False,
+    pseudo_DD:bool =False,
+    verbose:bool =False,
     idxs_hole_in=[],
 ):
+    """
+    Generates quantum circuits to measure X_iX_j+Y_iY_j terms in the Hamiltonian.
+
+    Args:
+        adopted (str):
+            String that indicates the simulator/device type.
+            Acceptable values are "simNISQ"/"simFTQC" and "Real".
+
+    Returns
+    -------
+    list
+        A list of transpiled and/or decomposed quantum circuits with measurements added. If verbose is True,
+        a tuple is returned where the first element is the list of final circuits and the second element is the
+        list of intermediate circuits prepared for drawing.
+    Raises
+    ------
+    ValueError
+        If the provided methods_XXYY is not "Google", which means that this function
+        is designed for basis rotation (Givens rotation) to diagonalize XX+YY term in the computational basis.  
+    """
     qc_list = []
     if methods_XXYY == "Google":
         qc_list_for_draw = []
@@ -353,11 +373,13 @@ def circuit_XXYY(
                     qc_list_for_draw.append(qc.copy())
                 qc.measure_all()
                 qc = qc.decompose(reps=8)
-                if adopted == "simNISQ":
+                if adopted == "simNISQ" or adopted == "simFTQC" :
                     qc = transpile(qc, backend, optimization_level=opt_level)
                 elif adopted == "Real":
                     pm = generate_preset_pass_manager(backend=backend)
                     qc = pm.run(qc)
+                else:
+                    raise ValueError(f"Invalid adopted: {adopted}")
                 qc_list.append(qc)
                 idx_circuit += 1
         if verbose:
