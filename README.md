@@ -18,3 +18,5 @@ If you are using `pip`, we recommend installing the dependencies as follows:
 ```bash
 pip install -r requirements.txt
 pip install -e .
+```
+
