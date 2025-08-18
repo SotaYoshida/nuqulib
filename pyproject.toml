@@ -8,7 +8,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.12"
 annotated-types = "^0.7.0"
 anyio = "^4.8.0"
 appdirs = "^1.4.4"
@@ -201,6 +201,8 @@ websockets = "^13.1"
 wheel = "^0.45.1"
 widgetsnbextension = "^4.0.13"
 wsproto = "^1.2.0"
+sphinx = "^8.2.3"
+furo = "^2025.7.19"
 
 
 

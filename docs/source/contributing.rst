@@ -19,9 +19,9 @@ Feedbacks and contributions to NuQuLib are very welcome. These can be:
 For these contributions, it would be nice to let you know a basic policy
 (the workflow of code development and LICENSE, shown below) in this project. 
 
-***************
+******************************
 Workflow of code development
-***************
+******************************
 
 If you make a contribution, please keep in mind the following workflow.
 

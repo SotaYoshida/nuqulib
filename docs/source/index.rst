@@ -14,9 +14,10 @@ One can use some interaction formats adopted in e.g. [NuHamil](https://github.co
 and try a subspace method called QSCI (a.k.a. SQD) through [NuclearToolkit.jl](https://github.com/SotaYoshida/NuclearToolkit.jl).
 
 
-**********
+*************************
 Installation
-**********
+*************************
+
 
 
 **********
