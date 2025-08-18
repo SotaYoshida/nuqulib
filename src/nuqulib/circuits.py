@@ -1,10 +1,6 @@
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 import numpy as np
 
-"""
-Controlled Givens rotation
-"""
-
 
 def cG1(circ, c_qubit, i, j, theta):
     theta_4 = theta / 4

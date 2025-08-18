@@ -1,6 +1,5 @@
 import numpy as np
 import pennylane as qml
-import itertools
 from pennylane import numpy as qnp
 from qiskit import QuantumCircuit, transpile
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager

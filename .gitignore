@@ -69,6 +69,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
+make_doc.sh
 docs/_build/
 
 # PyBuilder
@@ -213,5 +214,3 @@ __marimo__/
 .DS_Store
 Thumbs.db
 
-# For my purposes
-master_pUCCD.ipynb

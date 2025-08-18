@@ -168,7 +168,6 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
 
     hamil.set_mscheme_3NF()
     H_3b = hamil.mapping_3NF_Mscheme()
-    Hamil_NCSM_NN3NF = Hamil_NCSM_NN + H_3b
 
     n_qubits = hamil.n_qubits
     proton_qubits = list(range(0, hamil.n_qubits_p))
