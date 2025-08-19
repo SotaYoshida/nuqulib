@@ -373,11 +373,13 @@ def circuit_XXYY(
                     qc_list_for_draw.append(qc.copy())
                 qc.measure_all()
                 qc = qc.decompose(reps=8)
-                if adopted == "simNISQ" or adopted == "simFTQC" :
+                if adopted == "simNISQ":
                     qc = transpile(qc, backend, optimization_level=opt_level)
                 elif adopted == "Real":
                     pm = generate_preset_pass_manager(backend=backend)
                     qc = pm.run(qc)
+                elif adopted == "simFTQC":
+                    pass
                 else:
                     raise ValueError(f"Invalid adopted: {adopted}")
                 qc_list.append(qc)
