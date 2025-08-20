@@ -1,3 +1,10 @@
+"""Post-selection techniques for quantum nuclear simulations.
+
+This module provides post-selection and measurement analysis tools for quantum
+nuclear physics simulations, including particle number conservation constraints
+and expectation value calculations for different types of Hamiltonians.
+"""
+
 import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit, transpile
@@ -13,15 +20,28 @@ def reweight_results(
     verbose=False,
     make_number_conservation=True,
 ):
-    """
-    Function to reweight the results (Z-measurements) to the ones with the correct number of particles.
+    """Reweight quantum measurement results to enforce particle number conservation.
+    
+    This function filters and reweights measurement results to include only
+    configurations with the correct number of particles, which is essential
+    for nuclear quantum simulations.
+    
     Args:
-        sampler_results (dict): results of the quantum simulation, could be sampler results or similar dictionary
-        Nocc (int): number of occupied orbitals
-        normalize (bool): whether to normalize the results. If True, the results are normalized to 1.
-        verbose (bool): whether to print out the valid counts ratio
+        sampler_results (dict): Raw measurement results from quantum simulation.
+        Norb (int): Total number of orbitals (qubits).
+        Nocc (int): Number of occupied orbitals (target particle number).
+        normalize (bool, optional): Whether to normalize results to unity. 
+                                   Defaults to True.
+        verbose (bool, optional): Whether to print valid counts ratio. 
+                                 Defaults to False.
+        make_number_conservation (bool, optional): Whether to enforce particle 
+                                                  number conservation. Defaults to True.
+    
     Returns:
-        reweighted_results (dict): reweighted results
+        dict: Reweighted measurement results with proper particle number.
+        
+    Note:
+        Automatically handles both bitstring and hexadecimal input formats.
     """
 
     # Checking results are in bitstring or hexadecimal format. if hexadecimal, convert to bitstring
@@ -62,13 +82,19 @@ def reweight_results(
 def eval_expec_diag_postselection(
     hamiltonian_op_diag: SparsePauliOp, counts: dict, Nq, Nocc
 ):
-    """
-    Evaluate the expectation value of the Hamiltonian with diagonal terms
+    """Evaluate expectation value of diagonal Hamiltonian terms with post-selection.
+    
+    Computes the expectation value of Hamiltonian terms that are diagonal in the
+    computational basis (I and Z terms) using post-selected measurement results.
+    
     Args:
-        hamiltonian_op_diag (SparsePauliOp): Hamiltonian operator with diagonal terms
-        counts (dict): dictionary of measurement results
+        hamiltonian_op_diag (SparsePauliOp): Hamiltonian with only diagonal terms.
+        counts (dict): Dictionary of measurement results.
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals for post-selection.
+    
     Returns:
-        expec_val (float): expectation value of the Hamiltonian
+        float: Expectation value of the diagonal Hamiltonian terms.
     """
     counts = reweight_results(counts, Nq, Nocc, normalize=True)
     expec_val = 0.0
@@ -92,21 +118,30 @@ def eval_expec_XXYY_postselection(
     q,
     further_postselection_on_particle_number=False,
 ):
-    """
-    Evaluate the expectation value of the Hamiltonian with XX+YY terms
+    """Evaluate expectation value of XX+YY Hamiltonian terms with post-selection.
+    
+    Computes the expectation value of XX and YY Pauli terms using measurement
+    results from Givens rotation circuits. This is used for calculating
+    off-diagonal matrix elements in nuclear Hamiltonians.
+    
     Args:
-        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian operator with XX+YY terms
-        counts (dict): dictionary of measurement results
-        p (int): index of the first qubit involved in the XX or YY term
-        q (int): index of the second qubit
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian with XX and YY terms.
+        counts (dict): Dictionary of measurement results.
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals.
+        p (int): Index of first qubit in XX/YY term.
+        q (int): Index of second qubit in XX/YY term.
+        further_postselection_on_particle_number (bool, optional): Whether to 
+                                                                  enforce strict particle number conservation. 
+                                                                  Defaults to False.
+    
     Returns:
-        expec_val (float): expectation value of the Hamiltonian
-
-    Note that the XX and YY terms should have the same coefficient in ordinary Hamiltonians,
-    hence the calculation should be triggered only e.g. by the XX term.
-    It should also be noted that p < q is indexed for Pauli strings.
-    Corresponding Givens rotations are added in the circuit, but expectation value Zp-Zq should be evaluated by descending order,
-    i.e. Zp-Zq => Zq-Zp
+        float: Expectation value of the XX+YY terms.
+        
+    Note:
+        - XX and YY terms should have identical coefficients in physical Hamiltonians
+        - Index ordering: p < q for Pauli strings, but expectation value uses Zq-Zp
+        - This function processes only the XX terms and assumes matching YY coefficients
     """
     counts = reweight_results(
         counts,
@@ -131,6 +166,18 @@ def eval_expec_XXYY_postselection(
 
 
 def even_swap(labeling):
+    """Swap elements at even indices with their next neighbors.
+    
+    Args:
+        labeling (list): Input list to perform swaps on.
+        
+    Returns:
+        list: New list with even-indexed elements swapped.
+        
+    Example:
+        >>> even_swap([0, 1, 2, 3, 4, 5])
+        [1, 0, 3, 2, 5, 4]
+    """
     new = labeling.copy()
     for i in range(0, len(labeling) - 1, 2):
         new[i] = labeling[i + 1]
@@ -139,6 +186,18 @@ def even_swap(labeling):
 
 
 def odd_swap(labeling):
+    """Swap elements at odd indices with their next neighbors.
+    
+    Args:
+        labeling (list): Input list to perform swaps on.
+        
+    Returns:
+        list: New list with odd-indexed elements swapped.
+        
+    Example:
+        >>> odd_swap([0, 1, 2, 3, 4, 5])
+        [0, 2, 1, 4, 3, 5]
+    """
     new = labeling.copy()
     for i in range(1, len(labeling) - 1, 2):
         new[i] = labeling[i + 1]
@@ -157,6 +216,26 @@ def eval_Ediag(
     nshot,
     postselection_diag=True,
 ):
+    """Evaluate diagonal energy terms using quantum circuit measurements.
+    
+    Runs a quantum circuit to measure diagonal Hamiltonian terms and computes
+    their expectation values with optional post-selection.
+    
+    Args:
+        adopted (str): Simulation mode ("simNISQ", "Real", etc.).
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals.
+        hamiltonian_op_diag (SparsePauliOp): Diagonal Hamiltonian terms.
+        qc_ansatz (QuantumCircuit): Ansatz circuit to evaluate.
+        backend: Quantum backend for transpilation/execution.
+        sampler: Quantum sampler for measurements.
+        nshot (int): Number of measurement shots.
+        postselection_diag (bool, optional): Whether to apply particle number 
+                                           post-selection. Defaults to True.
+    
+    Returns:
+        float: Expectation value of diagonal Hamiltonian terms.
+    """
     qc_ansatz = qc_ansatz.decompose(reps=5)
     qc_ansatz.measure_all()
     if adopted == "simNISQ":
@@ -194,16 +273,35 @@ def eval_Energy_using_GoogleCircuit(
     debug_mode: bool = False,
     verbose: bool = False,
 ):
-    """
-    Even number circuits correspond to the circuit to measure  <X_i X_{i+1} + Y_i Y_{i+1}> for i=0, 2, 4, etc.
-    Odd number circuits correspond to the circuit to measure  <X_i X_{i+1} + Y_i Y_{i+1}> for i=1, 3, 5, etc.
-    For Nq=even systems, flipping the qubits due to Qiskit ordering does not cause confusion, but for Nq=odd systems,
-    one should be careful about the flipping of the qubits.
-    In the case of Nq=odd, the X_0X_1 term must be measured by *odd* number circuits instead of even number circuits.
-    To take account of these, the sum over the qubits starts from Nq below.
-
-    In the following, i,j is used to express qubits indices of the circuit.
-    These should be flipped to use counts obtained from the quantum simulation.
+    """Evaluate XX+YY energy terms using Google's circuit approach.
+    
+    This function evaluates the expectation values of XX and YY Hamiltonian terms
+    using the circuit design from Google's quantum simulation approach. It handles
+    the specific qubit ordering and measurement strategies for optimal performance.
+    
+    Args:
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals.
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian with XX+YY terms.
+        qc_list_XXYY (list): List of quantum circuits for measuring XX+YY terms.
+        sampler: Quantum sampler for measurements.
+        nshot (int): Number of measurement shots per circuit.
+        num_experiment (int): Number of experimental repetitions.
+        using_noisy_simulation (bool): Whether using noisy quantum simulation.
+        postselection_XXYY (bool, optional): Whether to apply post-selection. 
+                                            Defaults to True.
+        adopted (str, optional): Simulation mode. Defaults to "simFTQC".
+        debug_mode (bool, optional): Enable debug output. Defaults to False.
+        verbose (bool, optional): Enable verbose output. Defaults to False.
+    
+    Returns:
+        list: Energy values from multiple experimental runs.
+        
+    Note:
+        - Even circuits measure XX+YY for i=0,2,4,... 
+        - Odd circuits measure XX+YY for i=1,3,5,...
+        - For odd Nq systems, special handling of X_0X_1 term is required
+        - Qubit indices are flipped due to Qiskit ordering conventions
     """
     E_Google = []
     for exper in range(num_experiment):
