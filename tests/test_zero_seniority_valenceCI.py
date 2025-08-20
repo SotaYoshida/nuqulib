@@ -31,6 +31,7 @@ def test_O18_zero_seniority():
     h1b, h2b = get_pairwise_Hamil(Hamil, relevant_pairs)
     evals, evecs = eval_Hflat_eigen(config_list, Nq, Nocc, Hamil, h1b, h2b, Dict_qubits_to_sps)
     ops, coeffs, hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
+    hamiltonian_op_diag, hamiltonian_op_XXYY = separate_Hamil_terms(hamiltonian_op)
 
     ## Translating the Hamiltonian (Qiskit) to pennylane format
     coeffs_pl, obs_pl = read_QiskitPauli(ops, coeffs)
@@ -46,13 +47,15 @@ def test_O18_zero_seniority():
     ngate = len(where_is_G_or_cG1.keys()) 
 
     params_pl = qnp.array(params[:ngate], requires_grad=True)     
+    params_opt = np.zeros_like(params_pl)
     optimizer = qml.AdamOptimizer(stepsize=1.e-1)        
     Emin = 10**10
     for it in range(200):
         params_pl, _cost = optimizer.step_and_cost(circuit, params_pl)
         if _cost <  Emin:
             Emin = _cost
-
+            params_opt = params_pl
+    params_opt = np.array(params_opt)
     assert abs(Emin - np.min(evals)) < 1e-5, "The minimum energy should be close to the exact diagonalization result."
     
     ## Check IBM's Estimator gives the same result
@@ -68,6 +71,26 @@ def test_O18_zero_seniority():
     results = job.result()
     E_meas = results[0].data.evs
     assert abs(E_meas - np.min(evals)) < 1e-5, "The minimum energy should be close to the exact diagonalization result."
+
+    ## Mearure <H> using basis rotations circuits to diagonalize XX+YY
+    using_noisy_simulation = False
+    postselection_XXYY = True
+    adopted = "simFTQC"
+    backend = None
+    nshot = 10**4
+    num_experiment = 1
+    sampler = SamplerV2() 
+    
+    qc_ansatz = pair_ansatz_qiskit(params_opt, Nq, Nocc, method="pUCCD",)
+    E_diag = eval_Ediag(adopted, Nq, Nocc, hamiltonian_op_diag, qc_ansatz, backend, sampler, nshot)
+
+    qc_list = circuit_XXYY(qc_ansatz, "simFTQC", Nq, backend=backend)
+    E_XXYY_Google = eval_Energy_using_GoogleCircuit(Nq, Nocc, hamiltonian_op_XXYY, 
+                                        qc_list, sampler, nshot, num_experiment, 
+                                        using_noisy_simulation, postselection_XXYY=postselection_XXYY, adopted=adopted)
+    Energy = E_diag + E_XXYY_Google
+    print(f"E_dig {E_diag} XXYY {E_XXYY_Google} => Energy = {Energy}")
+    assert abs(Energy - E_meas) < 10/(np.sqrt(nshot)), "The energy should be close to the measured value."
 
 
 def test_O20_zero_seniority():
@@ -85,13 +108,10 @@ def test_O20_zero_seniority():
     ## Setting up the qubits and Hamiltonian in the qubit representation
     Nocc = (A - Acore) // 2
     Nq = len(Dict_sps_to_qubits.keys())
-    config_list = generate_config_bitstr_list(Nq, Nocc)
     relevant_pairs = get_possible_configs(n_sps)
 
     h1b, h2b = get_pairwise_Hamil(Hamil, relevant_pairs)
-    evals, evecs = eval_Hflat_eigen(config_list, Nq, Nocc, Hamil, h1b, h2b, Dict_qubits_to_sps)
     ops, coeffs, hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
-    hamiltonian_op_diag, hamiltonian_op_XXYY = separate_Hamil_terms(hamiltonian_op)
 
     ## Translating the Hamiltonian (Qiskit) to pennylane format
     coeffs_pl, obs_pl = read_QiskitPauli(ops, coeffs)
@@ -105,39 +125,17 @@ def test_O20_zero_seniority():
     ngate = Nocc * (Nq-Nocc)
 
     params_pl = qnp.array(params[:ngate], requires_grad=True)     
-    params_opt = np.zeros_like(params_pl)
     optimizer = qml.AdamOptimizer(stepsize=1.e-1)        
     Emin = 10**10
     for it in range(200):
         params_pl, _cost = optimizer.step_and_cost(circuit, params_pl)
         if _cost <  Emin:
             Emin = _cost
-            params_opt = params_pl
-    params_opt = np.array(params_opt)
     E_DOCI = -23.1461
-    print("Emin: ", Emin)
+    print("Emin(O20): ", Emin, "E_DOCI", E_DOCI)
     assert abs(Emin - E_DOCI) < 0.5 # "The minimum energy should be close to the DOCI result."
 
-    ## Mearure <H> using basis rotations circuits to diagonalize XX+YY
-    using_noisy_simulation = False
-    postselection_XXYY = True
-    adopted = "simFTQC"
-    backend = None
-    nshot = 10**4
-    num_experiment = 1
-    sampler = SamplerV2() 
-    
-    qc_ansatz = pair_ansatz_qiskit(params_opt, Nq, Nocc, method="pUCCD+all2all",)
-    E_diag = eval_Ediag(adopted, Nq, Nocc, hamiltonian_op_diag, qc_ansatz, backend, sampler, nshot)
-
-    qc_list = circuit_XXYY("simFTQC", params_opt, Nq, Nocc, "pUCCD+all2all", backend=backend)
-    E_XXYY_Google = eval_Energy_using_GoogleCircuit(Nq, Nocc, hamiltonian_op_XXYY, 
-                                        qc_list, sampler, nshot, num_experiment, 
-                                        using_noisy_simulation, postselection_XXYY=postselection_XXYY, adopted=adopted)
-    Energy = E_diag + E_XXYY_Google
-    print(f"E_dig {E_diag} XXYY {E_XXYY_Google} => Energy = {Energy}")
  
-
 if __name__ == "__main__":  
     # O18 pUCCD optimization with Pennylane and Execution with Pennylane and Qiskit Estimator  
     test_O18_zero_seniority()

@@ -108,63 +108,6 @@ def eval_expec_diag_postselection(
             expec_val += float(np.real(coeff)) * prob * fac
     return expec_val
 
-
-def eval_expec_XXYY_postselection(
-    hamiltonian_op_XXYY,
-    counts,
-    Nq,
-    Nocc,
-    p,
-    q,
-    further_postselection_on_particle_number=False,
-):
-    """Evaluate expectation value of XX+YY Hamiltonian terms with post-selection.
-    
-    Computes the expectation value of XX and YY Pauli terms using measurement
-    results from Givens rotation circuits. This is used for calculating
-    off-diagonal matrix elements in nuclear Hamiltonians.
-    
-    Args:
-        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian with XX and YY terms.
-        counts (dict): Dictionary of measurement results.
-        Nq (int): Number of qubits.
-        Nocc (int): Number of occupied orbitals.
-        p (int): Index of first qubit in XX/YY term.
-        q (int): Index of second qubit in XX/YY term.
-        further_postselection_on_particle_number (bool, optional): Whether to 
-                                                                  enforce strict particle number conservation. 
-                                                                  Defaults to False.
-    
-    Returns:
-        float: Expectation value of the XX+YY terms.
-        
-    Note:
-        - XX and YY terms should have identical coefficients in physical Hamiltonians
-        - Index ordering: p < q for Pauli strings, but expectation value uses Zq-Zp
-        - This function processes only the XX terms and assumes matching YY coefficients
-    """
-    counts = reweight_results(
-        counts,
-        Nq,
-        Nocc,
-        normalize=True,
-        make_number_conservation=further_postselection_on_particle_number,
-    )
-    expec_val = 0.0
-    for op, coeff in zip(hamiltonian_op_XXYY.paulis, hamiltonian_op_XXYY.coeffs):
-        op = str(op)
-        idx_XX = [idx for idx, pauli in enumerate(op) if pauli == "X"]
-        if [p, q] != idx_XX:
-            continue
-        for config, prob in counts.items():
-            expZp = (-1) ** int(config[p])
-            expZq = (-1) ** int(config[q])
-            expec_val += (
-                float(np.real(coeff)) * prob * (-(expZp - expZq))
-            )  # for minus sign, see the note above
-    return expec_val
-
-
 def even_swap(labeling):
     """Swap elements at even indices with their next neighbors.
     
@@ -362,11 +305,7 @@ def eval_Energy_using_GoogleCircuit(
                 if debug_mode:  # and expec_val != 0.0:
                     print(
                         "Debug mode(G): <XXYY>_{%d, %d} = %f" % (p, q, expec_val),
-                        "(i,j)= ",
-                        i,
-                        j,
-                        "coeff_op: ",
-                        coeff_XXYY,
+                        "(i,j)= ", i, j, "coeff_op: ", coeff_XXYY,
                     )
 
             if idx_cirq > 0 and idx_cirq % 2 == 1:
@@ -424,87 +363,6 @@ def single_eval_XXYY_Google(
         if idx_cirq > 0 and idx_cirq % 2 == 1:
             labeling = even_swap(labeling)
             labeling = odd_swap(labeling)
-    return E_XXYY
-
-
-def eval_XXYY_w_basis_rotation(
-    adopted,
-    params,
-    Nq,
-    Nocc,
-    hamiltonian_op_XXYY,
-    sampler,
-    nshot,
-    using_noisy_simulation,
-    postselection_XXYY=True,
-    backend=None,
-    debug_mode: bool = False,
-    verbose: bool = False,
-    type_of_ansatz="pUCCD",
-    idxs_hole_in=[],
-):
-    """
-    Evaluate the expectation value of the Hamiltonian with XX+YY terms using
-    basis rotations to diagonalize XX+YY term.
-
-    It should be noted that Pauli strings for Hamiltonians are used "as it is" in the calculation,
-    i.e. X_pX_q means "II...IX...XI...II" where the qubit p and q are involved in the X operator.
-    However, the qubits in the ansatz are indexed in descending order, i.e. qubit 0 is the most significant bit.
-    Hence, the indices for Pauli strings, p, q, should be converted to the indices in the ansatz, Nq-q-1, Nq-p-1,
-    where the ordering comes from the fact we are assuming p < q in the Pauli strings.
-    """
-    qc_list = []
-    relevant_idxs = []
-    for i in range(Nq):
-        for j in range(i + 1, Nq):
-            relevant_idxs.append([i, j])
-            # We should be careful about difference between the indices of the qubits in Pauli strings and those in the ansatz
-            rotation_XXYY = [Nq - j - 1, Nq - i - 1]
-
-            qc = pair_ansatz_qiskit(
-                params,
-                Nq,
-                Nocc,
-                method=type_of_ansatz,
-                decent_order=True,
-                rotation_XXYY=rotation_XXYY,
-                idxs_hole_in=idxs_hole_in,
-            )
-            qc.measure_all()
-            qc = qc.decompose(reps=5)
-            if using_noisy_simulation:
-                qc = transpile(qc, backend)
-            if adopted == "Real":
-                pm = generate_preset_pass_manager(backend=backend)
-                qc = pm.run(qc)
-            qc_list.append(qc)
-    job = sampler.run(qc_list, shots=nshot)
-    results = job.result()
-    if using_noisy_simulation:
-        results = results.results
-    E_XXYY = 0.0
-    for idx in range(len(results)):
-        if using_noisy_simulation:
-            counts = results[idx].data.counts
-        else:
-            counts = results[idx].data.meas.get_counts()
-        counts = reweight_results(
-            counts, Nq, Nocc, verbose=verbose, make_number_conservation=True
-        )
-        i, j = relevant_idxs[idx]
-        tmp = eval_expec_XXYY_postselection(
-            hamiltonian_op_XXYY,
-            counts,
-            Nq,
-            Nocc,
-            i,
-            j,
-            further_postselection_on_particle_number=postselection_XXYY,
-        )
-        E_XXYY += tmp
-        if debug_mode and tmp != 0.0:
-            print("Debug mode(R): E_XXYY_{%d, %d} = %f" % (i, j, tmp))
-            print("Debug mode(R): counts: ", counts)
     return E_XXYY
 
 

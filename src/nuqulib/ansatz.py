@@ -149,12 +149,13 @@ def pair_ansatz_qiskit(
     """
     where_is_G_or_cG1 = {}
     qc = QuantumCircuit(Norb)
-    if method == "HF+Givens":
+    if "HF" in method:
         for i in range(Nocc):
             if decent_order:
                 qc.x(Norb - 1 - i)
             else:
                 qc.x(i)
+    if method == "HF+Givens":
         count = 0
         for turn in range(Nocc):
             if turn == 0:
@@ -332,17 +333,13 @@ def pair_ansatz_pennylane(
 
 
 def circuit_XXYY(
+    qc_ansatz: QuantumCircuit,
     adopted: bool,
-    params: list[float],
     Nq: int,
-    Nocc: int,
-    method_ansatz: str,
-    decent_order: bool = True,
     methods_XXYY: str = "Google",
     backend:str | None = None,
     opt_level=3,
     verbose:bool =False,
-    idxs_hole_in=[],
 ):
     """
     Generates quantum circuits to measure X_iX_j+Y_iY_j terms in the Hamiltonian.
@@ -371,14 +368,7 @@ def circuit_XXYY(
         idx_circuit = 0
         for cycle in range(num_cycle):
             for eo_pair in range(2):
-                qc = pair_ansatz_qiskit(
-                    params,
-                    Nq,
-                    Nocc,
-                    method=method_ansatz,
-                    decent_order=decent_order,
-                    idxs_hole_in=idxs_hole_in,
-                )
+                qc = qc_ansatz.copy()
                 for c in range(cycle):
                     # even swap
                     for i in range(0, Nq - 1, 2):

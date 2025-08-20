@@ -1,7 +1,7 @@
 """Quantum encoding utilities for nuclear Hamiltonians.
 
-This module provides functions for mapping fermionic operators to qubit operators
-using various encoding schemes (Jordan-Wigner for now) and utilities for
+This module provides functions for mapping nuclear Hamiltonians to qubit operators
+using e.g., Jordan-Wigner,  and utilities for 
 working with Pauli operators in different quantum computing frameworks.
 """
 
@@ -43,12 +43,16 @@ def mapping_to_Pauli_string(
     return qubit_op
 
 
-def mapping_of_pn_hamiltonians(op_pn, n_qubits_p, n_qubits_n, method):
+def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
+                               n_qubits_p: int, n_qubits_n: int, method: str):
     """Map proton-neutron coupled Hamiltonians to Pauli operators.
     
     This function handles the mapping of nuclear Hamiltonians that include
     both proton and neutron sectors with their respective interactions.
-    
+    We here assume that proton indices are lower than neutron indices,
+    and those are to be coupled like neutron part followed by proton part
+    so that one can use them in Qiskit.
+
     Args:
         op_pn (dict): Dictionary with (proton_str, neutron_str) keys and coefficient values.
         n_qubits_p (int): Number of qubits for proton sector.
@@ -84,7 +88,7 @@ def mapping_of_pn_hamiltonians(op_pn, n_qubits_p, n_qubits_n, method):
 def check_XXYYterm(hamiltonian_op_XXYY):
     """Check that XX and YY terms have identical coefficients.
     
-    In ordinary Hamiltonians, the XX and YY terms should have the same coefficient.
+    In pairing or pair-wise Hamiltonians, the XX and YY terms should have the same coefficient.
     This function validates this constraint for debugging and verification.
     
     Args:
@@ -116,7 +120,7 @@ def check_XXYYterm(hamiltonian_op_XXYY):
 
 
 def separate_Hamil_terms(hamiltonian_op: SparsePauliOp):
-    """Separate Hamiltonian into diagonal and XX+YY terms.
+    """Separate Hamiltonian, pairing or pair-wise ones, into diagonal and XX+YY terms.
     
     This function partitions a Hamiltonian operator into terms that are diagonal
     in the computational basis (I and Z terms) and off-diagonal XX+YY terms.
@@ -197,7 +201,7 @@ def qpo_from_sparsepauliop(sp_op: SparsePauliOp) -> QubitPauliOperator:
     Note:
         This code is based on PyTKET documentation but modified to handle
         qubit ordering differences between Qiskit and PyTKET.
-        Original reference: https://docs.quantinuum.com/systems/trainings/knowledge_articles/Quantinuum_high_energy_physics_experiment.html
+        `Original reference <https://docs.quantinuum.com/systems/trainings/knowledge_articles/Quantinuum_high_energy_physics_experiment.html>`_
     """
     tk_op = defaultdict(complex)
     for term, coeff in sp_op.to_list():
