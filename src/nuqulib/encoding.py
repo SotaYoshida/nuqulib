@@ -1,7 +1,7 @@
 """Quantum encoding utilities for nuclear Hamiltonians.
 
 This module provides functions for mapping fermionic operators to qubit operators
-using various encoding schemes (Jordan-Wigner, Bravyi-Kitaev) and utilities for
+using various encoding schemes (Jordan-Wigner for now) and utilities for
 working with Pauli operators in different quantum computing frameworks.
 """
 

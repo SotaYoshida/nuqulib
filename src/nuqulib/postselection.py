@@ -260,8 +260,8 @@ def eval_Ediag(
 
 
 def eval_Energy_using_GoogleCircuit(
-    Nq,
-    Nocc,
+    Nq: int,
+    Nocc: int,
     hamiltonian_op_XXYY: SparsePauliOp,
     qc_list_XXYY: list,
     sampler,

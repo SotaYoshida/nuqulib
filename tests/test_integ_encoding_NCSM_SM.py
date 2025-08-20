@@ -1,5 +1,7 @@
 import os
 import pytest
+import numpy as np
+from qiskit.primitives import StatevectorEstimator
 from nuqulib import *
 
 chdir = os.path.dirname(os.path.abspath(__file__))
