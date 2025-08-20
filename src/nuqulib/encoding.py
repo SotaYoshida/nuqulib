@@ -8,7 +8,10 @@ from collections import defaultdict
 from pytket import Qubit
 
 
-def mapping_to_Pauli_string(Fermionic_op, n_qubits, method):
+def mapping_to_Pauli_string(
+    Fermionic_op: FermionicOp,
+    n_qubits: int, 
+    method: str):
     if method == "JordanWigner" or method == "JW" or method == "Jordan-Wigner":
         mapper = JordanWignerMapper()
     elif method == "BravyiKitaev" or method == "BK" or method == "Bravyi-Kitaev":

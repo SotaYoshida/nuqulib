@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import numpy as np
 import pennylane as qml
 from pennylane import numpy as qnp
@@ -6,14 +7,14 @@ from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from .circuits import G_gate, cG1_gate
 
 def nucl_ansatz(
-    n_qubit,
-    proton_qubits,
-    neutron_qubits,
-    proton_number,
-    neutron_number,
-    params,
-    method="HF",
-    return_Gdict=False,
+    n_qubit: int,
+    proton_qubits: Iterable[int],
+    neutron_qubits: Iterable[int],
+    proton_number: int,
+    neutron_number: int,
+    params: Iterable[float],
+    method: str = "HF",
+    return_Gdict: bool = False,
 ):
     n_qubits_p = len(proton_qubits)
 
@@ -78,14 +79,13 @@ def nucl_ansatz(
 
 
 def pair_ansatz(
-    params,
-    Norb,
-    Nocc,
-    method="HF",
-    return_Gdict=False,
-    decent_order=True,
+    params: Iterable[float],
+    Norb: int,
+    Nocc: int,
+    method: str = "HF",
+    return_Gdict: bool = False,
+    decent_order: bool = True,
     rotation_XXYY=[],
-    pseudo_DD=False,
     idxs_hole_in=[],
 ):
     where_is_G_or_cG1 = {}
@@ -317,7 +317,6 @@ def circuit_XXYY(
     methods_XXYY: str = "Google",
     backend:str | None = None,
     opt_level=3,
-    pseudo_DD:bool =False,
     verbose:bool =False,
     idxs_hole_in=[],
 ):
@@ -354,7 +353,6 @@ def circuit_XXYY(
                     Nocc,
                     method=method_ansatz,
                     decent_order=decent_order,
-                    pseudo_DD=pseudo_DD,
                     idxs_hole_in=idxs_hole_in,
                 )
                 for c in range(cycle):

@@ -20,8 +20,6 @@ def vqe_example_pennylane(
         Hdict, proton_number, neutron_number
     )
 
-    print("Hnn_of", H_nn_of)
-
     H = of.ops.FermionOperator()
     for ch in using_chs:
         if ch == "1b":
@@ -100,7 +98,7 @@ def vqe_example_pennylane(
     params = params[:num_params]
 
     ## ****** Optimizing parameters ******
-    N_it = 300
+    N_it = 150
     optimizer = qml.AdamOptimizer(stepsize=0.3)
 
     energies = []

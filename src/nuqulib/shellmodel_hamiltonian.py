@@ -1,8 +1,7 @@
-import itertools
 import copy
 from collections import Counter
 import gzip
-
+import itertools
 import multiprocessing
 from multiprocessing import get_context
 import numpy as np
@@ -165,7 +164,7 @@ class Hamiltonian:
             self.fn_3NF = fn_3NF
             self.JTorbitals = JTcoupledOrbitals(self.emax)
             if "readable.txt" in self.fn_3NF:
-                self.v3b_pn = self._read_3NF_readable(verbose=verbose)
+                self.v3b_pn = self.read_3NF_readable(verbose=verbose)
             elif "me3j.gz" in self.fn_3NF:
                 idx_sps = 0
                 for sps in self.single_particle_states:
@@ -222,12 +221,12 @@ class Hamiltonian:
         hw = txt.split("_")[0]
         return float(hw)
 
-    def read_snt_file(self, fn_NN_in):  # read the snt file (up to 2-body)
+    def read_snt_file(self, fn_NN_in):  
         """
         To read (valence-)NN interaction file in snt format.
 
-        For NCSM, one-body matrix elements are purely kinetic terms, T_{n,n'}.
-        hw *(A-1)/A factor is to be multiplied.
+        For NCSM, one-body matrix elements are purely kinetic terms, :math:`T_{n,n'}`.
+        :math:`\hbar\omega *(A-1)/A` factor is to be multiplied.
         """
         with open(fn_NN_in) as f:
             lines = f.readlines()
@@ -464,7 +463,7 @@ class Hamiltonian:
                                 num_1b_term += 1
 
         # for 2-body term
-        num_2b_term = num_pp = num_nn = num_pn = 0
+        num_pp = num_nn = num_pn = 0
         for a, b, c, d, J, V in self.v2b:
             # make them canonical order
             flip_ab = (-1) ** ((self.msps[a].j + self.msps[b].j) // 2 - J)
@@ -587,16 +586,7 @@ class Hamiltonian:
                                     op_dict_pn.append(
                                         [aa + 1, bb + 1, cc + 1, dd + 1, J, v]
                                     )
-        print(
-            "# of H_m terms, 1b",
-            num_1b_term,
-            "2b pp",
-            num_pp,
-            "nn",
-            num_nn,
-            "pn",
-            num_pn,
-        )
+        print(f"# of H_m terms, 1b: {num_1b_term}, 2b pp: {num_pp}, nn: {num_nn}, pn: {num_pn}")
         Hamildict = {
             "SPE": op_dict_1b,
             "Vpp": op_dict_pp,
@@ -654,7 +644,7 @@ class Hamiltonian:
         print("Warning: no such msps in the model space:", n, l, j, jz, tz)
         return None
 
-    def _read_3NF_readable(self, verbose=False):
+    def read_3NF_readable(self, verbose=False):
         """
         Read the NuHamil 3NF file in readable.text fmt.
         This method should be modified if the file is too large.
@@ -662,7 +652,7 @@ class Hamiltonian:
         In readable.text, V_{3N} is given as a function of a set of quanta,
         {a,b,c, Jab, Tab, d,e,f, Jde, Tde, Jabc, Tabc, Jabc, Tabc}
         where a~f are the single particle states having {n,l,j} quanta.
-        Those matrix elements correspond to Eq.(41) in NuHamil paper, [T.Miyagi, EPJA (2023)59:150](https://doi.org/10.1140/epja/s10050-023-01039-y).
+        Those matrix elements correspond to Eq.(41) in NuHamil paper, `T.Miyagi, EPJA (2023)59:150 <https://doi.org/10.1140/epja/s10050-023-01039-y>`_.
 
         pnME: proton-neutron matrix elements are obtained through the Clebsch-Gordan coefficients as detailed in Eq.(36) of NuHamil paper.
         """

@@ -1,9 +1,7 @@
 import numpy as np
 
-
 def hat(a):
     return np.sqrt(2 * a + 1)
-
 
 def permutation_parity(lst):
     # Returns 0 for even, 1 for odd permutation.
@@ -13,7 +11,6 @@ def permutation_parity(lst):
             if lst[i] > lst[j]:
                 par *= -1
     return 0 if par > 0 else 1
-
 
 def sort_3_orbits(a_in, b_in, c_in):
     # Adjust inputs if they're even
