@@ -1,3 +1,10 @@
+"""Quantum encoding utilities for nuclear Hamiltonians.
+
+This module provides functions for mapping fermionic operators to qubit operators
+using various encoding schemes (Jordan-Wigner, Bravyi-Kitaev) and utilities for
+working with Pauli operators in different quantum computing frameworks.
+"""
+
 import numpy as np
 from qiskit_nature.second_q.mappers import JordanWignerMapper, BravyiKitaevMapper
 from qiskit_nature.second_q.operators import FermionicOp
@@ -12,6 +19,20 @@ def mapping_to_Pauli_string(
     Fermionic_op: FermionicOp,
     n_qubits: int, 
     method: str):
+    """Map fermionic operators to Pauli strings using specified encoding.
+    
+    Args:
+        Fermionic_op (FermionicOp): Fermionic operator to be mapped.
+        n_qubits (int): Number of qubits for the mapping.
+        method (str): Encoding method. Options: "JordanWigner"/"JW"/"Jordan-Wigner"
+                     or "BravyiKitaev"/"BK"/"Bravyi-Kitaev".
+    
+    Returns:
+        SparsePauliOp: Mapped Pauli operator.
+        
+    Raises:
+        ValueError: If invalid encoding method is provided.
+    """
     if method == "JordanWigner" or method == "JW" or method == "Jordan-Wigner":
         mapper = JordanWignerMapper()
     elif method == "BravyiKitaev" or method == "BK" or method == "Bravyi-Kitaev":
@@ -23,6 +44,20 @@ def mapping_to_Pauli_string(
 
 
 def mapping_of_pn_hamiltonians(op_pn, n_qubits_p, n_qubits_n, method):
+    """Map proton-neutron coupled Hamiltonians to Pauli operators.
+    
+    This function handles the mapping of nuclear Hamiltonians that include
+    both proton and neutron sectors with their respective interactions.
+    
+    Args:
+        op_pn (dict): Dictionary with (proton_str, neutron_str) keys and coefficient values.
+        n_qubits_p (int): Number of qubits for proton sector.
+        n_qubits_n (int): Number of qubits for neutron sector.
+        method (str): Encoding method (e.g., "Jordan-Wigner", "Bravyi-Kitaev").
+    
+    Returns:
+        SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.
+    """
     op_list = []
     for p_str, n_str in op_pn.keys():
         coeff_overall = op_pn[(p_str, n_str)]
@@ -47,9 +82,19 @@ def mapping_of_pn_hamiltonians(op_pn, n_qubits_p, n_qubits_n, method):
 
 
 def check_XXYYterm(hamiltonian_op_XXYY):
-    """
+    """Check that XX and YY terms have identical coefficients.
+    
     In ordinary Hamiltonians, the XX and YY terms should have the same coefficient.
-    This function checks whether the XX and YY terms have the same coefficient.
+    This function validates this constraint for debugging and verification.
+    
+    Args:
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian containing only XX and YY terms.
+        
+    Returns:
+        bool: True if all XX/YY coefficient pairs match.
+        
+    Raises:
+        AssertionError: If XX and YY terms have different coefficients.
     """
     ops = hamiltonian_op_XXYY.paulis
     coeffs = hamiltonian_op_XXYY.coeffs
@@ -71,15 +116,24 @@ def check_XXYYterm(hamiltonian_op_XXYY):
 
 
 def separate_Hamil_terms(hamiltonian_op: SparsePauliOp):
-    """
-    Separate the Hamiltonian into the diagonal terms and the XX+YY terms.
+    """Separate Hamiltonian into diagonal and XX+YY terms.
+    
+    This function partitions a Hamiltonian operator into terms that are diagonal
+    in the computational basis (I and Z terms) and off-diagonal XX+YY terms.
+    This separation is useful for quantum algorithms that treat different
+    types of terms separately.
+    
     Args:
-        hamiltonian_op (SparsePauliOp): Hamiltonian operator
+        hamiltonian_op (SparsePauliOp): Full Hamiltonian operator.
+        
     Returns:
-        hamiltonian_op_diag (SparsePauliOp): Hamiltonian operator with diagonal terms
-        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian operator with XX+YY terms
-
-    This can be useful for post-processing the results of the quantum simulation.
+        tuple: Tuple containing:
+            - hamiltonian_op_diag (SparsePauliOp): Diagonal terms (I, Z).
+            - hamiltonian_op_XXYY (SparsePauliOp): XX and YY terms.
+            
+    Note:
+        This function validates that XX and YY terms have matching coefficients
+        and assumes real coefficients.
     """
     ops_all = hamiltonian_op.paulis
     coeffs_all = hamiltonian_op.coeffs
@@ -105,7 +159,18 @@ def separate_Hamil_terms(hamiltonian_op: SparsePauliOp):
 
 
 def qps_from_sparsepauliop(paulis):
-    """Convert SparsePauliOp tensor of Paulis to pytket QubitPauliString."""
+    """Convert SparsePauliOp Pauli strings to PyTKET QubitPauliString.
+    
+    Args:
+        paulis (str): Pauli string (e.g., "IXYZ").
+        
+    Returns:
+        QubitPauliString: PyTKET QubitPauliString representation.
+        
+    Note:
+        Identity operators are automatically filtered out as they don't
+        contribute to the QubitPauliString representation.
+    """
     pauli_sym = {"I": Pauli.I, "X": Pauli.X, "Y": Pauli.Y, "Z": Pauli.Z}
     qlist = []
     plist = []
@@ -117,10 +182,22 @@ def qps_from_sparsepauliop(paulis):
 
 
 def qpo_from_sparsepauliop(sp_op: SparsePauliOp) -> QubitPauliOperator:
-    """
-    Convert SparsePauliOp QubitOperator to pytket QubitPauliOperator.
-    This is code is originally from pytket documentation [here](https://docs.quantinuum.com/systems/trainings/knowledge_articles/Quantinuum_high_energy_physics_experiment.html),
-    but we need to modify to reverse the order of the qubits in the QubitPauliOperator.
+    """Convert Qiskit SparsePauliOp to PyTKET QubitPauliOperator.
+    
+    This function converts Qiskit's SparsePauliOp representation to PyTKET's
+    QubitPauliOperator format, with automatic reversal of qubit ordering
+    to match PyTKET conventions.
+    
+    Args:
+        sp_op (SparsePauliOp): Qiskit SparsePauliOp to convert.
+        
+    Returns:
+        QubitPauliOperator: PyTKET QubitPauliOperator with reversed qubit order.
+        
+    Note:
+        This code is based on PyTKET documentation but modified to handle
+        qubit ordering differences between Qiskit and PyTKET.
+        Original reference: https://docs.quantinuum.com/systems/trainings/knowledge_articles/Quantinuum_high_energy_physics_experiment.html
     """
     tk_op = defaultdict(complex)
     for term, coeff in sp_op.to_list():
