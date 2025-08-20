@@ -1,13 +1,12 @@
-from scipy.optimize import minimize_scalar
-import numpy as np
+from collections.abc import Iterable
 import matplotlib.pyplot as plt
+import numpy as np
 from qiskit.primitives import StatevectorEstimator
 from qiskit_aer.primitives import Estimator as AerEstimator
+from scipy.optimize import minimize_scalar
 import seaborn as sns
-
 cols = sns.color_palette("deep")
-
-from .ansatz import pair_ansatz, nucl_ansatz
+from .ansatz import pair_ansatz_qiskit, nucl_ansatz
 
 
 def draw_DFT_curve(xplot, DFTcurve, spot, Es, x_min, y_min):
@@ -103,7 +102,7 @@ def cost_func(
     neutron_qubits=[],
 ):
     if pairinghamiltonian:
-        qc = pair_ansatz(params, Nq, Nocc, method_ansatz)
+        qc = pair_ansatz_qiskit(params, Nq, Nocc, method_ansatz)
     else:
         qc = nucl_ansatz(
             Nq,
@@ -164,7 +163,6 @@ def NFTmethod(
 ):
     params_ = params.copy()
     # Making point to measure for Discrete Fourier Transformation
-    # GやcG1で使われる角度は中で2(4)で割って使われる。これらが0から2piの範囲をカバーしなければならないことに注意してfactorをかけている。
     if where_is_G_or_cG1[which_Gate] == "G":
         spot = [params_[which_Gate] + n * 2 * (2 * np.pi) / 5 for n in range(5)]
         spot = np.array(spot)
@@ -222,19 +220,19 @@ def NFTmethod(
 
 
 def optimize_params_with_NFT(
-    it_max,
+    it_max: int,
     hamiltonian_op,
-    params,
-    Nq,
-    Nocc,
-    ngate,
-    where_is_G_or_cG1,
-    method_ansatz,
-    method_measure,
-    verbose=False,
-    pairinghamiltonian=True,
-    proton_number=0,
-    neutron_number=0,
+    params: Iterable[float],
+    Nq: int,
+    Nocc: int,
+    ngate: int,
+    where_is_G_or_cG1: dict,
+    method_ansatz: str,
+    method_measure: str,
+    verbose: bool=False,
+    pairinghamiltonian: bool=True,
+    proton_number: int=0,
+    neutron_number: int=0,
     proton_qubits=[],
     neutron_qubits=[],
 ):

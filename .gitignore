@@ -209,8 +209,10 @@ __marimo__/
 
 # Poetry stuffs
 
-
 # OS generated files
 *.DS_Store
 Thumbs.db
+
+# Generated files
+*.pdf
 

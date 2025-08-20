@@ -19,7 +19,7 @@ def nucl_ansatz(
     n_qubits_p = len(proton_qubits)
 
     where_is_G_or_cG1 = {}
-    if method == "HF":
+    if method == "HF": # more precisely, lowest filling
         ansatz = QuantumCircuit(n_qubit)
         for i in range(proton_number):
             ansatz.x(proton_qubits[-1 - i])
@@ -78,7 +78,7 @@ def nucl_ansatz(
         raise ValueError("Invalid method for ansatz: " + method)
 
 
-def pair_ansatz(
+def pair_ansatz_qiskit(
     params: Iterable[float],
     Norb: int,
     Nocc: int,
@@ -192,12 +192,12 @@ def pair_ansatz(
 def pair_ansatz_pennylane(
     Hamil_pl,
     params,
-    Nq,
-    Nocc,
-    type_of_ansatz="HF",
-    observable="Hamil",
-    return_Gdict=False,
-    random_init_circ=False,
+    Nq: int,
+    Nocc: int,
+    type_of_ansatz: str="HF",
+    observable: str="Hamil",
+    return_Gdict: str=False,
+    random_init_circ: str=False,
     idxs_hole_in=[],
     combination_h_v=[],
 ):
@@ -208,39 +208,6 @@ def pair_ansatz_pennylane(
 
     theta_idx = 0
 
-    # Home-made ansatz with Givens/controlled-Givens
-    if type_of_ansatz == "HF+Givens":
-        if Nocc <= Nq // 2:
-            for i in range(Nq - Nocc, 0, -1):
-                local_where_is_G_or_cG1[theta_idx] = "G"
-                qml.SingleExcitation(params[theta_idx], wires=[i - 1, i])
-                theta_idx += 1
-            if Nocc > 1:
-                for cycle in range(Nocc - 1):
-                    q_end = Nq - Nocc + cycle + 1
-                    for q_wire_end in range(q_end, 1, -1):
-                        for c in range(q_wire_end - 2, -1, -1):
-                            local_where_is_G_or_cG1[theta_idx] = "cG1"
-                            qml.ctrl(qml.SingleExcitation, control=[c])(
-                                params[theta_idx], wires=[q_wire_end - 1, q_wire_end]
-                            )
-                            theta_idx += 1
-        else:
-            Nhole = Nq - Nocc
-            for q in range(Nhole - 1, Nq - 1):
-                local_where_is_G_or_cG1[theta_idx] = "G"
-                qml.SingleExcitation(params[theta_idx], wires=[q, q + 1])
-                theta_idx += 1
-            for cycle in range(Nhole - 1):
-                q_end = Nhole - 2 - cycle
-                for q_wire_end in range(q_end, Nq):
-                    for c in range(q_wire_end + 2, Nq):
-                        local_where_is_G_or_cG1[theta_idx] = "cG1"
-                        qml.ctrl(
-                            qml.SingleExcitation, control=[c], control_values=False
-                        )(params[theta_idx], wires=[q_wire_end, q_wire_end + 1])
-                        theta_idx += 1
-
     ## pUCCD ansatz in hard core boson formulation
     if type_of_ansatz == "pUCCD":
         for cycle in range(Nocc):
@@ -249,13 +216,6 @@ def pair_ansatz_pennylane(
                 qml.SingleExcitation(params[theta_idx], wires=[i - 1, i])
                 theta_idx += 1
                 qml.SWAP(wires=[i - 1, i])
-
-    if type_of_ansatz == "pUCCDwoSWAP":
-        for cycle in range(Nocc):
-            for i in range(Nq - Nocc + cycle, cycle, -1):
-                local_where_is_G_or_cG1[theta_idx] = "G"
-                qml.SingleExcitation(params[theta_idx], wires=[i - 1, i])
-                theta_idx += 1
 
     if type_of_ansatz == "pUCCD+all2all":
         """
@@ -347,7 +307,7 @@ def circuit_XXYY(
         idx_circuit = 0
         for cycle in range(num_cycle):
             for eo_pair in range(2):
-                qc = pair_ansatz(
+                qc = pair_ansatz_qiskit(
                     params,
                     Nq,
                     Nocc,

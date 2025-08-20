@@ -2,7 +2,7 @@ import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit, transpile
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
-from .ansatz import pair_ansatz
+from .ansatz import pair_ansatz_qiskit
 
 
 def reweight_results(
@@ -363,7 +363,7 @@ def eval_XXYY_w_basis_rotation(
             # We should be careful about difference between the indices of the qubits in Pauli strings and those in the ansatz
             rotation_XXYY = [Nq - j - 1, Nq - i - 1]
 
-            qc = pair_ansatz(
+            qc = pair_ansatz_qiskit(
                 params,
                 Nq,
                 Nocc,
