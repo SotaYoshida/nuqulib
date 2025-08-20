@@ -1,9 +1,8 @@
 """Quantum ansatz circuits for nuclear simulations.
 
 This module provides various ansatz implementations for nuclear quantum simulations,
-including Hartree-Fock states, Givens rotation-based circuits, and pairing model
-ansätze. These circuits are designed to efficiently represent nuclear many-body
-wavefunctions on quantum computers.
+including Hartree-Fock states (lowest-filling more precisely),
+Givens rotation-based circuits, and pair Unitary Coupled-Cluster Doubles (pUCCD).
 """
 
 from collections.abc import Iterable
@@ -122,10 +121,11 @@ def pair_ansatz_qiskit(
     
     Creates quantum circuits for pairing Hamiltonian simulations using
     Hartree-Fock states with optional Givens rotation enhancements.
-    Designed for nuclear pairing problems and quantum chemistry applications.
+    Designed for pairing Hamiltonian or pair-wise form of shell model,
+    such as Hard-core boson formulation focused on seniority-zero states.
     
     Args:
-        params (Iterable[float]): Variational parameters for Givens rotations.
+        params (Iterable[float]): Variational parameters for gates, mainly Givens rotations.
         Norb (int): Number of orbitals (qubits).
         Nocc (int): Number of occupied orbitals.
         method (str, optional): Ansatz method. Options: "HF", "HF+Givens". 
@@ -135,7 +135,7 @@ def pair_ansatz_qiskit(
         decent_order (bool, optional): Whether to use descending qubit ordering. 
                                       Defaults to True.
         rotation_XXYY (list, optional): List of XX+YY rotation parameters. 
-                                       Defaults to [].
+                                       Defaults to []. This is used to diagonalize XX+YY term in the computational basis.
         idxs_hole_in (list, optional): Indices of hole states. Defaults to [].
     
     Returns:
@@ -144,8 +144,8 @@ def pair_ansatz_qiskit(
                                 
     Note:
         The circuit starts with Hartree-Fock state preparation (X gates on
-        occupied orbitals) followed by layer of Givens rotations for variational
-        flexibility in the "HF+Givens" method.
+        occupied orbitals) followed by layer of Givens rotations,
+        which can be ragarded as excitations from the reference state.
     """
     where_is_G_or_cG1 = {}
     qc = QuantumCircuit(Norb)
@@ -260,6 +260,11 @@ def pair_ansatz_pennylane(
     idxs_hole_in=[],
     combination_h_v=[],
 ):
+    """Construct pairing model ansatz circuit using PennyLane.
+
+    This function is a counterpart of `pair_ansatz_qiskit` but uses PennyLane
+    and only supports pUCCD ansatze.
+    """
     local_where_is_G_or_cG1 = {}
     if type_of_ansatz != "pUCCD+all2all":
         for i in range(Nocc):
