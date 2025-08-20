@@ -244,7 +244,7 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     qc = nucl_ansatz(n_qubits, proton_qubits, neutron_qubits, 8, 8, [], "HF")
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    Hamil_NCSM_NN = H_1b + H_pp + H_nn + H_pn = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "JordanWigner")
     H_3b = hamil.mapping_3NF_Mscheme("JordanWigner")
 
     estimator = StatevectorEstimator()
