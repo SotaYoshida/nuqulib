@@ -1,3 +1,11 @@
+"""Quantum ansatz circuits for nuclear simulations.
+
+This module provides various ansatz implementations for nuclear quantum simulations,
+including Hartree-Fock states, Givens rotation-based circuits, and pairing model
+ansätze. These circuits are designed to efficiently represent nuclear many-body
+wavefunctions on quantum computers.
+"""
+
 from collections.abc import Iterable
 import numpy as np
 import pennylane as qml
@@ -16,6 +24,28 @@ def nucl_ansatz(
     method: str = "HF",
     return_Gdict: bool = False,
 ):
+    """Construct nuclear ansatz circuit for proton-neutron systems.
+    
+    Creates quantum circuits for nuclear many-body states with separate
+    proton and neutron sectors. Supports Hartree-Fock initial states
+    and Givens rotation-based variational ansätze.
+    
+    Args:
+        n_qubit (int): Total number of qubits.
+        proton_qubits (Iterable[int]): Indices of proton qubits.
+        neutron_qubits (Iterable[int]): Indices of neutron qubits.
+        proton_number (int): Number of protons.
+        neutron_number (int): Number of neutrons.
+        params (Iterable[float]): Variational parameters.
+        method (str, optional): Ansatz method. Options: "HF", "HF+Givens". 
+                               Defaults to "HF".
+        return_Gdict (bool, optional): Whether to return gate type dictionary. 
+                                      Defaults to False.
+    
+    Returns:
+        QuantumCircuit or tuple: Quantum circuit representing the ansatz.
+                                If return_Gdict=True, returns (circuit, gate_dict).
+    """
     n_qubits_p = len(proton_qubits)
 
     where_is_G_or_cG1 = {}
@@ -88,6 +118,35 @@ def pair_ansatz_qiskit(
     rotation_XXYY=[],
     idxs_hole_in=[],
 ):
+    """Construct pairing model ansatz circuit using Qiskit.
+    
+    Creates quantum circuits for pairing Hamiltonian simulations using
+    Hartree-Fock states with optional Givens rotation enhancements.
+    Designed for nuclear pairing problems and quantum chemistry applications.
+    
+    Args:
+        params (Iterable[float]): Variational parameters for Givens rotations.
+        Norb (int): Number of orbitals (qubits).
+        Nocc (int): Number of occupied orbitals.
+        method (str, optional): Ansatz method. Options: "HF", "HF+Givens". 
+                               Defaults to "HF".
+        return_Gdict (bool, optional): Whether to return gate type dictionary. 
+                                      Defaults to False.
+        decent_order (bool, optional): Whether to use descending qubit ordering. 
+                                      Defaults to True.
+        rotation_XXYY (list, optional): List of XX+YY rotation parameters. 
+                                       Defaults to [].
+        idxs_hole_in (list, optional): Indices of hole states. Defaults to [].
+    
+    Returns:
+        QuantumCircuit or tuple: Pairing ansatz circuit. If return_Gdict=True,
+                                returns (circuit, gate_dict).
+                                
+    Note:
+        The circuit starts with Hartree-Fock state preparation (X gates on
+        occupied orbitals) followed by layer of Givens rotations for variational
+        flexibility in the "HF+Givens" method.
+    """
     where_is_G_or_cG1 = {}
     qc = QuantumCircuit(Norb)
     if method == "HF+Givens":
