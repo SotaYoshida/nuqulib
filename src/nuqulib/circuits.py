@@ -1,8 +1,27 @@
+"""Quantum circuit implementations for nuclear simulations.
+
+This module provides various quantum circuit implementations including Givens rotations,
+controlled gates, and utility functions for Pauli string measurements. These circuits
+are commonly used in nuclear quantum computing applications.
+"""
+
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 import numpy as np
 
 
 def cG1(circ, c_qubit, i, j, theta):
+    """Apply controlled Givens rotation to a quantum circuit.
+    
+    Implements a controlled version of the Givens rotation gate using
+    elementary quantum gates. This is used for fermionic state preparation.
+    
+    Args:
+        circ (QuantumCircuit): Quantum circuit to modify.
+        c_qubit (int): Control qubit index.
+        i (int): First target qubit index.
+        j (int): Second target qubit index.
+        theta (float): Rotation angle parameter.
+    """
     theta_4 = theta / 4
     circ.cx(i, j)
     circ.ry(theta_4, i)
@@ -17,6 +36,19 @@ def cG1(circ, c_qubit, i, j, theta):
 
 
 def cG1_gate(theta, method="magic"):
+    """Create a controlled Givens rotation gate.
+    
+    Args:
+        theta (float): Rotation angle parameter.
+        method (str, optional): Implementation method. Options: "magic", "Xanadu", 
+                               "iSWAP_Rz". Defaults to "magic".
+    
+    Returns:
+        Gate: Controlled Givens rotation gate.
+        
+    Raises:
+        ValueError: If invalid method is provided.
+    """
     circ = QuantumCircuit(2)
     if method == "magic":
         Givens_magic(circ, 0, 1, theta)
@@ -33,6 +65,13 @@ def cG1_gate(theta, method="magic"):
 
 
 def apply_sqrt_iSWAP(qc, i, j):
+    """Apply square root of iSWAP gate to quantum circuit.
+    
+    Args:
+        qc (QuantumCircuit): Quantum circuit to modify.
+        i (int): First qubit index.
+        j (int): Second qubit index.
+    """
     sqrt_iSWAP_matrix = np.array(
         [
             [1, 0, 0, 0],
@@ -45,8 +84,16 @@ def apply_sqrt_iSWAP(qc, i, j):
 
 
 def Givens_iSWAP_Rz(circ, i, j, theta):
-    """
-    Givens rotation used in Google's HF paper, [Science 369, 1084 (2020)](DOI: 10.1126/science.abb9811).
+    """Givens rotation implementation using iSWAP and Rz gates.
+    
+    This implementation is based on Google's approach from 
+    Science 369, 1084 (2020) - DOI: 10.1126/science.abb9811.
+    
+    Args:
+        circ (QuantumCircuit): Quantum circuit to modify.
+        i (int): First qubit index.
+        j (int): Second qubit index.
+        theta (float): Rotation angle parameter.
     """
     theta = theta / 2
     apply_sqrt_iSWAP(circ, i, j)
@@ -57,10 +104,20 @@ def Givens_iSWAP_Rz(circ, i, j, theta):
 
 
 def Givens_magic(circ, i, j, theta):
-    """
-    Optimal quantum circuits for general two-qubit gates, based on [Phys. Rev. A 69, 032315 (2004)](https://doi.org/10.1103/PhysRevA.69.032315).
-    It was used in e.g. [npj Quantum Information (2023) 9:60](https://www.nature.com/articles/s41534-023-00730-8)
-    Maybe optimal in terms of number of CNOTs.
+    """Optimal Givens rotation using magic basis decomposition.
+    
+    This implementation is based on optimal quantum circuits for general 
+    two-qubit gates from Phys. Rev. A 69, 032315 (2004).
+    It minimizes the number of CNOT gates required.
+    
+    Args:
+        circ (QuantumCircuit): Quantum circuit to modify.
+        i (int): First qubit index.
+        j (int): Second qubit index.
+        theta (float): Rotation angle parameter.
+        
+    Reference:
+        Used in npj Quantum Information (2023) 9:60
     """
     theta = theta / 2
     circ.s(i)
@@ -76,8 +133,16 @@ def Givens_magic(circ, i, j, theta):
 
 
 def Givens_Xanadu(circ, i, j, theta):
-    """
-    Implementation given in paper by e.g. [Quantum 6, 742 (2022).](https://quantum-journal.org/papers/q-2022-06-20-742/)
+    """Givens rotation implementation from Xanadu.
+    
+    Implementation based on the approach described in 
+    Quantum 6, 742 (2022) - doi:10.22331/q-2022-06-20-742.
+    
+    Args:
+        circ (QuantumCircuit): Quantum circuit to modify.
+        i (int): First qubit index.
+        j (int): Second qubit index.
+        theta (float): Rotation angle parameter.
     """
     theta_2 = theta / 2
     circ.cx(i, j)
@@ -89,6 +154,19 @@ def Givens_Xanadu(circ, i, j, theta):
 
 
 def G_gate(theta, method="magic"):
+    """Create a Givens rotation gate using specified method.
+    
+    Args:
+        theta (float): Rotation angle parameter.
+        method (str, optional): Implementation method. Options: "magic", "Xanadu", 
+                               "iSWAP_Rz". Defaults to "magic".
+    
+    Returns:
+        Gate: Givens rotation gate.
+        
+    Raises:
+        ValueError: If invalid method is provided.
+    """
     circ = QuantumCircuit(2)
     if method == "magic":
         Givens_magic(circ, 0, 1, theta)
@@ -105,6 +183,19 @@ def G_gate(theta, method="magic"):
 
 
 def Givens_2_Xanadu(circ, i, j, k, l, theta):
+    """Two-qubit pair Givens rotation using Xanadu method.
+    
+    Implements a four-qubit Givens rotation that acts on two qubit pairs
+    simultaneously. This is useful for efficient fermionic simulations.
+    
+    Args:
+        circ (QuantumCircuit): Quantum circuit to modify.
+        i (int): First qubit of first pair.
+        j (int): Second qubit of first pair.
+        k (int): First qubit of second pair.
+        l (int): Second qubit of second pair.
+        theta (float): Rotation angle parameter.
+    """
     theta = theta / 8
     circ.cx(k, l)
     circ.cx(i, k)
@@ -137,6 +228,19 @@ def Givens_2_Xanadu(circ, i, j, k, l, theta):
 
 
 def G2_gate(theta, method="Xanadu"):
+    """Create a two-pair Givens rotation gate.
+    
+    Args:
+        theta (float): Rotation angle parameter.
+        method (str, optional): Implementation method. Currently only "Xanadu" 
+                               is supported. Defaults to "Xanadu".
+    
+    Returns:
+        Gate: Two-pair Givens rotation gate acting on 4 qubits.
+        
+    Raises:
+        ValueError: If invalid method is provided.
+    """
     circ = QuantumCircuit(4)
     if method == "Xanadu":
         Givens_2_Xanadu(circ, 0, 1, 2, 3, theta)
@@ -147,6 +251,17 @@ def G2_gate(theta, method="Xanadu"):
 
 
 def get_idx_ancilla_in_string(n_qubit, ancilla, Qiskit_ordering):
+    """Get ancilla qubit index in measurement string.
+    
+    Args:
+        n_qubit (int): Total number of qubits.
+        ancilla (int or None): Ancilla qubit index.
+        Qiskit_ordering (bool): Whether to use Qiskit qubit ordering.
+    
+    Returns:
+        int or None: Index of ancilla qubit in the measurement string,
+                    or None if no ancilla qubit.
+    """
     idx_ancilla = None
     if ancilla != None:
         if Qiskit_ordering:
@@ -157,6 +272,21 @@ def get_idx_ancilla_in_string(n_qubit, ancilla, Qiskit_ordering):
 
 
 def additional_qc(qc_in, pauli_str, register_target, Qiskit_order=True):
+    """Add basis rotation gates for Pauli string measurement.
+    
+    Applies the necessary basis rotation gates (H for X measurement, 
+    SdgH for Y measurement) to measure a Pauli string.
+    
+    Args:
+        qc_in (QuantumCircuit): Quantum circuit to modify.
+        pauli_str (str): Pauli string to measure.
+        register_target (list): List of target qubit indices.
+        Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering.
+                                      Defaults to True.
+    
+    Raises:
+        ValueError: If invalid Pauli string character is encountered.
+    """
     pauli_str = str(pauli_str)
     if Qiskit_order:
         pauli_str = pauli_str[::-1]
@@ -174,6 +304,19 @@ def additional_qc(qc_in, pauli_str, register_target, Qiskit_order=True):
 
 
 def get_idx_to_measure(pauli_str, Qiskit_order=True):
+    """Get qubit indices that need to be measured for a Pauli string.
+    
+    Returns indices of qubits that have non-identity Pauli operators
+    and therefore need to be measured.
+    
+    Args:
+        pauli_str (str): Pauli string.
+        Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering.
+                                      Defaults to True.
+    
+    Returns:
+        list: List of qubit indices to measure.
+    """
     idxs = [idx for idx, p in enumerate(pauli_str) if p != "I"]
     if Qiskit_order:
         idxs = [len(pauli_str) - 1 - idx for idx in idxs]
@@ -183,6 +326,27 @@ def get_idx_to_measure(pauli_str, Qiskit_order=True):
 def expec_Zstring(
     res, idx_relevant, Qiskit_ordering=True, target_qubits=[], ancilla_qubit=None
 ):
+    """Calculate expectation value of Z-string measurement from results.
+    
+    Computes the expectation value of a Z-string Pauli operator from
+    measurement results, with optional ancilla qubit post-selection.
+    
+    Args:
+        res (dict): Dictionary of measurement results {bitstring: count}.
+        idx_relevant (list): List of relevant qubit indices for Z measurements.
+        Qiskit_ordering (bool, optional): Whether to use Qiskit ordering. 
+                                         Defaults to True.
+        target_qubits (list, optional): List of target qubit indices. 
+                                       Defaults to [].
+        ancilla_qubit (int, optional): Ancilla qubit index for post-selection. 
+                                      Defaults to None.
+    
+    Returns:
+        tuple: Tuple containing:
+            - exp_val (float): Overall expectation value.
+            - exp_val_p0 (float): Expectation value when ancilla=0.
+            - exp_val_p1 (float): Expectation value when ancilla=1.
+    """
     exp_val = exp_val_p0 = exp_val_p1 = 0.0
     n_shot = sum(res.values())
     n_qubit = len(list(res.keys())[0])

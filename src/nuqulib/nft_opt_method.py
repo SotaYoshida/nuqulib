@@ -1,3 +1,11 @@
+"""Natural Fourier Transform (NFT) optimization method for VQE.
+
+This module implements the Natural Fourier Transform optimization algorithm
+for Variational Quantum Eigensolver (VQE) problems. The NFT method uses
+discrete Fourier transform to optimize individual parameters by fitting
+the periodic structure of quantum gate parameters.
+"""
+
 from collections.abc import Iterable
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,6 +18,16 @@ from .ansatz import pair_ansatz_qiskit, nucl_ansatz
 
 
 def draw_DFT_curve(xplot, DFTcurve, spot, Es, x_min, y_min):
+    """Draw DFT curve with measured points and minimum candidate.
+    
+    Args:
+        xplot (array): X-axis values for plotting.
+        DFTcurve (array): DFT curve values.
+        spot (array): Measurement points.
+        Es (array): Energy values at measurement points.
+        x_min (float): X-coordinate of minimum candidate.
+        y_min (float): Y-coordinate of minimum candidate.
+    """
     fig = plt.figure(figsize=(3, 3))
     ax = fig.add_subplot(1, 1, 1)
     ax.plot(xplot, DFTcurve, label="DFT curve", color=cols[0])
@@ -21,6 +39,19 @@ def draw_DFT_curve(xplot, DFTcurve, spot, Es, x_min, y_min):
 
 
 def eval_DFT_coeff(Es, spot, theta_scale_for_DFT):
+    """Evaluate discrete Fourier transform coefficients.
+    
+    Computes DFT coefficients from energy measurements at specific points
+    to reconstruct the periodic energy landscape.
+    
+    Args:
+        Es (array): Energy measurements.
+        spot (array): Parameter values where energies were measured.
+        theta_scale_for_DFT (float): Scaling factor for theta in DFT.
+    
+    Returns:
+        array: DFT coefficients.
+    """
     N = len(Es)
     DFT_coef = np.zeros(N, dtype=float)
     for idx_M in range(N):
@@ -46,6 +77,16 @@ def eval_DFT_coeff(Es, spot, theta_scale_for_DFT):
 
 
 def func_DFT_coeff(DFT_coef, theta_scale_for_DFT=1.0):
+    """Create function from DFT coefficients for energy landscape reconstruction.
+    
+    Args:
+        DFT_coef (array): DFT coefficients.
+        theta_scale_for_DFT (float, optional): Scaling factor for theta. 
+                                             Defaults to 1.0.
+    
+    Returns:
+        function: Function that evaluates DFT curve at given parameter values.
+    """
     def DFTcurve(x):
         y = 0
         for n in range(len(DFT_coef)):
@@ -62,8 +103,27 @@ def func_DFT_coeff(DFT_coef, theta_scale_for_DFT=1.0):
     return DFTcurve
 
 
-# def DiscreteFT(it, Es, spot,theta_scale_for_DFT, verbose, method="naive", eps=1.e-8):
 def DiscreteFT(it, Es, spot, theta_scale_for_DFT, verbose, method="scipy", eps=1.0e-8):
+    """Perform discrete Fourier transform optimization step.
+    
+    Uses DFT to fit energy measurements and find optimal parameter value
+    by minimizing the reconstructed energy landscape.
+    
+    Args:
+        it (int): Current iteration number.
+        Es (array): Energy measurements.
+        spot (array): Parameter values where energies were measured.
+        theta_scale_for_DFT (float): Scaling factor for DFT.
+        verbose (bool): Whether to print debug information.
+        method (str, optional): Optimization method. Options: "scipy", "naive". 
+                              Defaults to "scipy".
+        eps (float, optional): Numerical precision parameter. Defaults to 1.0e-8.
+    
+    Returns:
+        tuple: Tuple containing:
+            - new_theta (float): Optimal parameter value.
+            - y_min (float): Minimum energy value.
+    """
     N_duration = (len(Es) - 1) // 2
     DFT_coef = eval_DFT_coeff(Es, spot, theta_scale_for_DFT)
     theta_current = spot[0]
@@ -101,6 +161,31 @@ def cost_func(
     proton_qubits=[],
     neutron_qubits=[],
 ):
+    """Evaluate cost function for VQE optimization.
+    
+    Computes the expectation value of the Hamiltonian for given parameters
+    using the specified ansatz and measurement method.
+    
+    Args:
+        hamiltonian_op: Hamiltonian operator to evaluate.
+        params (array): Variational parameters.
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals.
+        method_ansatz (str): Ansatz method to use.
+        method_measure (str): Measurement method ("statevector" or "Aer").
+        pairinghamiltonian (bool, optional): Whether using pairing Hamiltonian. 
+                                           Defaults to True.
+        proton_number (int, optional): Number of protons. Defaults to 0.
+        neutron_number (int, optional): Number of neutrons. Defaults to 0.
+        proton_qubits (list, optional): Proton qubit indices. Defaults to [].
+        neutron_qubits (list, optional): Neutron qubit indices. Defaults to [].
+    
+    Returns:
+        float: Energy expectation value.
+        
+    Raises:
+        ValueError: If invalid measurement method is provided.
+    """
     if pairinghamiltonian:
         qc = pair_ansatz_qiskit(params, Nq, Nocc, method_ansatz)
     else:
@@ -161,6 +246,33 @@ def NFTmethod(
     proton_qubits=[],
     neutron_qubits=[],
 ):
+    """Perform one step of Natural Fourier Transform optimization.
+    
+    Optimizes a single parameter using the NFT method by measuring energies
+    at periodic intervals and using DFT to find the optimal parameter value.
+    
+    Args:
+        it (int): Current iteration number.
+        Ecurrent (float): Current energy value.
+        hamiltonian_op: Hamiltonian operator.
+        params (array): Current parameter values.
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals.
+        method_ansatz (str): Ansatz method.
+        method_measure (str): Measurement method.
+        where_is_G_or_cG1 (list): List indicating gate types ("G" or "cG1").
+        which_Gate (int): Index of gate to optimize.
+        verbose (bool): Whether to print debug information.
+        pairinghamiltonian (bool, optional): Whether using pairing Hamiltonian.
+                                           Defaults to True.
+        proton_number (int, optional): Number of protons. Defaults to 0.
+        neutron_number (int, optional): Number of neutrons. Defaults to 0.
+        proton_qubits (list, optional): Proton qubit indices. Defaults to [].
+        neutron_qubits (list, optional): Neutron qubit indices. Defaults to [].
+    
+    Returns:
+        array: Updated parameter values with optimized parameter.
+    """
     params_ = params.copy()
     # Making point to measure for Discrete Fourier Transformation
     if where_is_G_or_cG1[which_Gate] == "G":
