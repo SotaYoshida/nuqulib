@@ -1,3 +1,10 @@
+"""
+Integration tests for nuclear structure calculations with NCSM and shell model.
+
+This file contains basic integration tests for core functionality.
+For comprehensive tests with all nuclear systems and configurations,
+see test_technical_integration.py.
+"""
 import os
 import pytest
 from nuqulib import *
@@ -188,14 +195,12 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     assert abs(E_total - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_total}"
 
 if __name__ == "__main__":    
+    # Core functionality tests - run essential integration tests only
     test_valence_2n()
     test_valence_pn()
-    test_valence_16O()
-
-    test_ncsm_2n_emax0()
+    
+    # Basic NCSM test
     test_ncsm_4He_emax0()
-    test_ncsm_16O_emax1()
-
-    test_ncsm_16O_emax1_NN3NF()
-
-    print("Test passed successfully.")
+    
+    print("Core integration tests passed successfully.")
+    print("Run test_technical_integration.py for comprehensive nuclear structure tests.")
