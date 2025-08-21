@@ -1,41 +1,42 @@
-import numpy as np
+import os
 import pytest
-import pennylane as qml
-from qiskit_aer.primitives import SamplerV2
-from qiskit.quantum_info import Statevector
+#from qiskit.primitives import StatevectorEstimator
 from nuqulib import *
 
-def test_ansatz_pairing():
-    Nq = 4
-    Nocc = 2
-    Hamil = PairingHamiltonian(Nq, Nocc, 0.33)
-    hamiltonian_op = Hamil.encoding()
-    evals = np.linalg.eigvalsh(Hamil.Hmat)
-    Egs_exact = evals[0]
-    print("evals: ", evals)
-    # Create a dummy parameters array
-    params = np.zeros(100, dtype=float)
+chdir = os.path.dirname(os.path.abspath(__file__))
+int_dir = os.path.join(chdir, "interaction_file/")
 
-    # Create a pairing ansatz circuit and optimize it via Nakanishi-Fujii-Todo (NFT) method
-    method_ansatz = "HF+Givens"
-    qc, where_is_G_or_cG1 = pair_ansatz_qiskit(params, Nq, Nocc, method=method_ansatz,
-                            return_Gdict=True)
-    method_measure = "statevector"
-    it_max = 10
-    ngate = len(where_is_G_or_cG1.keys()) 
-    params_NFT, Emin_NFT = optimize_params_with_NFT(it_max, hamiltonian_op, params, 
-                                                    Nq, Nocc, ngate, where_is_G_or_cG1,
-                                                    method_ansatz, method_measure)
+def test_ODMD():
+    using_statevector = True
 
-    # Hadamard-test
-    Uprep = pair_ansatz_qiskit(params_NFT, Nq, Nocc, method=method_ansatz)
+    Z = 0; N = 2
+    fn_snt = int_dir+"ckpot.snt"
+  
+    hamil = Hamiltonian(fn_snt, Z, N)
+    n_qubits = hamil.n_qubits
+    proton_qubits = list(range(0, hamil.n_qubits_p))
+    neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
-    delta_t = 0.0123
-    max_iterations = 30
-    trotter_steps = 20
+    Hdict_M = hamil.get_mscheme_H(opform=True)
+    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_mapped = H_1b + H_nn
 
-    E_ODMD = ODMD(Uprep, hamiltonian_op, delta_t, max_iterations,
-                  trotter_steps, sampler=None, backend=None,
-                  ancilla_qubits=[0], target_qubits=list(range(1, Nq + 1)),
-                  d=10
-    )
+    delta_t = 0.01234
+    trotter_steps = 15
+    max_iterations = 15
+
+    dummy_params = [ ]
+    U_prep = nucl_ansatz(n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
+    U_prep = QuantumCircuit(n_qubits)
+    U_prep.x([9, 10])
+
+    ancilla_qubits=[0]
+    target_qubits=list(range(1,n_qubits+1))
+
+    E0 = ODMD(U_prep, H_mapped, delta_t, max_iterations, trotter_steps, 
+              None, None, 
+               ancilla_qubits, target_qubits,
+               using_statevector=using_statevector, d=8)
+    Eexact = -3.910
+
+    assert ( 100*abs(E0 - Eexact)/abs(Eexact) < 5), f"ODMD test failed: {E0} != {Eexact} within 5% tolerance"

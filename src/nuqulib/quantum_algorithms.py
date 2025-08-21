@@ -542,6 +542,9 @@ def ODMD(
     # Eigen values of A would be exp(-iE_j dt)
     lam, v = np.linalg.eig(A)
 
+    idxs = [ i for i in range(len(lam)) if np.abs((np.abs(lam[i])-1)) < 1.e-1]
+    lam = lam[idxs]
+
     print("lam", lam)
     print("|lam|", np.abs(lam))
     idx_remax = np.argmin(np.abs(np.abs(lam)-1))
