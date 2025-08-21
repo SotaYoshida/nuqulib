@@ -5,7 +5,6 @@ from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.circuit.library import QFT
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
-from qiskit_ibm_runtime import SamplerV2 as IBM_sampler
 import scipy
 from .circuits import get_idx_to_measure, additional_qc, expec_Zstring
 from tqdm import tqdm
@@ -79,7 +78,6 @@ def circuit_QPE(
 
 
 # The following functions are used in QuantumKrylov/ODMD
-
 
 def make_U_and_cU(
     i, delta_t, trotter_steps, hamiltonian_op, ancilla_qubits, target_qubits, Uprep
@@ -193,9 +191,6 @@ def make_cU(Uprep, Ui, Ntar):
     circuit_cUi.append(Ui, range(Ntar))
     circuit_cUi = circuit_cUi.decompose(reps=5)
     return circuit_cUi.to_gate().control(1)
-    # print("circuit_cUi:", dict(circuit_cUi.to_gate()))
-    # circuit_cUi = circuit_cUi.decompose().decompose()
-    # return circuit_cUi.to_gate().control(1)
 
 
 def make_nonD_H_qc(
@@ -301,7 +296,7 @@ def QuantumKrylov(
     print("num of Hamil term: ", num_of_Hamil_term)
     if not (do_simulation):
         return None
-    for it in tqdm(range(max_iterations)):
+    for it in range(max_iterations):
         print("iteration: ", it)
         ## make controlled U = exp(-iHδt * it)
         Ui = PauliEvolutionGate(

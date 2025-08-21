@@ -1,3 +1,14 @@
+"""Pairwise Hamiltonian utilities 
+
+This module provides utilities for constructing and manipulating pairwise Hamiltonians,
+which are often used in quantum computing and many-body physics.
+It includes functions for reading Hamiltonian data from files, generating configurations,
+and evaluating Hamiltonian matrices in many-body bases.
+
+These utilities are designed to work with pairing Hamiltonians or
+pairwise representations of shell model (e.g., time-reversal pairs).
+"""
+
 import numpy as np
 import itertools
 from qiskit.quantum_info import SparsePauliOp
@@ -6,16 +17,27 @@ import openfermion as of
 
 def read_msnt(
     fn,
-    A,
-    Acore,
-    pow_A=-0.3,
-    massdep=0,
-    degenerate_SPE=False,
-    verbose=False,
-    neutron=True,
-    pn_system=False,
-    only_monopole=False,
+    A: int,
+    Acore: int,
+    pow_A: float = -0.3,
+    massdep: int = 0,
+    degenerate_SPE: bool = False,
+    verbose: bool = False,
+    neutron: bool = True,
+    pn_system: bool = False,
+    only_monopole: bool = False,
 ):
+    """
+    Read a file in the msnt format, snt format with explicit jz(m),
+    and return the dictionary of the Hamiltonian, single-particle states,
+    and dictionaries to convert between single-particle states and qubits.
+
+    Note: 
+      The current implementation assumes that the file is formatted correctly
+      and outputs will be used for systems consisting of 
+      single species nucleons (either protons or neutrons).
+
+    """
     if pn_system:
         neutron = False
     Vfactor = 1.0
@@ -106,8 +128,24 @@ def read_msnt(
 
 
 def add_Vmonopole(
-    Hamil, config, n_qubits, Nocc, Dict_qubits_to_sps, neutron=True, verbose=False
+    Hamil: dict, config: str, n_qubits: int, Nocc: int, Dict_qubits_to_sps: dict, neutron=True, verbose=False
 ):
+    """Add monopole term to the Hamiltonian matrix.
+
+    This function calculates the monopole term of the Hamiltonian
+    based on the given configuration and the Hamiltonian data.
+    One should consider the monopole term only if the number of occupied states (Nocc)
+    under a shell-model type Hamiltonian, is greater than 1, as it involves pairs of particles.
+
+    Args:
+        Hamil : Dictionary containing Hamiltonian matrix elements.
+        config : Configuration string representing the occupation of orbitals.
+        n_qubits : Number of qubits (or orbitals).
+        Nocc : Number of occupied states.
+        Dict_qubits_to_sps : Dictionary mapping qubits to single-particle states.
+        neutron (optional): If True, consider neutron interactions; otherwise, proton interactions.
+        verbose (optional): If True, print detailed information.
+    """
     # Monopole term: V_{ijij} N_i N_j
     target_H2b = Hamil["Vnn"] if neutron else Hamil["Vpp"]
     if Nocc <= 1:
@@ -147,16 +185,22 @@ def add_Vmonopole(
     return Vmono
 
 
-def get_pairwise_Hamil(Hamil, configs, neutron=True):
+def get_pairwise_Hamil(Hamil: dict, adopted_sps: list, neutron=True):
+    """Generate the pairwise Hamiltonian matrix elements.
+
+    This function constructs the one-body and two-body Hamiltonian matrices
+    based on the provided Hamiltonian data and pair-wise representation of single-particle states.
+    """
+    pair_configs = get_possible_time_reversal_pairs(adopted_sps)
     target_H1b = Hamil["SPE"]
     target_H2b = Hamil["Vnn"] if neutron else Hamil["Vpp"]
-    nconfigs = len(configs)
+    nconfigs = len(pair_configs)
     h1b = np.zeros(nconfigs, dtype=float)
     h2b = np.zeros((nconfigs, nconfigs), dtype=float)
-    for i, config_l in enumerate(configs):
+    for i, config_l in enumerate(pair_configs):
         h1b[i] = target_H1b[config_l[0]] + target_H1b[config_l[1]]
         for j in range(i, nconfigs):
-            config_r = configs[j]
+            config_r = pair_configs[j]
             for tmp in target_H2b:
                 a, b, c, d, totJ, V = tmp
                 if (
@@ -180,16 +224,34 @@ def get_pairwise_Hamil(Hamil, configs, neutron=True):
 
 
 def eval_Hflat_eigen(
-    configs,
-    n_qubits,
-    Nocc,
-    Hamil,
-    h1b,
-    h2b,
-    Dict_qubits_to_sps,
-    verbose=False,
-    Vmonofac=0.25,
+    n_qubits: int,
+    Nocc: int,
+    Hamil: dict,
+    h1b: np.ndarray,
+    h2b: np.ndarray,
+    Dict_qubits_to_sps: dict,
+    verbose=False
 ):
+    """Evaluate the Hamiltonian matrix in the many-body basis.
+
+    Constructs the Hamiltonian matrix in the many-body basis explicitly,
+    and then computes its eigenvalues and eigenvectors.
+
+    Args:
+        n_qubits: Number of qubits.
+        Nocc: Number of occupied states.
+        Hamil: Dictionary containing Hamiltonian matrix elements.
+        h1b: One-body Hamiltonian matrix.
+        h2b: Two-body Hamiltonian matrix.
+        Dict_qubits_to_sps: Dictionary mapping qubits to single-particle states.
+        verbose: If True, print detailed information.
+
+    Returns:
+        tuple: Tuple containing:
+            - evals: Eigenvalues of the Hamiltonian matrix.
+            - evecs: Eigenvectors of the Hamiltonian matrix.
+    """
+    configs = generate_config_bitstr_list(n_qubits, Nocc)
     dim = len(configs)
     Hflat = np.zeros((dim, dim), dtype=float)
     H2b_flat = np.zeros((dim, dim), dtype=float)
@@ -209,7 +271,7 @@ def eval_Hflat_eigen(
 
         for idx_j in range(idx_i, dim):
             config_j = configs[idx_j]
-            # 配位の2進表現で、"差"が1以下(A^+Aで遷移可能)の場合のみ、H2を足す
+            # if hamming distance is less than or equal 1 (since we are considering pairs)
             diff = n_qubits - sum([config_i[i] == config_j[i] for i in range(n_qubits)])
             if diff > 2:
                 continue
@@ -238,7 +300,16 @@ def eval_Hflat_eigen(
     return evals, evecs
 
 
-def get_possible_configs(sps, verbose=False):
+def get_possible_time_reversal_pairs(sps: dict, verbose=False):
+    """Generate all time-reversal pairs of single-particle states
+    
+    Args:
+        sps (dict): Dictionary of single-particle states, where keys are state identifiers
+                    and values are tuples containing (n, l, j, mz, SPE).
+    
+    Note:
+        sps should be a dictionary for a single species (either protons or neutrons).
+    """
     configs = []
     for tmp in sps.keys():
         n, l, j, mz, SPE = sps[tmp]
@@ -254,18 +325,41 @@ def get_possible_configs(sps, verbose=False):
     return configs
 
 
-def generate_config_bitstr_list(n_qubits, Nocc, rev=False, verbose=False):
+def generate_config_bitstr_list(Nq: int, Nocc: int, rev=False):
+    """
+    Generate a list of strings representing configurations of occupied qubits.
+    """
     config_list_int = []
-    for config in itertools.combinations(range(n_qubits), Nocc):
+    for config in itertools.combinations(range(Nq), Nocc):
         config_list_int += [sum([2**i for i in config])]
-    config_list = [f"{config:0{n_qubits}b}" for config in config_list_int]
+    config_list = [f"{config:0{Nq}b}" for config in config_list_int]
     if rev:
         config_list = [config[::-1] for config in config_list]
     config_list.sort()
     return config_list
 
 
-def make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps):
+def make_pw_hamil_qiskit(Hamil: dict, h1b: np.ndarray,
+                         Nq:int, Nocc:int, Dict_qubits_to_sps: dict):
+    """Construct the pairwise Hamiltonian in Qiskit format.
+
+    This function constructs the pair-wise Hamiltonian in the Qiskit format,
+    which includes single-particle-like terms, pair terms, and monopole terms.
+    Since we are working within the so-called zero-seniority approximation
+    a.k.a. Hard-core boson representation,
+    the Jordan-Wigner transformation leads to only the following terms:
+
+    - Single-particle-like terms: (e_i + Vii) * (I-Z)/2
+    - Pair terms: (XX + YY)
+    - Monopole terms: (I-Zi)(I-Zj)/4
+
+    Args:
+        Hamil : Dictionary containing Hamiltonian matrix elements.
+        h1b : One-body Hamiltonian matrix elements.
+        Nq : Number of qubits (or orbitals).
+        Nocc : Number of occupied states.
+        Dict_qubits_to_sps : Dictionary mapping qubits to single-particle states.
+    """
     target = Hamil["Vnn"]
     Vspe = {i: 0.0 for i in range(Nq)}
     Vmono = {}
@@ -382,4 +476,4 @@ def make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps):
             ops.append(op_ZiZj)
             coeffs.append(coeff)
 
-    return ops, coeffs, SparsePauliOp.from_list(list(zip(ops, coeffs)))
+    return SparsePauliOp.from_list(list(zip(ops, coeffs)))

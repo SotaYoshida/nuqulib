@@ -1,7 +1,15 @@
-"""Pairing Hamiltonian implementation for nuclear quantum simulations.
+"""Pairing Hamiltonian implementation
 
-This module implements the pairing Hamiltonian model used in nuclear physics
-for studying correlated many-body systems with pairing interactions.
+This module implements the pairing Hamiltonian, a simplified model used in nuclear physics,
+condensed matter physics, and quantum computing. The pairing Hamiltonian describes
+the interactions between pairs of particles in a many-body system, making it a valuable tool
+for studying phenomena like superconductivity and nuclear pairing effects.
+
+This implementation is not optimized for performance but serves as a pedagogical example
+of how to construct and manipulate a pairing Hamiltonian in Python.
+More detailed and efficient implementations can be found as a Julia package
+`PairingHamiltonians.jl <https://github.com/SotaYoshida/PairingHamiltonians.jl>`_
+by the same author.
 """
 
 import numpy as np
@@ -12,12 +20,13 @@ from qiskit.quantum_info import SparsePauliOp
 class PairingHamiltonian:
     """Pairing Hamiltonian model for nuclear many-body systems.
     
-    This class implements a simplified nuclear pairing Hamiltonian with
-    single-particle energies and pairing interactions between pairs of nucleons.
+    This class implements a pairing Hamiltonian with
+    single-particle energies with a fixed spacing
+    and a constant pairing interaction strength. 
     
     Args:
         Norb (int): Number of single-particle orbitals.
-        Nocc (int): Number of occupied orbitals (particles).
+        Nocc (int): Number of occupied orbitals.
         gval (float): Pairing interaction strength.
         delta_eps (float, optional): Single-particle energy spacing. Defaults to 1.0.
     
@@ -70,7 +79,9 @@ class PairingHamiltonian:
         """Construct the Hamiltonian matrix.
         
         Builds the Hamiltonian matrix in the many-body basis including:
+
         - Single-particle energy terms (diagonal)
+        
         - Pairing interaction terms (off-diagonal for single excitations)
         
         Returns:
@@ -115,6 +126,7 @@ class PairingHamiltonian:
         
         Maps the pairing Hamiltonian to a sum of Pauli operators suitable
         for quantum algorithms. The encoding includes:
+        
         - Identity terms for constant energy shifts
         - Z terms for single-particle energies
         - XX and YY terms for pairing interactions
@@ -126,7 +138,6 @@ class PairingHamiltonian:
             The qubit ordering is reversed to match Qiskit conventions.
         """
         SPEs = self.epsilon
-        pauli_list = []
         obs = []
         coeffs = []
 

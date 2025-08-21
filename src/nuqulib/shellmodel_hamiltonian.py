@@ -1,18 +1,12 @@
 import copy
 from collections import Counter
-import gzip
 import itertools
 import multiprocessing
 from multiprocessing import get_context
 import numpy as np
-import os
-import openfermion as of
-import psutil
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import PauliEvolutionGate
-from sympy.physics.quantum.cg import CG as ClebschGordan
-from sympy.physics.wigner import wigner_6j
 from sympy.physics.quantum.cg import CG as ClebschGordan
 from tqdm import tqdm
 from .encoding import *

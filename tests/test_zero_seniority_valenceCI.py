@@ -25,15 +25,15 @@ def test_O18_zero_seniority():
     ## Setting up the qubits and Hamiltonian in the qubit representation
     Nocc = (A - Acore) // 2
     Nq = len(Dict_sps_to_qubits.keys())
-    config_list = generate_config_bitstr_list(Nq, Nocc)
-    relevant_pairs = get_possible_configs(n_sps)
 
-    h1b, h2b = get_pairwise_Hamil(Hamil, relevant_pairs)
-    evals, evecs = eval_Hflat_eigen(config_list, Nq, Nocc, Hamil, h1b, h2b, Dict_qubits_to_sps)
-    ops, coeffs, hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
+    h1b, h2b = get_pairwise_Hamil(Hamil, n_sps)
+    evals, evecs = eval_Hflat_eigen(Nq, Nocc, Hamil, h1b, h2b, Dict_qubits_to_sps)
+    hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
     hamiltonian_op_diag, hamiltonian_op_XXYY = separate_Hamil_terms(hamiltonian_op)
 
     ## Translating the Hamiltonian (Qiskit) to pennylane format
+    ops = [op.to_label() for op in hamiltonian_op.paulis]
+    coeffs = np.array([coeff for coeff in hamiltonian_op.coeffs])
     coeffs_pl, obs_pl = read_QiskitPauli(ops, coeffs)
     Hamil_pl = qml.Hamiltonian(coeffs_pl, obs_pl)
     params = np.random.rand(100)
@@ -87,7 +87,7 @@ def test_O18_zero_seniority():
     qc_list = circuit_XXYY(qc_ansatz, "simFTQC", Nq, backend=backend)
     E_XXYY_Google = eval_Energy_using_GoogleCircuit(Nq, Nocc, hamiltonian_op_XXYY, 
                                         qc_list, sampler, nshot, num_experiment, 
-                                        using_noisy_simulation, postselection_XXYY=postselection_XXYY, adopted=adopted)
+                                        using_noisy_simulation, postselection_XXYY=postselection_XXYY)
     Energy = E_diag + E_XXYY_Google
     print(f"E_dig {E_diag} XXYY {E_XXYY_Google} => Energy = {Energy}")
     assert abs(Energy - E_meas) < 10/(np.sqrt(nshot)), "The energy should be close to the measured value."
@@ -108,13 +108,12 @@ def test_O20_zero_seniority():
     ## Setting up the qubits and Hamiltonian in the qubit representation
     Nocc = (A - Acore) // 2
     Nq = len(Dict_sps_to_qubits.keys())
-    relevant_pairs = get_possible_configs(n_sps)
-
-    h1b, h2b = get_pairwise_Hamil(Hamil, relevant_pairs)
-    ops, coeffs, hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
+    
+    h1b, h2b = get_pairwise_Hamil(Hamil, n_sps)
+    hamiltonian_op = make_pw_hamil_qiskit(Hamil, h1b, Nq, Nocc, Dict_qubits_to_sps)
 
     ## Translating the Hamiltonian (Qiskit) to pennylane format
-    coeffs_pl, obs_pl = read_QiskitPauli(ops, coeffs)
+    coeffs_pl, obs_pl = transform_qiskitOps_to_pennylane(hamiltonian_op)
     Hamil_pl = qml.Hamiltonian(coeffs_pl, obs_pl)
     params = np.random.rand(100)
     dev = qml.device("default.qubit", wires=Nq)
@@ -135,10 +134,3 @@ def test_O20_zero_seniority():
     print("Emin(O20): ", Emin, "E_DOCI", E_DOCI)
     assert abs(Emin - E_DOCI) < 0.5 # "The minimum energy should be close to the DOCI result."
 
- 
-if __name__ == "__main__":  
-    # O18 pUCCD optimization with Pennylane and Execution with Pennylane and Qiskit Estimator  
-    test_O18_zero_seniority()
-
-    # O20 pUCCD (all-to-all) and optimization with Pennylane
-    test_O20_zero_seniority()

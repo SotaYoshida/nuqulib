@@ -5,14 +5,14 @@ using e.g., Jordan-Wigner,  and utilities for
 working with Pauli operators in different quantum computing frameworks.
 """
 
+from collections import defaultdict
 import numpy as np
+from pytket.pauli import Pauli, QubitPauliString
+from pytket.utils.operators import QubitPauliOperator
+from pytket import Qubit
 from qiskit_nature.second_q.mappers import JordanWignerMapper, BravyiKitaevMapper
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.quantum_info import SparsePauliOp
-from pytket.pauli import Pauli, QubitPauliString
-from pytket.utils.operators import QubitPauliOperator
-from collections import defaultdict
-from pytket import Qubit
 
 
 def mapping_to_Pauli_string(

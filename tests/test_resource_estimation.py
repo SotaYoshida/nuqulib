@@ -92,7 +92,3 @@ def test_resource_estimation( ):
     dict_ops_QKrylov_pairing = resource_estimation_QKrylov(Niter, H_mapped, dt=dt, trotter_steps=trotter_steps, H_is_like="pairing")
     print("# of gates (QKrylov; pairing-like): ", dict_ops_QKrylov_pairing)
     assert dict_ops_QKrylov_pairing['cx'] == 158113440, "cx for QKrylov pairing-like may be wrong under Nit=20 and p-shell space"
-
-if __name__ == "__main__":    
-    test_resource_estimation()
-    print("Test passed successfully.")

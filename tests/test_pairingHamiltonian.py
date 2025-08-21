@@ -115,13 +115,26 @@ def test_QPE():
     print(f"E_estimated(QPE): {E_estimated:.8f} Egs_exact: {Egs_exact:.8f} diff. {E_estimated - Egs_exact:.2e}")
     assert abs(E_estimated - Egs_exact) < buffer * 2*np.pi/(2**Na), f"Expected energy {Egs_exact} but got {E_estimated} with difference {abs(E_estimated - Egs_exact)}"
 
-if __name__ == "__main__": 
-    # Check the PairingHamiltonian class
-    test_pairingHamiltonian()
+def test_QKrylov():
+    Nq = 4
+    Nocc = 2
+    Hamil = PairingHamiltonian(Nq, Nocc, 0.33)
+    hamiltonian_op = Hamil.encoding()
+    evals = np.linalg.eigvalsh(Hamil.Hmat)
+    Egs = evals[0]
 
-    # Check the pairing ansatz and optimization via NFT method,
-    # including Hadamard test
-    test_ansatz_pairing()
+    Uprep = pair_ansatz_qiskit([ ], Nq, Nocc, method="HF")
+    ancilla_qubits=[0]
+    target_qubits=list(range(1,Nq+1))
+    sampler = backend = None
 
-    # Check the quantum phase estimation (QPE) for the pairing Hamiltonian
-    test_QPE()
+    Hmat, Nmat, Ens = QuantumKrylov(
+        Uprep, hamiltonian_op, sampler, backend,
+        ancilla_qubits, target_qubits, delta_t=1.0,
+        max_iterations=6, trotter_steps=10,
+        using_statevector=True)
+
+    assert abs(Egs - np.min(Ens)) < 1.e-5, f"Expected energy {Egs} but got {np.min(Ens)} with difference {abs(Egs - np.min(Ens))}"
+
+
+

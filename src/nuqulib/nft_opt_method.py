@@ -1,9 +1,12 @@
-"""Natural Fourier Transform (NFT) optimization method for VQE.
+"""Nakanishi-Fujii-Todo (NFT) optimization method for VQE.
 
-This module implements the Natural Fourier Transform optimization algorithm
-for Variational Quantum Eigensolver (VQE) problems. The NFT method uses
-discrete Fourier transform to optimize individual parameters by fitting
-the periodic structure of quantum gate parameters.
+This module implements the Nakanishi-Fujii-Todo optimization algorithm
+for Variational Quantum Eigensolver (VQE) problems. The NFT method is
+a derivative-free and sequential optimization algorithm that uses
+discrete Fourier transform to optimize the gate angles by exploiting
+the periodic structure on the parameter space.
+
+Ref: `KM.Nakanishi, K.Fujii, T.Todo, Phys. Rev. Research 2, 043158 (2020), <https://doi.org/10.1103/PhysRevResearch.2.043158>`_
 """
 
 from collections.abc import Iterable
@@ -38,7 +41,7 @@ def draw_DFT_curve(xplot, DFTcurve, spot, Es, x_min, y_min):
     plt.close()
 
 
-def eval_DFT_coeff(Es, spot, theta_scale_for_DFT):
+def eval_DFT_coeff(Es, spot, theta_scale_for_DFT: float=1.0):
     """Evaluate discrete Fourier transform coefficients.
     
     Computes DFT coefficients from energy measurements at specific points
@@ -47,7 +50,7 @@ def eval_DFT_coeff(Es, spot, theta_scale_for_DFT):
     Args:
         Es (array): Energy measurements.
         spot (array): Parameter values where energies were measured.
-        theta_scale_for_DFT (float): Scaling factor for theta in DFT.
+        theta_scale_for_DFT (float): Optional scaling factor for theta in DFT.
     
     Returns:
         array: DFT coefficients.
@@ -76,13 +79,12 @@ def eval_DFT_coeff(Es, spot, theta_scale_for_DFT):
     return DFT_coef
 
 
-def func_DFT_coeff(DFT_coef, theta_scale_for_DFT=1.0):
+def func_DFT_coeff(DFT_coef: Iterable[float], theta_scale_for_DFT=1.0):
     """Create function from DFT coefficients for energy landscape reconstruction.
     
     Args:
-        DFT_coef (array): DFT coefficients.
-        theta_scale_for_DFT (float, optional): Scaling factor for theta. 
-                                             Defaults to 1.0.
+        DFT_coef : DFT coefficients.
+        theta_scale_for_DFT : Scaling factor for theta. Defaults to 1.0.
     
     Returns:
         function: Function that evaluates DFT curve at given parameter values.
@@ -103,7 +105,9 @@ def func_DFT_coeff(DFT_coef, theta_scale_for_DFT=1.0):
     return DFTcurve
 
 
-def DiscreteFT(it, Es, spot, theta_scale_for_DFT, verbose, method="scipy", eps=1.0e-8):
+def DiscreteFT(it: int, Es: Iterable[float], 
+               spot: Iterable[float], 
+               theta_scale_for_DFT: float, verbose: bool, method: str="scipy", eps: float=1.0e-8):
     """Perform discrete Fourier transform optimization step.
     
     Uses DFT to fit energy measurements and find optimal parameter value
@@ -150,18 +154,18 @@ def DiscreteFT(it, Es, spot, theta_scale_for_DFT, verbose, method="scipy", eps=1
 
 def cost_func(
     hamiltonian_op,
-    params,
-    Nq,
-    Nocc,
-    method_ansatz,
-    method_measure,
-    pairinghamiltonian=True,
-    proton_number=0,
-    neutron_number=0,
+    params: Iterable[float],
+    Nq: int,
+    Nocc: int,
+    method_ansatz: str,
+    method_measure: str,
+    pairinghamiltonian: bool=True,
+    proton_number: int=0,
+    neutron_number: int=0,
     proton_qubits=[],
     neutron_qubits=[],
 ):
-    """Evaluate cost function for VQE optimization.
+    """Evaluate cost function for VQE optimization with NFT method.
     
     Computes the expectation value of the Hamiltonian for given parameters
     using the specified ansatz and measurement method.
@@ -246,7 +250,7 @@ def NFTmethod(
     proton_qubits=[],
     neutron_qubits=[],
 ):
-    """Perform one step of Natural Fourier Transform optimization.
+    """Perform one step of NFT method optimization
     
     Optimizes a single parameter using the NFT method by measuring energies
     at periodic intervals and using DFT to find the optimal parameter value.

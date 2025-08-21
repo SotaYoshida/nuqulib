@@ -1,4 +1,4 @@
-"""Post-selection techniques for quantum nuclear simulations.
+"""Implementation of post-selection methods for quantum simulations.
 
 This module provides post-selection and measurement analysis tools for quantum
 nuclear physics simulations, including particle number conservation constraints
@@ -9,16 +9,14 @@ import numpy as np
 from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit, transpile
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
-from .ansatz import pair_ansatz_qiskit
-
 
 def reweight_results(
-    sampler_results,
-    Norb,
-    Nocc,
-    normalize=True,
-    verbose=False,
-    make_number_conservation=True,
+    sampler_results: dict,
+    Norb: int,
+    Nocc: int,
+    normalize: bool=True,
+    verbose: bool=False,
+    make_number_conservation: bool=True,
 ):
     """Reweight quantum measurement results to enforce particle number conservation.
     
@@ -27,15 +25,16 @@ def reweight_results(
     for nuclear quantum simulations.
     
     Args:
-        sampler_results (dict): Raw measurement results from quantum simulation.
-        Norb (int): Total number of orbitals (qubits).
-        Nocc (int): Number of occupied orbitals (target particle number).
-        normalize (bool, optional): Whether to normalize results to unity. 
-                                   Defaults to True.
-        verbose (bool, optional): Whether to print valid counts ratio. 
-                                 Defaults to False.
-        make_number_conservation (bool, optional): Whether to enforce particle 
-                                                  number conservation. Defaults to True.
+        sampler_results : Raw measurement results from quantum simulation.
+            The keys are bitstrings or hexadecimal strings, and the values are counts or probabilities.
+        Norb : Total number of orbitals (qubits).
+        Nocc : Number of occupied orbitals (target particle number).
+        normalize (optional): Whether to normalize results to unity. 
+                                Defaults to True.
+        verbose (optional): Whether to print valid counts ratio. 
+                                Defaults to False.
+        make_number_conservation (optional): Whether to enforce particle 
+                                            number conservation. Defaults to True.
     
     Returns:
         dict: Reweighted measurement results with proper particle number.
@@ -80,7 +79,8 @@ def reweight_results(
 
 
 def eval_expec_diag_postselection(
-    hamiltonian_op_diag: SparsePauliOp, counts: dict, Nq, Nocc
+    hamiltonian_op_diag: SparsePauliOp, 
+    counts: dict, Nq: int, Nocc: int
 ):
     """Evaluate expectation value of diagonal Hamiltonian terms with post-selection.
     
@@ -149,14 +149,14 @@ def odd_swap(labeling):
 
 
 def eval_Ediag(
-    adopted,
-    Nq,
-    Nocc,
+    adopted: str,
+    Nq: int,
+    Nocc: int,
     hamiltonian_op_diag: SparsePauliOp,
     qc_ansatz: QuantumCircuit,
     backend,
     sampler,
-    nshot,
+    nshot: int,
     postselection_diag=True,
 ):
     """Evaluate diagonal energy terms using quantum circuit measurements.
@@ -165,14 +165,14 @@ def eval_Ediag(
     their expectation values with optional post-selection.
     
     Args:
-        adopted (str): Simulation mode ("simNISQ", "Real", etc.).
-        Nq (int): Number of qubits.
-        Nocc (int): Number of occupied orbitals.
+        adopted : Simulation mode ("simNISQ", "Real", etc.).
+        Nq : Number of qubits.
+        Nocc : Number of occupied orbitals.
         hamiltonian_op_diag (SparsePauliOp): Diagonal Hamiltonian terms.
         qc_ansatz (QuantumCircuit): Ansatz circuit to evaluate.
         backend: Quantum backend for transpilation/execution.
         sampler: Quantum sampler for measurements.
-        nshot (int): Number of measurement shots.
+        nshot : Number of measurement shots.
         postselection_diag (bool, optional): Whether to apply particle number 
                                            post-selection. Defaults to True.
     
@@ -212,7 +212,6 @@ def eval_Energy_using_GoogleCircuit(
     num_experiment: int,
     using_noisy_simulation: bool,
     postselection_XXYY: bool = True,
-    adopted: str = "simFTQC",
     debug_mode: bool = False,
     verbose: bool = False,
 ):
@@ -233,7 +232,6 @@ def eval_Energy_using_GoogleCircuit(
         using_noisy_simulation (bool): Whether using noisy quantum simulation.
         postselection_XXYY (bool, optional): Whether to apply post-selection. 
                                             Defaults to True.
-        adopted (str, optional): Simulation mode. Defaults to "simFTQC".
         debug_mode (bool, optional): Enable debug output. Defaults to False.
         verbose (bool, optional): Enable verbose output. Defaults to False.
     
@@ -316,10 +314,10 @@ def eval_Energy_using_GoogleCircuit(
 
 
 def single_eval_XXYY_Google(
-    Nq,
-    Nocc,
-    qc_list_XXYY,
-    list_counts_G,
+    Nq: int,
+    Nocc: int,
+    qc_list_XXYY: list,
+    list_counts_G: list,
     hamiltonian_op_XXYY: SparsePauliOp,
     postselection_XXYY: bool,
 ):
@@ -368,12 +366,12 @@ def single_eval_XXYY_Google(
 
 def eval_XXYY_w_Hgates(
     adopted,
-    Nq,
-    Nocc,
-    hamiltonian_op_XXYY,
-    qc_ansatz,
+    Nq: int,
+    Nocc: int,
+    hamiltonian_op_XXYY: SparsePauliOp,
+    qc_ansatz: QuantumCircuit,
     sampler,
-    nshot,
+    nshot: int,
     using_noisy_simulation=False,
     backend=None,
     return_counts_as_well=False,

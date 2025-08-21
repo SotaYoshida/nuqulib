@@ -189,15 +189,3 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     print("")
     assert abs(E_total - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_total}"
 
-if __name__ == "__main__":    
-    test_valence_2n()
-    test_valence_pn()
-    test_valence_16O()
-
-    test_ncsm_2n_emax0()
-    test_ncsm_4He_emax0()
-    test_ncsm_16O_emax1()
-
-    test_ncsm_16O_emax1_NN3NF()
-
-    print("Test passed successfully.")

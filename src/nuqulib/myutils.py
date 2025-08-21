@@ -1,8 +1,8 @@
 """Utility functions for NuQuLib.
 
-This module provides various utility functions for quantum computing simulations
-in nuclear physics, including format conversions between different quantum computing
-frameworks and LaTeX formatting for nuclear notation.
+This module provides various utility functions for NuQuLib,
+including format conversions between different quantum computing
+frameworks, LaTeX formatting for nuclear notation, etc.
 """
 
 import re
@@ -13,7 +13,7 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit import QuantumCircuit
 
 
-def latex_nuc(nuc):
+def latex_nuc(nuc: str) -> str:
     """Convert nuclear notation to LaTeX format.
     
     Args:
@@ -42,17 +42,17 @@ def read_QiskitPauli(ops_qiskit, coeffs_qiskit):
             - coeffs (list[float]): List of float coefficients.
             - obs (list): List of PennyLane operators.
     """
-    coeffs = []
+    coeffs = coeffs_qiskit
     obs = []
     for idx in range(len(ops_qiskit)):
         pauli_str = ops_qiskit[idx]
         coeff = coeffs_qiskit[idx]
-        coeffs += [float(coeff)]
+        #coeffs += [float(coeff)]
         obs += [get_operator_from_QiskitStr(pauli_str)]
     return coeffs, obs
 
 
-def get_operator_from_QiskitStr(pauli_str):
+def get_operator_from_QiskitStr(pauli_str:str) -> qml.operation.Operator:
     """Convert a Qiskit Pauli string to a PennyLane operator.
     
     Args:
@@ -62,42 +62,38 @@ def get_operator_from_QiskitStr(pauli_str):
         qml.operation.Operator: PennyLane operator corresponding to the Pauli string.
         
     Raises:
-        ValueError: If the Pauli string contains more than 2 non-identity operators.
+        ValueError: If the Pauli string contains invalid characters.
         
     Note:
         The function reverses the Pauli string to match PennyLane's qubit ordering.
-        Currently supports up to 2 non-identity Pauli operators.
     """
     pauli_str = pauli_str[::-1]
     n_qubits = len(pauli_str)
     nonI_idxs = [i for i in range(n_qubits) if pauli_str[i] != "I"]
     if len(nonI_idxs) == 0:
-        return qml.Identity(0)
-    elif len(nonI_idxs) == 1:
+        op = qml.Identity(0)
+    elif len(nonI_idxs) >= 1:
         idx = nonI_idxs[0]
         if pauli_str[idx] == "X":
-            return qml.PauliX(idx)
+            op = qml.PauliX(idx)
         elif pauli_str[idx] == "Y":
-            return qml.PauliY(idx)
+            op = qml.PauliY(idx)
         elif pauli_str[idx] == "Z":
-            return qml.PauliZ(idx)
-    elif len(nonI_idxs) == 2:
-        idx_1, idx_2 = nonI_idxs
-        if pauli_str[idx_1] == "X":
-            op1 = qml.PauliX(idx_1)
-        elif pauli_str[idx_1] == "Y":
-            op1 = qml.PauliY(idx_1)
-        elif pauli_str[idx_1] == "Z":
-            op1 = qml.PauliZ(idx_1)
-        if pauli_str[idx_2] == "X":
-            op2 = qml.PauliX(idx_2)
-        elif pauli_str[idx_2] == "Y":
-            op2 = qml.PauliY(idx_2)
-        elif pauli_str[idx_2] == "Z":
-            op2 = qml.PauliZ(idx_2)
-        return op1 @ op2
-    else:
-        raise ValueError(f"Invalid Pauli string: {pauli_str}")
+            op = qml.PauliZ(idx)
+        else:
+            raise ValueError(f"Invalid Pauli string: {pauli_str}")
+        
+        for i in range(1, len(nonI_idxs)):
+            idx = nonI_idxs[i]
+            if pauli_str[idx] == "X":
+                op = op @ qml.PauliX(idx)
+            elif pauli_str[idx] == "Y":
+                op = op @ qml.PauliY(idx)
+            elif pauli_str[idx] == "Z":
+                op = op @ qml.PauliZ(idx)
+            else:
+                raise ValueError(f"Invalid Pauli string: {pauli_str}")
+    return op
 
 
 def transform_pytket_counts_to_qiskit(counts_pytket):
@@ -122,24 +118,22 @@ def transform_pytket_counts_to_qiskit(counts_pytket):
     return counts_qiskit
 
 
-def transform_qiskitOps_to_pennylane(ops_qiskit: SparsePauliOp, coeffs_qiskit):
-    """Transform Qiskit SparsePauliOp operators to PennyLane format.
+def transform_qiskitOps_to_pennylane(Qiskit_Ops: SparsePauliOp):
+    """Transform Qiskit SparsePauliOp operator(s) to PennyLane format.
     
     Args:
-        ops_qiskit (SparsePauliOp): Qiskit sparse Pauli operator.
-        coeffs_qiskit (list): List of coefficients for the operators.
-        
+        Qiskit_Ops (SparsePauliOp): Qiskit sparse Pauli operator(s).
+
     Returns:
         tuple: Tuple containing:
             - coeffs (list[float]): List of float coefficients.
             - obs (list): List of PennyLane operators.
     """
-    coeffs = []
+    ops_qiskit = Qiskit_Ops.paulis
+    coeffs = Qiskit_Ops.coeffs
     obs = []
     for idx in range(len(ops_qiskit)):
-        pauli_str = ops_qiskit[idx]
-        coeff = coeffs_qiskit[idx]
-        coeffs += [float(coeff)]
+        pauli_str = ops_qiskit[idx].to_label()
         obs += [get_operator_from_QiskitStr(pauli_str)]
     return coeffs, obs
 

@@ -44,6 +44,3 @@ def test_GivensRotations():
         tnorm = np.linalg.norm(sv_i - sv_j)
         assert tnorm < 1e-10, f"Norm difference {tnorm} is too large for methods {i} and {j}"
 
-if __name__ == "__main__":    
-    # Check the simple Givens rotation gates
-    test_GivensRotations()

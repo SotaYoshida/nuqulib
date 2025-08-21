@@ -50,6 +50,4 @@ def test_meas_Paulis( ):
     assert abs(E_sv-E_meas) < 1.e-10
     assert abs(E_sv - E_shot) < 10/np.sqrt(num_shot), "Statevector and shot results do not match"
 
-if __name__ == "__main__":    
-    test_meas_Paulis()
 

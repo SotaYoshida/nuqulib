@@ -22,6 +22,3 @@ def test_vqe_pshell():
     neutron_number = 2
     params, Emin = vqe_example_pennylane(Hdict, proton_number, neutron_number, n_qubits_p, n_qubits_n, using_chs=["1b", "nn"])
     assert abs(Emin - (-3.90981)) < 1.e-4
-
-if __name__ == "__main__":    
-    test_vqe_pshell()
