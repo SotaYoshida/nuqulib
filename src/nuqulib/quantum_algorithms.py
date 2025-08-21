@@ -472,21 +472,20 @@ def construct_X_and_Y(snapshots, d=8):  # d is the number of delay
 
 
 def ODMD(
-    Uprep,
-    HamiltonianOps,
-    delta_t,
-    max_iterations,
-    trotter_steps,
+    Uprep: QuantumCircuit,
+    HamiltonianOps: SparsePauliOp,
+    delta_t: float,
+    max_iterations: int,
+    trotter_steps: int,
     sampler,
     backend,
     ancilla_qubits,
     target_qubits,
-    num_shot,
-    using_statevector,
-    d=8,
-    tol_SVD=1.0e-8,
-    do_simulation=False,
-    verbose=False,
+    num_shot: int = 10**4,
+    using_statevector: bool = True,
+    d: int = 8,
+    tol_SVD: float = 1.0e-8,
+    verbose: bool = False,
 ):
     Ntar = len(target_qubits)
 
@@ -522,7 +521,7 @@ def ODMD(
     # Observable DMD
     if verbose:
         print("snapshots of <U0|Uj>:", snapshots)
-    X, Y = construct_X_and_Y(snapshots)
+    X, Y = construct_X_and_Y(snapshots, d)
 
     # SVD of X
     U, Sigma, Vh = np.linalg.svd(X, full_matrices=False)
@@ -542,7 +541,10 @@ def ODMD(
 
     # Eigen values of A would be exp(-iE_j dt)
     lam, v = np.linalg.eig(A)
-    # print("lam", lam)
+
+    print("lam", lam)
+    print("|lam|", np.abs(lam))
+    idx_remax = np.argmin(np.abs(np.abs(lam)-1))
 
     ## argument of eigenvalues
     arg_lam = np.angle(lam)
@@ -553,6 +555,8 @@ def ODMD(
     idx_E0 = np.argmax(arg_in0to2pi)
     E0 = -arg_lam[idx_E0] / delta_t
 
-    print(f"E0: {E0:12.8f}")
+    Eremax = -arg_lam[idx_remax] / delta_t
+
+    print(f"E0: {E0:12.8f} E closest to unit circle: {Eremax:12.8f}")
     print("")
-    return E0
+    return Eremax
