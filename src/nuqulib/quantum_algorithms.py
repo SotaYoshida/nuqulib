@@ -267,6 +267,17 @@ def QuantumKrylov(
     using_statevector=False,
     do_simulation=True,
 ):
+    """Function to perform Quantum Krylov subspace method.
+
+    This function implements the Quantum Krylov subspace method for simulating quantum dynamics.
+
+    Note:
+      Within the current implementation, we assume that the Hamiltonian is pairing or pair-wise one,
+      leading to only I, Z, and XX+YY terms. Under this condition, the number of additional
+      quantum circuits needed is only two.
+      One consists of ansatz + Hadamard on all target qubits, and the other consists of
+      ansatz + Sdg followed by Hadamard gate on all target qubits.
+    """
     if len(ancilla_qubits) == 0:
         raise ValueError(
             "ancilla_qubits = []! You may need ancilla qubits for the Quantum Krylov method."
