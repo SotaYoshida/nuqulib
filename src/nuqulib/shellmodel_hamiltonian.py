@@ -4,6 +4,7 @@ import itertools
 import multiprocessing
 from multiprocessing import get_context
 import numpy as np
+import os
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import PauliEvolutionGate
@@ -27,6 +28,7 @@ element = ['NA',
 
 
 class Orbit_nljjztz:
+    """ Single particle state in the model space with n, l, j, jz, tz quanta. """
     def __init__(self, n, l, j, jz, tz):
         self.n = n
         self.l = l
@@ -37,6 +39,7 @@ class Orbit_nljjztz:
 
 
 class Orbit_nljtz:
+    """ Single particle state in the model space with n, l, j, tz quanta. """
     def __init__(self, n, l, j, tz):
         self.n = n
         self.l = l
@@ -53,11 +56,11 @@ def get_spsidx_from_nljtz(single_particle_states: list, n, l, j, tz):
         tz_ = sps.tz
         if n == n_ and l == l_ and j == j_ and tz == tz_:
             return idx
-    print("Warning: no such sps in the model space:", n, l, j, tz)
-    return None
+    raise ValueError(f"Single particle state with n={n}, l={l}, j={j}, tz={tz} not found in the model space.")
 
 
 class Orbit_nlj:
+    """ Single particle state in the model space with n, l, j quanta. """
     def __init__(self, n, l, j):
         self.n = n
         self.l = l
@@ -66,6 +69,7 @@ class Orbit_nlj:
 
 
 class JTcoupledOrbitals:
+    """ Class to handle the JT coupled orbitals in the model space. """
     def __init__(self, emax):
         self.emax = emax
         self.orbitals = {}
@@ -99,17 +103,25 @@ class JTcoupledOrbitals:
 
 
 class Hamiltonian:
+    """ Base class for Hamiltonian in the model space. 
+    
+    This Hamiltonian class is used to read the NN and 3NF interaction files,
+    both valence-space and no-core shell model (NCSM) interactions in snt format
+    adopted in public codes, KSHELL, NuHamil, NuclearToolkit.jl, etc.
+
+    """
+
     def __init__(
         self,
-        fn_NN,
-        Z,
-        N,
-        fn_3NF=None,
-        ncsm=False,
-        emax_truncate=20,
-        Qiskit_order=True,
-        verbose=False,
-        e3max=None,
+        fn_NN: str|os.PathLike,
+        Z: int,
+        N: int,
+        fn_3NF: str|os.PathLike|None=None,
+        ncsm: bool=False,
+        emax_truncate: int=20,
+        Qiskit_order: bool=True,
+        verbose: bool=False,
+        e3max: int|None=None,
     ):
         self.channel = {-3: "ppp", -1: "ppn", 1: "pnn", 3: "nnn"}
         self.fn_NN = fn_NN

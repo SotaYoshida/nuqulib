@@ -6,7 +6,7 @@ from qiskit.synthesis import SuzukiTrotter
 from qiskit.circuit.library import QFT
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 import scipy
-from .circuits import get_idx_to_measure, additional_qc, expec_Zstring
+from .circuits import get_idx_to_measure, expec_Zstring
 from tqdm import tqdm
 
 
@@ -108,23 +108,15 @@ def make_overlap_qc(
     qc_re.append(gate_cUi, ancilla_qubits + target_qubits)
     qc_re.x(0)
     qc_re.append(gate_cUj, ancilla_qubits + target_qubits)
+    qc_im = qc_re.copy() # make a copy for Im part
     qc_re.h(0)
-    if not using_statevector:
-        qc_re.measure(0, 0)
-    qc_re = qc_re.decompose()
-
-    # Overlap, Im part
-    qc_im = QuantumCircuit(1 + Ntar, 1)
-    qc_im.h(0)
-    qc_im.append(gate_cUi, ancilla_qubits + target_qubits)
-    qc_im.x(0)
-    qc_im.append(gate_cUj, ancilla_qubits + target_qubits)
     qc_im.sdg(0)
     qc_im.h(0)
     if not using_statevector:
+        qc_re.measure(0, 0)
         qc_im.measure(0, 0)
-    qc_im = qc_im.decompose()
-
+    qc_re = qc_re.decompose(reps=5)
+    qc_im = qc_im.decompose(reps=5)
     return qc_re, qc_im
 
 
@@ -193,46 +185,73 @@ def make_cU(Uprep, Ui, Ntar):
     return circuit_cUi.to_gate().control(1)
 
 
-def make_nonD_H_qc(
-    op_string,
-    Ntar,
-    ancilla_qubits,
-    target_qubits,
-    gate_cUi,
-    gate_cUj,
-    qcs_re,
-    qcs_im,
-    using_statevector,
-):
-    # real part
-    qc_reH_nonD = QuantumCircuit(1 + Ntar)
-    qc_reH_nonD.h(0)
-    qc_reH_nonD.append(gate_cUi, ancilla_qubits + target_qubits)
-    qc_reH_nonD.x(0)
-    qc_reH_nonD.append(gate_cUj, ancilla_qubits + target_qubits)
-    qc_reH_nonD.h(0)
-    additional_qc(qc_reH_nonD, op_string, target_qubits)
-    if not using_statevector:
-        qc_reH_nonD.measure_all()
-    qc_reH = qc_reH_nonD.decompose().decompose()
-    qcs_re.append(qc_reH)
+def make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits, 
+                          gate_cUi, gate_cUj, qcs_re, qcs_im, using_statevector):
+    
+    for idx_term in range(len(term_types)):
+        term = term_types[idx_term]
 
-    # imaginary part
-    qc_imH_nonD = QuantumCircuit(1 + Ntar)
-    qc_imH_nonD.h(0)
-    qc_imH_nonD.append(gate_cUi, ancilla_qubits + target_qubits)
-    qc_imH_nonD.x(0)
-    qc_imH_nonD.append(gate_cUj, ancilla_qubits + target_qubits)
-    qc_imH_nonD.sdg(0)
-    qc_imH_nonD.h(0)
-    additional_qc(qc_imH_nonD, op_string, target_qubits)
-    if not using_statevector:
-        qc_imH_nonD.measure_all()
-    qc_imH = qc_imH_nonD.decompose().decompose()
-    qcs_im.append(qc_imH)
+        qc = QuantumCircuit(1+Ntar)
+        qc.h(0)
+        qc.append(gate_cUi, ancilla_qubits + target_qubits)
+        qc.x(0)
+        qc.append(gate_cUj, ancilla_qubits + target_qubits)
+        qc_im = qc.copy() # copy here
+        qc.h(0)
+
+        qc_im.sdg(0)
+        qc_im.h(0)
+
+        if term == "IZ":
+            pass
+        elif term == "XX":
+            qc.h(target_qubits)
+            qc_im.h(target_qubits)
+        elif term == "YY":
+            qc.sdg(target_qubits)
+            qc.h(target_qubits)
+            qc_im.sdg(target_qubits)
+            qc_im.h(target_qubits)
+        else:
+            raise ValueError(f"Unsupported term type: {term}")
+        if not(using_statevector):
+            qc.measure_all()
+            qc_im.measure_all()
+
+        qc = qc.decompose(reps=5)
+        qcs_re.append(qc)
+
+        qc_im = qc_im.decompose(reps=5)
+        qcs_im.append(qc_im)
 
     return None
 
+def get_idx_circuit(op_string, term_types):
+    idx_circuit = None
+    if set(op_string) == {'I', 'Z'} or set(op_string) == {'I'}:                            
+        for i in range(len(term_types)):
+            if set(term_types[i]) == {'I', 'Z'} or set(term_types[i]) == {'I'}:
+                idx_circuit = i
+                break
+        if idx_circuit is None:
+            raise ValueError(f"Corresponding circuit for {op_string} not found in term_types: {term_types}")
+    elif set(op_string) == {'X', 'I'} or set(op_string) == {'X'}:
+        for i in range(len(term_types)):
+            if set(term_types[i]) == {'X', 'I'} or set(term_types[i]) == {'X'}:
+                idx_circuit = i
+                break
+        if idx_circuit is None:
+            raise ValueError(f"Corresponding circuit for {op_string} not found in term_types: {term_types}")
+    elif set(op_string) == {'Y', 'I'} or set(op_string) == {'Y'}:
+        for i in range(len(term_types)):
+            if set(term_types[i]) == {'Y', 'I'} or set(term_types[i]) == {'Y'}:
+                idx_circuit = i
+                break
+        if idx_circuit is None:
+            raise ValueError(f"Corresponding circuit for {op_string} not found in term_types: {term_types}")
+    else:
+        raise ValueError(f"Unexpected operator string: {op_string}. Supported types are 'IZ', 'XX', 'YY' for now.")
+    return idx_circuit     
 
 def QuantumKrylov(
     Uprep: QuantumCircuit,  # circuit to prepare a reference state
@@ -296,141 +315,100 @@ def QuantumKrylov(
     print("num of Hamil term: ", num_of_Hamil_term)
     if not (do_simulation):
         return None
-    for it in range(max_iterations):
+
+    term_types = { 0:"IZ", 1:"XX", 2:"YY"}  # general case => "XXYZ..."
+    for it in tqdm(range(max_iterations)):
         print("iteration: ", it)
         ## make controlled U = exp(-iHδt * it)
-        Ui = PauliEvolutionGate(
-            hamiltonian_op,
-            it * delta_t,
-            synthesis=SuzukiTrotter(order=1, reps=trotter_steps),
-        )
+        Ui = PauliEvolutionGate(hamiltonian_op, it*delta_t, synthesis=SuzukiTrotter(order=1,reps=trotter_steps))
         gate_cUi = make_cU(Uprep, Ui, Ntar)
         Unitaries.append(gate_cUi)
         N[it, it] = 1.0
         ## evaluate overlap to previous states
-        for j in range(it - 1, -1, -1):
+        for j in range(it-1, -1, -1):
             gate_cUj = Unitaries[j]
-            U_ij = measure_overlap(
-                num_shot,
-                Ntar,
-                gate_cUi,
-                gate_cUj,
-                ancilla_qubits,
-                target_qubits,
-                sampler,
-                backend,
-                using_statevector,
-                do_simulation,
-            )
+            U_ij = measure_overlap(num_shot, Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, 
+                                   sampler, backend, using_statevector, do_simulation)
             N[it, j] = U_ij
             N[j, it] = np.conj(U_ij)
         ### evaluate H_ii no need ancilla qubit
-        qcs = []
-        for idx_H in range(len(Hamil_paulis)):
-            op_string = Hamil_paulis[idx_H].to_label()
-            idx_relevant = get_idx_to_measure(op_string)
-            qc_reH_D = QuantumCircuit(Ntar)
-            qc_reH_D.append(Uprep, range(Ntar))
-            qc_reH_D.append(Ui, range(Ntar))
-            additional_qc(qc_reH_D, op_string, range(Ntar))
-            if not (using_statevector):
-                qc_reH_D.measure_all()
-            qc_reH_D = qc_reH_D.decompose().decompose()
-            qcs.append(qc_reH_D)
+        # ansatz, ansatz+All-H, ansatz+All-SdagH
+        qcs = [ ]
+        for idx_term in range(len(term_types)):
+            term = term_types[idx_term]
+            qc = QuantumCircuit(Ntar)
+            qc.append(Uprep, range(Ntar))
+            qc.append(Ui, range(Ntar))
+            if term == "IZ":
+                pass
+            elif term == "XX":
+                qc.h(range(Ntar))
+            elif term == "YY":
+                qc.sdg(range(Ntar))
+                qc.h(range(Ntar))
+            else:
+                raise ValueError(f"Unsupported term type: {term}")
+            if not(using_statevector):
+                qc.measure_all()
+            qcs.append(qc)
+                      
         if using_statevector:
-            results = [
-                Statevector.from_instruction(qc).probabilities_dict() for qc in qcs
-            ]
+            results = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs]
         else:
             job = sampler.run(qcs, shots=num_shot)
-            results = job.result()
+            results  = job.result()
 
         Hsum = 0.0
         for idx_H in range(len(Hamil_paulis)):
             op_string = Hamil_paulis[idx_H].to_label()
             idx_relevant = get_idx_to_measure(op_string)
+
+            idx_circuit = get_idx_circuit(op_string, term_types)
             if using_statevector:
-                res = results[idx_H]
+                res = results[idx_circuit]
             else:
-                res = results[idx_H].data.meas.get_counts()
+                res = results[idx_circuit].data.meas.get_counts()
             expval, dummy, dummy_ = expec_Zstring(res, idx_relevant)
             Hsum += Hamil_coeffs[idx_H] * expval
-            ##print("operator: ", op_string, "coeff: ", Hamil_coeffs[idx_H], "exp. val: ",  expval)
-        # print("H[it, it]", it, Hsum)
         H[it, it] = Hsum
 
         ### evaluate H_ij ancilla qubit is needed
-        for j in range(it - 1, -1, -1):
+        for j in range(it-1, -1, -1):
             gate_cUj = Unitaries[j]
             qcs_re = []
             qcs_im = []
-            for idx_H in range(len(Hamil_paulis)):
-                op_string = Hamil_paulis[idx_H].to_label()
-                make_nonD_H_qc(
-                    op_string,
-                    Ntar,
-                    ancilla_qubits,
-                    target_qubits,
-                    gate_cUi,
-                    gate_cUj,
-                    qcs_re,
-                    qcs_im,
-                    using_statevector,
-                )
+            make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits,
+                                  gate_cUi, gate_cUj, qcs_re, qcs_im, using_statevector)
+
             # Re part
             if using_statevector:
-                results = [
-                    Statevector.from_instruction(qc).probabilities_dict()
-                    for qc in qcs_re
-                ]
+                results_Re = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs_re]
+                results_Im = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs_im]
             else:
                 job = sampler.run(qcs_re, shots=num_shot)
-                results = job.result()
-            Re_H_ij = 0.0
+                results_Re = job.result()
+                job = sampler.run(qcs_im, shots=num_shot)
+                results_Im = job.result()
+
+            Re_H_ij = Im_H_ij = 0.0
             for idx_H in range(len(Hamil_paulis)):
                 op_string = Hamil_paulis[idx_H].to_label()
+                idx_circuit = get_idx_circuit(op_string, term_types)
+
                 idx_relevant = get_idx_to_measure(op_string)
                 if using_statevector:
-                    res = results[idx_H]
+                    res_Re = results_Re[idx_circuit]
+                    res_Im = results_Im[idx_circuit]
                 else:
-                    res = results[idx_H].data.meas.get_counts()
-                dummy_e, p0, p1 = expec_Zstring(
-                    res,
-                    idx_relevant,
-                    target_qubits=range(len(target_qubits)),
-                    ancilla_qubit=0,
-                )
+                    res_Re = results_Re[idx_circuit].data.meas.get_counts()
+                    res_Im = results_Im[idx_circuit].data.meas.get_counts()
+                dummy_e, p0, p1 = expec_Zstring(res_Re, idx_relevant, target_qubits=range(len(target_qubits)), ancilla_qubit=0)
                 expval = p0 - p1
                 Re_H_ij += Hamil_coeffs[idx_H] * expval
-                # print("operator: ", op_string, "coeff: ", Hamil_coeffs[idx_H], "exp. val: ",  expval)
-            # print("Re H_{ij}", Re_H_ij)
 
-            # Im part
-            if using_statevector:
-                results = [
-                    Statevector.from_instruction(qc).probabilities_dict()
-                    for qc in qcs_im
-                ]
-            else:
-                job = sampler.run(qcs_im, shots=num_shot)
-                results = job.result()
-            Im_H_ij = 0.0
-            for idx_H in range(len(Hamil_paulis)):
-                op_string = Hamil_paulis[idx_H].to_label()
-                idx_relevant = get_idx_to_measure(op_string)
-                if using_statevector:
-                    res = results[idx_H]
-                else:
-                    res = results[idx_H].data.meas.get_counts()
-                dummy_e, p0, p1 = expec_Zstring(
-                    res,
-                    idx_relevant,
-                    target_qubits=range(len(target_qubits)),
-                    ancilla_qubit=0,
-                )
+                dummy_e, p0, p1 = expec_Zstring(res_Im, idx_relevant, target_qubits=range(len(target_qubits)), ancilla_qubit=0)
                 expval = p0 - p1
                 Im_H_ij += Hamil_coeffs[idx_H] * expval
-            # print("Im H_{ij}", Im_H_ij)
 
             H[it, j] = Re_H_ij + 1j * Im_H_ij
             H[j, it] = Re_H_ij - 1j * Im_H_ij
