@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import SparsePauliOp, Statevector
@@ -41,9 +43,9 @@ def circuit_HadamardTest(
     # for statevector
     qc_2 = qc_Hadamard.copy()
     if using_statevector:
-        return qc_2.decompose(reps=5)
+        return qc_2.decompose(reps=3)
     else:
-        return qc_1.decompose(reps=5)
+        return qc_1.decompose(reps=3)
 
 
 def circuit_QPE(
@@ -76,8 +78,6 @@ def circuit_QPE(
         qc_QPE.measure(register_ancilla, range(n_ancilla))
     return qc_QPE
 
-
-# The following functions are used in QuantumKrylov/ODMD
 
 def make_U_and_cU(
     i, delta_t, trotter_steps, hamiltonian_op, ancilla_qubits, target_qubits, Uprep
@@ -115,8 +115,8 @@ def make_overlap_qc(
     if not using_statevector:
         qc_re.measure(0, 0)
         qc_im.measure(0, 0)
-    qc_re = qc_re.decompose(reps=5)
-    qc_im = qc_im.decompose(reps=5)
+    qc_re = qc_re.decompose()
+    qc_im = qc_im.decompose()
     return qc_re, qc_im
 
 
@@ -172,8 +172,8 @@ def measure_overlap(
         U_ij = ReN + 1j * ImN
         return U_ij
     else:  # only resource estimation
-        print("qc_re:", dict(qc_re.decompose(reps=5).count_ops()))
-        print("qc_im:", dict(qc_im.decompose(reps=5).count_ops()))
+        print("qc_re:", dict(qc_re.decompose(reps=1).count_ops()))
+        print("qc_im:", dict(qc_im.decompose(reps=1).count_ops()))
         return None
 
 
@@ -181,7 +181,7 @@ def make_cU(Uprep, Ui, Ntar):
     circuit_cUi = QuantumCircuit(Ntar)
     circuit_cUi.append(Uprep, range(Ntar))
     circuit_cUi.append(Ui, range(Ntar))
-    circuit_cUi = circuit_cUi.decompose(reps=5)
+    circuit_cUi = circuit_cUi.decompose(reps=1)
     return circuit_cUi.to_gate().control(1)
 
 
@@ -218,10 +218,10 @@ def make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits,
             qc.measure_all()
             qc_im.measure_all()
 
-        qc = qc.decompose(reps=5)
+        qc = qc.decompose()
         qcs_re.append(qc)
 
-        qc_im = qc_im.decompose(reps=5)
+        qc_im = qc_im.decompose()
         qcs_im.append(qc_im)
 
     return None
@@ -308,8 +308,7 @@ def QuantumKrylov(
 
     qc_Ui = QuantumCircuit(1 + Ntar)
     qc_Ui.append(gate_cUi, range(Ntar + 1))
-    qc_Ui = qc_Ui.decompose(reps=5)
-    print("Circuit for c-UiUp:", dict(qc_Ui.count_ops()))
+    qc_Ui = qc_Ui.decompose(reps=3)
     U_ij = measure_overlap(
         num_shot,
         Ntar,
@@ -459,6 +458,18 @@ def construct_X_and_Y(snapshots, d=8):  # d is the number of delay
             Y[i, j] = snapshots[idx + 1]
     return X, Y
 
+def lambda_plot(lam, Ens):
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(111)
+    for idx, point in enumerate(lam):
+        re = np.real(point)
+        im = np.imag(point)
+        ax.plot(re, im, 'x', label=f"<E>={Ens[idx]:8.3f} MeV")
+    circle = patches.Circle((0, 0), 1.0, edgecolor='green', facecolor='none', linewidth=2)
+    ax.add_patch(circle)
+    ax.legend()
+    plt.savefig("lambda_plot.pdf", bbox_inches='tight', pad_inches = 0.05)
+    plt.close()
 
 def ODMD(
     Uprep: QuantumCircuit,
@@ -475,6 +486,7 @@ def ODMD(
     d: int = 8,
     tol_SVD: float = 1.0e-8,
     verbose: bool = False,
+    plot_lambda=False
 ):
     Ntar = len(target_qubits)
 
@@ -489,7 +501,6 @@ def ODMD(
             it * delta_t,
             synthesis=SuzukiTrotter(order=1, reps=trotter_steps),
         )
-
         gate_cUj = make_cU(Uprep, Uj, Ntar)
         overlap = measure_overlap(
             num_shot,
@@ -502,6 +513,7 @@ def ODMD(
             backend,
             using_statevector,
         )
+        print(f"overlap {it:3d}: {overlap}")
         snapshots[it] = overlap
     print(
         f"Max iteration: {max_iterations:5d} trotter_steps: {trotter_steps:5d} delta_t: {delta_t:12.8f}"
@@ -540,15 +552,17 @@ def ODMD(
 
     ## argument of eigenvalues
     arg_lam = np.angle(lam)
-    # print("angle[/pi]", arg_lam / (np.pi))
-    print("E?", list(-(arg_lam) / delta_t))
+    Ens = list(-(arg_lam) / delta_t)
+    print("Ens:", Ens)
 
     arg_in0to2pi = arg_lam % (2 * np.pi)
     idx_E0 = np.argmax(arg_in0to2pi)
     E0 = -arg_lam[idx_E0] / delta_t
-
     Eremax = -arg_lam[idx_remax] / delta_t
 
     print(f"E0: {E0:12.8f} E closest to unit circle: {Eremax:12.8f}")
     print("")
+
+    if plot_lambda:
+        lambda_plot(lam, Ens)
     return Eremax

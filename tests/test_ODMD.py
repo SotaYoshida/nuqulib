@@ -1,6 +1,5 @@
 import os
 import pytest
-#from qiskit.primitives import StatevectorEstimator
 from nuqulib import *
 
 chdir = os.path.dirname(os.path.abspath(__file__))
@@ -8,6 +7,7 @@ int_dir = os.path.join(chdir, "interaction_file/")
 
 def test_ODMD():
     using_statevector = True
+    sampler = backend = None
 
     Z = 0; N = 2
     fn_snt = int_dir+"ckpot.snt"
@@ -34,9 +34,10 @@ def test_ODMD():
     target_qubits=list(range(1,n_qubits+1))
 
     E0 = ODMD(U_prep, H_mapped, delta_t, max_iterations, trotter_steps, 
-              None, None, 
-               ancilla_qubits, target_qubits,
-               using_statevector=using_statevector, d=8)
+              sampler, backend, 
+              ancilla_qubits, target_qubits,
+              using_statevector=using_statevector, d=10,
+              plot_lambda=True)
     Eexact = -3.910
 
     assert ( 100*abs(E0 - Eexact)/abs(Eexact) < 5), f"ODMD test failed: {E0} != {Eexact} within 5% tolerance"
