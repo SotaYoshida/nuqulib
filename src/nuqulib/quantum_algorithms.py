@@ -96,7 +96,6 @@ def make_U_and_cU(
     qc_cU.append(expiHt, range(Ntar))
     qc_cU = qc_cU.decompose().decompose()
     qc_cU = qc_cU.to_gate().control(1)
-
     return qc_U, qc_cU
 
 
@@ -308,7 +307,7 @@ def QuantumKrylov(
 
     qc_Ui = QuantumCircuit(1 + Ntar)
     qc_Ui.append(gate_cUi, range(Ntar + 1))
-    qc_Ui = qc_Ui.decompose(reps=3)
+    qc_Ui = qc_Ui.decompose()
     U_ij = measure_overlap(
         num_shot,
         Ntar,

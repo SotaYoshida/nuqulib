@@ -23,7 +23,7 @@ def test_ODMD():
 
     delta_t = 0.01234
     trotter_steps = 15
-    max_iterations = 15
+    max_iterations = 20
 
     dummy_params = [ ]
     U_prep = nucl_ansatz(n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
@@ -37,7 +37,7 @@ def test_ODMD():
               sampler, backend, 
               ancilla_qubits, target_qubits,
               using_statevector=using_statevector, d=10,
-              plot_lambda=True)
+              plot_lambda=False)
     Eexact = -3.910
 
     assert ( 100*abs(E0 - Eexact)/abs(Eexact) < 5), f"ODMD test failed: {E0} != {Eexact} within 5% tolerance"

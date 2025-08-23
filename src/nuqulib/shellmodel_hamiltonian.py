@@ -102,6 +102,41 @@ class JTcoupledOrbitals:
         return dict_sps2JTorbitals
 
 
+def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=None, ncsm=False):
+    """ Get the Hamiltonian from a snt file.
+
+    This is a wrapper to call the Hamiltonian class
+    """
+    if fn_3NF != "":
+        hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, emax_truncate=emax, e3max=emax, fn_3NF=fn_3NF)
+    else:
+        hamil = Hamiltonian(filename_snt, Z, N, ncsm=ncsm, emax_truncate=emax)
+
+    n_qubits = hamil.n_qubits
+    proton_qubits = list(range(0, hamil.n_qubits_p))
+    neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
+
+    Hdict_M = hamil.get_mscheme_H(opform=True)
+    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
+
+    if fn_3NF != "":
+        hamil.set_mscheme_3NF()
+        H_3b = hamil.mapping_3NF_Mscheme()
+
+    Hamil_ShellModel = H_1b 
+    if Z > 1:
+        Hamil_ShellModel += H_pp 
+    if N > 1:
+        Hamil_ShellModel += H_nn
+    if Z > 0 and N > 0:
+        Hamil_ShellModel += H_pn
+
+    if fn_3NF != "":
+        Hamil_ShellModel += H_3b
+
+    return hamil, Hamil_ShellModel, proton_qubits, neutron_qubits
+
+
 class Hamiltonian:
     """ Base class for Hamiltonian in the model space. 
     
