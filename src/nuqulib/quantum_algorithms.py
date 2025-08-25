@@ -136,8 +136,10 @@ def measure_overlap(
     )
     if backend != None:
         print("transpile: w/ backend=", backend)
+        print(f"before transpile...:", qc_re.count_ops())
         qc_re = transpile(qc_re, backend=backend, optimization_level=2)
         qc_im = transpile(qc_im, backend=backend, optimization_level=2)
+        print(f"after transpile...:", qc_re.count_ops())
     if do_simulation:
         if using_statevector:
             results = [
@@ -485,7 +487,8 @@ def ODMD(
     d: int = 8,
     tol_SVD: float = 1.0e-8,
     verbose: bool = False,
-    plot_lambda=False
+    plot_lambda=False,
+    tol_lambda = 1.e-2
 ):
     Ntar = len(target_qubits)
 
@@ -515,7 +518,8 @@ def ODMD(
         print(f"overlap {it:3d}: {overlap}")
         snapshots[it] = overlap
     print(
-        f"Max iteration: {max_iterations:5d} trotter_steps: {trotter_steps:5d} delta_t: {delta_t:12.8f}"
+        f"Max iteration: {max_iterations:5d} trotter_steps: {trotter_steps:5d} delta_t: {delta_t:12.8f}",
+        f" tol for lambda = {tol_lambda:8.2e}",
     )
 
     # Observable DMD
@@ -540,10 +544,16 @@ def ODMD(
     print("Check |AX - Y|", np.linalg.norm(A @ X - Y))
 
     # Eigen values of A would be exp(-iE_j dt)
-    lam, v = np.linalg.eig(A)
+    lams, v = np.linalg.eig(A)
 
-    idxs = [ i for i in range(len(lam)) if np.abs((np.abs(lam[i])-1)) < 1.e-1]
-    lam = lam[idxs]
+    idxs = [ ]
+    while len(idxs) ==0:
+        idxs = [ i for i in range(len(lams)) if np.abs((np.abs(lams[i])-1)) < tol_lambda]
+        lam = lams[idxs]
+        if len(idxs) == 0:
+            print(f"No eigenvalue found within |lambda|=1 +/- {tol_lambda:8.2e}.")
+            print("Increasing the tolerance by a factor of 10.")
+            tol_lambda *= 10
 
     print("lam", lam)
     print("|lam|", np.abs(lam))

@@ -6,13 +6,13 @@ Thank you for considering contributing to this package.
 
 Feedbacks and contributions to NuQuLib are very welcome. These can be: 
 
-- bug report 
+- bug reports 
 
-- submitting a new function or a patch to the bug 
+- submitting new functions or a patch to fix bugs
 
-- documentation issue 
+- documentation issues 
 
-- feature request 
+- feature requests 
 
 - etc.
 
@@ -23,15 +23,14 @@ For these contributions, it would be nice to let you know a basic policy
 Workflow of code development
 ******************************
 
-If you make a contribution, please keep in mind the following workflow.
+If you are willing to contribute to this package, please keep in mind the following workflow.
 
 - We use the GitHub to host the package, to track issues/pull requests.
 
-
 -  Please create a new branch for your work and make a pull request
 
-   -  If you are not familiar with git, please refer to the 
-      for the basic workflow.
+   -  If you are not familiar with git, please refer to the Git documentation such as
+      `Git - Book <https://git-scm.com/book/en/v2>`_.
    -  The ``main`` (default) branch of this repository is protected by
       ‘github branch protection’, so you cannot push directly to the
       main branch.
@@ -44,14 +43,14 @@ If you make a contribution, please keep in mind the following workflow.
    the changes are not destructive.
 
    The test jobs are specified in yml files like
-   ``.github/workflows/ci.yml`` and one can find the test code in
-   ``test/`` of the repository.
+   ``.github/workflows/ci.yml`` and one can find the tests code in
+   ``tests/`` of the repository.
 
    If you wish to add a new feature or to fix a bug, please consider to
    add a test code for it. All the classes and functions in the package
    should be accompanied by docstrings. Since we are using sphinx for
    documentation, please follow the docstring format used in the
-   existing code.
+   existing code or refer to the Sphinx documentation for guidance.
 
 --------------
 LICENSE
@@ -59,3 +58,4 @@ LICENSE
 
 Any contribution from you will be under the MIT License, as well as the package itself.
 Feel free to contact to @SotaYoshida if that’s a concern.
+
