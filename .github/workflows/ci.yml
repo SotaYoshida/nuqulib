@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [ "main", "dev"] # "main" to be removed
+    branches: ["main"] 
   push:
-    branches: [ "main" ]
+    branches: ["dev", "develop", "test"]
 
 jobs:
   test:
