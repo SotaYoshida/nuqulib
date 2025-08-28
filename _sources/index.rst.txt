@@ -8,7 +8,6 @@ Nuclear Quantum computing Library
    contributing
    nuqulib
 
-
 **********
 Features
 **********
