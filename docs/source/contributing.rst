@@ -57,5 +57,3 @@ LICENSE
 --------------
 
 Any contribution from you will be under the MIT License, as well as the package itself.
-Feel free to contact to @SotaYoshida if that’s a concern.
-
