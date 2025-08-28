@@ -3,7 +3,7 @@
 NuQuLib provides a set of tools for quantum simulations of nuclear physics problems.
 This library enables quantum computing research in nuclear physics by providing:
 
-- Nuclear Hamiltonian encodings and mappings
+- Nuclear Hamiltonian encodings/mappings
 - Quantum circuit implementations for some selected problems and algorithms
 - A small example of a Variational Quantum Eigensolver (VQE) using PennyLane/Qiskit
 
