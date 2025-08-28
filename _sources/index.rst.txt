@@ -43,6 +43,11 @@ If you are using `pip`, we recommend installing the dependencies as follows:
    pip install -r requirements.txt
    pip install -e .
 
+**************************
+Tutorials
+**************************
+
+A tutorial notebook is available at `here <https://github.com/SotaYoshida/nuqulib/blob/main/examples/tutorial_NuQuLib.ipynb>`_.
 
 
 Indices and tables
