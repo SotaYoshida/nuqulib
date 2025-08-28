@@ -43,7 +43,7 @@ jobs:
       - name: Run pytest with coverage
         run: poetry run pytest --cov=src/nuqulib --cov-report=xml --cov-report=term -s
 
-      - name: Upload coverage to GitHub summary
+      - name: Upload coverage to GitHub summary 
         if: github.event_name == 'pull_request'
         run: |
           COVERAGE=$(grep -A 1 'Name.*Stmts' coverage.xml | tail -n 1 | grep -oP 'percent=\"\K[0-9.]+')
