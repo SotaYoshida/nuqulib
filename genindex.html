@@ -1,0 +1,883 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 --><title>Index - NuQuLib 0.1.0 documentation</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">NuQuLib 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">NuQuLib 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nuqulib.html">nuqulib package</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          
+<section class="genindex-section">
+  <h1 id="index">Index</h1>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+</section>
+<section id="A" class="genindex-section">
+  <h2>A</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.JTcoupledOrbitals.add_orbital">add_orbital() (nuqulib.shellmodel_hamiltonian.JTcoupledOrbitals method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.add_Vmonopole">add_Vmonopole() (in module nuqulib.pairwise)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.circuits.additional_qc">additional_qc() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.allocate_3bme">allocate_3bme() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.apply_sqrt_iSWAP">apply_sqrt_iSWAP() (in module nuqulib.circuits)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="B" class="genindex-section">
+  <h2>B</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.basis">basis (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="C" class="genindex-section">
+  <h2>C</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.circuits.cG1">cG1() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.cG1_gate">cG1_gate() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.encoding.check_XXYYterm">check_XXYYterm() (in module nuqulib.encoding)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.circuit_HadamardTest">circuit_HadamardTest() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.circuit_QPE">circuit_QPE() (in module nuqulib.quantum_algorithms)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.ansatz.circuit_XXYY">circuit_XXYY() (in module nuqulib.ansatz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.construct_X_and_Y">construct_X_and_Y() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.cost_func">cost_func() (in module nuqulib.nft_opt_method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.count_me3jgz">count_me3jgz() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.count_nreads">count_nreads() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.counting_CNOTs">counting_CNOTs() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="D" class="genindex-section">
+  <h2>D</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.vqe_example_pennylane.define_Hamil_in_OpenFermion">define_Hamil_in_OpenFermion() (in module nuqulib.vqe_example_pennylane)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.delta">delta() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.delta_eps">delta_eps (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.diagonalize">diagonalize() (nuqulib.pairing_hamiltonian.PairingHamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.DiscreteFT">DiscreteFT() (in module nuqulib.nft_opt_method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.draw_DFT_curve">draw_DFT_curve() (in module nuqulib.nft_opt_method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="E" class="genindex-section">
+  <h2>E</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.encoding">encoding() (nuqulib.pairing_hamiltonian.PairingHamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.epsilon">epsilon (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.eval_DFT_coeff">eval_DFT_coeff() (in module nuqulib.nft_opt_method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.eval_Ediag">eval_Ediag() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.eval_Energy_using_GoogleCircuit">eval_Energy_using_GoogleCircuit() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.eval_epsilon">eval_epsilon() (nuqulib.pairing_hamiltonian.PairingHamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.eval_expec_diag_postselection">eval_expec_diag_postselection() (in module nuqulib.postselection)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.pairwise.eval_Hflat_eigen">eval_Hflat_eigen() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.eval_Hmat">eval_Hmat() (nuqulib.pairing_hamiltonian.PairingHamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.eval_XXYY_from_Hcounts">eval_XXYY_from_Hcounts() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.eval_XXYY_w_Hgates">eval_XXYY_w_Hgates() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.even_swap">even_swap() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.expec_Zstring">expec_Zstring() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.extract_hw">extract_hw() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="F" class="genindex-section">
+  <h2>F</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.func_DFT_coeff">func_DFT_coeff() (in module nuqulib.nft_opt_method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="G" class="genindex-section">
+  <h2>G</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.circuits.G2_gate">G2_gate() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.G_gate">G_gate() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.generate_config_bitstr_list">generate_config_bitstr_list() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.Get3BME_ISO">Get3BME_ISO() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.get_canonical_order_6j">get_canonical_order_6j() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.get_cG">get_cG() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.get_CGs_from_dict">get_CGs_from_dict() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.JTcoupledOrbitals.get_dict_sps2JTsps">get_dict_sps2JTsps() (nuqulib.shellmodel_hamiltonian.JTcoupledOrbitals method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.get_Hamiltonian">get_Hamiltonian() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.get_idx_ancilla_in_string">get_idx_ancilla_in_string() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.get_idx_circuit">get_idx_circuit() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.get_idx_to_measure">get_idx_to_measure() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.get_key6j_sym">get_key6j_sym() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.get_midx_from_nljjztz">get_midx_from_nljjztz() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.get_modelspace">get_modelspace() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.get_mscheme_H">get_mscheme_H() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.get_mscheme_sps">get_mscheme_sps() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.get_nkey6">get_nkey6() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.get_nkey6_shift">get_nkey6_shift() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.myutils.get_operator_from_QiskitStr">get_operator_from_QiskitStr() (in module nuqulib.myutils)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.get_pairwise_Hamil">get_pairwise_Hamil() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.get_possible_time_reversal_pairs">get_possible_time_reversal_pairs() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.get_spsidx_from_nljtz">get_spsidx_from_nljtz() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.get_V3_pn">get_V3_pn() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.Givens_2_Xanadu">Givens_2_Xanadu() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.Givens_iSWAP_Rz">Givens_iSWAP_Rz() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.Givens_magic">Givens_magic() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.circuits.Givens_Xanadu">Givens_Xanadu() (in module nuqulib.circuits)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.guess_emax_from_fn">guess_emax_from_fn() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.gval">gval (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="H" class="genindex-section">
+  <h2>H</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian">Hamiltonian (class in nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.hat">hat() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.Hmat">Hmat (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.j_col_score">j_col_score() (in module nuqulib.read_me3jgz)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.JTcoupledOrbitals">JTcoupledOrbitals (class in nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="L" class="genindex-section">
+  <h2>L</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.lambda_plot">lambda_plot() (in module nuqulib.quantum_algorithms)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.myutils.latex_nuc">latex_nuc() (in module nuqulib.myutils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="M" class="genindex-section">
+  <h2>M</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.make_basis">make_basis() (nuqulib.pairing_hamiltonian.PairingHamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.make_Circ_forNondiagH">make_Circ_forNondiagH() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.make_cU">make_cU() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.make_overlap_qc">make_overlap_qc() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.make_pw_hamil_qiskit">make_pw_hamil_qiskit() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.make_U_and_cU">make_U_and_cU() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.mapping_3NF_Mscheme">mapping_3NF_Mscheme() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.encoding.mapping_of_pn_hamiltonians">mapping_of_pn_hamiltonians() (in module nuqulib.encoding)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.mapping_opform">mapping_opform() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.encoding.mapping_to_Pauli_string">mapping_to_Pauli_string() (in module nuqulib.encoding)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.measure_overlap">measure_overlap() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li>
+    module
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib">nuqulib</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.ansatz">nuqulib.ansatz</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.circuits">nuqulib.circuits</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.encoding">nuqulib.encoding</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.myutils">nuqulib.myutils</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.nft_opt_method">nuqulib.nft_opt_method</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.pairing_hamiltonian">nuqulib.pairing_hamiltonian</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.pairwise">nuqulib.pairwise</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.postselection">nuqulib.postselection</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.quantum_algorithms">nuqulib.quantum_algorithms</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.read_me3jgz">nuqulib.read_me3jgz</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.shellmodel_hamiltonian">nuqulib.shellmodel_hamiltonian</a>
+</li>
+          <li><a href="nuqulib.html#module-nuqulib.vqe_example_pennylane">nuqulib.vqe_example_pennylane</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.monopole_V3">monopole_V3() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.NFTmethod">NFTmethod() (in module nuqulib.nft_opt_method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.Nocc">Nocc (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.Norb">Norb (nuqulib.pairing_hamiltonian.PairingHamiltonian attribute)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.ansatz.nucl_ansatz">nucl_ansatz() (in module nuqulib.ansatz)</a>
+</li>
+        <li>
+    nuqulib
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.ansatz
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.ansatz">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.circuits
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.circuits">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.encoding
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.encoding">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.myutils
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.myutils">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.nft_opt_method
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.nft_opt_method">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    nuqulib.pairing_hamiltonian
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.pairing_hamiltonian">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.pairwise
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.pairwise">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.postselection
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.postselection">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.quantum_algorithms
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.quantum_algorithms">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.read_me3jgz
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.read_me3jgz">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.shellmodel_hamiltonian
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.shellmodel_hamiltonian">module</a>
+</li>
+        </ul></li>
+        <li>
+    nuqulib.vqe_example_pennylane
+
+        <ul>
+          <li><a href="nuqulib.html#module-nuqulib.vqe_example_pennylane">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="O" class="genindex-section">
+  <h2>O</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.postselection.odd_swap">odd_swap() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.ODMD">ODMD() (in module nuqulib.quantum_algorithms)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.op_dict_T1_permutations">op_dict_T1_permutations() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.nft_opt_method.optimize_params_with_NFT">optimize_params_with_NFT() (in module nuqulib.nft_opt_method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Orbit_nlj">Orbit_nlj (class in nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Orbit_nljjztz">Orbit_nljjztz (class in nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Orbit_nljtz">Orbit_nljtz (class in nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="P" class="genindex-section">
+  <h2>P</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.ansatz.pair_ansatz_pennylane">pair_ansatz_pennylane() (in module nuqulib.ansatz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.ansatz.pair_ansatz_qiskit">pair_ansatz_qiskit() (in module nuqulib.ansatz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian">PairingHamiltonian (class in nuqulib.pairing_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.permutation_parity">permutation_parity() (in module nuqulib.read_me3jgz)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols.prep_d6j_int">prep_d6j_int() (nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols.prep_d6j_lj">prep_d6j_lj() (nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols.prep_dcg_spin">prep_dcg_spin() (nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.prep_dicts_for_WignerSymbols">prep_dicts_for_WignerSymbols (class in nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.process_op">process_op() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="Q" class="genindex-section">
+  <h2>Q</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.encoding.qpo_from_sparsepauliop">qpo_from_sparsepauliop() (in module nuqulib.encoding)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.encoding.qps_from_sparsepauliop">qps_from_sparsepauliop() (in module nuqulib.encoding)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.quantum_algorithms.QuantumKrylov">QuantumKrylov() (in module nuqulib.quantum_algorithms)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="R" class="genindex-section">
+  <h2>R</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.read_3NF_readable">read_3NF_readable() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz.read_me3jgz">read_me3jgz() (nuqulib.read_me3jgz.ReadThBME_me3jgz method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairwise.read_msnt">read_msnt() (in module nuqulib.pairwise)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.myutils.read_QiskitPauli">read_QiskitPauli() (in module nuqulib.myutils)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.read_snt_file">read_snt_file() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.ReadThBME_me3jgz">ReadThBME_me3jgz (class in nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.RecouplingCG">RecouplingCG() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.removing_redundant_ops">removing_redundant_ops() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.removing_redundant_terms">removing_redundant_terms() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.postselection.reweight_results">reweight_results() (in module nuqulib.postselection)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="S" class="genindex-section">
+  <h2>S</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.encoding.separate_Hamil_terms">separate_Hamil_terms() (in module nuqulib.encoding)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.separate_proton_and_neutron">separate_proton_and_neutron() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.Hamiltonian.set_mscheme_3NF">set_mscheme_3NF() (nuqulib.shellmodel_hamiltonian.Hamiltonian method)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.set_op_list_from_op_dict_3b">set_op_list_from_op_dict_3b() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.postselection.single_eval_XXYY_Google">single_eval_XXYY_Google() (in module nuqulib.postselection)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.sort_3_orbits">sort_3_orbits() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.sps_3Blab">sps_3Blab (class in nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.sum_over_J">sum_over_J() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="T" class="genindex-section">
+  <h2>T</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.myutils.transform_pytket_counts_to_qiskit">transform_pytket_counts_to_qiskit() (in module nuqulib.myutils)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.myutils.transform_qiskitOps_to_pennylane">transform_qiskitOps_to_pennylane() (in module nuqulib.myutils)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.tri_check">tri_check() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.truncate_v3bme">truncate_v3bme() (in module nuqulib.read_me3jgz)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.pairing_hamiltonian.tuple_to_bitstring">tuple_to_bitstring() (in module nuqulib.pairing_hamiltonian)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="U" class="genindex-section">
+  <h2>U</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.unhash_key6j">unhash_key6j() (in module nuqulib.read_me3jgz)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="V" class="genindex-section">
+  <h2>V</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.read_me3jgz.valid_check">valid_check() (in module nuqulib.read_me3jgz)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.vqe_example_pennylane.vqe_example_pennylane">vqe_example_pennylane() (in module nuqulib.vqe_example_pennylane)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="W" class="genindex-section">
+  <h2>W</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.worker_cU">worker_cU() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.shellmodel_hamiltonian.worker_U">worker_U() (in module nuqulib.shellmodel_hamiltonian)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="nuqulib.html#nuqulib.myutils.write_out_pytketCircuit_from_Qiskit">write_out_pytketCircuit_from_Qiskit() (in module nuqulib.myutils)</a>
+</li>
+        <li><a href="nuqulib.html#nuqulib.myutils.write_out_pytketCircuits_from_Qiskit">write_out_pytketCircuits_from_Qiskit() (in module nuqulib.myutils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

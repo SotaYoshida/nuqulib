@@ -1,0 +1,691 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+        <title>nuqulib.circuits - NuQuLib 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">NuQuLib 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">NuQuLib 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">nuqulib package</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for nuqulib.circuits</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Quantum circuit implementations for nuclear simulations.</span>
+
+<span class="sd">This module provides various quantum circuit implementations including Givens rotations,</span>
+<span class="sd">controlled gates, and utility functions for Pauli string measurements.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="cG1">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.cG1">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cG1</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">c_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply controlled Givens rotation to a quantum circuit.</span>
+<span class="sd">    </span>
+<span class="sd">    Implements a controlled version of the Givens rotation gate using</span>
+<span class="sd">    elementary quantum gates. This is used for e.g. state preparation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        circ (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        c_qubit (int): Control qubit index.</span>
+<span class="sd">        i (int): First target qubit index.</span>
+<span class="sd">        j (int): Second target qubit index.</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta_4</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="mi">4</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta_4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta_4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">c_qubit</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta_4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta_4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">c_qubit</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cG1_gate">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.cG1_gate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cG1_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a controlled Givens rotation gate.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">        method (str, optional): Implementation method. Options: &quot;magic&quot;, &quot;Xanadu&quot;, </span>
+<span class="sd">                               &quot;iSWAP_Rz&quot;. Defaults to &quot;magic&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Gate: Controlled Givens rotation gate.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If invalid method is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;magic&quot;</span><span class="p">:</span>
+        <span class="n">Givens_magic</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cG1(magic)&quot;</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Xanadu&quot;</span><span class="p">:</span>
+        <span class="n">Givens_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cG1(Xanadu)&quot;</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;iSWAP_Rz&quot;</span><span class="p">:</span>
+        <span class="n">Givens_iSWAP_Rz</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cG1(iSWAP_Rz)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">circ</span> <span class="o">=</span> <span class="n">circ</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span>
+    <span class="n">circ</span> <span class="o">=</span> <span class="n">circ</span><span class="o">.</span><span class="n">control</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circ</span></div>
+
+
+<div class="viewcode-block" id="apply_sqrt_iSWAP">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.apply_sqrt_iSWAP">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_sqrt_iSWAP</span><span class="p">(</span><span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply square root of iSWAP gate to quantum circuit.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        qc (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        i (int): First qubit index.</span>
+<span class="sd">        j (int): Second qubit index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sqrt_iSWAP_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="n">j</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">qc</span><span class="o">.</span><span class="n">unitary</span><span class="p">(</span><span class="n">sqrt_iSWAP_matrix</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sqrt_iSWAP&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Givens_iSWAP_Rz">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_iSWAP_Rz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Givens_iSWAP_Rz</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Givens rotation implementation using iSWAP and Rz gates.</span>
+<span class="sd">    </span>
+<span class="sd">    This implementation is based on Google&#39;s approach from </span>
+<span class="sd">    Science 369, 1084 (2020) - DOI: 10.1126/science.abb9811.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        circ (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        i (int): First qubit index.</span>
+<span class="sd">        j (int): Second qubit index.</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">apply_sqrt_iSWAP</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">theta</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">apply_sqrt_iSWAP</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">rz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Givens_magic">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_magic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Givens_magic</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimal Givens rotation using magic basis decomposition.</span>
+<span class="sd">    </span>
+<span class="sd">    This implementation is based on optimal quantum circuits for general </span>
+<span class="sd">    two-qubit gates from Phys. Rev. A 69, 032315 (2004).</span>
+<span class="sd">    It minimizes the number of CNOT gates required.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        circ (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        i (int): First qubit index.</span>
+<span class="sd">        j (int): Second qubit index.</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">        </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        Used in npj Quantum Information (2023) 9:60</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">sdg</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">sdg</span><span class="p">(</span><span class="n">j</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Givens_Xanadu">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_Xanadu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Givens_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Givens rotation implementation from Xanadu.</span>
+<span class="sd">    </span>
+<span class="sd">    Implementation based on the approach described in </span>
+<span class="sd">    Quantum 6, 742 (2022) - doi:10.22331/q-2022-06-20-742.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        circ (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        i (int): First qubit index.</span>
+<span class="sd">        j (int): Second qubit index.</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta_2</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta_2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta_2</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="G_gate">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.G_gate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">G_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Givens rotation gate using specified method.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">        method (str, optional): Implementation method. Options: &quot;magic&quot;, &quot;Xanadu&quot;, </span>
+<span class="sd">                               &quot;iSWAP_Rz&quot;. Defaults to &quot;magic&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Gate: Givens rotation gate.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If invalid method is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;magic&quot;</span><span class="p">:</span>
+        <span class="n">Givens_magic</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;G(magic)&quot;</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Xanadu&quot;</span><span class="p">:</span>
+        <span class="n">Givens_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;G(Xanadu)&quot;</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;iSWAP_Rz&quot;</span><span class="p">:</span>
+        <span class="n">Givens_iSWAP_Rz</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;G(iSWAP_Rz)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method for G_gate&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circ</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="Givens_2_Xanadu">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_2_Xanadu">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Givens_2_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Two-qubit pair Givens rotation using Xanadu method.</span>
+<span class="sd">    </span>
+<span class="sd">    Implements a four-qubit Givens rotation that acts on two qubit pairs</span>
+<span class="sd">    simultaneously. This is useful for efficient fermionic simulations.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        circ (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        i (int): First qubit of first pair.</span>
+<span class="sd">        j (int): Second qubit of first pair.</span>
+<span class="sd">        k (int): First qubit of second pair.</span>
+<span class="sd">        l (int): Second qubit of second pair.</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">/</span> <span class="mi">8</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">circ</span><span class="o">.</span><span class="n">cx</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="G2_gate">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.G2_gate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">G2_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Xanadu&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a two-pair Givens rotation gate.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        theta (float): Rotation angle parameter.</span>
+<span class="sd">        method (str, optional): Implementation method. Currently only &quot;Xanadu&quot; </span>
+<span class="sd">                               is supported. Defaults to &quot;Xanadu&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Gate: Two-pair Givens rotation gate acting on 4 qubits.</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If invalid method is provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Xanadu&quot;</span><span class="p">:</span>
+        <span class="n">Givens_2_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">circ</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;G2(Xanadu)&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid method for G2_gate: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">circ</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_idx_ancilla_in_string">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.get_idx_ancilla_in_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_idx_ancilla_in_string</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancilla</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Qiskit_ordering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get ancilla qubit index in measurement string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        n_qubit (int): Total number of qubits.</span>
+<span class="sd">        ancilla (int or None): Ancilla qubit index.</span>
+<span class="sd">        Qiskit_ordering (bool): Whether to use Qiskit qubit ordering.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int or None: Index of ancilla qubit in the measurement string,</span>
+<span class="sd">                    or None if no ancilla qubit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idx_ancilla</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">ancilla</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Qiskit_ordering</span><span class="p">:</span>
+            <span class="n">idx_ancilla</span> <span class="o">=</span> <span class="n">n_qubit</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">ancilla</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx_ancilla</span> <span class="o">=</span> <span class="n">ancilla</span>
+    <span class="k">return</span> <span class="n">idx_ancilla</span></div>
+
+
+
+<div class="viewcode-block" id="additional_qc">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.additional_qc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">additional_qc</span><span class="p">(</span><span class="n">qc_in</span><span class="p">,</span> <span class="n">pauli_str</span><span class="p">,</span> <span class="n">register_target</span><span class="p">,</span> <span class="n">Qiskit_order</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add basis rotation gates for Pauli string measurement.</span>
+<span class="sd">    </span>
+<span class="sd">    Applies the necessary basis rotation gates (H for X measurement, </span>
+<span class="sd">    SdgH for Y measurement) to measure a Pauli string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        qc_in (QuantumCircuit): Quantum circuit to modify.</span>
+<span class="sd">        pauli_str (str): Pauli string to measure.</span>
+<span class="sd">        register_target (list): List of target qubit indices.</span>
+<span class="sd">        Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering.</span>
+<span class="sd">                                      Defaults to True.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If invalid Pauli string character is encountered.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pauli_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Qiskit_order</span><span class="p">:</span>
+        <span class="n">pauli_str</span> <span class="o">=</span> <span class="n">pauli_str</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+            <span class="n">qc_in</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">register_target</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+            <span class="n">qc_in</span><span class="o">.</span><span class="n">sdg</span><span class="p">(</span><span class="n">register_target</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">qc_in</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">register_target</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span> <span class="ow">or</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Pauli string: &quot;</span><span class="p">,</span> <span class="n">pauli_str</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_idx_to_measure">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.get_idx_to_measure">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_idx_to_measure</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Qiskit_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get qubit indices that need to be measured for a Pauli string.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns indices of qubits that have non-identity Pauli operators</span>
+<span class="sd">    and therefore need to be measured.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        pauli_str (str): Pauli string.</span>
+<span class="sd">        Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering.</span>
+<span class="sd">                                      Defaults to True.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of qubit indices to measure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">Qiskit_order</span><span class="p">:</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">idxs</span></div>
+
+
+
+<div class="viewcode-block" id="expec_Zstring">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.expec_Zstring">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">expec_Zstring</span><span class="p">(</span>
+    <span class="n">res</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx_relevant</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Qiskit_ordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">ancilla_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate expectation value of Z-string measurement from results.</span>
+<span class="sd">    </span>
+<span class="sd">    Computes the expectation value of a Z-string Pauli operator from measurement results,</span>
+<span class="sd">    with optional ancilla qubit for some algorithms such as QKrylov.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        res (dict): Dictionary of measurement results {bitstring: count/weights}.</span>
+<span class="sd">                    values can be either raw counts (int) or normalized weights (float)</span>
+<span class="sd">        idx_relevant (list): List of relevant qubit indices for Z measurements.</span>
+<span class="sd">        Qiskit_ordering (bool, optional): Whether to use Qiskit ordering. </span>
+<span class="sd">                                         Defaults to True.</span>
+<span class="sd">        target_qubits (list, optional): List of target qubit indices. </span>
+<span class="sd">                                       Defaults to [].</span>
+<span class="sd">        ancilla_qubit (int, optional): Ancilla qubit index for post-selection. </span>
+<span class="sd">                                      Defaults to None.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: Tuple containing:</span>
+<span class="sd">            - exp_val (float): Overall expectation value.</span>
+<span class="sd">            - exp_val_p0 (float): Expectation value when ancilla=0.</span>
+<span class="sd">            - exp_val_p1 (float): Expectation value when ancilla=1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">exp_val</span> <span class="o">=</span> <span class="n">exp_val_p0</span> <span class="o">=</span> <span class="n">exp_val_p1</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">n_shot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">idx_ancilla</span> <span class="o">=</span> <span class="n">get_idx_ancilla_in_string</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">Qiskit_ordering</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bitstr</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">ancilla_qubit</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_qubits</span> <span class="o">!=</span> <span class="p">[]:</span>
+            <span class="n">bitstr_target</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">bitstr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">idx_ancilla</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bitstr_target</span> <span class="o">=</span> <span class="n">bitstr</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idx_relevant</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Qiskit_ordering</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">idx</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bitstr_target</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">tmp</span> <span class="o">*=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">bit</span>
+        <span class="n">exp_val</span> <span class="o">+=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">count</span>
+
+        <span class="k">if</span> <span class="n">ancilla_qubit</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">bitstr</span><span class="p">[</span><span class="n">idx_ancilla</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">exp_val_p0</span> <span class="o">+=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">count</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exp_val_p1</span> <span class="o">+=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">count</span>
+    <span class="n">exp_val</span> <span class="o">/=</span> <span class="n">n_shot</span>
+    <span class="n">exp_val_p0</span> <span class="o">/=</span> <span class="n">n_shot</span>
+    <span class="n">exp_val_p1</span> <span class="o">/=</span> <span class="n">n_shot</span>
+    <span class="k">return</span> <span class="n">exp_val</span><span class="p">,</span> <span class="n">exp_val_p0</span><span class="p">,</span> <span class="n">exp_val_p1</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
