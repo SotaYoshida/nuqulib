@@ -1,5 +1,14 @@
-nuqulib package
+NuQuLib
 ===============
+
+Module contents
+---------------
+
+.. automodule:: nuqulib
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 
 Submodules
 ----------
@@ -100,10 +109,3 @@ nuqulib.vqe\_example\_pennylane module
    :show-inheritance:
    :undoc-members:
 
-Module contents
----------------
-
-.. automodule:: nuqulib
-   :members:
-   :show-inheritance:
-   :undoc-members:
