@@ -5,6 +5,7 @@ including format conversions between different quantum computing
 frameworks, LaTeX formatting for nuclear notation, etc.
 """
 
+import itertools
 import re
 import numpy as np
 import pennylane as qml
@@ -182,3 +183,43 @@ def write_out_pytketCircuit_from_Qiskit(
     MyDict["circuit"] = tk_circ
     MyDict["name"] = circ_name
     np.save(fname, MyDict, allow_pickle=True)
+
+
+class Orbit_nljjztz:
+    """ Single particle state in the model space with n, l, j, jz, tz quanta. """
+    def __init__(self, n, l, j, jz, tz):
+        self.n = n
+        self.l = l
+        self.j = j
+        self.jz = jz
+        self.tz = tz
+        self.e = 2 * n + l
+
+
+class Orbit_nljtz:
+    """ Single particle state in the model space with n, l, j, tz quanta. """
+    def __init__(self, n, l, j, tz):
+        self.n = n
+        self.l = l
+        self.j = j
+        self.tz = tz
+        self.e = 2 * n + l
+
+class Orbit_nlj:
+    """ Single particle state in the model space with n, l, j quanta. """
+    def __init__(self, n, l, j):
+        self.n = n
+        self.l = l
+        self.j = j
+        self.e = 2 * n + l
+
+
+def get_spsidx_from_nljtz(single_particle_states: list, n, l, j, tz):
+    for idx, sps in enumerate(single_particle_states):
+        n_ = sps.n
+        l_ = sps.l
+        j_ = sps.j
+        tz_ = sps.tz
+        if n == n_ and l == l_ and j == j_ and tz == tz_:
+            return idx
+    raise ValueError(f"Single particle state with n={n}, l={l}, j={j}, tz={tz} not found in the model space.")

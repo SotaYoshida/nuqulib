@@ -11,14 +11,14 @@ The library is designed to work in conjunction with existing nuclear physics cod
 and supports various interaction formats used in nuclear structure calculations.
 """
 
+from .myutils import *
 from .ansatz import *
 from .circuits import *
 from .encoding import *
-from .myutils import *
 from .nft_opt_method import *
 from .pairwise import *
 from .pairing_hamiltonian import *
 from .postselection import *
 from .quantum_algorithms import *
-from .shellmodel_hamiltonian import *
+from .nuclear_hamiltonian import *
 from .vqe_example_pennylane import *

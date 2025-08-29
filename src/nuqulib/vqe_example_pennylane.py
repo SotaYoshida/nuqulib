@@ -10,7 +10,7 @@ import pennylane as qml
 import openfermion as of
 from pennylane import numpy as pnp  # pennylane numpy (using Torch for arrays)
 import matplotlib.pyplot as plt
-from .shellmodel_hamiltonian import *
+from .nuclear_hamiltonian import *
 
 
 def vqe_example_pennylane(
