@@ -334,7 +334,7 @@ def pair_ansatz_pennylane(
 
 def circuit_XXYY(
     qc_ansatz: QuantumCircuit,
-    adopted: bool,
+    adopted: str,
     Nq: int,
     methods_XXYY: str = "Google",
     backend:str | None = None,
