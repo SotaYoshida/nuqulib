@@ -44,7 +44,7 @@ jobs:
         run: poetry run pytest --cov=src/nuqulib --cov-report=xml --cov-report=term -s
 
       - name: Upload coverage reports to Codecov
-          uses: codecov/codecov-action@v5
-          with:
+        uses: codecov/codecov-action@v5
+        with:
             token: ${{ secrets.CODECOV_TOKEN }}
             slug: SotaYoshida/nuqulib
