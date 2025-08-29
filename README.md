@@ -1,5 +1,7 @@
 # NuQuLib
 
+[![codecov](https://codecov.io/github/SotaYoshida/nuqulib/graph/badge.svg?token=2DAZLO1N3U)](https://codecov.io/github/SotaYoshida/nuqulib)
+
 Nuclear Quantum Computing Library
 
 # Installation & Execution
