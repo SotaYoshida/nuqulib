@@ -102,7 +102,7 @@ def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False)
 
 
 class Hamiltonian:
-    """ Base class for Hamiltonian in the model space. 
+    """Base class for Hamiltonian in the model space. 
     
     This Hamiltonian class is used to read the NN and 3NF interaction files,
     both valence-space and no-core shell model (NCSM) interactions in snt format
