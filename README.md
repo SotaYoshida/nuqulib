@@ -22,3 +22,7 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
+# Documentation
+
+For more information on how to use NuQuLib, please refer to the official documentation:
+https://sotayoshida.github.io/nuqulib/
