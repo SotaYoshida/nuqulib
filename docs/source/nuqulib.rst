@@ -85,18 +85,11 @@ nuqulib.quantum\_algorithms module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.read\_me3jgz module
----------------------------
 
-.. automodule:: nuqulib.read_me3jgz
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-nuqulib.shellmodel\_hamiltonian module
+nuqulib.nuclear\_hamiltonian module
 --------------------------------------
 
-.. automodule:: nuqulib.shellmodel_hamiltonian
+.. automodule:: nuqulib.nuclear_hamiltonian
    :members:
    :show-inheritance:
    :undoc-members:
