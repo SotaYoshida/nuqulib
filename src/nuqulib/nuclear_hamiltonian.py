@@ -626,6 +626,23 @@ class Hamiltonian:
             return 0
 
     def op_dict_T1_permutations(self, op_dict, aa, bb, cc, dd, J, v):
+        """Add two-body operator terms with proper permutation symmetry.
+        
+        Adds fermionic operator terms to the operator dictionary, including
+        the necessary permutations for antisymmetrized matrix elements.
+        
+        Args:
+            op_dict (dict): Dictionary to store operator strings and coefficients.
+            aa, bb (int): Bra state indices.
+            cc, dd (int): Ket state indices.
+            J (int): Total angular momentum quantum number.
+            v (float): Matrix element value.
+            
+        Note:
+            For identical bra and ket configurations, only one term is added.
+            For different configurations, both direct and exchanged terms are included
+            to ensure proper antisymmetrization of fermionic operators.
+        """
         bitstr = "+_" + str(aa) + " +_" + str(bb) + " -_" + str(dd) + " -_" + str(cc)
         if [aa, bb] == [cc, dd]:
             if bitstr in op_dict:
@@ -2569,6 +2586,25 @@ def get_canonical_order_6j(j1: int, j2: int, j3: int, j4: int, j5: int, j6: int)
 def set_op_list_from_op_dict_3b(
     op_dict_3b, n_qubits_p, n_qubits_n, method="Jordan-Wigner"
 ):
+    """Map three-body force dictionary to Pauli operator list using parallel processing.
+    
+    Efficiently converts a dictionary of proton-neutron operator pairs to a list
+    of Pauli operators using the specified fermion-to-qubit mapping. Employs
+    multiprocessing for computational efficiency on large three-body matrices.
+    
+    Args:
+        op_dict_3b (dict): Dictionary of (proton_op, neutron_op) -> coefficient pairs.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        method (str, optional): Fermion-to-qubit mapping method. Defaults to "Jordan-Wigner".
+        
+    Returns:
+        list: List of (pauli_label, coefficient) tuples representing the mapped operators.
+        
+    Note:
+        Uses multiprocessing with fork context for efficient parallel processing.
+        The number of processes is set to cpu_count - 2 to avoid system overload.
+    """
     print("Setting up op_list...")
     # Prepare task arguments for each entry in op_dict_3b
     tasks = [
@@ -2724,6 +2760,22 @@ def removing_redundant_terms(ops: SparsePauliOp):
 
 
 def sum_over_J(Hamil):
+    """Sum two-body matrix elements over total angular momentum J.
+    
+    Combines two-body matrix elements with the same orbital indices but
+    different total angular momentum quantum numbers, which is needed
+    for certain nuclear structure calculations.
+    
+    Args:
+        Hamil (dict): Dictionary of Hamiltonian components with matrix element lists.
+        
+    Returns:
+        dict: Modified Hamiltonian dictionary with J-summed matrix elements.
+        
+    Note:
+        Single-particle energies (SPE) are passed through unchanged.
+        Two-body terms (Vpp, Vnn, Vpn) are combined over J quantum numbers.
+    """
     new_Hamil = {}
     for key in Hamil.keys():
         if key == "SPE":
