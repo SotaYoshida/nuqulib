@@ -1,3 +1,28 @@
+"""Nuclear Hamiltonian construction and manipulation module.
+
+This module provides functionality for constructing and manipulating nuclear
+Hamiltonians for quantum many-body calculations. It supports both valence-space 
+and no-core shell model (NCSM) interactions in the standard snt format used by
+nuclear physics codes such as KSHELL, NuHamil, and NuclearToolkit.jl.
+
+The module handles:
+- Two-body and three-body nuclear force interactions
+- M-scheme and J-T coupled representations
+- Mapping to fermionic operators and Pauli strings for quantum computing
+- Matrix element calculations and transformations
+- Quantum resource estimation for nuclear Hamiltonians
+
+Key Classes:
+- Hamiltonian: Main class for nuclear Hamiltonian construction and manipulation
+- JTcoupledOrbitals: Handler for J-T coupled orbital basis states
+- ReadThBME_me3jgz: Reader for three-body matrix elements in compressed format
+- sps_3Blab: Single-particle state manager for three-body calculations
+
+References:
+- T. Miyagi et al., "Ab initio multishell valence-space Hamiltonians", 
+  Eur. Phys. J. A 59, 150 (2023)
+"""
+
 import copy
 from collections import Counter
 import gzip
@@ -33,19 +58,55 @@ element = ['NA',
 
 
 class JTcoupledOrbitals:
-    """ Class to handle the JT coupled orbitals in the model space. """
+    """Class to handle J-T coupled orbitals in the model space.
+    
+    This class manages orbital states in the J-T (angular momentum - isospin) 
+    coupled basis, which is natural for nuclear many-body calculations. It provides
+    methods to add orbitals and convert between different single-particle state
+    representations.
+    
+    Attributes:
+        emax (int): Maximum excitation energy for orbitals.
+        orbitals (dict): Dictionary mapping orbital indices to Orbit_nlj objects.
+        dict_sps2JTorbitals (dict): Mapping from single-particle states to J-T orbitals.
+    """
+    
     def __init__(self, emax):
+        """Initialize J-T coupled orbitals manager.
+        
+        Args:
+            emax (int): Maximum excitation energy for orbitals in the model space.
+        """
         self.emax = emax
         self.orbitals = {}
         self.dict_sps2JTorbitals = {}
 
     def add_orbital(self, idx, n, l, j):
+        """Add an orbital to the J-T coupled basis.
+        
+        Args:
+            idx (int): Index identifier for the orbital.
+            n (int): Principal quantum number (radial).
+            l (int): Orbital angular momentum quantum number.
+            j (int): Total angular momentum quantum number (twice the actual value).
+        """
         self.orbitals[idx] = Orbit_nlj(n, l, j)
 
     def get_dict_sps2JTsps(self, sps_defined_in_NN):
-        """
-        Convert the single particle states (sps) to the JT coupled states.
-        The sps are defined when the NN interaction file is loaded.
+        """Convert single particle states to J-T coupled states.
+        
+        Maps the single particle states defined in the nuclear interaction files
+        to the J-T coupled orbital basis for consistent matrix element handling.
+        
+        Args:
+            sps_defined_in_NN (list): Single particle states from NN interaction file.
+            
+        Returns:
+            dict: Mapping from single-particle state indices to J-T orbital indices.
+            
+        Note:
+            The single-particle states are defined when the NN interaction file is loaded.
+            This method ensures compatibility between different representations.
         """
         print("sps_defined_in_NN", sps_defined_in_NN)
         dict_sps2JTorbitals = {}
@@ -67,9 +128,31 @@ class JTcoupledOrbitals:
 
 
 def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False):
-    """ Get the Hamiltonian from a snt file.
+    """Get nuclear Hamiltonian from snt interaction files.
 
-    This is a wrapper to call the Hamiltonian class
+    This is a convenience wrapper function that constructs a Hamiltonian object
+    and returns the mapped quantum operators ready for use in quantum algorithms.
+    It handles both two-body and three-body nuclear interactions.
+
+    Args:
+        filename_snt (str): Path to the snt format interaction file.
+        Z (int): Number of protons in the nucleus.
+        N (int): Number of neutrons in the nucleus.
+        fn_3NF (str, optional): Path to three-body force file. Defaults to "".
+        emax (int, optional): Maximum excitation energy for truncation. Defaults to 20.
+        e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.
+        ncsm (bool, optional): Whether using no-core shell model. Defaults to False.
+
+    Returns:
+        tuple: A tuple containing:
+            - hamil (Hamiltonian): The Hamiltonian object
+            - Hamil_ShellModel (SparsePauliOp): Mapped Hamiltonian as Pauli operators
+            - proton_qubits (list): Qubit indices corresponding to proton states
+            - neutron_qubits (list): Qubit indices corresponding to neutron states
+
+    Example:
+        >>> hamil, H_mapped, p_qubits, n_qubits = get_Hamiltonian("interaction.snt", 8, 8)
+        >>> print(f"Total qubits: {len(p_qubits) + len(n_qubits)}")
     """
     if fn_3NF != "":
         hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF)
@@ -102,12 +185,51 @@ def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False)
 
 
 class Hamiltonian:
-    """Base class for Hamiltonian in the model space. 
+    """Nuclear Hamiltonian constructor and manager for quantum many-body calculations.
     
-    This Hamiltonian class is used to read the NN and 3NF interaction files,
-    both valence-space and no-core shell model (NCSM) interactions in snt format
-    adopted in public codes, KSHELL, NuHamil, NuclearToolkit.jl, etc.
-
+    This class provides comprehensive functionality for constructing nuclear Hamiltonians
+    from standard interaction files, supporting both valence-space and no-core shell
+    model (NCSM) calculations. It handles two-body and three-body nuclear forces,
+    performs basis transformations, and maps to quantum operator representations.
+    
+    The class reads interaction files in the snt format used by nuclear physics
+    codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:
+    - Single-particle basis management
+    - Matrix element calculations and transformations
+    - M-scheme and J-T coupled representations
+    - Mapping to fermionic operators and Pauli strings
+    - Three-body force handling and optimization
+    
+    Attributes:
+        fn_NN (str): Path to two-body interaction file.
+        Z (int): Number of protons.
+        N (int): Number of neutrons.
+        Anum (int): Mass number (Z + N).
+        nucleus (str): Nuclear symbol (e.g., "16O").
+        emax (int): Maximum excitation energy for truncation.
+        ncsm (bool): Whether using no-core shell model.
+        hw (float): Harmonic oscillator frequency (for NCSM).
+        n_qubits (int): Total number of qubits needed.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        msps (list): M-scheme single-particle states.
+        v1b (list): One-body matrix elements.
+        v2b (list): Two-body matrix elements.
+        v3b_pn (dict): Three-body matrix elements in p-n representation.
+        v3b_Mscheme (dict): Three-body matrix elements in M-scheme.
+    
+    Example:
+        >>> # For valence-space calculation
+        >>> hamil = Hamiltonian("interaction.snt", Z=8, N=8)
+        >>> H_dict = hamil.get_mscheme_H(opform=True)
+        >>> 
+        >>> # For NCSM with three-body forces
+        >>> hamil = Hamiltonian("ncsm_int.snt", Z=4, N=4, 
+        ...                     fn_3NF="3nf.me3j.gz", ncsm=True, emax_truncate=2)
+    
+    References:
+        - T. Miyagi et al., Eur. Phys. J. A 59, 150 (2023)
+        - Standard snt format documentation
     """
 
     def __init__(
@@ -122,6 +244,33 @@ class Hamiltonian:
         verbose: bool=False,
         e3max: int|None=None,
     ):
+        """Initialize nuclear Hamiltonian from interaction files.
+        
+        Args:
+            fn_NN (str or PathLike): Path to two-body nuclear interaction file in snt format.
+            Z (int): Number of protons in the nucleus.
+            N (int): Number of neutrons in the nucleus.
+            fn_3NF (str, PathLike, or None, optional): Path to three-body force file.
+                Supports "readable.txt" and "me3j.gz" formats. Defaults to None.
+            ncsm (bool, optional): Whether to use no-core shell model. If True,
+                includes kinetic energy and center-of-mass corrections. Defaults to False.
+            emax_truncate (int, optional): Maximum excitation energy for model space
+                truncation. Defaults to 20.
+            Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering
+                convention. Defaults to True.
+            verbose (bool, optional): Enable verbose output for debugging. Defaults to False.
+            e3max (int, optional): Maximum excitation energy for three-body forces.
+                If None, uses emax_truncate value. Defaults to None.
+        
+        Raises:
+            ValueError: If three-body file format is not supported.
+            FileNotFoundError: If interaction files are not found.
+            
+        Note:
+            For NCSM calculations, the harmonic oscillator frequency is extracted
+            from the filename. Three-body forces require careful truncation
+            parameter matching between 2N and 3N interactions.
+        """
         self.channel = {-3: "ppp", -1: "ppn", 1: "pnn", 3: "nnn"}
         self.fn_NN = fn_NN
         self.Z = Z
@@ -210,6 +359,22 @@ class Hamiltonian:
             self.v3b_Mscheme = {}
 
     def guess_emax_from_fn(self, fn_3NF):
+        """Extract excitation energy parameters from three-body force filename.
+        
+        Attempts to parse the maximum excitation energies for one-body, two-body,
+        and three-body sectors from the three-body force filename pattern.
+        
+        Args:
+            fn_3NF (str): Path to three-body force file.
+            
+        Returns:
+            tuple: A tuple containing (e1max_file, e2max_file, e3max_file).
+                If parsing fails, returns default values based on emax_truncate.
+                
+        Note:
+            Expects filename pattern with "_ms{e1max}_{e2max}_{e3max}" substring.
+            Falls back to emax_truncate * {1, 2, 3} if parsing fails.
+        """
         e1max_file = e2max_file = e3max_file = None
         if fn_3NF is not None and "_ms" in fn_3NF:
             txt = fn_3NF.split("_ms")[-1].split(".")[0].split("_")
@@ -225,16 +390,51 @@ class Hamiltonian:
         return e1max_file, e2max_file, e3max_file
 
     def extract_hw(self):
+        """Extract harmonic oscillator frequency from NCSM interaction filename.
+        
+        Parses the harmonic oscillator frequency (hw) parameter from the filename
+        of NCSM interaction files, which typically contain "hw{value}" in the name.
+        
+        Returns:
+            float: Harmonic oscillator frequency in MeV.
+            
+        Note:
+            Required for NCSM calculations to properly scale kinetic energy terms.
+        """
         txt = self.fn_NN.split("hw")[-1]
         hw = txt.split("_")[0]
         return float(hw)
 
     def read_snt_file(self, fn_NN_in):  
-        """
-        To read (valence-)NN interaction file in snt format.
-
-        For NCSM, one-body matrix elements are purely kinetic terms, :math:`T_{n,n'}`.
-        :math:`\hbar\omega *(A-1)/A` factor is to be multiplied.
+        """Read nuclear interaction file in snt format.
+        
+        Parses nuclear interaction files containing single-particle energies and
+        two-body matrix elements in the standard snt format used by nuclear
+        physics codes like KSHELL and NuHamil.
+        
+        Args:
+            fn_NN_in (str or PathLike): Path to the snt format interaction file.
+            
+        Returns:
+            tuple: A tuple containing:
+                - nsp_p (int): Number of proton single-particle states
+                - nsp_n (int): Number of neutron single-particle states  
+                - core_p (int): Number of core protons
+                - core_n (int): Number of core neutrons
+                - single_particle_states (list): List of Orbit_nljtz objects
+                - v1b (list): One-body matrix elements as (a, b, value) tuples
+                - v2b (list): Two-body matrix elements as (a, b, c, d, J, value) tuples
+                
+        Note:
+            For NCSM calculations, one-body matrix elements represent kinetic terms
+            :math:`T_{n,n'}` with :math:`\\hbar\\omega (A-1)/A` scaling factor.
+            
+            The snt format supports both valence-space and NCSM interactions.
+            Mass-dependence factors :math:`(A/A_{ref})^p` are handled for empirical
+            shell model interactions.
+        
+        Raises:
+            FileNotFoundError: If the interaction file cannot be found.
         """
         with open(fn_NN_in) as f:
             lines = f.readlines()
@@ -347,6 +547,23 @@ class Hamiltonian:
         return nsp_p, nsp_n, core_p, core_n, single_particle_states, v1b, v2b
 
     def get_mscheme_sps(self):
+        """Generate M-scheme single-particle states from J-T coupled basis.
+        
+        Constructs the M-scheme (magnetic quantum number resolved) single-particle
+        states from the J-T coupled orbital basis. This includes expanding each
+        j-orbital into its 2j+1 magnetic substates and organizing them by particle type.
+        
+        Returns:
+            tuple: A tuple containing:
+                - proton_register (range): Qubit indices for proton states
+                - neutron_register (range): Qubit indices for neutron states  
+                - mps (list): List of Orbit_nljjztz objects representing M-scheme states
+                - dict_sps2msps (dict): Mapping from J-T states to M-scheme state lists
+                
+        Note:
+            The proton states are placed first in the qubit register, followed by
+            neutron states. This convention is used throughout the quantum mappings.
+        """
         mps = []
         dict_sps2msps = {}
         count = 0
@@ -384,6 +601,15 @@ class Hamiltonian:
         return proton_register, neutron_register, mps, dict_sps2msps
 
     def delta(self, morb_a, morb_b):
+        """Check if two M-scheme orbitals are identical.
+        
+        Args:
+            morb_a (Orbit_nljjztz): First M-scheme orbital.
+            morb_b (Orbit_nljjztz): Second M-scheme orbital.
+            
+        Returns:
+            int: 1 if orbitals are identical, 0 otherwise.
+        """
         n_a = morb_a.n
         l_a = morb_a.l
         j_a = morb_a.j
