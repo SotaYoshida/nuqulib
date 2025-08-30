@@ -14,13 +14,6 @@ The module handles:
 
 Key Classes:
 - Hamiltonian: Main class for nuclear Hamiltonian construction and manipulation
-- JTcoupledOrbitals: Handler for J-T coupled orbital basis states
-- ReadThBME_me3jgz: Reader for three-body matrix elements in compressed format
-- sps_3Blab: Single-particle state manager for three-body calculations
-
-References:
-- T. Miyagi et al., "Ab initio multishell valence-space Hamiltonians", 
-  Eur. Phys. J. A 59, 150 (2023)
 """
 
 import copy
@@ -58,17 +51,16 @@ element = ['NA',
 
 
 class JTcoupledOrbitals:
-    """Class to handle J-T coupled orbitals in the model space.
+    """Class to handle JT coupled orbitals in the model space.
     
-    This class manages orbital states in the J-T (angular momentum - isospin) 
-    coupled basis, which is natural for nuclear many-body calculations. It provides
-    methods to add orbitals and convert between different single-particle state
+    This class manages orbital states in the JT (angular momentum - isospin) coupled basis.
+    It provides methods to add orbitals and convert between different single-particle state
     representations.
     
     Attributes:
         emax (int): Maximum excitation energy for orbitals.
         orbitals (dict): Dictionary mapping orbital indices to Orbit_nlj objects.
-        dict_sps2JTorbitals (dict): Mapping from single-particle states to J-T orbitals.
+        dict_sps2JTorbitals (dict): Mapping from single-particle states to JT orbitals.
     """
     
     def __init__(self, emax):
@@ -128,7 +120,7 @@ class JTcoupledOrbitals:
 
 
 def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False):
-    """Get nuclear Hamiltonian from snt interaction files.
+    """Get nuclear Hamiltonian from interaction files.
 
     This is a convenience wrapper function that constructs a Hamiltonian object
     and returns the mapped quantum operators ready for use in quantum algorithms.
@@ -146,7 +138,7 @@ def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False)
     Returns:
         tuple: A tuple containing:
             - hamil (Hamiltonian): The Hamiltonian object
-            - Hamil_ShellModel (SparsePauliOp): Mapped Hamiltonian as Pauli operators
+            - H_mapped (SparsePauliOp): Mapped Hamiltonian as Pauli operators
             - proton_qubits (list): Qubit indices corresponding to proton states
             - neutron_qubits (list): Qubit indices corresponding to neutron states
 
