@@ -52,8 +52,8 @@ If you are willing to contribute to this package, please keep in mind the follow
    documentation, please follow the docstring format used in the
    existing code or refer to the Sphinx documentation for guidance.
 
---------------
+******************************
 LICENSE
---------------
+******************************
 
 Any contribution from you will be under the MIT License, as well as the package itself.

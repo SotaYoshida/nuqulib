@@ -27,7 +27,7 @@ Installation
 
 We assume you are using a virtual environment. If not, we recommend creating one.
 
-A recommended environment is `poetry`.
+A recommended environment to set up the dependencies and run NuQuLib is one like `poetry`.
 
 .. code-block:: bash
    :caption: poetry
@@ -50,8 +50,14 @@ Tutorials
 A tutorial notebook is available at `here <https://github.com/SotaYoshida/nuqulib/blob/main/examples/tutorial_NuQuLib.ipynb>`_.
 
 
-Indices and tables
-==================
+*************************
+API Reference
+*************************
 
-* :ref:`genindex`
-* :ref:`modindex`
+Please refer to :doc:`nuqulib` for detailed API reference.
+
+.. Indices and tables
+.. ==================
+
+.. * :ref:`genindex`
+.. * :ref:`modindex`
