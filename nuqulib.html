@@ -2041,9 +2041,9 @@ codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_JT">
-<span class="sig-name descname"><span class="pre">v3b_JT</span></span><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_JT" title="Link to this definition">¶</a></dt>
-<dd><p>Three-body matrix elements in JT-coupled scheme.</p>
+<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_pn">
+<span class="sig-name descname"><span class="pre">v3b_pn</span></span><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_pn" title="Link to this definition">¶</a></dt>
+<dd><p>Three-body matrix elements in p-n representation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
@@ -2335,12 +2335,20 @@ to ensure proper antisymmetrization of fermionic operators.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable">
 <span class="sig-name descname"><span class="pre">read_3NF_readable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.read_3NF_readable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable" title="Link to this definition">¶</a></dt>
-<dd><p>Read the NuHamil 3NF file in readable.text fmt.</p>
-<p>This method should be modified if the file is too large.</p>
+<dd><p>Read the NuHamil 3NF file in readable.text fmt and store JT-coupled 3NF.</p>
 <p>In readable.text, V_{3N} is given as a function of a set of quanta,
 {a,b,c, Jab, Tab, d,e,f, Jde, Tde, Jabc, Tabc, Jabc, Tabc}
 where a~f are the single particle states having {n,l,j} quanta.
-Those matrix elements correspond to Eq.(41) in NuHamil paper, <a class="reference external" href="https://doi.org/10.1140/epja/s10050-023-01039-y">T.Miyagi, EPJA (2023)59:150</a>.</p>
+Those matrix elements correspond to Eq.(41) in NuHamil paper, <a class="reference external" href="https://doi.org/10.1140/epja/s10050-023-01039-y">T.Miyagi, EPJA (2023)59:150</a>.
+Then, proton-neutron matrix elements are obtained through the Clebsch-Gordan coefficients as detailed in Eq.(36) of NuHamil paper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the 3NF matrix elements in the pn-coupled form.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2560,6 +2568,17 @@ by the e*max values defining the adopted model space.</p>
 <dd></dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Trans_JT_into_pn">
+<span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">Trans_JT_into_pn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jde</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tde</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ME</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pnME_3NF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">JTorbitals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_particle_states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CGdict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Trans_JT_into_pn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn" title="Link to this definition">¶</a></dt>
+<dd><p>Transforms the JT-coupled 3NF into the proton-neutron (single-particle) one.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Developers should be aware that pnME_3NF dict is
+destructively updated in this method.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.counting_CNOTs">
 <span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">counting_CNOTs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_mapped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_qubits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#counting_CNOTs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.counting_CNOTs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2763,12 +2782,6 @@ efficient parallel processing of large three-body force matrices.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.process_orbitals">
-<span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">process_orbitals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tab</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Jde</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tde</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ME</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">JTME_3NF</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">JTorbitals</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_particle_states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CGdict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#process_orbitals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.process_orbitals" title="Link to this definition">¶</a></dt>
-<dd><p>Note that JTME_3NF is updated in this method</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.removing_redundant_ops">
 <span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">removing_redundant_ops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#removing_redundant_ops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.removing_redundant_ops" title="Link to this definition">¶</a></dt>
 <dd><p>Remove redundant Pauli operators by combining terms with same labels.</p>
@@ -2812,7 +2825,8 @@ Combines terms with identical Pauli labels and removes negligible coefficients.<
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is used for final cleanup of mapped Hamiltonians before
-quantum algorithm applications.</p>
+quantum algorithm applications. Without this step, imaginary
+terms may persist and affect the results.</p>
 </div>
 </dd></dl>
 
@@ -2993,7 +3007,8 @@ Two-body terms (Vpp, Vnn, Vpn) are combined over J quantum numbers.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.truncate_v3bme">
 <span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">truncate_v3bme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_v3bme</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sps_3b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ThBME</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nreads_v3bme</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dWS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_idxheadThBME</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#truncate_v3bme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.truncate_v3bme" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Truncate JT-coupled 3NF matrix elements with specified model space truncations.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.unhash_key6j">
@@ -3317,7 +3332,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.msps"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.msps</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v1b"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.v1b</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v2b"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.v2b</span></code></a></li>
-<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_JT"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.v3b_JT</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_pn"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.v3b_pn</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.v3b_Mscheme"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.v3b_Mscheme</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.delta_jj"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.delta_jj()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.extract_hw"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.extract_hw()</span></code></a></li>
@@ -3351,6 +3366,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 </ul>
 </li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.RecouplingCG"><code class="docutils literal notranslate"><span class="pre">RecouplingCG()</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn"><code class="docutils literal notranslate"><span class="pre">Trans_JT_into_pn()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.counting_CNOTs"><code class="docutils literal notranslate"><span class="pre">counting_CNOTs()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.get_CGs_from_dict"><code class="docutils literal notranslate"><span class="pre">get_CGs_from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.get_Hamiltonian"><code class="docutils literal notranslate"><span class="pre">get_Hamiltonian()</span></code></a></li>
@@ -3368,7 +3384,6 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 </ul>
 </li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.process_op"><code class="docutils literal notranslate"><span class="pre">process_op()</span></code></a></li>
-<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.process_orbitals"><code class="docutils literal notranslate"><span class="pre">process_orbitals()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.removing_redundant_ops"><code class="docutils literal notranslate"><span class="pre">removing_redundant_ops()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.removing_redundant_terms"><code class="docutils literal notranslate"><span class="pre">removing_redundant_terms()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.set_op_list_from_op_dict_3b"><code class="docutils literal notranslate"><span class="pre">set_op_list_from_op_dict_3b()</span></code></a></li>

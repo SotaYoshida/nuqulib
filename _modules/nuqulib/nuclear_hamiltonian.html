@@ -457,7 +457,7 @@
 <span class="sd">        msps (list): M-scheme single-particle states.</span>
 <span class="sd">        v1b (list): One-body matrix elements.</span>
 <span class="sd">        v2b (list): Two-body matrix elements.</span>
-<span class="sd">        v3b_JT (dict): Three-body matrix elements in JT-coupled scheme.</span>
+<span class="sd">        v3b_pn (dict): Three-body matrix elements in p-n representation.</span>
 <span class="sd">        v3b_Mscheme (dict): Three-body matrix elements in M-scheme.</span>
 <span class="sd">    </span>
 <span class="sd">    Example:</span>
@@ -560,7 +560,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span> <span class="o">=</span> <span class="n">fn_3NF</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span> <span class="o">=</span> <span class="n">JTcoupledOrbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emax</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;readable.txt&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_3NF_readable</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_3NF_readable</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
             <span class="k">elif</span> <span class="s2">&quot;me3j.gz&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">:</span>
                 <span class="n">idx_sps</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">sps</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">:</span>
@@ -583,7 +583,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">JTME_3NF</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">pnME_3NF</span>
                 <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fn_3NF is now: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">)</span>
@@ -1234,19 +1234,20 @@
 <div class="viewcode-block" id="Hamiltonian.read_3NF_readable">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_3NF_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the NuHamil 3NF file in readable.text fmt.</span>
-
-<span class="sd">        This method should be modified if the file is too large.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the NuHamil 3NF file in readable.text fmt and store JT-coupled 3NF.</span>
 
 <span class="sd">        In readable.text, V_{3N} is given as a function of a set of quanta,</span>
 <span class="sd">        {a,b,c, Jab, Tab, d,e,f, Jde, Tde, Jabc, Tabc, Jabc, Tabc}</span>
 <span class="sd">        where a~f are the single particle states having {n,l,j} quanta.</span>
 <span class="sd">        Those matrix elements correspond to Eq.(41) in NuHamil paper, `T.Miyagi, EPJA (2023)59:150 &lt;https://doi.org/10.1140/epja/s10050-023-01039-y&gt;`_.</span>
-
+<span class="sd">        Then, proton-neutron matrix elements are obtained through the Clebsch-Gordan coefficients as detailed in Eq.(36) of NuHamil paper.</span>
+<span class="sd">                </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing the 3NF matrix elements in the pn-coupled form.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-        <span class="n">JTME_3NF</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pnME_3NF</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">sector</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;idx,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;n,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;l,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;j&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">):</span>
@@ -1286,23 +1287,23 @@
                         <span class="sa">f</span><span class="s2">&quot;a </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> b </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2"> c </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> Jab </span><span class="si">{</span><span class="n">Jab</span><span class="si">}</span><span class="s2"> Tab </span><span class="si">{</span><span class="n">Tab</span><span class="si">}</span><span class="s2"> d </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2"> e </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> f </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> Jde </span><span class="si">{</span><span class="n">Jde</span><span class="si">}</span><span class="s2"> Tde </span><span class="si">{</span><span class="n">Tde</span><span class="si">}</span><span class="s2"> Jtot </span><span class="si">{</span><span class="n">Jabc</span><span class="si">}</span><span class="s2"> Ttot </span><span class="si">{</span><span class="n">Tabc</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
                 
-                <span class="n">process_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span>
-                                 <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> <span class="n">Jabc</span><span class="p">,</span> <span class="n">Tabc</span><span class="p">,</span> <span class="n">ME</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">,</span>
+                <span class="n">Trans_JT_into_pn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span>
+                                 <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> <span class="n">Jabc</span><span class="p">,</span> <span class="n">Tabc</span><span class="p">,</span> <span class="n">ME</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">,</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">,</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JTME_3NF&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pnME_3NF&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jabc</span> <span class="o">=</span> <span class="n">key</span>
                 <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.e-8</span><span class="p">:</span>
                    <span class="k">continue</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pn_a </span><span class="si">{</span><span class="n">pn_a</span><span class="si">}</span><span class="s2"> pn_b </span><span class="si">{</span><span class="n">pn_b</span><span class="si">}</span><span class="s2"> pn_c </span><span class="si">{</span><span class="n">pn_c</span><span class="si">}</span><span class="s2"> pn_d </span><span class="si">{</span><span class="n">pn_d</span><span class="si">}</span><span class="s2"> pn_e </span><span class="si">{</span><span class="n">pn_e</span><span class="si">}</span><span class="s2"> pn_f </span><span class="si">{</span><span class="n">pn_f</span><span class="si">}</span><span class="s2"> Jab </span><span class="si">{</span><span class="n">Jab</span><span class="si">}</span><span class="s2"> Jde </span><span class="si">{</span><span class="n">Jde</span><span class="si">}</span><span class="s2"> Jabc </span><span class="si">{</span><span class="n">Jabc</span><span class="si">}</span><span class="s2"> value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;Total number of 3NF matrix elements in pn J-coupld form&quot;</span><span class="p">,</span>
-                <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">JTME_3NF</span></div>
+        <span class="k">return</span> <span class="n">pnME_3NF</span></div>
 
 
 
@@ -1330,7 +1331,7 @@
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting pn J-coupled 3NF to mscheme...&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting up 3NF matrix elements in mscheme...&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ME_3n_pn</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ME_3n_pn</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jabc</span> <span class="o">=</span> <span class="n">key</span>
             <span class="n">orb_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">pn_a</span><span class="p">]</span>
             <span class="n">ja_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">orb_a</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -1871,7 +1872,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;norm(v3bme):&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">JTME_3NF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">,</span> <span class="n">array_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pnME_3NF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">,</span> <span class="n">array_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.get_modelspace">
@@ -2086,7 +2087,7 @@
         <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
         <span class="n">e1max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e1max</span>
         <span class="n">e3max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span>
-        <span class="n">JTME_3NF</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">pnME_3NF</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
         <span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">total_dim</span> <span class="o">=</span> <span class="n">non_zero_term</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Loop over indices (assumed 1-indexed and odd numbers)</span>
@@ -2175,10 +2176,10 @@
                                                         <span class="n">ff</span> <span class="o">=</span> <span class="n">f</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
                                                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                                                             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aa</span><span class="si">:</span><span class="s2">&lt;3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bb</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cc</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">Jab</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Tab</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">dd</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ee</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ff</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">Jde</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">Tde</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">] : </span><span class="si">{</span><span class="n">J3</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">T3</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> v </span><span class="si">{</span><span class="n">v3val</span><span class="si">:</span><span class="s2"> 15.10f</span><span class="si">}</span><span class="s2"> Tindex </span><span class="si">{</span><span class="n">Tindex</span><span class="si">}</span><span class="s2"> idx_3bme </span><span class="si">{</span><span class="n">total_dim</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                                                        <span class="n">process_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> 
+                                                        <span class="n">Trans_JT_into_pn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> 
                                                                          <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span> 
                                                                          <span class="n">dd</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> 
-                                                                         <span class="n">J3</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">v3val</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">,</span>
+                                                                         <span class="n">J3</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">v3val</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">)</span>
@@ -2209,101 +2210,108 @@
         <span class="k">elif</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;checking dim for readable.txt...&quot;</span><span class="p">,</span> <span class="n">non_zero_term</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">JTME_3NF</span></div>
+            <span class="k">return</span> <span class="n">pnME_3NF</span></div>
 </div>
 
+        
 
-
-<div class="viewcode-block" id="process_orbitals">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.process_orbitals">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">process_orbitals</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<div class="viewcode-block" id="Trans_JT_into_pn">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Trans_JT_into_pn</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                     <span class="n">J3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">T3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ME</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span>
+                     <span class="n">J3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">T3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ME</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span>
                      <span class="n">JTorbitals</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">single_particle_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
                      <span class="n">CGdict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms the JT-coupled 3NF into the proton-neutron (single-particle) one.</span>
 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Note that JTME_3NF is updated in this method &quot;&quot;&quot;</span>
-        <span class="n">orb_a</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-        <span class="n">orb_b</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-        <span class="n">orb_c</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-        <span class="n">orb_d</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
-        <span class="n">orb_e</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
-        <span class="n">orb_f</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">tz_a</span><span class="p">,</span> <span class="n">tz_b</span><span class="p">,</span> <span class="n">tz_c</span><span class="p">,</span> <span class="n">tz_d</span><span class="p">,</span> <span class="n">tz_e</span><span class="p">,</span> <span class="n">tz_f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
-            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">6</span>
-        <span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span> <span class="o">+</span> <span class="n">tz_f</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tab</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tde</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="n">pn_a</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_a</span>
-            <span class="p">)</span>
-            <span class="n">pn_b</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_b</span>
-            <span class="p">)</span>
-            <span class="n">pn_c</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_c</span>
-            <span class="p">)</span>
-            <span class="n">pn_d</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_d</span>
-            <span class="p">)</span>
-            <span class="n">pn_e</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_e</span>
-            <span class="p">)</span>
-            <span class="n">pn_f</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
-                <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_f</span>
-            <span class="p">)</span>
-            <span class="n">Tz_bra</span> <span class="o">=</span> <span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span>
-            <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># nnn</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># pnn</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">Z</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># npp</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span> <span class="ow">and</span> <span class="n">Z</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># ppp</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Tz_bra</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">T3</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="n">pnkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">J3</span><span class="p">)</span>
-            <span class="n">cg_1</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
-                <span class="mi">1</span><span class="p">,</span> <span class="n">tz_a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_b</span><span class="p">,</span> <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">),</span> <span class="n">CGdict</span>
-            <span class="p">)</span>
-            <span class="n">cg_2</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
-                <span class="mi">1</span><span class="p">,</span> <span class="n">tz_d</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_e</span><span class="p">,</span> <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">),</span> <span class="n">CGdict</span>
-            <span class="p">)</span>
-            <span class="n">cg_3</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
-                <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_c</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span><span class="p">),</span> <span class="n">CGdict</span>
-            <span class="p">)</span>
-            <span class="n">cg_4</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
-                <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_f</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span> <span class="o">+</span> <span class="n">tz_f</span><span class="p">),</span> <span class="n">CGdict</span>
-            <span class="p">)</span>
-            <span class="n">cgfact</span> <span class="o">=</span> <span class="n">cg_1</span> <span class="o">*</span> <span class="n">cg_2</span> <span class="o">*</span> <span class="n">cg_3</span> <span class="o">*</span> <span class="n">cg_4</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cgfact</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-8</span><span class="p">:</span>
-                <span class="k">continue</span>
+<span class="sd">    Note:</span>
+<span class="sd">        Developers should be aware that pnME_3NF dict is</span>
+<span class="sd">        destructively updated in this method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">orb_a</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+    <span class="n">orb_b</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+    <span class="n">orb_c</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">orb_d</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+    <span class="n">orb_e</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
+    <span class="n">orb_f</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">tz_a</span><span class="p">,</span> <span class="n">tz_b</span><span class="p">,</span> <span class="n">tz_c</span><span class="p">,</span> <span class="n">tz_d</span><span class="p">,</span> <span class="n">tz_e</span><span class="p">,</span> <span class="n">tz_f</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
+        <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">6</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span> <span class="o">+</span> <span class="n">tz_f</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tab</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tde</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">pn_a</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_a</span>
+        <span class="p">)</span>
+        <span class="n">pn_b</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_b</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_b</span>
+        <span class="p">)</span>
+        <span class="n">pn_c</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_c</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_c</span>
+        <span class="p">)</span>
+        <span class="n">pn_d</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_d</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_d</span>
+        <span class="p">)</span>
+        <span class="n">pn_e</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_e</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_e</span>
+        <span class="p">)</span>
+        <span class="n">pn_f</span> <span class="o">=</span> <span class="n">get_spsidx_from_nljtz</span><span class="p">(</span>
+            <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb_f</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">tz_f</span>
+        <span class="p">)</span>
+        <span class="n">Tz_bra</span> <span class="o">=</span> <span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span>
+        <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># nnn</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">Z</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">N</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># pnn</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">Z</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># npp</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">Tz_bra</span> <span class="o">==</span> <span class="o">-</span><span class="mi">3</span> <span class="ow">and</span> <span class="n">Z</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span> <span class="c1"># ppp</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Tz_bra</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">T3</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">pnkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">J3</span><span class="p">)</span>
+        <span class="n">cg_1</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="n">tz_a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_b</span><span class="p">,</span> <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">),</span> <span class="n">CGdict</span>
+        <span class="p">)</span>
+        <span class="n">cg_2</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="n">tz_d</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_e</span><span class="p">,</span> <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">),</span> <span class="n">CGdict</span>
+        <span class="p">)</span>
+        <span class="n">cg_3</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+            <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_c</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span> <span class="o">+</span> <span class="n">tz_c</span><span class="p">),</span> <span class="n">CGdict</span>
+        <span class="p">)</span>
+        <span class="n">cg_4</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+            <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz_f</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="p">(</span><span class="n">tz_d</span> <span class="o">+</span> <span class="n">tz_e</span> <span class="o">+</span> <span class="n">tz_f</span><span class="p">),</span> <span class="n">CGdict</span>
+        <span class="p">)</span>
+        <span class="n">cgfact</span> <span class="o">=</span> <span class="n">cg_1</span> <span class="o">*</span> <span class="n">cg_2</span> <span class="o">*</span> <span class="n">cg_3</span> <span class="o">*</span> <span class="n">cg_4</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cgfact</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-8</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">ME</span> <span class="o">*</span> <span class="n">cgfact</span>
+        <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+
+        <span class="c1"># bra &lt;-&gt; ket permutations must be considered, since they are absent in readable.text format</span>
+        <span class="k">if</span> <span class="n">pnkey</span> <span class="o">!=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">):</span>
+            <span class="n">pnkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">)</span>
             <span class="n">part</span> <span class="o">=</span> <span class="n">ME</span> <span class="o">*</span> <span class="n">cgfact</span>
-            <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
+            <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
-
-            <span class="c1"># bra &lt;-&gt; ket permutations must be considered, since they are absent in readable.text format</span>
-            <span class="k">if</span> <span class="n">pnkey</span> <span class="o">!=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">):</span>
-                <span class="n">pnkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">)</span>
-                <span class="n">part</span> <span class="o">=</span> <span class="n">ME</span> <span class="o">*</span> <span class="n">cgfact</span>
-                <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span></div>
+                <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span></div>
 
 
 
 <div class="viewcode-block" id="truncate_v3bme">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.truncate_v3bme">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">truncate_v3bme</span><span class="p">(</span><span class="n">dim_v3bme</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">ThBME</span><span class="p">,</span> <span class="n">nreads_v3bme</span><span class="p">,</span> <span class="n">dWS</span><span class="p">,</span> <span class="n">dict_idxheadThBME</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Truncate JT-coupled 3NF matrix elements with specified model space truncations.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">v3bme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim_v3bme</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">e1max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e1max</span>
     <span class="n">e2max</span> <span class="o">=</span> <span class="n">e1max</span> <span class="o">*</span> <span class="mi">2</span>
@@ -2377,15 +2385,7 @@
                             <span class="p">):</span>
                                 <span class="k">continue</span>
                             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_check</span><span class="p">(</span>
-                                <span class="n">ea</span><span class="p">,</span>
-                                <span class="n">eb</span><span class="p">,</span>
-                                <span class="n">ec</span><span class="p">,</span>
-                                <span class="n">ed</span><span class="p">,</span>
-                                <span class="n">ee</span><span class="p">,</span>
-                                <span class="n">ef</span><span class="p">,</span>
-                                <span class="n">e1max_file</span><span class="p">,</span>
-                                <span class="n">e2max_file</span><span class="p">,</span>
-                                <span class="n">e3max_file</span><span class="p">,</span>
+                                <span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max_file</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">,</span>
                             <span class="p">):</span>
                                 <span class="k">continue</span>
 
@@ -2877,7 +2877,8 @@
 <span class="sd">        </span>
 <span class="sd">    Note:</span>
 <span class="sd">        This is used for final cleanup of mapped Hamiltonians before</span>
-<span class="sd">        quantum algorithm applications.</span>
+<span class="sd">        quantum algorithm applications. Without this step, imaginary</span>
+<span class="sd">        terms may persist and affect the results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">paulis</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">coeffs</span>
