@@ -207,7 +207,7 @@ class Hamiltonian:
         msps (list): M-scheme single-particle states.
         v1b (list): One-body matrix elements.
         v2b (list): Two-body matrix elements.
-        v3b_JT (dict): Three-body matrix elements in JT-coupled scheme.
+        v3b_pn (dict): Three-body matrix elements in p-n representation.
         v3b_Mscheme (dict): Three-body matrix elements in M-scheme.
     
     Example:
@@ -310,7 +310,7 @@ class Hamiltonian:
             self.fn_3NF = fn_3NF
             self.JTorbitals = JTcoupledOrbitals(self.emax)
             if "readable.txt" in self.fn_3NF:
-                self.v3b_JT = self.read_3NF_readable(verbose=verbose)
+                self.v3b_pn = self.read_3NF_readable(verbose=verbose)
             elif "me3j.gz" in self.fn_3NF:
                 idx_sps = 0
                 for sps in self.single_particle_states:
@@ -333,7 +333,7 @@ class Hamiltonian:
                     self.CG_dict,
                     verbose=self.verbose
                 )
-                self.v3b_JT = obj.JTME_3NF
+                self.v3b_pn = obj.pnME_3NF
                 obj = None
             else:
                 print("fn_3NF is now: ", self.fn_3NF)
@@ -952,19 +952,20 @@ class Hamiltonian:
         raise ValueError("Requested M-scheme state not found.")
 
     def read_3NF_readable(self, verbose=False):
-        """Read the NuHamil 3NF file in readable.text fmt.
-
-        This method should be modified if the file is too large.
+        """Read the NuHamil 3NF file in readable.text fmt and store JT-coupled 3NF.
 
         In readable.text, V_{3N} is given as a function of a set of quanta,
         {a,b,c, Jab, Tab, d,e,f, Jde, Tde, Jabc, Tabc, Jabc, Tabc}
         where a~f are the single particle states having {n,l,j} quanta.
         Those matrix elements correspond to Eq.(41) in NuHamil paper, `T.Miyagi, EPJA (2023)59:150 <https://doi.org/10.1140/epja/s10050-023-01039-y>`_.
-
+        Then, proton-neutron matrix elements are obtained through the Clebsch-Gordan coefficients as detailed in Eq.(36) of NuHamil paper.
+                
+        Returns:
+            dict: A dictionary containing the 3NF matrix elements in the pn-coupled form.
         """
         with open(self.fn_3NF, "r") as f:
             lines = f.readlines()
-        JTME_3NF = {}
+        pnME_3NF = {}
         sector = 0
         for line in lines:
             if ("idx," in line) and ("n," in line) and ("l," in line) and ("j" in line):
@@ -1004,23 +1005,23 @@ class Hamiltonian:
                         f"a {a} b {b} c {c} Jab {Jab} Tab {Tab} d {d} e {e} f {f} Jde {Jde} Tde {Tde} Jtot {Jabc} Ttot {Tabc}"
                     )
                 
-                process_orbitals(self.Z, self.N, a, b, c, Jab, Tab,
-                                 d, e, f, Jde, Tde, Jabc, Tabc, ME, JTME_3NF,
+                Trans_JT_into_pn(self.Z, self.N, a, b, c, Jab, Tab,
+                                 d, e, f, Jde, Tde, Jabc, Tabc, ME, pnME_3NF,
                                  self.JTorbitals, self.single_particle_states,
                                  self.CG_dict)
 
         if verbose:
-            print("JTME_3NF")
-            for key, value in JTME_3NF.items():
+            print("pnME_3NF")
+            for key, value in pnME_3NF.items():
                 pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, Jabc = key
                 if abs(value) < 1.e-8:
                    continue
                 print(f"pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} value {value}")
             print(
                 "Total number of 3NF matrix elements in pn J-coupld form",
-                len(list(JTME_3NF.keys())),
+                len(list(pnME_3NF.keys())),
             )
-        return JTME_3NF
+        return pnME_3NF
 
 
     def set_mscheme_3NF(self, dev_mode=True, verbose=False):
@@ -1045,7 +1046,7 @@ class Hamiltonian:
         if verbose:
             print("Converting pn J-coupled 3NF to mscheme...")
         print("Setting up 3NF matrix elements in mscheme...")
-        for key, ME_3n_pn in tqdm(self.v3b_JT.items()):
+        for key, ME_3n_pn in tqdm(self.v3b_pn.items()):
             pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, Jabc = key
             orb_a = self.single_particle_states[pn_a]
             ja_range = range(-orb_a.j, orb_a.j + 1, 2)
@@ -1546,7 +1547,7 @@ class ReadThBME_me3jgz:
                 self.dict_idxheadThBME,
             )
         print(f"norm(v3bme):", np.linalg.norm(self.v3bme))
-        self.JTME_3NF = self.loop_over_JT(self.sps_3b, what_you_need="me3j->readable.txt", array_in=self.v3bme)
+        self.pnME_3NF = self.loop_over_JT(self.sps_3b, what_you_need="me3j->readable.txt", array_in=self.v3bme)
 
 
     def get_modelspace(self, e1max, e1max_file, e2max, e3max, e3max_file):
@@ -1750,7 +1751,7 @@ class ReadThBME_me3jgz:
         sps = sps_3b.sps
         e1max = sps_3b.e1max
         e3max = sps_3b.e3max
-        JTME_3NF = { }
+        pnME_3NF = { }
         dict_3b_idx = {}
         total_dim = non_zero_term = 0
         # Loop over indices (assumed 1-indexed and odd numbers)
@@ -1839,10 +1840,10 @@ class ReadThBME_me3jgz:
                                                         ff = f // 2 + 1
                                                         if self.verbose:
                                                             print(f"{aa:<3d} {bb:3d} {cc:3d} [{Jab:3d} {Tab:2d}] {dd:3d} {ee:3d} {ff:3d} [{Jde:3d} {Tde:2d}] : {J3:3d} {T3:2d} v {v3val: 15.10f} Tindex {Tindex} idx_3bme {total_dim}")
-                                                        process_orbitals(self.Z, self.N, 
+                                                        Trans_JT_into_pn(self.Z, self.N, 
                                                                          aa, bb, cc, Jab, Tab, 
                                                                          dd, ee, ff, Jde, Tde, 
-                                                                         J3, T3, v3val, JTME_3NF,
+                                                                         J3, T3, v3val, pnME_3NF,
                                                                          self.JTorbitals,
                                                                          self.single_particle_states,
                                                                          self.CG_dict)
@@ -1873,94 +1874,101 @@ class ReadThBME_me3jgz:
         elif what_you_need == "me3j->readable.txt":
             if self.verbose:
                 print("checking dim for readable.txt...", non_zero_term, "/", total_dim)
-            return JTME_3NF
+            return pnME_3NF
+        
 
-
-def process_orbitals(Z: int, N: int,
+def Trans_JT_into_pn(Z: int, N: int,
                      a: int, b: int, c: int, Jab: int, Tab: int,
                      d: int, e: int, f: int, Jde: int, Tde: int,
-                     J3: int, T3: int, ME:float, JTME_3NF:dict,
+                     J3: int, T3: int, ME:float, pnME_3NF:dict,
                      JTorbitals: dict, single_particle_states: list,
                      CGdict: dict):
+    """Transforms the JT-coupled 3NF into the proton-neutron (single-particle) one.
 
-        """ Note that JTME_3NF is updated in this method """
-        orb_a = JTorbitals.orbitals[a]
-        orb_b = JTorbitals.orbitals[b]
-        orb_c = JTorbitals.orbitals[c]
-        orb_d = JTorbitals.orbitals[d]
-        orb_e = JTorbitals.orbitals[e]
-        orb_f = JTorbitals.orbitals[f]
-        for tz_a, tz_b, tz_c, tz_d, tz_e, tz_f in itertools.product(
-            [-1, 1], repeat=6
-        ):
-            if (tz_a + tz_b + tz_c) != (tz_d + tz_e + tz_f):
-                continue
-            if (tz_a + tz_b) > 2 * Tab:
-                continue
-            if (tz_d + tz_e) > 2 * Tde:
-                continue
-            pn_a = get_spsidx_from_nljtz(
-                single_particle_states, orb_a.n, orb_a.l, orb_a.j, tz_a
-            )
-            pn_b = get_spsidx_from_nljtz(
-                single_particle_states, orb_b.n, orb_b.l, orb_b.j, tz_b
-            )
-            pn_c = get_spsidx_from_nljtz(
-                single_particle_states, orb_c.n, orb_c.l, orb_c.j, tz_c
-            )
-            pn_d = get_spsidx_from_nljtz(
-                single_particle_states, orb_d.n, orb_d.l, orb_d.j, tz_d
-            )
-            pn_e = get_spsidx_from_nljtz(
-                single_particle_states, orb_e.n, orb_e.l, orb_e.j, tz_e
-            )
-            pn_f = get_spsidx_from_nljtz(
-                single_particle_states, orb_f.n, orb_f.l, orb_f.j, tz_f
-            )
-            Tz_bra = tz_a + tz_b + tz_c
-            if Tz_bra == 3 and N < 3: # nnn
-                continue
-            if Tz_bra == 1 and (Z == 0 or N <= 1): # pnn
-                continue
-            if Tz_bra == -1 and (N == 0 or Z <= 1): # npp
-                continue
-            if Tz_bra == -3 and Z < 3: # ppp
-                continue
-            if abs(Tz_bra) > T3:
-                continue
-            pnkey = (pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, J3)
-            cg_1 = get_CGs_from_dict(
-                1, tz_a, 1, tz_b, Tab * 2, (tz_a + tz_b), CGdict
-            )
-            cg_2 = get_CGs_from_dict(
-                1, tz_d, 1, tz_e, Tde * 2, (tz_d + tz_e), CGdict
-            )
-            cg_3 = get_CGs_from_dict(
-                Tab * 2, (tz_a + tz_b), 1, tz_c, T3, (tz_a + tz_b + tz_c), CGdict
-            )
-            cg_4 = get_CGs_from_dict(
-                Tde * 2, (tz_d + tz_e), 1, tz_f, T3, (tz_d + tz_e + tz_f), CGdict
-            )
-            cgfact = cg_1 * cg_2 * cg_3 * cg_4
-            if abs(cgfact) < 1.0e-8:
-                continue
+    Note:
+        Developers should be aware that pnME_3NF dict is
+        destructively updated in this method.
+    """
+    orb_a = JTorbitals.orbitals[a]
+    orb_b = JTorbitals.orbitals[b]
+    orb_c = JTorbitals.orbitals[c]
+    orb_d = JTorbitals.orbitals[d]
+    orb_e = JTorbitals.orbitals[e]
+    orb_f = JTorbitals.orbitals[f]
+    for tz_a, tz_b, tz_c, tz_d, tz_e, tz_f in itertools.product(
+        [-1, 1], repeat=6
+    ):
+        if (tz_a + tz_b + tz_c) != (tz_d + tz_e + tz_f):
+            continue
+        if (tz_a + tz_b) > 2 * Tab:
+            continue
+        if (tz_d + tz_e) > 2 * Tde:
+            continue
+        pn_a = get_spsidx_from_nljtz(
+            single_particle_states, orb_a.n, orb_a.l, orb_a.j, tz_a
+        )
+        pn_b = get_spsidx_from_nljtz(
+            single_particle_states, orb_b.n, orb_b.l, orb_b.j, tz_b
+        )
+        pn_c = get_spsidx_from_nljtz(
+            single_particle_states, orb_c.n, orb_c.l, orb_c.j, tz_c
+        )
+        pn_d = get_spsidx_from_nljtz(
+            single_particle_states, orb_d.n, orb_d.l, orb_d.j, tz_d
+        )
+        pn_e = get_spsidx_from_nljtz(
+            single_particle_states, orb_e.n, orb_e.l, orb_e.j, tz_e
+        )
+        pn_f = get_spsidx_from_nljtz(
+            single_particle_states, orb_f.n, orb_f.l, orb_f.j, tz_f
+        )
+        Tz_bra = tz_a + tz_b + tz_c
+        if Tz_bra == 3 and N < 3: # nnn
+            continue
+        if Tz_bra == 1 and (Z == 0 or N <= 1): # pnn
+            continue
+        if Tz_bra == -1 and (N == 0 or Z <= 1): # npp
+            continue
+        if Tz_bra == -3 and Z < 3: # ppp
+            continue
+        if abs(Tz_bra) > T3:
+            continue
+        pnkey = (pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, J3)
+        cg_1 = get_CGs_from_dict(
+            1, tz_a, 1, tz_b, Tab * 2, (tz_a + tz_b), CGdict
+        )
+        cg_2 = get_CGs_from_dict(
+            1, tz_d, 1, tz_e, Tde * 2, (tz_d + tz_e), CGdict
+        )
+        cg_3 = get_CGs_from_dict(
+            Tab * 2, (tz_a + tz_b), 1, tz_c, T3, (tz_a + tz_b + tz_c), CGdict
+        )
+        cg_4 = get_CGs_from_dict(
+            Tde * 2, (tz_d + tz_e), 1, tz_f, T3, (tz_d + tz_e + tz_f), CGdict
+        )
+        cgfact = cg_1 * cg_2 * cg_3 * cg_4
+        if abs(cgfact) < 1.0e-8:
+            continue
+        part = ME * cgfact
+        if pnkey in pnME_3NF.keys():
+            pnME_3NF[pnkey] += part
+        else:
+            pnME_3NF[pnkey] = part
+
+        # bra <-> ket permutations must be considered, since they are absent in readable.text format
+        if pnkey != (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, J3):
+            pnkey = (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, J3)
             part = ME * cgfact
-            if pnkey in JTME_3NF.keys():
-                JTME_3NF[pnkey] += part
+            if pnkey in pnME_3NF.keys():
+                pnME_3NF[pnkey] += part
             else:
-                JTME_3NF[pnkey] = part
-
-            # bra <-> ket permutations must be considered, since they are absent in readable.text format
-            if pnkey != (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, J3):
-                pnkey = (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, J3)
-                part = ME * cgfact
-                if pnkey in JTME_3NF.keys():
-                    JTME_3NF[pnkey] += part
-                else:
-                    JTME_3NF[pnkey] = part
+                pnME_3NF[pnkey] = part
 
 
 def truncate_v3bme(dim_v3bme, sps_3b, ThBME, nreads_v3bme, dWS, dict_idxheadThBME):
+    """Truncate JT-coupled 3NF matrix elements with specified model space truncations.
+
+    """
     v3bme = np.zeros(dim_v3bme, dtype=np.float64)
     e1max = sps_3b.e1max
     e2max = e1max * 2
@@ -2034,15 +2042,7 @@ def truncate_v3bme(dim_v3bme, sps_3b, ThBME, nreads_v3bme, dWS, dict_idxheadThBM
                             ):
                                 continue
                             if not valid_check(
-                                ea,
-                                eb,
-                                ec,
-                                ed,
-                                ee,
-                                ef,
-                                e1max_file,
-                                e2max_file,
-                                e3max_file,
+                                ea, eb, ec, ed, ee, ef, e1max_file, e2max_file, e3max_file,
                             ):
                                 continue
 
@@ -2489,7 +2489,8 @@ def removing_redundant_terms(ops: SparsePauliOp):
         
     Note:
         This is used for final cleanup of mapped Hamiltonians before
-        quantum algorithm applications.
+        quantum algorithm applications. Without this step, imaginary
+        terms may persist and affect the results.
     """
     paulis = ops.paulis
     coeffs = ops.coeffs
