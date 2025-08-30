@@ -243,7 +243,7 @@
 
 <span class="sd">The module handles:</span>
 <span class="sd">- Two-body and three-body nuclear force interactions</span>
-<span class="sd">- M-scheme and J-T coupled representations</span>
+<span class="sd">- M-scheme and JT-coupled representations</span>
 <span class="sd">- Mapping to fermionic operators and Pauli strings for quantum computing</span>
 <span class="sd">- Matrix element calculations and transformations</span>
 <span class="sd">- Quantum resource estimation for nuclear Hamiltonians</span>
@@ -289,7 +289,7 @@
 <div class="viewcode-block" id="JTcoupledOrbitals">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JTcoupledOrbitals</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle JT coupled orbitals in the model space.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle JT-coupled orbitals in the model space.</span>
 <span class="sd">    </span>
 <span class="sd">    This class manages orbital states in the JT (angular momentum - isospin) coupled basis.</span>
 <span class="sd">    It provides methods to add orbitals and convert between different single-particle state</span>
@@ -302,10 +302,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize J-T coupled orbitals manager.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize JT-coupled orbitals manager.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            emax (int): Maximum excitation energy for orbitals in the model space.</span>
+<span class="sd">            emax (int): maximum value for 2n+l quanta in the model space</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbitals</span> <span class="o">=</span> <span class="p">{}</span>
@@ -314,7 +314,7 @@
 <div class="viewcode-block" id="JTcoupledOrbitals.add_orbital">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.add_orbital">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_orbital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an orbital to the J-T coupled basis.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an orbital to the JT-coupled basis.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            idx (int): Index identifier for the orbital.</span>
@@ -328,16 +328,16 @@
 <div class="viewcode-block" id="JTcoupledOrbitals.get_dict_sps2JTsps">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.get_dict_sps2JTsps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_dict_sps2JTsps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_defined_in_NN</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single particle states to J-T coupled states.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single particle states to JT-coupled states.</span>
 <span class="sd">        </span>
 <span class="sd">        Maps the single particle states defined in the nuclear interaction files</span>
-<span class="sd">        to the J-T coupled orbital basis for consistent matrix element handling.</span>
+<span class="sd">        to the JT-coupled orbital basis for consistent matrix element handling.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            sps_defined_in_NN (list): Single particle states from NN interaction file.</span>
 <span class="sd">            </span>
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: Mapping from single-particle state indices to J-T orbital indices.</span>
+<span class="sd">            dict: Mapping from single-particle state indices to JT orbital indices.</span>
 <span class="sd">            </span>
 <span class="sd">        Note:</span>
 <span class="sd">            The single-particle states are defined when the NN interaction file is loaded.</span>
@@ -366,7 +366,7 @@
 
 <div class="viewcode-block" id="get_Hamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_Hamiltonian">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">filename_snt</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">emax</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get nuclear Hamiltonian from interaction files.</span>
 
 <span class="sd">    This is a convenience wrapper function that constructs a Hamiltonian object</span>
@@ -374,7 +374,7 @@
 <span class="sd">    It handles both two-body and three-body nuclear interactions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        filename_snt (str): Path to the snt format interaction file.</span>
+<span class="sd">        fn_NN (str): Path to the snt format interaction file.</span>
 <span class="sd">        Z (int): Number of protons in the nucleus.</span>
 <span class="sd">        N (int): Number of neutrons in the nucleus.</span>
 <span class="sd">        fn_3NF (str, optional): Path to three-body force file. Defaults to &quot;&quot;.</span>
@@ -394,9 +394,9 @@
 <span class="sd">        &gt;&gt;&gt; print(f&quot;Total qubits: {len(p_qubits) + len(n_qubits)}&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">fn_3NF</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">filename_snt</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="n">e3max</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="n">fn_3NF</span><span class="p">)</span>
+        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="n">e3max</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="n">fn_3NF</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">filename_snt</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="n">ncsm</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">)</span>
+        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="n">ncsm</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">)</span>
 
     <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits</span>
     <span class="n">proton_qubits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits_p</span><span class="p">))</span>
@@ -438,7 +438,7 @@
 <span class="sd">    codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:</span>
 <span class="sd">    - Single-particle basis management</span>
 <span class="sd">    - Matrix element calculations and transformations</span>
-<span class="sd">    - M-scheme and J-T coupled representations</span>
+<span class="sd">    - M-scheme and JT-coupled representations</span>
 <span class="sd">    - Mapping to fermionic operators and Pauli strings</span>
 <span class="sd">    - Three-body force handling and optimization</span>
 <span class="sd">    </span>
@@ -457,7 +457,7 @@
 <span class="sd">        msps (list): M-scheme single-particle states.</span>
 <span class="sd">        v1b (list): One-body matrix elements.</span>
 <span class="sd">        v2b (list): Two-body matrix elements.</span>
-<span class="sd">        v3b_pn (dict): Three-body matrix elements in p-n representation.</span>
+<span class="sd">        v3b_JT (dict): Three-body matrix elements in JT-coupled scheme.</span>
 <span class="sd">        v3b_Mscheme (dict): Three-body matrix elements in M-scheme.</span>
 <span class="sd">    </span>
 <span class="sd">    Example:</span>
@@ -560,7 +560,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span> <span class="o">=</span> <span class="n">fn_3NF</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span> <span class="o">=</span> <span class="n">JTcoupledOrbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">emax</span><span class="p">)</span>
             <span class="k">if</span> <span class="s2">&quot;readable.txt&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_3NF_readable</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_3NF_readable</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
             <span class="k">elif</span> <span class="s2">&quot;me3j.gz&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">:</span>
                 <span class="n">idx_sps</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">sps</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">:</span>
@@ -583,29 +583,21 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
                 <span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;obj.pnME_3NF&quot;</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">pnME_3NF</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">pnME_3NF</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;self.v3b_pn&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">JTME_3NF</span>
                 <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fn_3NF is now: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;In the current implementation fn_3NF should be in either readable.text or me3j.gz file format&quot;</span>
                 <span class="p">)</span>
-
-            <span class="c1"># print(&quot;v3b_pn&quot;)</span>
-            <span class="c1"># for key, value in self.v3b_pn.items():</span>
-            <span class="c1">#     pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, Jabc = key</span>
-            <span class="c1">#     print(f&quot;pnkey: {key} value :{value}&quot;)</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="Hamiltonian.guess_emax_from_fn">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.guess_emax_from_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">guess_emax_from_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract excitation energy parameters from three-body force filename.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the model space information from three-body force filename.</span>
 <span class="sd">        </span>
-<span class="sd">        Attempts to parse the maximum excitation energies for one-body, two-body,</span>
+<span class="sd">        Attempts to parse the e1max/e2max/e3max for one-body, two-body,</span>
 <span class="sd">        and three-body sectors from the three-body force filename pattern.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
@@ -660,7 +652,7 @@
 <span class="sd">        </span>
 <span class="sd">        Parses nuclear interaction files containing single-particle energies and</span>
 <span class="sd">        two-body matrix elements in the standard snt format used by nuclear</span>
-<span class="sd">        physics codes like KSHELL and NuHamil.</span>
+<span class="sd">        physics codes like KSHELL and NuclearToolkit.jl.</span>
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            fn_NN_in (str or PathLike): Path to the snt format interaction file.</span>
@@ -800,18 +792,17 @@
 <div class="viewcode-block" id="Hamiltonian.get_mscheme_sps">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_sps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate M-scheme single-particle states from J-T coupled basis.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate M-scheme single-particle states from proton-neutron J-coupled states.</span>
 <span class="sd">        </span>
-<span class="sd">        Constructs the M-scheme (magnetic quantum number resolved) single-particle</span>
-<span class="sd">        states from the J-T coupled orbital basis. This includes expanding each</span>
-<span class="sd">        j-orbital into its 2j+1 magnetic substates and organizing them by particle type.</span>
+<span class="sd">        Constructs the M-scheme single-particle states from the JT-coupled orbital basis.</span>
+<span class="sd">        This includes expanding each j-orbital into its 2j+1 magnetic substates and organizing them by particle type.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: A tuple containing:</span>
 <span class="sd">                - proton_register (range): Qubit indices for proton states</span>
 <span class="sd">                - neutron_register (range): Qubit indices for neutron states  </span>
 <span class="sd">                - mps (list): List of Orbit_nljjztz objects representing M-scheme states</span>
-<span class="sd">                - dict_sps2msps (dict): Mapping from J-T states to M-scheme state lists</span>
+<span class="sd">                - dict_sps2msps (dict): Mapping from JT states to M-scheme state lists</span>
 <span class="sd">                </span>
 <span class="sd">        Note:</span>
 <span class="sd">            The proton states are placed first in the qubit register, followed by</span>
@@ -829,7 +820,6 @@
                 <span class="k">continue</span>
             <span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">jz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                <span class="c1"># mps.append((idx, n, l, j, jz, tz))</span>
                 <span class="n">mps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Orbit_nljjztz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">))</span>
                 <span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
                 <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -854,11 +844,11 @@
         <span class="k">return</span> <span class="n">proton_register</span><span class="p">,</span> <span class="n">neutron_register</span><span class="p">,</span> <span class="n">mps</span><span class="p">,</span> <span class="n">dict_sps2msps</span></div>
 
 
-<div class="viewcode-block" id="Hamiltonian.delta">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.delta">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two M-scheme orbitals are identical.</span>
-<span class="sd">        </span>
+<div class="viewcode-block" id="Hamiltonian.delta_jj">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.delta_jj">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delta_jj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two orbitals are identical in terms of their n, l, j, and tz quantum numbers.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            morb_a (Orbit_nljjztz): First M-scheme orbital.</span>
 <span class="sd">            morb_b (Orbit_nljjztz): Second M-scheme orbital.</span>
@@ -869,12 +859,10 @@
         <span class="n">n_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">n</span>
         <span class="n">l_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">l</span>
         <span class="n">j_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">j</span>
-        <span class="n">jz_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">jz</span>
         <span class="n">tz_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">tz</span>
         <span class="n">n_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">n</span>
         <span class="n">l_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">l</span>
         <span class="n">j_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">j</span>
-        <span class="n">jz_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">jz</span>
         <span class="n">tz_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">tz</span>
         <span class="k">if</span> <span class="n">n_a</span> <span class="o">==</span> <span class="n">n_b</span> <span class="ow">and</span> <span class="n">l_a</span> <span class="o">==</span> <span class="n">l_b</span> <span class="ow">and</span> <span class="n">j_a</span> <span class="o">==</span> <span class="n">j_b</span> <span class="ow">and</span> <span class="n">tz_a</span> <span class="o">==</span> <span class="n">tz_b</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span>
@@ -929,7 +917,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opform</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Hamiltonian matrix elements in M-scheme representation.</span>
 <span class="sd">        </span>
-<span class="sd">        Transforms the J-T coupled nuclear interaction matrix elements into</span>
+<span class="sd">        Transforms the JT-coupled nuclear interaction matrix elements into</span>
 <span class="sd">        M-scheme (magnetic quantum number resolved) representation, which is</span>
 <span class="sd">        required for quantum computing applications. The method handles both</span>
 <span class="sd">        one-body and two-body terms with proper angular momentum recoupling.</span>
@@ -1033,7 +1021,7 @@
                     <span class="n">phase_bra</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">((</span><span class="n">j_a</span> <span class="o">+</span> <span class="n">j_b</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">J</span><span class="p">)</span>
                     <span class="n">Mbra</span> <span class="o">=</span> <span class="p">(</span><span class="n">jz_a</span> <span class="o">+</span> <span class="n">jz_b</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
                     <span class="n">N_ab</span> <span class="o">=</span> <span class="mf">1.0</span>
-                    <span class="n">delta_ab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">)</span>
+                    <span class="n">delta_ab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_jj</span><span class="p">(</span><span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">)</span>
                     <span class="n">Tz</span> <span class="o">=</span> <span class="n">tz_a</span> <span class="o">+</span> <span class="n">tz_b</span>
                     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Tz</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">delta_ab</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">N_ab</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">J</span><span class="p">)</span>
@@ -1064,7 +1052,7 @@
                                 <span class="k">continue</span>
 
                             <span class="n">N_cd</span> <span class="o">=</span> <span class="mf">1.0</span>
-                            <span class="n">delta_cd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta</span><span class="p">(</span><span class="n">morb_c</span><span class="p">,</span> <span class="n">morb_d</span><span class="p">)</span>
+                            <span class="n">delta_cd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_jj</span><span class="p">(</span><span class="n">morb_c</span><span class="p">,</span> <span class="n">morb_d</span><span class="p">)</span>
                             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tz_c</span> <span class="o">+</span> <span class="n">tz_d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">delta_cd</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                                 <span class="n">N_cd</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">J</span><span class="p">)</span>
 
@@ -1204,9 +1192,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            float: Clebsch-Gordan coefficient &lt;j1 m1 j2 m2 | J M&gt;.</span>
 <span class="sd">            </span>
-<span class="sd">        Note:</span>
-<span class="sd">            Uses sympy&#39;s ClebschGordan implementation. The coefficient is</span>
-<span class="sd">            essential for M-scheme transformations of nuclear matrix elements.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">sps_i</span><span class="o">.</span><span class="n">j</span>
         <span class="n">jz</span> <span class="o">=</span> <span class="n">sps_i</span><span class="o">.</span><span class="n">jz</span>
@@ -1230,12 +1215,10 @@
 <span class="sd">            j (int): Total angular momentum quantum number (twice the actual value).</span>
 <span class="sd">            jz (int): Magnetic quantum number (twice the actual value).</span>
 <span class="sd">            tz (int): Isospin projection (-1 for protons, +1 for neutrons).</span>
-<span class="sd">            </span>
-<span class="sd">        Returns:</span>
-<span class="sd">            int or None: Index of the matching M-scheme state, or None if not found.</span>
-<span class="sd">            </span>
-<span class="sd">        Note:</span>
-<span class="sd">            Prints a warning if the requested state is not found in the model space.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the requested M-scheme state is not found.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">):</span>
             <span class="n">n_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">n</span>
@@ -1245,15 +1228,14 @@
             <span class="n">tz_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">tz</span>
             <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">n_</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">==</span> <span class="n">l_</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="n">j_</span> <span class="ow">and</span> <span class="n">jz</span> <span class="o">==</span> <span class="n">jz_</span> <span class="ow">and</span> <span class="n">tz</span> <span class="o">==</span> <span class="n">tz_</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">idx</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: no such msps in the model space:&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Requested M-scheme state not found.&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Hamiltonian.read_3NF_readable">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_3NF_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read the NuHamil 3NF file in readable.text fmt.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the NuHamil 3NF file in readable.text fmt.</span>
+
 <span class="sd">        This method should be modified if the file is too large.</span>
 
 <span class="sd">        In readable.text, V_{3N} is given as a function of a set of quanta,</span>
@@ -1261,11 +1243,10 @@
 <span class="sd">        where a~f are the single particle states having {n,l,j} quanta.</span>
 <span class="sd">        Those matrix elements correspond to Eq.(41) in NuHamil paper, `T.Miyagi, EPJA (2023)59:150 &lt;https://doi.org/10.1140/epja/s10050-023-01039-y&gt;`_.</span>
 
-<span class="sd">        pnME: proton-neutron matrix elements are obtained through the Clebsch-Gordan coefficients as detailed in Eq.(36) of NuHamil paper.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-        <span class="n">pnME_3NF</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">JTME_3NF</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">sector</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;idx,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;n,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;l,&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;j&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">):</span>
@@ -1306,121 +1287,50 @@
                     <span class="p">)</span>
                 
                 <span class="n">process_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span>
-                                 <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> <span class="n">Jabc</span><span class="p">,</span> <span class="n">Tabc</span><span class="p">,</span> <span class="n">ME</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">,</span>
+                                 <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> <span class="n">Jabc</span><span class="p">,</span> <span class="n">Tabc</span><span class="p">,</span> <span class="n">ME</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">,</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">,</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">)</span>
 
-                <span class="c1"># orb_a = self.JTorbitals.orbitals[a]</span>
-                <span class="c1"># orb_b = self.JTorbitals.orbitals[b]</span>
-                <span class="c1"># orb_c = self.JTorbitals.orbitals[c]</span>
-                <span class="c1"># orb_d = self.JTorbitals.orbitals[d]</span>
-                <span class="c1"># orb_e = self.JTorbitals.orbitals[e]</span>
-                <span class="c1"># orb_f = self.JTorbitals.orbitals[f]</span>
-                <span class="c1"># for tz_a, tz_b, tz_c, tz_d, tz_e, tz_f in itertools.product(</span>
-                <span class="c1">#     [-1, 1], repeat=6</span>
-                <span class="c1"># ):</span>
-                <span class="c1">#     if (tz_a + tz_b + tz_c) != (tz_d + tz_e + tz_f):</span>
-                <span class="c1">#         continue</span>
-                <span class="c1">#     if (tz_a + tz_b) &gt; 2 * Tab:</span>
-                <span class="c1">#         continue</span>
-                <span class="c1">#     if (tz_d + tz_e) &gt; 2 * Tde:</span>
-                <span class="c1">#         continue</span>
-                <span class="c1">#     pn_a = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_a.n, orb_a.l, orb_a.j, tz_a</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     pn_b = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_b.n, orb_b.l, orb_b.j, tz_b</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     pn_c = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_c.n, orb_c.l, orb_c.j, tz_c</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     pn_d = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_d.n, orb_d.l, orb_d.j, tz_d</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     pn_e = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_e.n, orb_e.l, orb_e.j, tz_e</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     pn_f = get_spsidx_from_nljtz(</span>
-                <span class="c1">#         self.single_particle_states, orb_f.n, orb_f.l, orb_f.j, tz_f</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     Tz_bra = tz_a + tz_b + tz_c</span>
-                <span class="c1">#     if Tz_bra == 3 and self.N &lt; 3:</span>
-                <span class="c1">#         continue  # nnn</span>
-                <span class="c1">#     if Tz_bra == 1 and (self.Z == 0 or self.N &lt;= 1):</span>
-                <span class="c1">#         continue  # pnn</span>
-                <span class="c1">#     if Tz_bra == -1 and (self.N == 0 or self.Z &lt;= 1):</span>
-                <span class="c1">#         continue  # npp</span>
-                <span class="c1">#     if Tz_bra == -3 and self.Z &lt; 3:</span>
-                <span class="c1">#         continue  # ppp</span>
-                <span class="c1">#     if abs(Tz_bra) &gt; Tabc:</span>
-                <span class="c1">#         continue</span>
-                <span class="c1">#     pnkey = (pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, Jabc)</span>
-                <span class="c1">#     cg_1 = get_CGs_from_dict(</span>
-                <span class="c1">#         1, tz_a, 1, tz_b, Tab * 2, (tz_a + tz_b), self.CG_dict</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     cg_2 = get_CGs_from_dict(</span>
-                <span class="c1">#         1, tz_d, 1, tz_e, Tde * 2, (tz_d + tz_e), self.CG_dict  </span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     cg_3 = get_CGs_from_dict(</span>
-                <span class="c1">#         Tab * 2, (tz_a + tz_b), 1, tz_c, Tabc, (tz_a + tz_b + tz_c), self.CG_dict</span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     cg_4 = get_CGs_from_dict(</span>
-                <span class="c1">#         Tde * 2, (tz_d + tz_e), 1, tz_f, Tabc, (tz_d + tz_e + tz_f), self.CG_dict   </span>
-                <span class="c1">#     )</span>
-                <span class="c1">#     cgfact = cg_1 * cg_2 * cg_3 * cg_4</span>
-                <span class="c1">#     if abs(cgfact) &lt; 1.0e-8:</span>
-                <span class="c1">#         continue</span>
-                <span class="c1">#     part = ME * cgfact</span>
-                <span class="c1">#     if pnkey in pnME_3NF.keys():</span>
-                <span class="c1">#         pnME_3NF[pnkey] += part</span>
-                <span class="c1">#     else:</span>
-                <span class="c1">#         pnME_3NF[pnkey] = part</span>
-
-                <span class="c1">#     # bra &lt;-&gt; ket permutations must be considered, since they are absent in readable.text format</span>
-                <span class="c1">#     if pnkey != (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, Jabc):</span>
-                <span class="c1">#         pnkey = (pn_d, pn_e, pn_f, pn_a, pn_b, pn_c, Jde, Jab, Jabc)</span>
-                <span class="c1">#         part = ME * cgfact</span>
-                <span class="c1">#         if pnkey in pnME_3NF.keys():</span>
-                <span class="c1">#             pnME_3NF[pnkey] += part</span>
-                <span class="c1">#         else:</span>
-                <span class="c1">#             pnME_3NF[pnkey] = part</span>
-
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pnME_3NF&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;JTME_3NF&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jabc</span> <span class="o">=</span> <span class="n">key</span>
-                <span class="c1"># print(f&quot;pnkey: {key} value :{value}&quot;)</span>
-                <span class="c1"># if abs(value) &lt; 1.e-8:</span>
-                <span class="c1">#    continue</span>
-                <span class="c1"># print(f&quot;pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} value {value}&quot;)</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.e-8</span><span class="p">:</span>
+                   <span class="k">continue</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pn_a </span><span class="si">{</span><span class="n">pn_a</span><span class="si">}</span><span class="s2"> pn_b </span><span class="si">{</span><span class="n">pn_b</span><span class="si">}</span><span class="s2"> pn_c </span><span class="si">{</span><span class="n">pn_c</span><span class="si">}</span><span class="s2"> pn_d </span><span class="si">{</span><span class="n">pn_d</span><span class="si">}</span><span class="s2"> pn_e </span><span class="si">{</span><span class="n">pn_e</span><span class="si">}</span><span class="s2"> pn_f </span><span class="si">{</span><span class="n">pn_f</span><span class="si">}</span><span class="s2"> Jab </span><span class="si">{</span><span class="n">Jab</span><span class="si">}</span><span class="s2"> Jde </span><span class="si">{</span><span class="n">Jde</span><span class="si">}</span><span class="s2"> Jabc </span><span class="si">{</span><span class="n">Jabc</span><span class="si">}</span><span class="s2"> value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;Total number of 3NF matrix elements in pn J-coupld form&quot;</span><span class="p">,</span>
-                <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">pnME_3NF</span></div>
+        <span class="k">return</span> <span class="n">JTME_3NF</span></div>
 
 
 
 <div class="viewcode-block" id="Hamiltonian.set_mscheme_3NF">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mscheme_3NF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Q. Why do we need to devide the 3NF matrix elements by 36?</span>
-<span class="sd">        A. All the permutations of the 3NF matrix elements are counted below.</span>
-<span class="sd">        It would be more efficient to avoid redundancy in the first place. It is left for the future.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the 3NF matrix elements in the mscheme.</span>
 
-<span class="sd">        Q. Why do we need to multiply the 3NF matrix elements by 9 for pnn and npp?</span>
-<span class="sd">        A. At first, proton and neutron operators commute.</span>
-<span class="sd">        We are now generating all the permutations not taking into account of this.</span>
-<span class="sd">        While transforming the pn JT-coupled form to J-coupled form,</span>
-<span class="sd">        we generate something like &lt;pnn|V|npn&gt;, &lt;pnn|V|nnp&gt;, etc.</span>
-<span class="sd">        The factor of 9 is to take account of this.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: A dictionary containing the 3NF matrix elements in the mscheme.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Q. Why do we need to devide the 3NF matrix elements by 36?</span>
+<span class="sd">            A. All the permutations of the 3NF matrix elements are counted below.</span>
+<span class="sd">            It would be more efficient to avoid redundancy in the first place. It is left for the future.</span>
+
+<span class="sd">            Q. Why do we need to multiply the 3NF matrix elements by 9 for pnn and npp?</span>
+<span class="sd">            A. At first, proton and neutron operators commute.</span>
+<span class="sd">            We are now generating all the permutations not taking into account of this.</span>
+<span class="sd">            While transforming the pn JT-coupled form to J-coupled form,</span>
+<span class="sd">            we generate something like &lt;pnn|V|npn&gt;, &lt;pnn|V|nnp&gt;, etc.</span>
+<span class="sd">            The factor of 9 is to take account of this.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting pn J-coupled 3NF to mscheme...&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting up 3NF matrix elements in mscheme...&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ME_3n_pn</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ME_3n_pn</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3b_JT</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
             <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jabc</span> <span class="o">=</span> <span class="n">key</span>
             <span class="n">orb_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">pn_a</span><span class="p">]</span>
             <span class="n">ja_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">orb_a</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">orb_a</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
@@ -1549,7 +1459,12 @@
 
 <div class="viewcode-block" id="Hamiltonian.separate_proton_and_neutron">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.separate_proton_and_neutron">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">separate_proton_and_neutron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im_a</span><span class="p">,</span> <span class="n">im_b</span><span class="p">,</span> <span class="n">im_c</span><span class="p">,</span> <span class="n">im_d</span><span class="p">,</span> <span class="n">im_e</span><span class="p">,</span> <span class="n">im_f</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">separate_proton_and_neutron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                                    <span class="n">im_a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                    <span class="n">im_d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_e</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_f</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Separate the proton and neutron operators for a given set of indices.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">morb_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">im_a</span><span class="p">]</span>
         <span class="n">morb_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">im_b</span><span class="p">]</span>
         <span class="n">morb_c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">im_c</span><span class="p">]</span>
@@ -1579,9 +1494,9 @@
 <div class="viewcode-block" id="Hamiltonian.mapping_3NF_Mscheme">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_3NF_Mscheme">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mapping_3NF_Mscheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">):</span>
-        <span class="c1"># global op_dict_3b</span>
-        <span class="k">global</span> <span class="n">shared_data</span><span class="p">,</span> <span class="n">locks</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map the 3NF matrix elements to the specified scheme.</span>
 
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op_dict_3b</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting up op_dict_3b...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">mkey</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -1736,7 +1651,7 @@
 <div class="viewcode-block" id="get_CGs_from_dict">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_CGs_from_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_CGs_from_dict</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">CG_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve or calculate Clebsch-Gordan coefficient with caching.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve or calculate Clebsch-Gordan coefficient.</span>
 <span class="sd">    </span>
 <span class="sd">    Gets a Clebsch-Gordan coefficient from cache or calculates and stores it.</span>
 <span class="sd">    This provides efficient access to frequently used CG coefficients in</span>
@@ -1756,8 +1671,7 @@
 <span class="sd">        </span>
 <span class="sd">    Note:</span>
 <span class="sd">        The coefficient is calculated using sympy if not found in cache.</span>
-<span class="sd">        All angular momenta are provided as integers (twice their actual values)</span>
-<span class="sd">        to avoid floating-point arithmetic issues.</span>
+<span class="sd">        All angular momenta are provided as integers (twice their actual values).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">CG_dict</span><span class="p">:</span>
@@ -1900,6 +1814,13 @@
 <div class="viewcode-block" id="ReadThBME_me3jgz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReadThBME_me3jgz</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read three-body matrix elements from a me3j.gz file.</span>
+
+<span class="sd">    This class handles the reading and processing of three-body matrix elements</span>
+<span class="sd">    stored in a compressed me3j.gz file format.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">single_particle_states</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -1930,9 +1851,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modelspace</span><span class="p">(</span><span class="n">e1max</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_MS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="s2">&quot;ModelSpace&quot;</span><span class="p">)</span>
-        <span class="c1">#self.count_ME_file = self.count_me3jgz(self.sps_3b)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ThBME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_me3jgz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_file</span><span class="p">)</span>
-        <span class="c1">#self.v3bme, self.dict_3b_idx = self.allocate_3bme(self.sps_3b)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;allocate_v3bme&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span> <span class="o">=</span> <span class="n">CG_dict_fromHamiltonian</span>
@@ -1952,7 +1871,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;norm(v3bme):&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pnME_3NF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">,</span> <span class="n">array_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">JTME_3NF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">,</span> <span class="n">array_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.get_modelspace">
@@ -1999,7 +1918,8 @@
 <div class="viewcode-block" id="ReadThBME_me3jgz.count_nreads">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.count_nreads">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;File&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of elements of floating-point numbers to be read from the interaction file.</span>
+
 <span class="sd">        In some interaction files, odd indices correspond to proton and even indices correspond to neutron.</span>
 <span class="sd">        One should take this into account when processing the data when working in JT-coupled schemes.</span>
 
@@ -2118,6 +2038,11 @@
 <div class="viewcode-block" id="ReadThBME_me3jgz.read_me3jgz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.read_me3jgz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_me3jgz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">count_ME_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read three-body matrix elements from a me3j.gz file.</span>
+
+<span class="sd">        The ordering of the matrix elements are uniquely determined</span>
+<span class="sd">        by the e*max values defining the adopted model space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">size_ME</span> <span class="o">=</span> <span class="n">count_ME_file</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span>
@@ -2152,11 +2077,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ME_is_double</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
                      <span class="n">array_in</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to loop over JT-coupled three-body matrix elements.</span>
+
+<span class="sd">        This method iterates over the relevant quantum numbers and constructs</span>
+<span class="sd">        the necessary data structures for the three-body matrix elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">norbits</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">norbits_ms</span>
         <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
         <span class="n">e1max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e1max</span>
         <span class="n">e3max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span>
-        <span class="n">pnME_3NF</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">JTME_3NF</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
         <span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">total_dim</span> <span class="o">=</span> <span class="n">non_zero_term</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Loop over indices (assumed 1-indexed and odd numbers)</span>
@@ -2248,7 +2178,7 @@
                                                         <span class="n">process_orbitals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> 
                                                                          <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span> 
                                                                          <span class="n">dd</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Tde</span><span class="p">,</span> 
-                                                                         <span class="n">J3</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">v3val</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">,</span>
+                                                                         <span class="n">J3</span><span class="p">,</span> <span class="n">T3</span><span class="p">,</span> <span class="n">v3val</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">JTorbitals</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">single_particle_states</span><span class="p">,</span>
                                                                          <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">)</span>
@@ -2279,192 +2209,21 @@
         <span class="k">elif</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;checking dim for readable.txt...&quot;</span><span class="p">,</span> <span class="n">non_zero_term</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">pnME_3NF</span></div>
-
-
-<div class="viewcode-block" id="ReadThBME_me3jgz.monopole_V3">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.monopole_V3">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">monopole_V3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">E3max</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">dict_3b_idx</span><span class="p">,</span> <span class="n">v3bme</span><span class="p">,</span> <span class="n">dWS</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">n_orbits</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">norbits_ms</span>
-        <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
-        <span class="n">stored_keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># Build list of keys.</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">oi</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">oj</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">oi</span><span class="o">.</span><span class="n">l</span> <span class="o">!=</span> <span class="n">oj</span><span class="o">.</span><span class="n">l</span> <span class="ow">or</span> <span class="n">oi</span><span class="o">.</span><span class="n">j</span> <span class="o">!=</span> <span class="n">oj</span><span class="o">.</span><span class="n">j</span> <span class="ow">or</span> <span class="n">oi</span><span class="o">.</span><span class="n">tz</span> <span class="o">!=</span> <span class="n">oj</span><span class="o">.</span><span class="n">tz</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                    <span class="n">oa</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-                    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                        <span class="n">ob</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-                        <span class="k">if</span> <span class="n">oa</span><span class="o">.</span><span class="n">l</span> <span class="o">!=</span> <span class="n">ob</span><span class="o">.</span><span class="n">l</span> <span class="ow">or</span> <span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">!=</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span> <span class="ow">or</span> <span class="n">oa</span><span class="o">.</span><span class="n">tz</span> <span class="o">!=</span> <span class="n">ob</span><span class="o">.</span><span class="n">tz</span><span class="p">:</span>
-                            <span class="k">continue</span>
-                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                            <span class="n">oc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="n">oa</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">oi</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">E3max</span><span class="p">:</span>
-                                <span class="k">continue</span>
-                            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_orbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                                <span class="n">od</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
-                                <span class="k">if</span> <span class="n">oc</span><span class="o">.</span><span class="n">l</span> <span class="o">!=</span> <span class="n">od</span><span class="o">.</span><span class="n">l</span> <span class="ow">or</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span> <span class="o">!=</span> <span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="ow">or</span> <span class="n">oc</span><span class="o">.</span><span class="n">tz</span> <span class="o">!=</span> <span class="n">od</span><span class="o">.</span><span class="n">tz</span><span class="p">:</span>
-                                    <span class="k">continue</span>
-                                <span class="k">if</span> <span class="n">ob</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">od</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">oj</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">E3max</span><span class="p">:</span>
-                                    <span class="k">continue</span>
-                                <span class="c1"># Check parity condition from orbital angular momenta.</span>
-                                <span class="k">if</span> <span class="p">(</span><span class="n">oi</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oa</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">od</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oj</span><span class="o">.</span><span class="n">l</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                                    <span class="k">continue</span>
-                                <span class="n">key</span> <span class="o">=</span> <span class="n">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
-                                <span class="n">stored_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-        <span class="n">nkeys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stored_keys</span><span class="p">)</span>
-        <span class="c1"># print(&quot;Number of keys for V3mono:&quot;, nkeys)</span>
-
-        <span class="c1"># Initialize dictionary for monopole matrix elements.</span>
-        <span class="n">Vmon3</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">stored_keys</span><span class="p">}</span>
-
-        <span class="c1"># Loop over keys (e.g., parallelize here if needed)</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stored_keys</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">unhash_key6j</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="n">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span>
-
-            <span class="n">ja</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-            <span class="n">jc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-            <span class="n">ji</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-            <span class="n">jb</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-            <span class="n">jd</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-            <span class="n">jj</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">j</span>
-
-            <span class="n">j2min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">ja</span> <span class="o">-</span> <span class="n">jc</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">jb</span> <span class="o">-</span> <span class="n">jd</span><span class="p">))</span> <span class="o">//</span> <span class="mi">2</span>
-            <span class="n">j2max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ja</span> <span class="o">+</span> <span class="n">jc</span><span class="p">,</span> <span class="n">jb</span> <span class="o">+</span> <span class="n">jd</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="mf">0.0</span>
-
-            <span class="k">for</span> <span class="n">j2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j2min</span><span class="p">,</span> <span class="n">j2max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">Jmin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j2</span> <span class="o">-</span> <span class="n">ji</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j2</span> <span class="o">-</span> <span class="n">jj</span><span class="p">))</span>
-                <span class="n">Jmax</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j2</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="n">ji</span><span class="p">,</span> <span class="n">jj</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">J2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jmin</span><span class="p">,</span> <span class="n">Jmax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                    <span class="n">vtmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_V3_pn</span><span class="p">(</span>
-                        <span class="n">idx</span><span class="p">,</span>
-                        <span class="n">E3max</span><span class="p">,</span>
-                        <span class="n">v3bme</span><span class="p">,</span>
-                        <span class="n">j2</span><span class="p">,</span>
-                        <span class="n">j2</span><span class="p">,</span>
-                        <span class="n">J2</span><span class="p">,</span>
-                        <span class="n">a</span><span class="p">,</span>
-                        <span class="n">c</span><span class="p">,</span>
-                        <span class="n">i</span><span class="p">,</span>
-                        <span class="n">b</span><span class="p">,</span>
-                        <span class="n">d</span><span class="p">,</span>
-                        <span class="n">j</span><span class="p">,</span>
-                        <span class="n">sps_3b</span><span class="p">,</span>
-                        <span class="n">dict_3b_idx</span><span class="p">,</span>
-                        <span class="n">dWS</span><span class="p">,</span>
-                        <span class="n">pnME_3NF</span><span class="p">,</span>
-                    <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">J2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="n">v</span> <span class="o">+=</span> <span class="n">vtmp</span>
-            <span class="n">Vmon3</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">/</span> <span class="p">(</span><span class="n">ji</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Vmon3</span><span class="o">.</span><span class="n">values</span><span class="p">())]))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Monopole V3 norm: </span><span class="si">{</span><span class="n">norm</span><span class="si">:</span><span class="s2">.5e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Vmon3</span></div>
-
-
-<div class="viewcode-block" id="ReadThBME_me3jgz.get_V3_pn">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.get_V3_pn">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_V3_pn</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">indx</span><span class="p">,</span>
-        <span class="n">E3max</span><span class="p">,</span>
-        <span class="n">v3bme</span><span class="p">,</span>
-        <span class="n">Jab</span><span class="p">,</span>
-        <span class="n">Jde</span><span class="p">,</span>
-        <span class="n">J2</span><span class="p">,</span>
-        <span class="n">a</span><span class="p">,</span>
-        <span class="n">b</span><span class="p">,</span>
-        <span class="n">c</span><span class="p">,</span>
-        <span class="n">d</span><span class="p">,</span>
-        <span class="n">e</span><span class="p">,</span>
-        <span class="n">f</span><span class="p">,</span>
-        <span class="n">sps_3b</span><span class="p">,</span>
-        <span class="n">dict_3b_idx</span><span class="p">,</span>
-        <span class="n">dWS</span><span class="p">,</span>
-        <span class="n">pnME_3NF</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="n">tza</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">tzb</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">tzc</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">tzd</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">tze</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">tzf</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
-        <span class="n">dcg_spin</span> <span class="o">=</span> <span class="n">dWS</span><span class="o">.</span><span class="n">dcg_spin</span>
-
-        <span class="n">Vpn</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">Tmin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span> <span class="o">+</span> <span class="n">tzc</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span> <span class="o">+</span> <span class="n">tzf</span><span class="p">))</span>
-
-        <span class="c1"># Loop over &#39;Tab&#39;: from div(abs(tza+tzb), 2) up to 1 (inclusive)</span>
-        <span class="n">start_Tab</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># Python&#39;s range(stop) is exclusive, so use 2 as stop to include 1.</span>
-        <span class="k">for</span> <span class="n">Tab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_Tab</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="n">key1</span> <span class="o">=</span> <span class="n">get_nkey6_shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tza</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzb</span><span class="p">,</span> <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">)</span>
-
-            <span class="n">CG1</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="p">[</span><span class="n">key1</span><span class="p">]</span>
-            <span class="c1"># Loop over &#39;Tde&#39;: from div(abs(tzd+tze), 2) up to 1 (inclusive)</span>
-            <span class="n">start_Tde</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="c1"># print(f&quot;key1 {key1}, CG1 {CG1}&quot;)</span>
-            <span class="k">for</span> <span class="n">Tde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_Tde</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                <span class="n">key2</span> <span class="o">=</span> <span class="n">get_nkey6_shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tzd</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tze</span><span class="p">,</span> <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">)</span>
-                <span class="n">CG2</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">CG1</span> <span class="o">*</span> <span class="n">CG2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">Tmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tab</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tde</span><span class="p">)</span>
-                <span class="c1"># Loop over T2 from Tmin to Tmax inclusive with step 2</span>
-                <span class="k">for</span> <span class="n">T2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Tmax</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                    <span class="n">key3</span> <span class="o">=</span> <span class="n">get_nkey6_shift</span><span class="p">(</span>
-                        <span class="n">Tab</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzc</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span> <span class="o">+</span> <span class="n">tzc</span>
-                    <span class="p">)</span>
-                    <span class="n">CG3</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="p">[</span><span class="n">key3</span><span class="p">]</span>
-                    <span class="n">key4</span> <span class="o">=</span> <span class="n">get_nkey6_shift</span><span class="p">(</span>
-                        <span class="n">Tde</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzf</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span> <span class="o">+</span> <span class="n">tzf</span>
-                    <span class="p">)</span>
-                    <span class="n">CG4</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="p">[</span><span class="n">key4</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">CG3</span> <span class="o">*</span> <span class="n">CG4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="n">tbme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Get3BME_ISO</span><span class="p">(</span>
-                        <span class="n">indx</span><span class="p">,</span>
-                        <span class="n">E3max</span><span class="p">,</span>
-                        <span class="n">v3bme</span><span class="p">,</span>
-                        <span class="n">dict_3b_idx</span><span class="p">,</span>
-                        <span class="n">sps_3b</span><span class="p">,</span>
-                        <span class="n">Jab</span><span class="p">,</span>
-                        <span class="n">Jde</span><span class="p">,</span>
-                        <span class="n">J2</span><span class="p">,</span>
-                        <span class="n">Tab</span><span class="p">,</span>
-                        <span class="n">Tde</span><span class="p">,</span>
-                        <span class="n">T2</span><span class="p">,</span>
-                        <span class="n">a</span><span class="p">,</span>
-                        <span class="n">b</span><span class="p">,</span>
-                        <span class="n">c</span><span class="p">,</span>
-                        <span class="n">d</span><span class="p">,</span>
-                        <span class="n">e</span><span class="p">,</span>
-                        <span class="n">f</span><span class="p">,</span>
-                        <span class="n">dWS</span><span class="p">,</span>
-                        <span class="n">pnME_3NF</span><span class="p">,</span>
-                    <span class="p">)</span>
-                    <span class="n">Vpn</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">CG1</span> <span class="o">*</span> <span class="n">CG2</span> <span class="o">*</span> <span class="n">CG3</span> <span class="o">*</span> <span class="n">CG4</span><span class="p">)</span> <span class="o">*</span> <span class="n">tbme</span>
-        <span class="k">return</span> <span class="n">Vpn</span></div>
+            <span class="k">return</span> <span class="n">JTME_3NF</span></div>
 </div>
 
-    
+
 
 <div class="viewcode-block" id="process_orbitals">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.process_orbitals">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_orbitals</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-                     <span class="n">J3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">T3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ME</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">pnME_3NF</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span>
+                     <span class="n">J3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">T3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ME</span><span class="p">:</span><span class="nb">float</span><span class="p">,</span> <span class="n">JTME_3NF</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span>
                      <span class="n">JTorbitals</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">single_particle_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
                      <span class="n">CGdict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Note that pnME_3NF is updated in this method &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Note that JTME_3NF is updated in this method &quot;&quot;&quot;</span>
         <span class="n">orb_a</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
         <span class="n">orb_b</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
         <span class="n">orb_c</span> <span class="o">=</span> <span class="n">JTorbitals</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
@@ -2526,19 +2285,19 @@
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cgfact</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-8</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">part</span> <span class="o">=</span> <span class="n">ME</span> <span class="o">*</span> <span class="n">cgfact</span>
-            <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
+            <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+                <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
 
             <span class="c1"># bra &lt;-&gt; ket permutations must be considered, since they are absent in readable.text format</span>
             <span class="k">if</span> <span class="n">pnkey</span> <span class="o">!=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">):</span>
                 <span class="n">pnkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">pn_d</span><span class="p">,</span> <span class="n">pn_e</span><span class="p">,</span> <span class="n">pn_f</span><span class="p">,</span> <span class="n">pn_a</span><span class="p">,</span> <span class="n">pn_b</span><span class="p">,</span> <span class="n">pn_c</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J3</span><span class="p">)</span>
                 <span class="n">part</span> <span class="o">=</span> <span class="n">ME</span> <span class="o">*</span> <span class="n">cgfact</span>
-                <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">pnME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
+                <span class="k">if</span> <span class="n">pnkey</span> <span class="ow">in</span> <span class="n">JTME_3NF</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">+=</span> <span class="n">part</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pnME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span></div>
+                    <span class="n">JTME_3NF</span><span class="p">[</span><span class="n">pnkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span></div>
 
 
 
