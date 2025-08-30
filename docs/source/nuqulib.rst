@@ -13,7 +13,7 @@ Module contents
 Submodules
 ----------
 
-nuqulib.ansatz module
+ansatz submodule
 ---------------------
 
 .. automodule:: nuqulib.ansatz
@@ -21,7 +21,7 @@ nuqulib.ansatz module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.circuits module
+circuits submodule
 -----------------------
 
 .. automodule:: nuqulib.circuits
@@ -29,7 +29,7 @@ nuqulib.circuits module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.encoding module
+encoding submodule
 -----------------------
 
 .. automodule:: nuqulib.encoding
@@ -37,7 +37,7 @@ nuqulib.encoding module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.myutils module
+myutils submodule
 ----------------------
 
 .. automodule:: nuqulib.myutils
@@ -45,7 +45,7 @@ nuqulib.myutils module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.nft\_opt\_method module
+nft\_opt\_method submodule
 -------------------------------
 
 .. automodule:: nuqulib.nft_opt_method
@@ -53,7 +53,7 @@ nuqulib.nft\_opt\_method module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.pairing\_hamiltonian module
+pairing\_hamiltonian submodule
 -----------------------------------
 
 .. automodule:: nuqulib.pairing_hamiltonian
@@ -61,7 +61,7 @@ nuqulib.pairing\_hamiltonian module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.pairwise module
+pairwise submodule
 -----------------------
 
 .. automodule:: nuqulib.pairwise
@@ -69,7 +69,7 @@ nuqulib.pairwise module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.postselection module
+postselection submodule
 ----------------------------
 
 .. automodule:: nuqulib.postselection
@@ -77,7 +77,7 @@ nuqulib.postselection module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.quantum\_algorithms module
+quantum\_algorithms submodule
 ----------------------------------
 
 .. automodule:: nuqulib.quantum_algorithms
@@ -86,7 +86,7 @@ nuqulib.quantum\_algorithms module
    :undoc-members:
 
 
-nuqulib.nuclear\_hamiltonian module
+nuclear\_hamiltonian submodule
 --------------------------------------
 
 .. automodule:: nuqulib.nuclear_hamiltonian
@@ -94,7 +94,7 @@ nuqulib.nuclear\_hamiltonian module
    :show-inheritance:
    :undoc-members:
 
-nuqulib.vqe\_example\_pennylane module
+vqe\_example\_pennylane submodule
 --------------------------------------
 
 .. automodule:: nuqulib.vqe_example_pennylane
