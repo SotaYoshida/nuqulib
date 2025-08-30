@@ -1,3 +1,21 @@
+"""Nuclear Hamiltonian construction and manipulation module.
+
+This module provides functionality for constructing and manipulating nuclear
+Hamiltonians for quantum many-body calculations. It supports both valence-space 
+and no-core shell model (NCSM) interactions in the standard snt format used by
+nuclear physics codes such as KSHELL, NuHamil, and NuclearToolkit.jl.
+
+The module handles:
+- Two-body and three-body nuclear force interactions
+- M-scheme and J-T coupled representations
+- Mapping to fermionic operators and Pauli strings for quantum computing
+- Matrix element calculations and transformations
+- Quantum resource estimation for nuclear Hamiltonians
+
+Key Classes:
+- Hamiltonian: Main class for nuclear Hamiltonian construction and manipulation
+"""
+
 import copy
 from collections import Counter
 import gzip
@@ -33,19 +51,54 @@ element = ['NA',
 
 
 class JTcoupledOrbitals:
-    """ Class to handle the JT coupled orbitals in the model space. """
+    """Class to handle JT coupled orbitals in the model space.
+    
+    This class manages orbital states in the JT (angular momentum - isospin) coupled basis.
+    It provides methods to add orbitals and convert between different single-particle state
+    representations.
+    
+    Attributes:
+        emax (int): Maximum excitation energy for orbitals.
+        orbitals (dict): Dictionary mapping orbital indices to Orbit_nlj objects.
+        dict_sps2JTorbitals (dict): Mapping from single-particle states to JT orbitals.
+    """
+    
     def __init__(self, emax):
+        """Initialize J-T coupled orbitals manager.
+        
+        Args:
+            emax (int): Maximum excitation energy for orbitals in the model space.
+        """
         self.emax = emax
         self.orbitals = {}
         self.dict_sps2JTorbitals = {}
 
     def add_orbital(self, idx, n, l, j):
+        """Add an orbital to the J-T coupled basis.
+        
+        Args:
+            idx (int): Index identifier for the orbital.
+            n (int): Principal quantum number (radial).
+            l (int): Orbital angular momentum quantum number.
+            j (int): Total angular momentum quantum number (twice the actual value).
+        """
         self.orbitals[idx] = Orbit_nlj(n, l, j)
 
     def get_dict_sps2JTsps(self, sps_defined_in_NN):
-        """
-        Convert the single particle states (sps) to the JT coupled states.
-        The sps are defined when the NN interaction file is loaded.
+        """Convert single particle states to J-T coupled states.
+        
+        Maps the single particle states defined in the nuclear interaction files
+        to the J-T coupled orbital basis for consistent matrix element handling.
+        
+        Args:
+            sps_defined_in_NN (list): Single particle states from NN interaction file.
+            
+        Returns:
+            dict: Mapping from single-particle state indices to J-T orbital indices.
+            
+        Note:
+            The single-particle states are defined when the NN interaction file is loaded.
+            This method ensures compatibility between different representations.
         """
         print("sps_defined_in_NN", sps_defined_in_NN)
         dict_sps2JTorbitals = {}
@@ -67,9 +120,31 @@ class JTcoupledOrbitals:
 
 
 def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False):
-    """ Get the Hamiltonian from a snt file.
+    """Get nuclear Hamiltonian from interaction files.
 
-    This is a wrapper to call the Hamiltonian class
+    This is a convenience wrapper function that constructs a Hamiltonian object
+    and returns the mapped quantum operators ready for use in quantum algorithms.
+    It handles both two-body and three-body nuclear interactions.
+
+    Args:
+        filename_snt (str): Path to the snt format interaction file.
+        Z (int): Number of protons in the nucleus.
+        N (int): Number of neutrons in the nucleus.
+        fn_3NF (str, optional): Path to three-body force file. Defaults to "".
+        emax (int, optional): Maximum excitation energy for truncation. Defaults to 20.
+        e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.
+        ncsm (bool, optional): Whether using no-core shell model. Defaults to False.
+
+    Returns:
+        tuple: A tuple containing:
+            - hamil (Hamiltonian): The Hamiltonian object
+            - H_mapped (SparsePauliOp): Mapped Hamiltonian as Pauli operators
+            - proton_qubits (list): Qubit indices corresponding to proton states
+            - neutron_qubits (list): Qubit indices corresponding to neutron states
+
+    Example:
+        >>> hamil, H_mapped, p_qubits, n_qubits = get_Hamiltonian("interaction.snt", 8, 8)
+        >>> print(f"Total qubits: {len(p_qubits) + len(n_qubits)}")
     """
     if fn_3NF != "":
         hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF)
@@ -102,12 +177,51 @@ def get_Hamiltonian(filename_snt, Z, N, fn_3NF="", emax=20, e3max=0, ncsm=False)
 
 
 class Hamiltonian:
-    """Base class for Hamiltonian in the model space. 
+    """Nuclear Hamiltonian constructor and manager for quantum many-body calculations.
     
-    This Hamiltonian class is used to read the NN and 3NF interaction files,
-    both valence-space and no-core shell model (NCSM) interactions in snt format
-    adopted in public codes, KSHELL, NuHamil, NuclearToolkit.jl, etc.
-
+    This class provides comprehensive functionality for constructing nuclear Hamiltonians
+    from standard interaction files, supporting both valence-space and no-core shell
+    model (NCSM) calculations. It handles two-body and three-body nuclear forces,
+    performs basis transformations, and maps to quantum operator representations.
+    
+    The class reads interaction files in the snt format used by nuclear physics
+    codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:
+    - Single-particle basis management
+    - Matrix element calculations and transformations
+    - M-scheme and J-T coupled representations
+    - Mapping to fermionic operators and Pauli strings
+    - Three-body force handling and optimization
+    
+    Attributes:
+        fn_NN (str): Path to two-body interaction file.
+        Z (int): Number of protons.
+        N (int): Number of neutrons.
+        Anum (int): Mass number (Z + N).
+        nucleus (str): Nuclear symbol (e.g., "16O").
+        emax (int): Maximum excitation energy for truncation.
+        ncsm (bool): Whether using no-core shell model.
+        hw (float): Harmonic oscillator frequency (for NCSM).
+        n_qubits (int): Total number of qubits needed.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        msps (list): M-scheme single-particle states.
+        v1b (list): One-body matrix elements.
+        v2b (list): Two-body matrix elements.
+        v3b_pn (dict): Three-body matrix elements in p-n representation.
+        v3b_Mscheme (dict): Three-body matrix elements in M-scheme.
+    
+    Example:
+        >>> # For valence-space calculation
+        >>> hamil = Hamiltonian("interaction.snt", Z=8, N=8)
+        >>> H_dict = hamil.get_mscheme_H(opform=True)
+        >>> 
+        >>> # For NCSM with three-body forces
+        >>> hamil = Hamiltonian("ncsm_int.snt", Z=4, N=4, 
+        ...                     fn_3NF="3nf.me3j.gz", ncsm=True, emax_truncate=2)
+    
+    References:
+        - T. Miyagi et al., Eur. Phys. J. A 59, 150 (2023)
+        - Standard snt format documentation
     """
 
     def __init__(
@@ -122,6 +236,33 @@ class Hamiltonian:
         verbose: bool=False,
         e3max: int|None=None,
     ):
+        """Initialize nuclear Hamiltonian from interaction files.
+        
+        Args:
+            fn_NN (str or PathLike): Path to two-body nuclear interaction file in snt format.
+            Z (int): Number of protons in the nucleus.
+            N (int): Number of neutrons in the nucleus.
+            fn_3NF (str, PathLike, or None, optional): Path to three-body force file.
+                Supports "readable.txt" and "me3j.gz" formats. Defaults to None.
+            ncsm (bool, optional): Whether to use no-core shell model. If True,
+                includes kinetic energy and center-of-mass corrections. Defaults to False.
+            emax_truncate (int, optional): Maximum excitation energy for model space
+                truncation. Defaults to 20.
+            Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering
+                convention. Defaults to True.
+            verbose (bool, optional): Enable verbose output for debugging. Defaults to False.
+            e3max (int, optional): Maximum excitation energy for three-body forces.
+                If None, uses emax_truncate value. Defaults to None.
+        
+        Raises:
+            ValueError: If three-body file format is not supported.
+            FileNotFoundError: If interaction files are not found.
+            
+        Note:
+            For NCSM calculations, the harmonic oscillator frequency is extracted
+            from the filename. Three-body forces require careful truncation
+            parameter matching between 2N and 3N interactions.
+        """
         self.channel = {-3: "ppp", -1: "ppn", 1: "pnn", 3: "nnn"}
         self.fn_NN = fn_NN
         self.Z = Z
@@ -210,6 +351,22 @@ class Hamiltonian:
             self.v3b_Mscheme = {}
 
     def guess_emax_from_fn(self, fn_3NF):
+        """Extract excitation energy parameters from three-body force filename.
+        
+        Attempts to parse the maximum excitation energies for one-body, two-body,
+        and three-body sectors from the three-body force filename pattern.
+        
+        Args:
+            fn_3NF (str): Path to three-body force file.
+            
+        Returns:
+            tuple: A tuple containing (e1max_file, e2max_file, e3max_file).
+                If parsing fails, returns default values based on emax_truncate.
+                
+        Note:
+            Expects filename pattern with "_ms{e1max}_{e2max}_{e3max}" substring.
+            Falls back to emax_truncate * {1, 2, 3} if parsing fails.
+        """
         e1max_file = e2max_file = e3max_file = None
         if fn_3NF is not None and "_ms" in fn_3NF:
             txt = fn_3NF.split("_ms")[-1].split(".")[0].split("_")
@@ -225,16 +382,51 @@ class Hamiltonian:
         return e1max_file, e2max_file, e3max_file
 
     def extract_hw(self):
+        """Extract harmonic oscillator frequency from NCSM interaction filename.
+        
+        Parses the harmonic oscillator frequency (hw) parameter from the filename
+        of NCSM interaction files, which typically contain "hw{value}" in the name.
+        
+        Returns:
+            float: Harmonic oscillator frequency in MeV.
+            
+        Note:
+            Required for NCSM calculations to properly scale kinetic energy terms.
+        """
         txt = self.fn_NN.split("hw")[-1]
         hw = txt.split("_")[0]
         return float(hw)
 
     def read_snt_file(self, fn_NN_in):  
-        """
-        To read (valence-)NN interaction file in snt format.
-
-        For NCSM, one-body matrix elements are purely kinetic terms, :math:`T_{n,n'}`.
-        :math:`\hbar\omega *(A-1)/A` factor is to be multiplied.
+        """Read nuclear interaction file in snt format.
+        
+        Parses nuclear interaction files containing single-particle energies and
+        two-body matrix elements in the standard snt format used by nuclear
+        physics codes like KSHELL and NuHamil.
+        
+        Args:
+            fn_NN_in (str or PathLike): Path to the snt format interaction file.
+            
+        Returns:
+            tuple: A tuple containing:
+                - nsp_p (int): Number of proton single-particle states
+                - nsp_n (int): Number of neutron single-particle states  
+                - core_p (int): Number of core protons
+                - core_n (int): Number of core neutrons
+                - single_particle_states (list): List of Orbit_nljtz objects
+                - v1b (list): One-body matrix elements as (a, b, value) tuples
+                - v2b (list): Two-body matrix elements as (a, b, c, d, J, value) tuples
+                
+        Note:
+            For NCSM calculations, one-body matrix elements represent kinetic terms
+            :math:`T_{n,n'}` with :math:`\\hbar\\omega (A-1)/A` scaling factor.
+            
+            The snt format supports both valence-space and NCSM interactions.
+            Mass-dependence factors :math:`(A/A_{ref})^p` are handled for empirical
+            shell model interactions.
+        
+        Raises:
+            FileNotFoundError: If the interaction file cannot be found.
         """
         with open(fn_NN_in) as f:
             lines = f.readlines()
@@ -347,6 +539,23 @@ class Hamiltonian:
         return nsp_p, nsp_n, core_p, core_n, single_particle_states, v1b, v2b
 
     def get_mscheme_sps(self):
+        """Generate M-scheme single-particle states from J-T coupled basis.
+        
+        Constructs the M-scheme (magnetic quantum number resolved) single-particle
+        states from the J-T coupled orbital basis. This includes expanding each
+        j-orbital into its 2j+1 magnetic substates and organizing them by particle type.
+        
+        Returns:
+            tuple: A tuple containing:
+                - proton_register (range): Qubit indices for proton states
+                - neutron_register (range): Qubit indices for neutron states  
+                - mps (list): List of Orbit_nljjztz objects representing M-scheme states
+                - dict_sps2msps (dict): Mapping from J-T states to M-scheme state lists
+                
+        Note:
+            The proton states are placed first in the qubit register, followed by
+            neutron states. This convention is used throughout the quantum mappings.
+        """
         mps = []
         dict_sps2msps = {}
         count = 0
@@ -384,6 +593,15 @@ class Hamiltonian:
         return proton_register, neutron_register, mps, dict_sps2msps
 
     def delta(self, morb_a, morb_b):
+        """Check if two M-scheme orbitals are identical.
+        
+        Args:
+            morb_a (Orbit_nljjztz): First M-scheme orbital.
+            morb_b (Orbit_nljjztz): Second M-scheme orbital.
+            
+        Returns:
+            int: 1 if orbitals are identical, 0 otherwise.
+        """
         n_a = morb_a.n
         l_a = morb_a.l
         j_a = morb_a.j
@@ -400,6 +618,23 @@ class Hamiltonian:
             return 0
 
     def op_dict_T1_permutations(self, op_dict, aa, bb, cc, dd, J, v):
+        """Add two-body operator terms with proper permutation symmetry.
+        
+        Adds fermionic operator terms to the operator dictionary, including
+        the necessary permutations for antisymmetrized matrix elements.
+        
+        Args:
+            op_dict (dict): Dictionary to store operator strings and coefficients.
+            aa, bb (int): Bra state indices.
+            cc, dd (int): Ket state indices.
+            J (int): Total angular momentum quantum number.
+            v (float): Matrix element value.
+            
+        Note:
+            For identical bra and ket configurations, only one term is added.
+            For different configurations, both direct and exchanged terms are included
+            to ensure proper antisymmetrization of fermionic operators.
+        """
         bitstr = "+_" + str(aa) + " +_" + str(bb) + " -_" + str(dd) + " -_" + str(cc)
         if [aa, bb] == [cc, dd]:
             if bitstr in op_dict:
@@ -422,6 +657,32 @@ class Hamiltonian:
                 op_dict[bitstr] = v
 
     def get_mscheme_H(self, opform=False):
+        """Construct Hamiltonian matrix elements in M-scheme representation.
+        
+        Transforms the J-T coupled nuclear interaction matrix elements into
+        M-scheme (magnetic quantum number resolved) representation, which is
+        required for quantum computing applications. The method handles both
+        one-body and two-body terms with proper angular momentum recoupling.
+        
+        Args:
+            opform (bool, optional): If True, returns operators in fermionic
+                string form. If False, returns matrix element lists. Defaults to False.
+                
+        Returns:
+            dict: Dictionary containing Hamiltonian components:
+                - "SPE": Single-particle energy terms (1-body)
+                - "Vpp": Proton-proton interaction terms (2-body)
+                - "Vnn": Neutron-neutron interaction terms (2-body)  
+                - "Vpn": Proton-neutron interaction terms (2-body)
+                
+        Note:
+            For opform=True, terms are returned as fermionic operator strings
+            (e.g., "+_0 -_1" for creation/annihilation operators).
+            For opform=False, terms are returned as matrix element lists.
+            
+            The M-scheme transformation includes proper Clebsch-Gordan coefficients
+            and normalization factors for antisymmetrized matrix elements.
+        """
         op_dict_1b = {}
         if opform:
             op_dict_pp = {}
@@ -608,6 +869,27 @@ class Hamiltonian:
             return Hamildict
 
     def mapping_opform(self, Hamildict_opform, mapping_method):
+        """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
+        
+        Transforms the fermionic nuclear Hamiltonian into qubit operators using
+        standard fermion-to-qubit mappings such as Jordan-Wigner or Bravyi-Kitaev.
+        Handles the separate proton and neutron subsystems with appropriate mappings.
+        
+        Args:
+            Hamildict_opform (dict): Dictionary of fermionic operators from get_mscheme_H().
+            mapping_method (str): Fermion-to-qubit mapping method (e.g., "Jordan-Wigner").
+            
+        Returns:
+            tuple: A tuple containing mapped Pauli operators:
+                - H_1b (SparsePauliOp): One-body terms
+                - H_pp (SparsePauliOp): Proton-proton terms  
+                - H_nn (SparsePauliOp): Neutron-neutron terms
+                - H_pn (SparsePauliOp): Proton-neutron terms
+                
+        Note:
+            The proton-neutron terms require special handling due to the tensor
+            product structure of the proton-neutron Hilbert space.
+        """
         H_1b = mapping_to_Pauli_string(
             FermionicOp(Hamildict_opform["SPE"], num_spin_orbitals=self.n_qubits),
             self.n_qubits,
@@ -633,6 +915,23 @@ class Hamiltonian:
         return H_1b, H_pp, H_nn, H_pn
 
     def get_cG(self, sps_i, sps_j, J):
+        """Calculate Clebsch-Gordan coefficient for angular momentum coupling.
+        
+        Computes the Clebsch-Gordan coefficient for coupling two single-particle
+        states to a given total angular momentum J.
+        
+        Args:
+            sps_i (Orbit_nljjztz): First single-particle state in M-scheme.
+            sps_j (Orbit_nljjztz): Second single-particle state in M-scheme.
+            J (int): Total angular momentum quantum number.
+            
+        Returns:
+            float: Clebsch-Gordan coefficient <j1 m1 j2 m2 | J M>.
+            
+        Note:
+            Uses sympy's ClebschGordan implementation. The coefficient is
+            essential for M-scheme transformations of nuclear matrix elements.
+        """
         j = sps_i.j
         jz = sps_i.jz
         j_ = sps_j.j
@@ -641,6 +940,24 @@ class Hamiltonian:
         return float(ClebschGordan(j / 2, jz / 2, j_ / 2, jz_ / 2, J, M).doit())
 
     def get_midx_from_nljjztz(self, n, l, j, jz, tz):
+        """Find M-scheme single-particle state index from quantum numbers.
+        
+        Searches for the index of a M-scheme single-particle state with
+        specified quantum numbers in the model space.
+        
+        Args:
+            n (int): Principal quantum number (radial).
+            l (int): Orbital angular momentum quantum number.
+            j (int): Total angular momentum quantum number (twice the actual value).
+            jz (int): Magnetic quantum number (twice the actual value).
+            tz (int): Isospin projection (-1 for protons, +1 for neutrons).
+            
+        Returns:
+            int or None: Index of the matching M-scheme state, or None if not found.
+            
+        Note:
+            Prints a warning if the requested state is not found in the model space.
+        """
         for idx, target in enumerate(self.msps):
             n_ = target.n
             l_ = target.l
@@ -1006,6 +1323,28 @@ class Hamiltonian:
 
 
 def process_op(args):
+    """Process a single proton-neutron operator term for quantum mapping.
+    
+    This function processes individual terms from the three-body force dictionary,
+    mapping them from fermionic operators to Pauli strings using the specified
+    fermion-to-qubit mapping. Designed for parallel processing.
+    
+    Args:
+        args (tuple): A tuple containing:
+            - p_str (str): Proton fermionic operator string
+            - n_str (str): Neutron fermionic operator string  
+            - coeff_overall (complex): Overall coefficient
+            - n_qubits_p (int): Number of proton qubits
+            - n_qubits_n (int): Number of neutron qubits
+            - method (str): Fermion-to-qubit mapping method
+            
+    Returns:
+        list: List of (pauli_label, coefficient) tuples for this operator.
+        
+    Note:
+        This function is designed to be used with multiprocessing for
+        efficient parallel processing of large three-body force matrices.
+    """
     p_str, n_str, coeff_overall, n_qubits_p, n_qubits_n, method = args
     op_list_local = []
     op_p = mapping_to_Pauli_string(
@@ -1027,11 +1366,37 @@ def process_op(args):
     return op_list_local
 
 
-
 def hat(a):
+    """Angular momentum hat notation: sqrt(2*j + 1).
+    
+    Args:
+        a (int or float): Angular momentum quantum number (can be half-integer).
+        
+    Returns:
+        float: sqrt(2*a + 1), commonly used in nuclear physics calculations.
+        
+    Note:
+        This is the standard "hat" notation used in nuclear physics and
+        atomic physics for angular momentum algebra.
+    """
     return np.sqrt(2 * a + 1)
 
 def permutation_parity(lst):
+    """Calculate the parity (even/odd) of a permutation.
+    
+    Determines whether a permutation is even (0) or odd (1) by counting
+    the number of inversions in the list.
+    
+    Args:
+        lst (list): A permutation as a list of elements.
+        
+    Returns:
+        int: 0 for even permutation, 1 for odd permutation.
+        
+    Note:
+        Used in nuclear physics calculations where antisymmetrization
+        requires tracking permutation signs.
+    """
     # Returns 0 for even, 1 for odd permutation.
     par = 1
     for i in range(len(lst)):
@@ -1064,6 +1429,29 @@ def sort_3_orbits(a_in, b_in, c_in):
     return a, b, c, idx
 
 def get_CGs_from_dict(j1, m1, j2, m2, J, M, CG_dict: dict):
+    """Retrieve or calculate Clebsch-Gordan coefficient with caching.
+    
+    Gets a Clebsch-Gordan coefficient from cache or calculates and stores it.
+    This provides efficient access to frequently used CG coefficients in
+    nuclear many-body calculations.
+    
+    Args:
+        j1 (int): First angular momentum (twice the actual value).
+        m1 (int): First magnetic quantum number (twice the actual value).
+        j2 (int): Second angular momentum (twice the actual value).
+        m2 (int): Second magnetic quantum number (twice the actual value).
+        J (int): Coupled angular momentum (twice the actual value).
+        M (int): Coupled magnetic quantum number (twice the actual value).
+        CG_dict (dict): Cache dictionary for storing calculated coefficients.
+        
+    Returns:
+        float: Clebsch-Gordan coefficient <j1 m1 j2 m2 | J M>.
+        
+    Note:
+        The coefficient is calculated using sympy if not found in cache.
+        All angular momenta are provided as integers (twice their actual values)
+        to avoid floating-point arithmetic issues.
+    """
     tkey = (j1, m1, j2, m2, J, M)
     if tkey in CG_dict:
         return CG_dict[tkey]
@@ -1100,6 +1488,24 @@ def unhash_key6j(i):
     return a, b, c, d, e, f
 
 class sps_3Blab:
+    """Single-particle state manager for three-body matrix element calculations.
+    
+    This class manages single-particle states and model space parameters needed
+    for three-body force calculations. It stores both the truncated model space
+    parameters and the parameters from the original interaction files.
+    
+    Attributes:
+        e1max (int): Maximum single-particle excitation energy for model space.
+        e1max_file (int): Maximum single-particle excitation from original file.
+        e2max_file (int): Maximum two-body excitation from original file.  
+        e3max (int): Maximum three-body excitation energy for model space.
+        e3max_file (int): Maximum three-body excitation from original file.
+        norbits_ms (int): Number of orbitals in model space.
+        norbits_file (int): Number of orbitals in original file.
+        sps (dict): Single-particle states for model space.
+        sps_file (dict): Single-particle states from original file.
+    """
+    
     def __init__(
         self,
         e1max: int,
@@ -1112,6 +1518,19 @@ class sps_3Blab:
         sps,
         sps_file,
     ):
+        """Initialize single-particle state manager for 3NF calculations.
+        
+        Args:
+            e1max (int): Maximum single-particle excitation for model space.
+            e1max_file (int): Maximum single-particle excitation from file.
+            e2max_file (int): Maximum two-body excitation from file.
+            e3max (int): Maximum three-body excitation for model space.
+            e3max_file (int): Maximum three-body excitation from file.
+            norbits_ms (int): Number of orbitals in model space.
+            norbits_file (int): Number of orbitals in original file.
+            sps (dict): Model space single-particle states.
+            sps_file (dict): File single-particle states.
+        """
         self.e1max = e1max
         self.e1max_file = e1max_file
         self.e2max_file = e2max_file
@@ -1124,6 +1543,26 @@ class sps_3Blab:
 
 
 def valid_check(ea, eb, ec, ed, ee, ef, e1max, e2max, e3max):
+    """Check if three-body matrix element satisfies model space truncation limits.
+    
+    Validates that a three-body matrix element with excitation energies ea-ef
+    is within the specified model space truncation parameters.
+    
+    Args:
+        ea, eb, ec (int): Excitation energies of bra orbitals.
+        ed, ee, ef (int): Excitation energies of ket orbitals.
+        e1max (int): Maximum single-particle excitation energy.
+        e2max (int): Maximum two-body excitation energy.
+        e3max (int): Maximum three-body excitation energy.
+        
+    Returns:
+        bool: True if the matrix element is within model space limits.
+        
+    Note:
+        This enforces the standard nuclear physics truncation scheme where
+        single-particle, two-body, and three-body excitations are separately
+        limited to maintain computational tractability.
+    """
     if ea > e1max or eb > e1max or ec > e1max or ed > e1max or ee > e1max or ef > e1max:
         return False
     if ea + eb > e2max or ea + ec > e2max or eb + ec > e2max:
@@ -2139,6 +2578,25 @@ def get_canonical_order_6j(j1: int, j2: int, j3: int, j4: int, j5: int, j6: int)
 def set_op_list_from_op_dict_3b(
     op_dict_3b, n_qubits_p, n_qubits_n, method="Jordan-Wigner"
 ):
+    """Map three-body force dictionary to Pauli operator list using parallel processing.
+    
+    Efficiently converts a dictionary of proton-neutron operator pairs to a list
+    of Pauli operators using the specified fermion-to-qubit mapping. Employs
+    multiprocessing for computational efficiency on large three-body matrices.
+    
+    Args:
+        op_dict_3b (dict): Dictionary of (proton_op, neutron_op) -> coefficient pairs.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        method (str, optional): Fermion-to-qubit mapping method. Defaults to "Jordan-Wigner".
+        
+    Returns:
+        list: List of (pauli_label, coefficient) tuples representing the mapped operators.
+        
+    Note:
+        Uses multiprocessing with fork context for efficient parallel processing.
+        The number of processes is set to cpu_count - 2 to avoid system overload.
+    """
     print("Setting up op_list...")
     # Prepare task arguments for each entry in op_dict_3b
     tasks = [
@@ -2215,6 +2673,21 @@ def counting_CNOTs(H_mapped, label_int, label_op, dt, n_qubits):
 
 
 def removing_redundant_ops(op_list):
+    """Remove redundant Pauli operators by combining terms with same labels.
+    
+    Consolidates a list of Pauli operators by combining coefficients for
+    operators with identical Pauli labels, removing near-zero terms.
+    
+    Args:
+        op_list (list): List of (pauli_label, coefficient) tuples.
+        
+    Returns:
+        SparsePauliOp: Consolidated Pauli operator with redundant terms removed.
+        
+    Note:
+        Terms with coefficients smaller than 1e-16 are discarded to avoid
+        numerical precision issues in quantum simulations.
+    """
     print("Removing redundant terms... len=", len(op_list), end=" => ")
     new_dict = {}
     for label, c in tqdm(op_list):
@@ -2238,6 +2711,21 @@ def removing_redundant_ops(op_list):
 
 
 def removing_redundant_terms(ops: SparsePauliOp):
+    """Remove redundant terms from existing SparsePauliOp.
+    
+    Similar to removing_redundant_ops but works on existing SparsePauliOp objects.
+    Combines terms with identical Pauli labels and removes negligible coefficients.
+    
+    Args:
+        ops (SparsePauliOp): Input Pauli operator.
+        
+    Returns:
+        SparsePauliOp: Cleaned Pauli operator with redundant terms combined.
+        
+    Note:
+        This is used for final cleanup of mapped Hamiltonians before
+        quantum algorithm applications.
+    """
     paulis = ops.paulis
     coeffs = ops.coeffs
     print("Removing redundant terms... len=", len(paulis))
@@ -2264,6 +2752,22 @@ def removing_redundant_terms(ops: SparsePauliOp):
 
 
 def sum_over_J(Hamil):
+    """Sum two-body matrix elements over total angular momentum J.
+    
+    Combines two-body matrix elements with the same orbital indices but
+    different total angular momentum quantum numbers, which is needed
+    for certain nuclear structure calculations.
+    
+    Args:
+        Hamil (dict): Dictionary of Hamiltonian components with matrix element lists.
+        
+    Returns:
+        dict: Modified Hamiltonian dictionary with J-summed matrix elements.
+        
+    Note:
+        Single-particle energies (SPE) are passed through unchanged.
+        Two-body terms (Vpp, Vnn, Vpn) are combined over J quantum numbers.
+    """
     new_Hamil = {}
     for key in Hamil.keys():
         if key == "SPE":
