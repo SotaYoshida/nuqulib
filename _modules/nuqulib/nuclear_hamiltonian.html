@@ -234,7 +234,25 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.nuclear_hamiltonian</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span></span><span class="sd">&quot;&quot;&quot;Nuclear Hamiltonian construction and manipulation module.</span>
+
+<span class="sd">This module provides functionality for constructing and manipulating nuclear</span>
+<span class="sd">Hamiltonians for quantum many-body calculations. It supports both valence-space </span>
+<span class="sd">and no-core shell model (NCSM) interactions in the standard snt format used by</span>
+<span class="sd">nuclear physics codes such as KSHELL, NuHamil, and NuclearToolkit.jl.</span>
+
+<span class="sd">The module handles:</span>
+<span class="sd">- Two-body and three-body nuclear force interactions</span>
+<span class="sd">- M-scheme and J-T coupled representations</span>
+<span class="sd">- Mapping to fermionic operators and Pauli strings for quantum computing</span>
+<span class="sd">- Matrix element calculations and transformations</span>
+<span class="sd">- Quantum resource estimation for nuclear Hamiltonians</span>
+
+<span class="sd">Key Classes:</span>
+<span class="sd">- Hamiltonian: Main class for nuclear Hamiltonian construction and manipulation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
@@ -271,8 +289,24 @@
 <div class="viewcode-block" id="JTcoupledOrbitals">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JTcoupledOrbitals</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Class to handle the JT coupled orbitals in the model space. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle JT coupled orbitals in the model space.</span>
+<span class="sd">    </span>
+<span class="sd">    This class manages orbital states in the JT (angular momentum - isospin) coupled basis.</span>
+<span class="sd">    It provides methods to add orbitals and convert between different single-particle state</span>
+<span class="sd">    representations.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        emax (int): Maximum excitation energy for orbitals.</span>
+<span class="sd">        orbitals (dict): Dictionary mapping orbital indices to Orbit_nlj objects.</span>
+<span class="sd">        dict_sps2JTorbitals (dict): Mapping from single-particle states to JT orbitals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize J-T coupled orbitals manager.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            emax (int): Maximum excitation energy for orbitals in the model space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbitals</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dict_sps2JTorbitals</span> <span class="o">=</span> <span class="p">{}</span>
@@ -280,15 +314,34 @@
 <div class="viewcode-block" id="JTcoupledOrbitals.add_orbital">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.add_orbital">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_orbital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an orbital to the J-T coupled basis.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            idx (int): Index identifier for the orbital.</span>
+<span class="sd">            n (int): Principal quantum number (radial).</span>
+<span class="sd">            l (int): Orbital angular momentum quantum number.</span>
+<span class="sd">            j (int): Total angular momentum quantum number (twice the actual value).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">orbitals</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">Orbit_nlj</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="JTcoupledOrbitals.get_dict_sps2JTsps">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.get_dict_sps2JTsps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_dict_sps2JTsps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_defined_in_NN</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert the single particle states (sps) to the JT coupled states.</span>
-<span class="sd">        The sps are defined when the NN interaction file is loaded.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single particle states to J-T coupled states.</span>
+<span class="sd">        </span>
+<span class="sd">        Maps the single particle states defined in the nuclear interaction files</span>
+<span class="sd">        to the J-T coupled orbital basis for consistent matrix element handling.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            sps_defined_in_NN (list): Single particle states from NN interaction file.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Mapping from single-particle state indices to J-T orbital indices.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            The single-particle states are defined when the NN interaction file is loaded.</span>
+<span class="sd">            This method ensures compatibility between different representations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sps_defined_in_NN&quot;</span><span class="p">,</span> <span class="n">sps_defined_in_NN</span><span class="p">)</span>
         <span class="n">dict_sps2JTorbitals</span> <span class="o">=</span> <span class="p">{}</span>
@@ -314,9 +367,31 @@
 <div class="viewcode-block" id="get_Hamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_Hamiltonian">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">filename_snt</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">emax</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get the Hamiltonian from a snt file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get nuclear Hamiltonian from interaction files.</span>
 
-<span class="sd">    This is a wrapper to call the Hamiltonian class</span>
+<span class="sd">    This is a convenience wrapper function that constructs a Hamiltonian object</span>
+<span class="sd">    and returns the mapped quantum operators ready for use in quantum algorithms.</span>
+<span class="sd">    It handles both two-body and three-body nuclear interactions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename_snt (str): Path to the snt format interaction file.</span>
+<span class="sd">        Z (int): Number of protons in the nucleus.</span>
+<span class="sd">        N (int): Number of neutrons in the nucleus.</span>
+<span class="sd">        fn_3NF (str, optional): Path to three-body force file. Defaults to &quot;&quot;.</span>
+<span class="sd">        emax (int, optional): Maximum excitation energy for truncation. Defaults to 20.</span>
+<span class="sd">        e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.</span>
+<span class="sd">        ncsm (bool, optional): Whether using no-core shell model. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing:</span>
+<span class="sd">            - hamil (Hamiltonian): The Hamiltonian object</span>
+<span class="sd">            - H_mapped (SparsePauliOp): Mapped Hamiltonian as Pauli operators</span>
+<span class="sd">            - proton_qubits (list): Qubit indices corresponding to proton states</span>
+<span class="sd">            - neutron_qubits (list): Qubit indices corresponding to neutron states</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; hamil, H_mapped, p_qubits, n_qubits = get_Hamiltonian(&quot;interaction.snt&quot;, 8, 8)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Total qubits: {len(p_qubits) + len(n_qubits)}&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">fn_3NF</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
         <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">filename_snt</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="n">e3max</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="n">fn_3NF</span><span class="p">)</span>
@@ -352,12 +427,51 @@
 <div class="viewcode-block" id="Hamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Hamiltonian</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for Hamiltonian in the model space. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Nuclear Hamiltonian constructor and manager for quantum many-body calculations.</span>
 <span class="sd">    </span>
-<span class="sd">    This Hamiltonian class is used to read the NN and 3NF interaction files,</span>
-<span class="sd">    both valence-space and no-core shell model (NCSM) interactions in snt format</span>
-<span class="sd">    adopted in public codes, KSHELL, NuHamil, NuclearToolkit.jl, etc.</span>
-
+<span class="sd">    This class provides comprehensive functionality for constructing nuclear Hamiltonians</span>
+<span class="sd">    from standard interaction files, supporting both valence-space and no-core shell</span>
+<span class="sd">    model (NCSM) calculations. It handles two-body and three-body nuclear forces,</span>
+<span class="sd">    performs basis transformations, and maps to quantum operator representations.</span>
+<span class="sd">    </span>
+<span class="sd">    The class reads interaction files in the snt format used by nuclear physics</span>
+<span class="sd">    codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:</span>
+<span class="sd">    - Single-particle basis management</span>
+<span class="sd">    - Matrix element calculations and transformations</span>
+<span class="sd">    - M-scheme and J-T coupled representations</span>
+<span class="sd">    - Mapping to fermionic operators and Pauli strings</span>
+<span class="sd">    - Three-body force handling and optimization</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        fn_NN (str): Path to two-body interaction file.</span>
+<span class="sd">        Z (int): Number of protons.</span>
+<span class="sd">        N (int): Number of neutrons.</span>
+<span class="sd">        Anum (int): Mass number (Z + N).</span>
+<span class="sd">        nucleus (str): Nuclear symbol (e.g., &quot;16O&quot;).</span>
+<span class="sd">        emax (int): Maximum excitation energy for truncation.</span>
+<span class="sd">        ncsm (bool): Whether using no-core shell model.</span>
+<span class="sd">        hw (float): Harmonic oscillator frequency (for NCSM).</span>
+<span class="sd">        n_qubits (int): Total number of qubits needed.</span>
+<span class="sd">        n_qubits_p (int): Number of proton qubits.</span>
+<span class="sd">        n_qubits_n (int): Number of neutron qubits.</span>
+<span class="sd">        msps (list): M-scheme single-particle states.</span>
+<span class="sd">        v1b (list): One-body matrix elements.</span>
+<span class="sd">        v2b (list): Two-body matrix elements.</span>
+<span class="sd">        v3b_pn (dict): Three-body matrix elements in p-n representation.</span>
+<span class="sd">        v3b_Mscheme (dict): Three-body matrix elements in M-scheme.</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # For valence-space calculation</span>
+<span class="sd">        &gt;&gt;&gt; hamil = Hamiltonian(&quot;interaction.snt&quot;, Z=8, N=8)</span>
+<span class="sd">        &gt;&gt;&gt; H_dict = hamil.get_mscheme_H(opform=True)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # For NCSM with three-body forces</span>
+<span class="sd">        &gt;&gt;&gt; hamil = Hamiltonian(&quot;ncsm_int.snt&quot;, Z=4, N=4, </span>
+<span class="sd">        ...                     fn_3NF=&quot;3nf.me3j.gz&quot;, ncsm=True, emax_truncate=2)</span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        - T. Miyagi et al., Eur. Phys. J. A 59, 150 (2023)</span>
+<span class="sd">        - Standard snt format documentation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -372,6 +486,33 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">|</span><span class="kc">None</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize nuclear Hamiltonian from interaction files.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fn_NN (str or PathLike): Path to two-body nuclear interaction file in snt format.</span>
+<span class="sd">            Z (int): Number of protons in the nucleus.</span>
+<span class="sd">            N (int): Number of neutrons in the nucleus.</span>
+<span class="sd">            fn_3NF (str, PathLike, or None, optional): Path to three-body force file.</span>
+<span class="sd">                Supports &quot;readable.txt&quot; and &quot;me3j.gz&quot; formats. Defaults to None.</span>
+<span class="sd">            ncsm (bool, optional): Whether to use no-core shell model. If True,</span>
+<span class="sd">                includes kinetic energy and center-of-mass corrections. Defaults to False.</span>
+<span class="sd">            emax_truncate (int, optional): Maximum excitation energy for model space</span>
+<span class="sd">                truncation. Defaults to 20.</span>
+<span class="sd">            Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering</span>
+<span class="sd">                convention. Defaults to True.</span>
+<span class="sd">            verbose (bool, optional): Enable verbose output for debugging. Defaults to False.</span>
+<span class="sd">            e3max (int, optional): Maximum excitation energy for three-body forces.</span>
+<span class="sd">                If None, uses emax_truncate value. Defaults to None.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If three-body file format is not supported.</span>
+<span class="sd">            FileNotFoundError: If interaction files are not found.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            For NCSM calculations, the harmonic oscillator frequency is extracted</span>
+<span class="sd">            from the filename. Three-body forces require careful truncation</span>
+<span class="sd">            parameter matching between 2N and 3N interactions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;ppp&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;ppn&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;pnn&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;nnn&quot;</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fn_NN</span> <span class="o">=</span> <span class="n">fn_NN</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">Z</span>
@@ -462,6 +603,22 @@
 <div class="viewcode-block" id="Hamiltonian.guess_emax_from_fn">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.guess_emax_from_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">guess_emax_from_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract excitation energy parameters from three-body force filename.</span>
+<span class="sd">        </span>
+<span class="sd">        Attempts to parse the maximum excitation energies for one-body, two-body,</span>
+<span class="sd">        and three-body sectors from the three-body force filename pattern.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fn_3NF (str): Path to three-body force file.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing (e1max_file, e2max_file, e3max_file).</span>
+<span class="sd">                If parsing fails, returns default values based on emax_truncate.</span>
+<span class="sd">                </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Expects filename pattern with &quot;_ms{e1max}_{e2max}_{e3max}&quot; substring.</span>
+<span class="sd">            Falls back to emax_truncate * {1, 2, 3} if parsing fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">e1max_file</span> <span class="o">=</span> <span class="n">e2max_file</span> <span class="o">=</span> <span class="n">e3max_file</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">fn_3NF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;_ms&quot;</span> <span class="ow">in</span> <span class="n">fn_3NF</span><span class="p">:</span>
             <span class="n">txt</span> <span class="o">=</span> <span class="n">fn_3NF</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_ms&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
@@ -480,6 +637,17 @@
 <div class="viewcode-block" id="Hamiltonian.extract_hw">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.extract_hw">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_hw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract harmonic oscillator frequency from NCSM interaction filename.</span>
+<span class="sd">        </span>
+<span class="sd">        Parses the harmonic oscillator frequency (hw) parameter from the filename</span>
+<span class="sd">        of NCSM interaction files, which typically contain &quot;hw{value}&quot; in the name.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Harmonic oscillator frequency in MeV.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Required for NCSM calculations to properly scale kinetic energy terms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_NN</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;hw&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">hw</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">hw</span><span class="p">)</span></div>
@@ -488,11 +656,35 @@
 <div class="viewcode-block" id="Hamiltonian.read_snt_file">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_snt_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_snt_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_NN_in</span><span class="p">):</span>  
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        To read (valence-)NN interaction file in snt format.</span>
-
-<span class="sd">        For NCSM, one-body matrix elements are purely kinetic terms, :math:`T_{n,n&#39;}`.</span>
-<span class="sd">        :math:`\hbar\omega *(A-1)/A` factor is to be multiplied.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read nuclear interaction file in snt format.</span>
+<span class="sd">        </span>
+<span class="sd">        Parses nuclear interaction files containing single-particle energies and</span>
+<span class="sd">        two-body matrix elements in the standard snt format used by nuclear</span>
+<span class="sd">        physics codes like KSHELL and NuHamil.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            fn_NN_in (str or PathLike): Path to the snt format interaction file.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing:</span>
+<span class="sd">                - nsp_p (int): Number of proton single-particle states</span>
+<span class="sd">                - nsp_n (int): Number of neutron single-particle states  </span>
+<span class="sd">                - core_p (int): Number of core protons</span>
+<span class="sd">                - core_n (int): Number of core neutrons</span>
+<span class="sd">                - single_particle_states (list): List of Orbit_nljtz objects</span>
+<span class="sd">                - v1b (list): One-body matrix elements as (a, b, value) tuples</span>
+<span class="sd">                - v2b (list): Two-body matrix elements as (a, b, c, d, J, value) tuples</span>
+<span class="sd">                </span>
+<span class="sd">        Note:</span>
+<span class="sd">            For NCSM calculations, one-body matrix elements represent kinetic terms</span>
+<span class="sd">            :math:`T_{n,n&#39;}` with :math:`\\hbar\\omega (A-1)/A` scaling factor.</span>
+<span class="sd">            </span>
+<span class="sd">            The snt format supports both valence-space and NCSM interactions.</span>
+<span class="sd">            Mass-dependence factors :math:`(A/A_{ref})^p` are handled for empirical</span>
+<span class="sd">            shell model interactions.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If the interaction file cannot be found.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn_NN_in</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
@@ -608,6 +800,23 @@
 <div class="viewcode-block" id="Hamiltonian.get_mscheme_sps">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_sps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate M-scheme single-particle states from J-T coupled basis.</span>
+<span class="sd">        </span>
+<span class="sd">        Constructs the M-scheme (magnetic quantum number resolved) single-particle</span>
+<span class="sd">        states from the J-T coupled orbital basis. This includes expanding each</span>
+<span class="sd">        j-orbital into its 2j+1 magnetic substates and organizing them by particle type.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing:</span>
+<span class="sd">                - proton_register (range): Qubit indices for proton states</span>
+<span class="sd">                - neutron_register (range): Qubit indices for neutron states  </span>
+<span class="sd">                - mps (list): List of Orbit_nljjztz objects representing M-scheme states</span>
+<span class="sd">                - dict_sps2msps (dict): Mapping from J-T states to M-scheme state lists</span>
+<span class="sd">                </span>
+<span class="sd">        Note:</span>
+<span class="sd">            The proton states are placed first in the qubit register, followed by</span>
+<span class="sd">            neutron states. This convention is used throughout the quantum mappings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mps</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">dict_sps2msps</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -648,6 +857,15 @@
 <div class="viewcode-block" id="Hamiltonian.delta">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.delta">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two M-scheme orbitals are identical.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            morb_a (Orbit_nljjztz): First M-scheme orbital.</span>
+<span class="sd">            morb_b (Orbit_nljjztz): Second M-scheme orbital.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int: 1 if orbitals are identical, 0 otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">n</span>
         <span class="n">l_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">l</span>
         <span class="n">j_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">j</span>
@@ -667,6 +885,23 @@
 <div class="viewcode-block" id="Hamiltonian.op_dict_T1_permutations">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.op_dict_T1_permutations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">op_dict_T1_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_dict</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two-body operator terms with proper permutation symmetry.</span>
+<span class="sd">        </span>
+<span class="sd">        Adds fermionic operator terms to the operator dictionary, including</span>
+<span class="sd">        the necessary permutations for antisymmetrized matrix elements.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            op_dict (dict): Dictionary to store operator strings and coefficients.</span>
+<span class="sd">            aa, bb (int): Bra state indices.</span>
+<span class="sd">            cc, dd (int): Ket state indices.</span>
+<span class="sd">            J (int): Total angular momentum quantum number.</span>
+<span class="sd">            v (float): Matrix element value.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            For identical bra and ket configurations, only one term is added.</span>
+<span class="sd">            For different configurations, both direct and exchanged terms are included</span>
+<span class="sd">            to ensure proper antisymmetrization of fermionic operators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bitstr</span> <span class="o">=</span> <span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; +_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; -_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; -_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">[</span><span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="n">cc</span><span class="p">,</span> <span class="n">dd</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">bitstr</span> <span class="ow">in</span> <span class="n">op_dict</span><span class="p">:</span>
@@ -692,6 +927,32 @@
 <div class="viewcode-block" id="Hamiltonian.get_mscheme_H">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opform</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Hamiltonian matrix elements in M-scheme representation.</span>
+<span class="sd">        </span>
+<span class="sd">        Transforms the J-T coupled nuclear interaction matrix elements into</span>
+<span class="sd">        M-scheme (magnetic quantum number resolved) representation, which is</span>
+<span class="sd">        required for quantum computing applications. The method handles both</span>
+<span class="sd">        one-body and two-body terms with proper angular momentum recoupling.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            opform (bool, optional): If True, returns operators in fermionic</span>
+<span class="sd">                string form. If False, returns matrix element lists. Defaults to False.</span>
+<span class="sd">                </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Dictionary containing Hamiltonian components:</span>
+<span class="sd">                - &quot;SPE&quot;: Single-particle energy terms (1-body)</span>
+<span class="sd">                - &quot;Vpp&quot;: Proton-proton interaction terms (2-body)</span>
+<span class="sd">                - &quot;Vnn&quot;: Neutron-neutron interaction terms (2-body)  </span>
+<span class="sd">                - &quot;Vpn&quot;: Proton-neutron interaction terms (2-body)</span>
+<span class="sd">                </span>
+<span class="sd">        Note:</span>
+<span class="sd">            For opform=True, terms are returned as fermionic operator strings</span>
+<span class="sd">            (e.g., &quot;+_0 -_1&quot; for creation/annihilation operators).</span>
+<span class="sd">            For opform=False, terms are returned as matrix element lists.</span>
+<span class="sd">            </span>
+<span class="sd">            The M-scheme transformation includes proper Clebsch-Gordan coefficients</span>
+<span class="sd">            and normalization factors for antisymmetrized matrix elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op_dict_1b</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">opform</span><span class="p">:</span>
             <span class="n">op_dict_pp</span> <span class="o">=</span> <span class="p">{}</span>
@@ -881,6 +1142,27 @@
 <div class="viewcode-block" id="Hamiltonian.mapping_opform">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mapping_opform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Hamildict_opform</span><span class="p">,</span> <span class="n">mapping_method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.</span>
+<span class="sd">        </span>
+<span class="sd">        Transforms the fermionic nuclear Hamiltonian into qubit operators using</span>
+<span class="sd">        standard fermion-to-qubit mappings such as Jordan-Wigner or Bravyi-Kitaev.</span>
+<span class="sd">        Handles the separate proton and neutron subsystems with appropriate mappings.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            Hamildict_opform (dict): Dictionary of fermionic operators from get_mscheme_H().</span>
+<span class="sd">            mapping_method (str): Fermion-to-qubit mapping method (e.g., &quot;Jordan-Wigner&quot;).</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple containing mapped Pauli operators:</span>
+<span class="sd">                - H_1b (SparsePauliOp): One-body terms</span>
+<span class="sd">                - H_pp (SparsePauliOp): Proton-proton terms  </span>
+<span class="sd">                - H_nn (SparsePauliOp): Neutron-neutron terms</span>
+<span class="sd">                - H_pn (SparsePauliOp): Proton-neutron terms</span>
+<span class="sd">                </span>
+<span class="sd">        Note:</span>
+<span class="sd">            The proton-neutron terms require special handling due to the tensor</span>
+<span class="sd">            product structure of the proton-neutron Hilbert space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">H_1b</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
             <span class="n">FermionicOp</span><span class="p">(</span><span class="n">Hamildict_opform</span><span class="p">[</span><span class="s2">&quot;SPE&quot;</span><span class="p">],</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span>
@@ -909,6 +1191,23 @@
 <div class="viewcode-block" id="Hamiltonian.get_cG">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_cG">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_cG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_i</span><span class="p">,</span> <span class="n">sps_j</span><span class="p">,</span> <span class="n">J</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Clebsch-Gordan coefficient for angular momentum coupling.</span>
+<span class="sd">        </span>
+<span class="sd">        Computes the Clebsch-Gordan coefficient for coupling two single-particle</span>
+<span class="sd">        states to a given total angular momentum J.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            sps_i (Orbit_nljjztz): First single-particle state in M-scheme.</span>
+<span class="sd">            sps_j (Orbit_nljjztz): Second single-particle state in M-scheme.</span>
+<span class="sd">            J (int): Total angular momentum quantum number.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Clebsch-Gordan coefficient &lt;j1 m1 j2 m2 | J M&gt;.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Uses sympy&#39;s ClebschGordan implementation. The coefficient is</span>
+<span class="sd">            essential for M-scheme transformations of nuclear matrix elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">sps_i</span><span class="o">.</span><span class="n">j</span>
         <span class="n">jz</span> <span class="o">=</span> <span class="n">sps_i</span><span class="o">.</span><span class="n">jz</span>
         <span class="n">j_</span> <span class="o">=</span> <span class="n">sps_j</span><span class="o">.</span><span class="n">j</span>
@@ -920,6 +1219,24 @@
 <div class="viewcode-block" id="Hamiltonian.get_midx_from_nljjztz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_midx_from_nljjztz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_midx_from_nljjztz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find M-scheme single-particle state index from quantum numbers.</span>
+<span class="sd">        </span>
+<span class="sd">        Searches for the index of a M-scheme single-particle state with</span>
+<span class="sd">        specified quantum numbers in the model space.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            n (int): Principal quantum number (radial).</span>
+<span class="sd">            l (int): Orbital angular momentum quantum number.</span>
+<span class="sd">            j (int): Total angular momentum quantum number (twice the actual value).</span>
+<span class="sd">            jz (int): Magnetic quantum number (twice the actual value).</span>
+<span class="sd">            tz (int): Isospin projection (-1 for protons, +1 for neutrons).</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int or None: Index of the matching M-scheme state, or None if not found.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Prints a warning if the requested state is not found in the model space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">):</span>
             <span class="n">n_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">n</span>
             <span class="n">l_</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">l</span>
@@ -1301,6 +1618,28 @@
 <div class="viewcode-block" id="process_op">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.process_op">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_op</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process a single proton-neutron operator term for quantum mapping.</span>
+<span class="sd">    </span>
+<span class="sd">    This function processes individual terms from the three-body force dictionary,</span>
+<span class="sd">    mapping them from fermionic operators to Pauli strings using the specified</span>
+<span class="sd">    fermion-to-qubit mapping. Designed for parallel processing.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        args (tuple): A tuple containing:</span>
+<span class="sd">            - p_str (str): Proton fermionic operator string</span>
+<span class="sd">            - n_str (str): Neutron fermionic operator string  </span>
+<span class="sd">            - coeff_overall (complex): Overall coefficient</span>
+<span class="sd">            - n_qubits_p (int): Number of proton qubits</span>
+<span class="sd">            - n_qubits_n (int): Number of neutron qubits</span>
+<span class="sd">            - method (str): Fermion-to-qubit mapping method</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of (pauli_label, coefficient) tuples for this operator.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        This function is designed to be used with multiprocessing for</span>
+<span class="sd">        efficient parallel processing of large three-body force matrices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">,</span> <span class="n">coeff_overall</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">args</span>
     <span class="n">op_list_local</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">op_p</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
@@ -1323,16 +1662,42 @@
 
 
 
-
 <div class="viewcode-block" id="hat">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.hat">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hat</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Angular momentum hat notation: sqrt(2*j + 1).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        a (int or float): Angular momentum quantum number (can be half-integer).</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: sqrt(2*a + 1), commonly used in nuclear physics calculations.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is the standard &quot;hat&quot; notation used in nuclear physics and</span>
+<span class="sd">        atomic physics for angular momentum algebra.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="permutation_parity">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.permutation_parity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">permutation_parity</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the parity (even/odd) of a permutation.</span>
+<span class="sd">    </span>
+<span class="sd">    Determines whether a permutation is even (0) or odd (1) by counting</span>
+<span class="sd">    the number of inversions in the list.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lst (list): A permutation as a list of elements.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: 0 for even permutation, 1 for odd permutation.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Used in nuclear physics calculations where antisymmetrization</span>
+<span class="sd">        requires tracking permutation signs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Returns 0 for even, 1 for odd permutation.</span>
     <span class="n">par</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)):</span>
@@ -1371,6 +1736,29 @@
 <div class="viewcode-block" id="get_CGs_from_dict">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_CGs_from_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_CGs_from_dict</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">CG_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve or calculate Clebsch-Gordan coefficient with caching.</span>
+<span class="sd">    </span>
+<span class="sd">    Gets a Clebsch-Gordan coefficient from cache or calculates and stores it.</span>
+<span class="sd">    This provides efficient access to frequently used CG coefficients in</span>
+<span class="sd">    nuclear many-body calculations.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        j1 (int): First angular momentum (twice the actual value).</span>
+<span class="sd">        m1 (int): First magnetic quantum number (twice the actual value).</span>
+<span class="sd">        j2 (int): Second angular momentum (twice the actual value).</span>
+<span class="sd">        m2 (int): Second magnetic quantum number (twice the actual value).</span>
+<span class="sd">        J (int): Coupled angular momentum (twice the actual value).</span>
+<span class="sd">        M (int): Coupled magnetic quantum number (twice the actual value).</span>
+<span class="sd">        CG_dict (dict): Cache dictionary for storing calculated coefficients.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Clebsch-Gordan coefficient &lt;j1 m1 j2 m2 | J M&gt;.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        The coefficient is calculated using sympy if not found in cache.</span>
+<span class="sd">        All angular momenta are provided as integers (twice their actual values)</span>
+<span class="sd">        to avoid floating-point arithmetic issues.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">CG_dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">CG_dict</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span>
@@ -1419,6 +1807,24 @@
 <div class="viewcode-block" id="sps_3Blab">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sps_3Blab">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">sps_3Blab</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-particle state manager for three-body matrix element calculations.</span>
+<span class="sd">    </span>
+<span class="sd">    This class manages single-particle states and model space parameters needed</span>
+<span class="sd">    for three-body force calculations. It stores both the truncated model space</span>
+<span class="sd">    parameters and the parameters from the original interaction files.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        e1max (int): Maximum single-particle excitation energy for model space.</span>
+<span class="sd">        e1max_file (int): Maximum single-particle excitation from original file.</span>
+<span class="sd">        e2max_file (int): Maximum two-body excitation from original file.  </span>
+<span class="sd">        e3max (int): Maximum three-body excitation energy for model space.</span>
+<span class="sd">        e3max_file (int): Maximum three-body excitation from original file.</span>
+<span class="sd">        norbits_ms (int): Number of orbitals in model space.</span>
+<span class="sd">        norbits_file (int): Number of orbitals in original file.</span>
+<span class="sd">        sps (dict): Single-particle states for model space.</span>
+<span class="sd">        sps_file (dict): Single-particle states from original file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">e1max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1431,6 +1837,19 @@
         <span class="n">sps</span><span class="p">,</span>
         <span class="n">sps_file</span><span class="p">,</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize single-particle state manager for 3NF calculations.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            e1max (int): Maximum single-particle excitation for model space.</span>
+<span class="sd">            e1max_file (int): Maximum single-particle excitation from file.</span>
+<span class="sd">            e2max_file (int): Maximum two-body excitation from file.</span>
+<span class="sd">            e3max (int): Maximum three-body excitation for model space.</span>
+<span class="sd">            e3max_file (int): Maximum three-body excitation from file.</span>
+<span class="sd">            norbits_ms (int): Number of orbitals in model space.</span>
+<span class="sd">            norbits_file (int): Number of orbitals in original file.</span>
+<span class="sd">            sps (dict): Model space single-particle states.</span>
+<span class="sd">            sps_file (dict): File single-particle states.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e1max</span> <span class="o">=</span> <span class="n">e1max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e1max_file</span> <span class="o">=</span> <span class="n">e1max_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e2max_file</span> <span class="o">=</span> <span class="n">e2max_file</span>
@@ -1446,6 +1865,26 @@
 <div class="viewcode-block" id="valid_check">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.valid_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_check</span><span class="p">(</span><span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if three-body matrix element satisfies model space truncation limits.</span>
+<span class="sd">    </span>
+<span class="sd">    Validates that a three-body matrix element with excitation energies ea-ef</span>
+<span class="sd">    is within the specified model space truncation parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        ea, eb, ec (int): Excitation energies of bra orbitals.</span>
+<span class="sd">        ed, ee, ef (int): Excitation energies of ket orbitals.</span>
+<span class="sd">        e1max (int): Maximum single-particle excitation energy.</span>
+<span class="sd">        e2max (int): Maximum two-body excitation energy.</span>
+<span class="sd">        e3max (int): Maximum three-body excitation energy.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the matrix element is within model space limits.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        This enforces the standard nuclear physics truncation scheme where</span>
+<span class="sd">        single-particle, two-body, and three-body excitations are separately</span>
+<span class="sd">        limited to maintain computational tractability.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ea</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">eb</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">ec</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">ed</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">ee</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">ef</span> <span class="o">&gt;</span> <span class="n">e1max</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">ea</span> <span class="o">+</span> <span class="n">eb</span> <span class="o">&gt;</span> <span class="n">e2max</span> <span class="ow">or</span> <span class="n">ea</span> <span class="o">+</span> <span class="n">ec</span> <span class="o">&gt;</span> <span class="n">e2max</span> <span class="ow">or</span> <span class="n">eb</span> <span class="o">+</span> <span class="n">ec</span> <span class="o">&gt;</span> <span class="n">e2max</span><span class="p">:</span>
@@ -2518,6 +2957,25 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">set_op_list_from_op_dict_3b</span><span class="p">(</span>
     <span class="n">op_dict_3b</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map three-body force dictionary to Pauli operator list using parallel processing.</span>
+<span class="sd">    </span>
+<span class="sd">    Efficiently converts a dictionary of proton-neutron operator pairs to a list</span>
+<span class="sd">    of Pauli operators using the specified fermion-to-qubit mapping. Employs</span>
+<span class="sd">    multiprocessing for computational efficiency on large three-body matrices.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        op_dict_3b (dict): Dictionary of (proton_op, neutron_op) -&gt; coefficient pairs.</span>
+<span class="sd">        n_qubits_p (int): Number of proton qubits.</span>
+<span class="sd">        n_qubits_n (int): Number of neutron qubits.</span>
+<span class="sd">        method (str, optional): Fermion-to-qubit mapping method. Defaults to &quot;Jordan-Wigner&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: List of (pauli_label, coefficient) tuples representing the mapped operators.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Uses multiprocessing with fork context for efficient parallel processing.</span>
+<span class="sd">        The number of processes is set to cpu_count - 2 to avoid system overload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting up op_list...&quot;</span><span class="p">)</span>
     <span class="c1"># Prepare task arguments for each entry in op_dict_3b</span>
     <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span>
@@ -2606,6 +3064,21 @@
 <div class="viewcode-block" id="removing_redundant_ops">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.removing_redundant_ops">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">removing_redundant_ops</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove redundant Pauli operators by combining terms with same labels.</span>
+<span class="sd">    </span>
+<span class="sd">    Consolidates a list of Pauli operators by combining coefficients for</span>
+<span class="sd">    operators with identical Pauli labels, removing near-zero terms.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        op_list (list): List of (pauli_label, coefficient) tuples.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        SparsePauliOp: Consolidated Pauli operator with redundant terms removed.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Terms with coefficients smaller than 1e-16 are discarded to avoid</span>
+<span class="sd">        numerical precision issues in quantum simulations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing redundant terms... len=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">op_list</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot; =&gt; &quot;</span><span class="p">)</span>
     <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
@@ -2632,6 +3105,21 @@
 <div class="viewcode-block" id="removing_redundant_terms">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.removing_redundant_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">removing_redundant_terms</span><span class="p">(</span><span class="n">ops</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove redundant terms from existing SparsePauliOp.</span>
+<span class="sd">    </span>
+<span class="sd">    Similar to removing_redundant_ops but works on existing SparsePauliOp objects.</span>
+<span class="sd">    Combines terms with identical Pauli labels and removes negligible coefficients.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        ops (SparsePauliOp): Input Pauli operator.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        SparsePauliOp: Cleaned Pauli operator with redundant terms combined.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        This is used for final cleanup of mapped Hamiltonians before</span>
+<span class="sd">        quantum algorithm applications.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">paulis</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">coeffs</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Removing redundant terms... len=&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">paulis</span><span class="p">))</span>
@@ -2661,6 +3149,22 @@
 <div class="viewcode-block" id="sum_over_J">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sum_over_J">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sum_over_J</span><span class="p">(</span><span class="n">Hamil</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum two-body matrix elements over total angular momentum J.</span>
+<span class="sd">    </span>
+<span class="sd">    Combines two-body matrix elements with the same orbital indices but</span>
+<span class="sd">    different total angular momentum quantum numbers, which is needed</span>
+<span class="sd">    for certain nuclear structure calculations.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        Hamil (dict): Dictionary of Hamiltonian components with matrix element lists.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Modified Hamiltonian dictionary with J-summed matrix elements.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Single-particle energies (SPE) are passed through unchanged.</span>
+<span class="sd">        Two-body terms (Vpp, Vnn, Vpn) are combined over J quantum numbers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_Hamil</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">Hamil</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;SPE&quot;</span><span class="p">:</span>
