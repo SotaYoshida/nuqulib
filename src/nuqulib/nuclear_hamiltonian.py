@@ -1526,9 +1526,9 @@ class ReadThBME_me3jgz:
         self.dWs = prep_dicts_for_WignerSymbols(e1max)
         self.sps_3b = self.get_modelspace(e1max, e1max_file, e2max, e3max, e3max_file)
         self.count_ME_file, self.dict_idxheadThBME = self.count_nreads(self.sps_3b)
-        self.count_ME_MS = self.count_nreads(self.sps_3b, "ModelSpace")
+        self.count_ME_MS, self.dict_idxheadThBME_MS = self.count_nreads(self.sps_3b, "ModelSpace")
         self.ThBME = self.read_me3jgz(self.filename, self.count_ME_file)
-        self.v3bme, self.dict_3b_idx = self.loop_over_JT(self.sps_3b, what_you_need="allocate_v3bme")
+        self.v3bme = self.loop_over_JT(self.sps_3b, what_you_need="allocate_v3bme")
         self.verbose = verbose
         self.CG_dict = CG_dict_fromHamiltonian
         if (
@@ -1538,13 +1538,14 @@ class ReadThBME_me3jgz:
         ):
             self.v3bme = self.ThBME
         else:
-            self.v3bme = self.truncate_v3bme(
-                len(self.v3bme),
+            self.v3bme = truncate_v3bme(
+                self.count_ME_file,
+                self.count_ME_MS,
                 self.sps_3b,
                 self.ThBME,
-                self.count_ME_MS,
                 self.dWs,
                 self.dict_idxheadThBME,
+                self.dict_idxheadThBME_MS
             )
         print(f"norm(v3bme):", np.linalg.norm(self.v3bme))
         self.pnME_3NF = self.loop_over_JT(self.sps_3b, what_you_need="me3j->readable.txt", array_in=self.v3bme)
@@ -1588,7 +1589,7 @@ class ReadThBME_me3jgz:
             sps_file,
         )
 
-    def count_nreads(self, sps_3b, mode="File"):
+    def count_nreads(self, sps_3b: sps_3Blab, mode="File"):
         """Count the number of elements of floating-point numbers to be read from the interaction file.
 
         In some interaction files, odd indices correspond to proton and even indices correspond to neutron.
@@ -1682,9 +1683,8 @@ class ReadThBME_me3jgz:
                                 if twoJCMindown > twoJCMaxup:
                                     continue
 
-                                if mode == "File":
-                                    nkey = (idx_a, idx_b, idx_c, idx_d, idx_e, idx_f)
-                                    dict_idx_ThBME[nkey] = nread
+                                nkey = (idx_a, idx_b, idx_c, idx_d, idx_e, idx_f)
+                                dict_idx_ThBME[nkey] = nread
 
                                 for Jab in range(JabMin, JabMax + 1):
                                     for Jde in range(JdeMin, JdeMax + 1):
@@ -1701,9 +1701,7 @@ class ReadThBME_me3jgz:
         if mode == "File":
             nkeys = len(dict_idx_ThBME)
             print("size of dict_idx_ThBME:", nkeys, nkeys * 2 * 8 / 1024**3, "GB")
-            return nread, dict_idx_ThBME
-        else:
-            return nreads
+        return nread, dict_idx_ThBME
 
     def read_me3jgz(self, filename, count_ME_file):
         """Read three-body matrix elements from a me3j.gz file.
@@ -1729,19 +1727,19 @@ class ReadThBME_me3jgz:
                 idx_i = (idx - 1) * 10
                 idx_f = idx_i + 9
                 subsize = 10
-                if idx_i > count_ME_file:
+                if idx_i >= count_ME_file:
                     break
-                if idx_f > count_ME_file:
-                    subsize = count_ME_file - idx_i + 1
+                if idx_f >= count_ME_file:
+                    subsize = count_ME_file - idx_i 
                 for i in range(subsize):
                     tl = line[16 * i : 16 * (i + 1)]
                     ThBME[idx_i + i] = float(tl)
         print("Total ThBME entries read:", len(ThBME))
         return ThBME
 
-    def loop_over_JT(self, sps_3b, what_you_need="", ME_is_double=True, 
+    def loop_over_JT(self, sps_3b: sps_3Blab, what_you_need="", ME_is_double=True, 
                      array_in: np.ndarray=np.zeros(1, dtype=np.float64)
-        ):
+        ): 
         """Method to loop over JT-coupled three-body matrix elements.
 
         This method iterates over the relevant quantum numbers and constructs
@@ -1802,10 +1800,10 @@ class ReadThBME_me3jgz:
 
                                 abc_eq_def = ( (a, b, c) == (d, e, f) )
 
-                                # Record the current dimension offset using a hash key.
-                                if what_you_need == "allocate_v3bme":
-                                    orbit_hash = get_nkey6(a, b, c, d, e, f)
-                                    dict_3b_idx[orbit_hash] = total_dim
+                                # # Record the current dimension offset using a hash key.
+                                # if what_you_need == "allocate_v3bme":
+                                #     orbit_hash = get_nkey6(a, b, c, d, e, f)
+                                #     dict_3b_idx[orbit_hash] = total_dim
 
                                 if what_you_need == "me3j->readable.txt":
 
@@ -1870,7 +1868,7 @@ class ReadThBME_me3jgz:
                 )
             print(f"# of 3BME: {total_dim:12d} Mem. {size_3bme:12.5e} GB")
             v3bme = np.zeros(total_dim, dtype=np.float64)
-            return v3bme, dict_3b_idx
+            return v3bme#, dict_3b_idx
         elif what_you_need == "me3j->readable.txt":
             if self.verbose:
                 print("checking dim for readable.txt...", non_zero_term, "/", total_dim)
@@ -1965,170 +1963,88 @@ def Trans_JT_into_pn(Z: int, N: int,
                 pnME_3NF[pnkey] = part
 
 
-def truncate_v3bme(dim_v3bme, sps_3b, ThBME, nreads_v3bme, dWS, dict_idxheadThBME):
+def truncate_v3bme(dim_v3bme_file: int, dim_v3bme_ms: int,
+                   sps_3b: sps_3Blab,
+                   ThBME, dWS, 
+                   dict_idxheadThBME_file,
+                   dict_idxheadThBME_MS):
     """Truncate JT-coupled 3NF matrix elements with specified model space truncations.
 
     """
-    v3bme = np.zeros(dim_v3bme, dtype=np.float64)
+    v3bme = np.zeros(dim_v3bme_ms, dtype=np.float64)
     e1max = sps_3b.e1max
     e2max = e1max * 2
-    e1max_file = sps_3b.e1max_file
-    e2max_file = sps_3b.e2max_file
-    e3max_file = sps_3b.e3max_file
     e3max = sps_3b.e3max
     l3max = e1max
     sps = sps_3b.sps
-    norbits = sps_3b.norbits
+    norbits = sps_3b.norbits_ms
     count_ME_file = 0
 
-    # Loop over 'bra' indices (odd numbers from 1 to norbits)
-    for idx_a in range(1, norbits + 1, 2):
-        oa = sps[idx_a]
+    for a in range(1, norbits + 1, 2):
+        oa = sps[a]
         ea = oa.e
-        # nreads_v3bme index conversion: Julia's div(idx_a,2)+1 -> Python's idx_a//2
-        nread_v3bme = nreads_v3bme[idx_a // 2]
-        if ea > e1max:
+        la = oa.l
+        if ea > e1max or ea > e3max:
             continue
 
-        for idx_b in range(1, idx_a + 1, 2):
-            ob = sps[idx_b]
+        for b in range(1, a + 1, 2):
+            ob = sps[b]
             eb = ob.e
-            if ea + eb > e2max:
+            lb = ob.l
+            if ea + eb > e3max:
                 continue
 
-            for idx_c in range(1, idx_b + 1, 2):
-                oc = sps[idx_c]
+            Jab_min = abs(oa.j - ob.j) // 2
+            Jab_max = (oa.j + ob.j) // 2
+
+            for c in range(1, b + 1, 2):
+                oc = sps[c]
                 ec = oc.e
                 if ea + eb + ec > e3max:
                     continue
 
-                JabMax = (oa.j + ob.j) // 2
-                JabMin = abs(oa.j - ob.j) // 2
-                if abs(oa.j - ob.j) > oc.j:
-                    twoJCMindownbra = abs(oa.j - ob.j) - oc.j
-                elif oc.j < (oa.j + ob.j):
-                    twoJCMindownbra = 1
-                else:
-                    twoJCMindownbra = oc.j - oa.j - ob.j
-                twoJCMaxupbra = oa.j + ob.j + oc.j
-
-                # Loop for 'ket' part
-                for idx_d in range(1, idx_a + 1, 2):
-                    od = sps[idx_d]
+                for d in range(1, a + 1, 2):
+                    od = sps[d]
                     ed = od.e
-                    if ed > e1max:
-                        continue
-                    upper_idx_e = idx_b if (idx_a == idx_d) else idx_d
-                    for idx_e in range(1, upper_idx_e + 1, 2):
-                        oe = sps[idx_e]
+
+                    # Upper limit for index e depends on whether d equals a
+                    upper_idx_e = b if d == a else d
+                    for e in range(1, upper_idx_e + 1, 2):
+                        oe = sps[e]
                         ee = oe.e
-                        if ee > e1max:
-                            continue
-                        idx_f_max = (
-                            idx_c if (idx_a == idx_d and idx_b == idx_e) else idx_e
-                        )
-                        for idx_f in range(1, idx_f_max + 1, 2):
-                            of_ = sps[idx_f]
-                            ef = of_.e
-                            if ef > e1max:
-                                continue
+
+                        # Upper limit for index f depends on a,d and b,e combinations
+                        upper_idx_f = c if (a == d and b == e) else e
+                        for f in range(1, upper_idx_f + 1, 2):
+                            of = sps[f]
+                            ef = of.e
                             if ed + ee + ef > e3max:
                                 continue
-                            if (oa.l + ob.l + oc.l + od.l + oe.l + of_.l) % 2 != 0:
+
+                            # Check parity condition from orbital angular momenta.
+                            if (la + lb + oc.l + od.l + oe.l + of.l) % 2 != 0:
                                 continue
 
-                            if not valid_check(
-                                ea, eb, ec, ed, ee, ef, e1max, e2max, e3max
-                            ):
-                                continue
-                            if not valid_check(
-                                ea, eb, ec, ed, ee, ef, e1max_file, e2max_file, e3max_file,
-                            ):
-                                continue
+                            tkey = (a, b, c, d, e, f)                            
+                            ofst_ms = dict_idxheadThBME_MS[tkey]
+                            ofst_file = dict_idxheadThBME_file[tkey]
 
-                            JdeMax = (od.j + oe.j) // 2
-                            JdeMin = abs(od.j - oe.j) // 2
-                            if abs(od.j - oe.j) > of_.j:
-                                twoJCMindownket = abs(od.j - oe.j) - of_.j
-                            elif of_.j < (od.j + oe.j):
-                                twoJCMindownket = 1
-                            else:
-                                twoJCMindownket = of_.j - od.j - oe.j
-                            twoJCMaxupket = od.j + oe.j + of_.j
-
-                            twoJCMindown = max(twoJCMindownbra, twoJCMindownket)
-                            twoJCMaxup = min(twoJCMaxupbra, twoJCMaxupket)
-                            if twoJCMindown > twoJCMaxup:
-                                continue
-
-                            key = get_nkey6(idx_a, idx_b, idx_c, idx_d, idx_e, idx_f)
-                            offset_ThBME = dict_idxheadThBME[key]
-                            idx_ThBME = offset_ThBME
-
-                            for Jab in range(JabMin, JabMax + 1):
-                                for Jde in range(JdeMin, JdeMax + 1):
-                                    twoJCMin = max(
-                                        abs(2 * Jab - oc.j), abs(2 * Jde - of_.j)
+                            idx_intr = 0
+                            Jde_min = abs(od.j - oe.j) // 2
+                            Jde_max = (od.j + oe.j) // 2
+                            for Jab in range(Jab_min, Jab_max + 1):
+                                for Jde in range(Jde_min, Jde_max + 1):
+                                    J3_min = max(
+                                        abs(2 * Jab - oc.j), abs(2 * Jde - of.j)
                                     )
-                                    twoJCMax = min(2 * Jab + oc.j, 2 * Jde + of_.j)
-                                    if twoJCMin > twoJCMax:
-                                        continue
-                                    blocksize = ((twoJCMax - twoJCMin) // 2 + 1) * 5
-                                    for JTind in range(0, twoJCMax - twoJCMin + 1):
-                                        twoJC = twoJCMin + (JTind // 2) * 2
-                                        twoT = 1 + (JTind % 2) * 2
-                                        for Tab in range(0, 2):
-                                            for Tde in range(0, 2):
-                                                if twoT > min(2 * Tab + 1, 2 * Tde + 1):
-                                                    continue
-                                                index_ab = (
-                                                    ((5 * (twoJC - twoJCMin)) // 2)
-                                                    + 2 * Tab
-                                                    + Tde
-                                                    + ((twoT - 1) // 2)
-                                                )
-                                                v3idx = nread_v3bme + index_ab + 1
-                                                idx_ThBME += 1
-                                                ThBME_idx = idx_ThBME
-                                                V = 0.0
-                                                autozero = False
-                                                if (
-                                                    oa.l > l3max
-                                                    or ob.l > l3max
-                                                    or oc.l > l3max
-                                                    or od.l > l3max
-                                                    or oe.l > l3max
-                                                    or of_.l > l3max
-                                                ):
-                                                    V = 0.0
-                                                v3bme[v3idx] = ThBME[ThBME_idx]
-                                                if (
-                                                    idx_a == idx_b
-                                                    and (Tab + Jab) % 2 == 0
-                                                ) or (
-                                                    idx_d == idx_e
-                                                    and (Tde + Jde) % 2 == 0
-                                                ):
-                                                    autozero = True
-                                                if (
-                                                    idx_a == idx_b
-                                                    and idx_a == idx_c
-                                                    and twoT == 3
-                                                    and oa.j < 3
-                                                ):
-                                                    autozero = True
-                                                if (
-                                                    idx_d == idx_e
-                                                    and idx_d == idx_f
-                                                    and twoT == 3
-                                                    and od.j < 3
-                                                ):
-                                                    autozero = True
-                                    if valid_check(
-                                        ea, eb, ec, ed, ee, ef, e1max, e2max, e3max
-                                    ):
-                                        nread_v3bme += blocksize
-                                    count_ME_file += blocksize
+                                    J3_max = min(2 * Jab + oc.j, 2 * Jde + of.j)
+                                    for J3 in range(J3_min, J3_max + 1, 2):
+                                        for Tindex in range(5):
+                                            idx_3bme_file = ofst_file + idx_intr
+                                            idx_3bme_ms = ofst_ms + idx_intr
+                                            v3bme[idx_3bme_ms] = ThBME[idx_3bme_file]
+                                            idx_intr += 1
+    return v3bme
 
 
 def RecouplingCG(idx_abc, ja2, jb2, jc2, Jab_in, Jab, J2, dWS) -> float:
