@@ -1851,9 +1851,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dWs</span> <span class="o">=</span> <span class="n">prep_dicts_for_WignerSymbols</span><span class="p">(</span><span class="n">e1max</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_modelspace</span><span class="p">(</span><span class="n">e1max</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_MS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="s2">&quot;ModelSpace&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_MS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME_MS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="s2">&quot;ModelSpace&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ThBME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_me3jgz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_file</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;allocate_v3bme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;allocate_v3bme&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span> <span class="o">=</span> <span class="n">CG_dict_fromHamiltonian</span>
         <span class="k">if</span> <span class="p">(</span>
@@ -1863,13 +1863,14 @@
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ThBME</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate_v3bme</span><span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span> <span class="o">=</span> <span class="n">truncate_v3bme</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_file</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_MS</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ThBME</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">count_ME_MS</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">dWs</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dict_idxheadThBME_MS</span>
             <span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;norm(v3bme):&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pnME_3NF</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">,</span> <span class="n">array_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span><span class="p">)</span>
@@ -1918,7 +1919,7 @@
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.count_nreads">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.count_nreads">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;File&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;File&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of elements of floating-point numbers to be read from the interaction file.</span>
 
 <span class="sd">        In some interaction files, odd indices correspond to proton and even indices correspond to neutron.</span>
@@ -2012,9 +2013,8 @@
                                 <span class="k">if</span> <span class="n">twoJCMindown</span> <span class="o">&gt;</span> <span class="n">twoJCMaxup</span><span class="p">:</span>
                                     <span class="k">continue</span>
 
-                                <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;File&quot;</span><span class="p">:</span>
-                                    <span class="n">nkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">idx_e</span><span class="p">,</span> <span class="n">idx_f</span><span class="p">)</span>
-                                    <span class="n">dict_idx_ThBME</span><span class="p">[</span><span class="n">nkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">nread</span>
+                                <span class="n">nkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">idx_e</span><span class="p">,</span> <span class="n">idx_f</span><span class="p">)</span>
+                                <span class="n">dict_idx_ThBME</span><span class="p">[</span><span class="n">nkey</span><span class="p">]</span> <span class="o">=</span> <span class="n">nread</span>
 
                                 <span class="k">for</span> <span class="n">Jab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">JabMin</span><span class="p">,</span> <span class="n">JabMax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
                                     <span class="k">for</span> <span class="n">Jde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">JdeMin</span><span class="p">,</span> <span class="n">JdeMax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -2031,9 +2031,7 @@
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;File&quot;</span><span class="p">:</span>
             <span class="n">nkeys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict_idx_ThBME</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;size of dict_idx_ThBME:&quot;</span><span class="p">,</span> <span class="n">nkeys</span><span class="p">,</span> <span class="n">nkeys</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">/</span> <span class="mi">1024</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">nread</span><span class="p">,</span> <span class="n">dict_idx_ThBME</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">nreads</span></div>
+        <span class="k">return</span> <span class="n">nread</span><span class="p">,</span> <span class="n">dict_idx_ThBME</span></div>
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.read_me3jgz">
@@ -2062,10 +2060,10 @@
                 <span class="n">idx_i</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
                 <span class="n">idx_f</span> <span class="o">=</span> <span class="n">idx_i</span> <span class="o">+</span> <span class="mi">9</span>
                 <span class="n">subsize</span> <span class="o">=</span> <span class="mi">10</span>
-                <span class="k">if</span> <span class="n">idx_i</span> <span class="o">&gt;</span> <span class="n">count_ME_file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">idx_i</span> <span class="o">&gt;=</span> <span class="n">count_ME_file</span><span class="p">:</span>
                     <span class="k">break</span>
-                <span class="k">if</span> <span class="n">idx_f</span> <span class="o">&gt;</span> <span class="n">count_ME_file</span><span class="p">:</span>
-                    <span class="n">subsize</span> <span class="o">=</span> <span class="n">count_ME_file</span> <span class="o">-</span> <span class="n">idx_i</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">idx_f</span> <span class="o">&gt;=</span> <span class="n">count_ME_file</span><span class="p">:</span>
+                    <span class="n">subsize</span> <span class="o">=</span> <span class="n">count_ME_file</span> <span class="o">-</span> <span class="n">idx_i</span> 
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">subsize</span><span class="p">):</span>
                     <span class="n">tl</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">16</span> <span class="o">*</span> <span class="n">i</span> <span class="p">:</span> <span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
                     <span class="n">ThBME</span><span class="p">[</span><span class="n">idx_i</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tl</span><span class="p">)</span>
@@ -2075,9 +2073,9 @@
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.loop_over_JT">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.loop_over_JT">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ME_is_double</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ME_is_double</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
                      <span class="n">array_in</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="p">):</span>
+        <span class="p">):</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to loop over JT-coupled three-body matrix elements.</span>
 
 <span class="sd">        This method iterates over the relevant quantum numbers and constructs</span>
@@ -2138,10 +2136,10 @@
 
                                 <span class="n">abc_eq_def</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="p">)</span>
 
-                                <span class="c1"># Record the current dimension offset using a hash key.</span>
-                                <span class="k">if</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;allocate_v3bme&quot;</span><span class="p">:</span>
-                                    <span class="n">orbit_hash</span> <span class="o">=</span> <span class="n">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-                                    <span class="n">dict_3b_idx</span><span class="p">[</span><span class="n">orbit_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_dim</span>
+                                <span class="c1"># # Record the current dimension offset using a hash key.</span>
+                                <span class="c1"># if what_you_need == &quot;allocate_v3bme&quot;:</span>
+                                <span class="c1">#     orbit_hash = get_nkey6(a, b, c, d, e, f)</span>
+                                <span class="c1">#     dict_3b_idx[orbit_hash] = total_dim</span>
 
                                 <span class="k">if</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
 
@@ -2206,7 +2204,7 @@
                 <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# of 3BME: </span><span class="si">{</span><span class="n">total_dim</span><span class="si">:</span><span class="s2">12d</span><span class="si">}</span><span class="s2"> Mem. </span><span class="si">{</span><span class="n">size_3bme</span><span class="si">:</span><span class="s2">12.5e</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
             <span class="n">v3bme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">total_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">v3bme</span><span class="p">,</span> <span class="n">dict_3b_idx</span>
+            <span class="k">return</span> <span class="n">v3bme</span><span class="c1">#, dict_3b_idx</span>
         <span class="k">elif</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;checking dim for readable.txt...&quot;</span><span class="p">,</span> <span class="n">non_zero_term</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
@@ -2308,170 +2306,88 @@
 
 <div class="viewcode-block" id="truncate_v3bme">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.truncate_v3bme">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">truncate_v3bme</span><span class="p">(</span><span class="n">dim_v3bme</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">,</span> <span class="n">ThBME</span><span class="p">,</span> <span class="n">nreads_v3bme</span><span class="p">,</span> <span class="n">dWS</span><span class="p">,</span> <span class="n">dict_idxheadThBME</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">truncate_v3bme</span><span class="p">(</span><span class="n">dim_v3bme_file</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dim_v3bme_ms</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                   <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span>
+                   <span class="n">ThBME</span><span class="p">,</span> <span class="n">dWS</span><span class="p">,</span> 
+                   <span class="n">dict_idxheadThBME_file</span><span class="p">,</span>
+                   <span class="n">dict_idxheadThBME_MS</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Truncate JT-coupled 3NF matrix elements with specified model space truncations.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">v3bme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim_v3bme</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">v3bme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim_v3bme_ms</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">e1max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e1max</span>
     <span class="n">e2max</span> <span class="o">=</span> <span class="n">e1max</span> <span class="o">*</span> <span class="mi">2</span>
-    <span class="n">e1max_file</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e1max_file</span>
-    <span class="n">e2max_file</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e2max_file</span>
-    <span class="n">e3max_file</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max_file</span>
     <span class="n">e3max</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span>
     <span class="n">l3max</span> <span class="o">=</span> <span class="n">e1max</span>
     <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
-    <span class="n">norbits</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">norbits</span>
+    <span class="n">norbits</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">norbits_ms</span>
     <span class="n">count_ME_file</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="c1"># Loop over &#39;bra&#39; indices (odd numbers from 1 to norbits)</span>
-    <span class="k">for</span> <span class="n">idx_a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">norbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-        <span class="n">oa</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_a</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">norbits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">oa</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
         <span class="n">ea</span> <span class="o">=</span> <span class="n">oa</span><span class="o">.</span><span class="n">e</span>
-        <span class="c1"># nreads_v3bme index conversion: Julia&#39;s div(idx_a,2)+1 -&gt; Python&#39;s idx_a//2</span>
-        <span class="n">nread_v3bme</span> <span class="o">=</span> <span class="n">nreads_v3bme</span><span class="p">[</span><span class="n">idx_a</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">ea</span> <span class="o">&gt;</span> <span class="n">e1max</span><span class="p">:</span>
+        <span class="n">la</span> <span class="o">=</span> <span class="n">oa</span><span class="o">.</span><span class="n">l</span>
+        <span class="k">if</span> <span class="n">ea</span> <span class="o">&gt;</span> <span class="n">e1max</span> <span class="ow">or</span> <span class="n">ea</span> <span class="o">&gt;</span> <span class="n">e3max</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="k">for</span> <span class="n">idx_b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">idx_a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="n">ob</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_b</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">ob</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
             <span class="n">eb</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">e</span>
-            <span class="k">if</span> <span class="n">ea</span> <span class="o">+</span> <span class="n">eb</span> <span class="o">&gt;</span> <span class="n">e2max</span><span class="p">:</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">l</span>
+            <span class="k">if</span> <span class="n">ea</span> <span class="o">+</span> <span class="n">eb</span> <span class="o">&gt;</span> <span class="n">e3max</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="k">for</span> <span class="n">idx_c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">idx_b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                <span class="n">oc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_c</span><span class="p">]</span>
+            <span class="n">Jab_min</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">Jab_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">oc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
                 <span class="n">ec</span> <span class="o">=</span> <span class="n">oc</span><span class="o">.</span><span class="n">e</span>
                 <span class="k">if</span> <span class="n">ea</span> <span class="o">+</span> <span class="n">eb</span> <span class="o">+</span> <span class="n">ec</span> <span class="o">&gt;</span> <span class="n">e3max</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="n">JabMax</span> <span class="o">=</span> <span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-                <span class="n">JabMin</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">:</span>
-                    <span class="n">twoJCMindownbra</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span>
-                <span class="k">elif</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">):</span>
-                    <span class="n">twoJCMindownbra</span> <span class="o">=</span> <span class="mi">1</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">twoJCMindownbra</span> <span class="o">=</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span>
-                <span class="n">twoJCMaxupbra</span> <span class="o">=</span> <span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span>
-
-                <span class="c1"># Loop for &#39;ket&#39; part</span>
-                <span class="k">for</span> <span class="n">idx_d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">idx_a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                    <span class="n">od</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_d</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">od</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
                     <span class="n">ed</span> <span class="o">=</span> <span class="n">od</span><span class="o">.</span><span class="n">e</span>
-                    <span class="k">if</span> <span class="n">ed</span> <span class="o">&gt;</span> <span class="n">e1max</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="n">upper_idx_e</span> <span class="o">=</span> <span class="n">idx_b</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx_a</span> <span class="o">==</span> <span class="n">idx_d</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx_d</span>
-                    <span class="k">for</span> <span class="n">idx_e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_idx_e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                        <span class="n">oe</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_e</span><span class="p">]</span>
+
+                    <span class="c1"># Upper limit for index e depends on whether d equals a</span>
+                    <span class="n">upper_idx_e</span> <span class="o">=</span> <span class="n">b</span> <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="n">a</span> <span class="k">else</span> <span class="n">d</span>
+                    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_idx_e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                        <span class="n">oe</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">e</span><span class="p">]</span>
                         <span class="n">ee</span> <span class="o">=</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span>
-                        <span class="k">if</span> <span class="n">ee</span> <span class="o">&gt;</span> <span class="n">e1max</span><span class="p">:</span>
-                            <span class="k">continue</span>
-                        <span class="n">idx_f_max</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">idx_c</span> <span class="k">if</span> <span class="p">(</span><span class="n">idx_a</span> <span class="o">==</span> <span class="n">idx_d</span> <span class="ow">and</span> <span class="n">idx_b</span> <span class="o">==</span> <span class="n">idx_e</span><span class="p">)</span> <span class="k">else</span> <span class="n">idx_e</span>
-                        <span class="p">)</span>
-                        <span class="k">for</span> <span class="n">idx_f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">idx_f_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                            <span class="n">of_</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">idx_f</span><span class="p">]</span>
-                            <span class="n">ef</span> <span class="o">=</span> <span class="n">of_</span><span class="o">.</span><span class="n">e</span>
-                            <span class="k">if</span> <span class="n">ef</span> <span class="o">&gt;</span> <span class="n">e1max</span><span class="p">:</span>
-                                <span class="k">continue</span>
+
+                        <span class="c1"># Upper limit for index f depends on a,d and b,e combinations</span>
+                        <span class="n">upper_idx_f</span> <span class="o">=</span> <span class="n">c</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">d</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="n">e</span><span class="p">)</span> <span class="k">else</span> <span class="n">e</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_idx_f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                            <span class="n">of</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+                            <span class="n">ef</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">e</span>
                             <span class="k">if</span> <span class="n">ed</span> <span class="o">+</span> <span class="n">ee</span> <span class="o">+</span> <span class="n">ef</span> <span class="o">&gt;</span> <span class="n">e3max</span><span class="p">:</span>
                                 <span class="k">continue</span>
-                            <span class="k">if</span> <span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">od</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">of_</span><span class="o">.</span><span class="n">l</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+
+                            <span class="c1"># Check parity condition from orbital angular momenta.</span>
+                            <span class="k">if</span> <span class="p">(</span><span class="n">la</span> <span class="o">+</span> <span class="n">lb</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">od</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">l</span> <span class="o">+</span> <span class="n">of</span><span class="o">.</span><span class="n">l</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="k">continue</span>
 
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_check</span><span class="p">(</span>
-                                <span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span>
-                            <span class="p">):</span>
-                                <span class="k">continue</span>
-                            <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_check</span><span class="p">(</span>
-                                <span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max_file</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">,</span>
-                            <span class="p">):</span>
-                                <span class="k">continue</span>
+                            <span class="n">tkey</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>                            
+                            <span class="n">ofst_ms</span> <span class="o">=</span> <span class="n">dict_idxheadThBME_MS</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span>
+                            <span class="n">ofst_file</span> <span class="o">=</span> <span class="n">dict_idxheadThBME_file</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span>
 
-                            <span class="n">JdeMax</span> <span class="o">=</span> <span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-                            <span class="n">JdeMin</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-                            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span><span class="p">:</span>
-                                <span class="n">twoJCMindownket</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">-</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span>
-                            <span class="k">elif</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">):</span>
-                                <span class="n">twoJCMindownket</span> <span class="o">=</span> <span class="mi">1</span>
-                            <span class="k">else</span><span class="p">:</span>
-                                <span class="n">twoJCMindownket</span> <span class="o">=</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span>
-                            <span class="n">twoJCMaxupket</span> <span class="o">=</span> <span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span>
-
-                            <span class="n">twoJCMindown</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">twoJCMindownbra</span><span class="p">,</span> <span class="n">twoJCMindownket</span><span class="p">)</span>
-                            <span class="n">twoJCMaxup</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">twoJCMaxupbra</span><span class="p">,</span> <span class="n">twoJCMaxupket</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="n">twoJCMindown</span> <span class="o">&gt;</span> <span class="n">twoJCMaxup</span><span class="p">:</span>
-                                <span class="k">continue</span>
-
-                            <span class="n">key</span> <span class="o">=</span> <span class="n">get_nkey6</span><span class="p">(</span><span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">idx_e</span><span class="p">,</span> <span class="n">idx_f</span><span class="p">)</span>
-                            <span class="n">offset_ThBME</span> <span class="o">=</span> <span class="n">dict_idxheadThBME</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                            <span class="n">idx_ThBME</span> <span class="o">=</span> <span class="n">offset_ThBME</span>
-
-                            <span class="k">for</span> <span class="n">Jab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">JabMin</span><span class="p">,</span> <span class="n">JabMax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                                <span class="k">for</span> <span class="n">Jde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">JdeMin</span><span class="p">,</span> <span class="n">JdeMax</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                                    <span class="n">twoJCMin</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-                                        <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">-</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">-</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+                            <span class="n">idx_intr</span> <span class="o">=</span> <span class="mi">0</span>
+                            <span class="n">Jde_min</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+                            <span class="n">Jde_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+                            <span class="k">for</span> <span class="n">Jab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jab_min</span><span class="p">,</span> <span class="n">Jab_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                <span class="k">for</span> <span class="n">Jde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jde_min</span><span class="p">,</span> <span class="n">Jde_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                                    <span class="n">J3_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                                        <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">-</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">-</span> <span class="n">of</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
                                     <span class="p">)</span>
-                                    <span class="n">twoJCMax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">+</span> <span class="n">of_</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
-                                    <span class="k">if</span> <span class="n">twoJCMin</span> <span class="o">&gt;</span> <span class="n">twoJCMax</span><span class="p">:</span>
-                                        <span class="k">continue</span>
-                                    <span class="n">blocksize</span> <span class="o">=</span> <span class="p">((</span><span class="n">twoJCMax</span> <span class="o">-</span> <span class="n">twoJCMin</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span>
-                                    <span class="k">for</span> <span class="n">JTind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">twoJCMax</span> <span class="o">-</span> <span class="n">twoJCMin</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                                        <span class="n">twoJC</span> <span class="o">=</span> <span class="n">twoJCMin</span> <span class="o">+</span> <span class="p">(</span><span class="n">JTind</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
-                                        <span class="n">twoT</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">JTind</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
-                                        <span class="k">for</span> <span class="n">Tab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                                            <span class="k">for</span> <span class="n">Tde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
-                                                <span class="k">if</span> <span class="n">twoT</span> <span class="o">&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Tab</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tde</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                                                    <span class="k">continue</span>
-                                                <span class="n">index_ab</span> <span class="o">=</span> <span class="p">(</span>
-                                                    <span class="p">((</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="n">twoJC</span> <span class="o">-</span> <span class="n">twoJCMin</span><span class="p">))</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-                                                    <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Tab</span>
-                                                    <span class="o">+</span> <span class="n">Tde</span>
-                                                    <span class="o">+</span> <span class="p">((</span><span class="n">twoT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
-                                                <span class="p">)</span>
-                                                <span class="n">v3idx</span> <span class="o">=</span> <span class="n">nread_v3bme</span> <span class="o">+</span> <span class="n">index_ab</span> <span class="o">+</span> <span class="mi">1</span>
-                                                <span class="n">idx_ThBME</span> <span class="o">+=</span> <span class="mi">1</span>
-                                                <span class="n">ThBME_idx</span> <span class="o">=</span> <span class="n">idx_ThBME</span>
-                                                <span class="n">V</span> <span class="o">=</span> <span class="mf">0.0</span>
-                                                <span class="n">autozero</span> <span class="o">=</span> <span class="kc">False</span>
-                                                <span class="k">if</span> <span class="p">(</span>
-                                                    <span class="n">oa</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                    <span class="ow">or</span> <span class="n">ob</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                    <span class="ow">or</span> <span class="n">oc</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                    <span class="ow">or</span> <span class="n">od</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                    <span class="ow">or</span> <span class="n">oe</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                    <span class="ow">or</span> <span class="n">of_</span><span class="o">.</span><span class="n">l</span> <span class="o">&gt;</span> <span class="n">l3max</span>
-                                                <span class="p">):</span>
-                                                    <span class="n">V</span> <span class="o">=</span> <span class="mf">0.0</span>
-                                                <span class="n">v3bme</span><span class="p">[</span><span class="n">v3idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">ThBME</span><span class="p">[</span><span class="n">ThBME_idx</span><span class="p">]</span>
-                                                <span class="k">if</span> <span class="p">(</span>
-                                                    <span class="n">idx_a</span> <span class="o">==</span> <span class="n">idx_b</span>
-                                                    <span class="ow">and</span> <span class="p">(</span><span class="n">Tab</span> <span class="o">+</span> <span class="n">Jab</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
-                                                <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-                                                    <span class="n">idx_d</span> <span class="o">==</span> <span class="n">idx_e</span>
-                                                    <span class="ow">and</span> <span class="p">(</span><span class="n">Tde</span> <span class="o">+</span> <span class="n">Jde</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
-                                                <span class="p">):</span>
-                                                    <span class="n">autozero</span> <span class="o">=</span> <span class="kc">True</span>
-                                                <span class="k">if</span> <span class="p">(</span>
-                                                    <span class="n">idx_a</span> <span class="o">==</span> <span class="n">idx_b</span>
-                                                    <span class="ow">and</span> <span class="n">idx_a</span> <span class="o">==</span> <span class="n">idx_c</span>
-                                                    <span class="ow">and</span> <span class="n">twoT</span> <span class="o">==</span> <span class="mi">3</span>
-                                                    <span class="ow">and</span> <span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">&lt;</span> <span class="mi">3</span>
-                                                <span class="p">):</span>
-                                                    <span class="n">autozero</span> <span class="o">=</span> <span class="kc">True</span>
-                                                <span class="k">if</span> <span class="p">(</span>
-                                                    <span class="n">idx_d</span> <span class="o">==</span> <span class="n">idx_e</span>
-                                                    <span class="ow">and</span> <span class="n">idx_d</span> <span class="o">==</span> <span class="n">idx_f</span>
-                                                    <span class="ow">and</span> <span class="n">twoT</span> <span class="o">==</span> <span class="mi">3</span>
-                                                    <span class="ow">and</span> <span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">&lt;</span> <span class="mi">3</span>
-                                                <span class="p">):</span>
-                                                    <span class="n">autozero</span> <span class="o">=</span> <span class="kc">True</span>
-                                    <span class="k">if</span> <span class="n">valid_check</span><span class="p">(</span>
-                                        <span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span>
-                                    <span class="p">):</span>
-                                        <span class="n">nread_v3bme</span> <span class="o">+=</span> <span class="n">blocksize</span>
-                                    <span class="n">count_ME_file</span> <span class="o">+=</span> <span class="n">blocksize</span></div>
+                                    <span class="n">J3_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">+</span> <span class="n">of</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+                                    <span class="k">for</span> <span class="n">J3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">J3_min</span><span class="p">,</span> <span class="n">J3_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                                        <span class="k">for</span> <span class="n">Tindex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+                                            <span class="n">idx_3bme_file</span> <span class="o">=</span> <span class="n">ofst_file</span> <span class="o">+</span> <span class="n">idx_intr</span>
+                                            <span class="n">idx_3bme_ms</span> <span class="o">=</span> <span class="n">ofst_ms</span> <span class="o">+</span> <span class="n">idx_intr</span>
+                                            <span class="n">v3bme</span><span class="p">[</span><span class="n">idx_3bme_ms</span><span class="p">]</span> <span class="o">=</span> <span class="n">ThBME</span><span class="p">[</span><span class="n">idx_3bme_file</span><span class="p">]</span>
+                                            <span class="n">idx_intr</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">v3bme</span></div>
 
 
 
