@@ -156,7 +156,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
+    H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
 
     if fn_3NF != "":
         hamil.set_mscheme_3NF()
@@ -229,9 +229,10 @@ class Hamiltonian:
         fn_NN: str|os.PathLike,
         Z: int,
         N: int,
+        jz: int|None=None,
         fn_3NF: str|os.PathLike|None=None,
         ncsm: bool=False,
-        emax_truncate: int=20,
+        emax_truncate: int=5,
         Qiskit_order: bool=True,
         verbose: bool=False,
         e3max: int|None=None,
@@ -247,7 +248,7 @@ class Hamiltonian:
             ncsm (bool, optional): Whether to use no-core shell model. If True,
                 includes kinetic energy and center-of-mass corrections. Defaults to False.
             emax_truncate (int, optional): Maximum excitation energy for model space
-                truncation. Defaults to 20.
+                truncation. Defaults to 5.
             Qiskit_order (bool, optional): Whether to use Qiskit qubit ordering
                 convention. Defaults to True.
             verbose (bool, optional): Enable verbose output for debugging. Defaults to False.
@@ -272,9 +273,12 @@ class Hamiltonian:
         self.emax = emax_truncate
         self.verbose = verbose
         self.ncsm = ncsm
+        if ncsm:
+            self._emax_check(self.emax)
         self.Qiskit_order = Qiskit_order
         self.hw = None
         self.fn_3NF = fn_3NF
+        self.Jz = jz
         if ncsm:
             self.hw = self.extract_hw()
         (
@@ -295,15 +299,16 @@ class Hamiltonian:
         self.n_qubits_p = len(self.proton_qubits)
         self.n_qubits_n = len(self.neutron_qubits)
         self.e3max = e3max if e3max != None else emax_truncate
-        if (ncsm or fn_3NF != None) and e3max is None:
-            print(
-                "Warning: e3max is not set. You must specify it. Using emax_truncate value for it for now."
-            )
-            self.e3max = emax_truncate
         if ncsm:
             self.e1max_file, self.e2max, self.e3max_file = self.guess_emax_from_fn(
                 self.fn_3NF
             )
+        if (ncsm or fn_3NF != None) and e3max is None:
+            print(
+                f"Warning: e3max is not set, then set as {self.e3max_file} ",
+                "If you don't like it, you must specify it."
+            )
+            self.e3max = self.e3max_file
 
         self.CG_dict = {}
         if fn_3NF != None:
@@ -342,6 +347,12 @@ class Hamiltonian:
                 )
             self.v3b_Mscheme = {}
 
+    def _emax_check(self, emax, emax_acceptable=5):
+        if emax >= emax_acceptable:
+            print(f"Warning: emax ({emax}) is greater than or equal to the acceptable limit ({emax_acceptable}).")
+            print(f"You should know emax=4 (5) corresponds to 140 (232) qubits in total")
+            print(f"If you are sure about this value, you can proceed by editing the source code of NuQuLib")
+
     def guess_emax_from_fn(self, fn_3NF):
         """Extract the model space information from three-body force filename.
         
@@ -372,6 +383,30 @@ class Hamiltonian:
             e2max_file = self.emax * 2
             e3max_file = self.emax * 3
         return e1max_file, e2max_file, e3max_file
+
+    def neutron_number_constraint(self, N0, Hamildict_opform, mapping_method, filepath='./tmp'):
+        H_n = mapping_to_Pauli_string(
+            FermionicOp(Hamildict_opform["N"], num_spin_orbitals=self.n_qubits), 
+                        self.n_qubits, 
+                        method=mapping_method, 
+                        Hamildict_opform = Hamildict_opform, filepath=filepath)
+        op = N0**2 * SparsePauliOp('I'*self.n_qubits)
+        for pauli in H_n:
+            op += pauli.dot(pauli)
+            op -= 2*N0*pauli
+        return op.simplify()
+
+    def proton_number_constraint(self, N0, Hamildict_opform, mapping_method, filepath='./tmp'):
+        H_p = mapping_to_Pauli_string(
+            FermionicOp(Hamildict_opform["P"],num_spin_orbitals=self.n_qubits),
+            self.n_qubits, method=mapping_method, 
+            Hamildict_opform=Hamildict_opform, 
+            filepath=filepath)
+        op=N0**2*SparsePauliOp('I'*self.n_qubits)
+        for pauli in H_p:
+            op += pauli.dot(pauli)
+            op -= 2*N0*pauli
+        return op.simplify()
 
     def extract_hw(self):
         """Extract harmonic oscillator frequency from NCSM interaction filename.
@@ -654,7 +689,7 @@ class Hamiltonian:
         
         Args:
             opform (bool, optional): If True, returns operators in fermionic
-                string form. If False, returns matrix element lists. Defaults to False.
+            string form. If False, returns matrix element lists. Defaults to False.
                 
         Returns:
             dict: Dictionary containing Hamiltonian components:
@@ -672,6 +707,9 @@ class Hamiltonian:
             and normalization factors for antisymmetrized matrix elements.
         """
         op_dict_1b = {}
+        op_dict_p = {}
+        op_dict_n = {}
+        op_dict_jz = {}
         if opform:
             op_dict_pp = {}
             op_dict_nn = {}
@@ -707,6 +745,9 @@ class Hamiltonian:
                         if opform:
                             bitstr = "+_" + str(aa) + " -_" + str(bb)
                             op_dict_1b[bitstr] = Tab
+                            op_dict_n[bitstr] = (1+tz_a)//2 
+                            op_dict_p[bitstr] = (1-tz_a)//2 
+                            op_dict_jz[bitstr] = jz_a 
                             num_1b_term += 1
                             if aa != bb:
                                 bitstr = "+_" + str(bb) + " -_" + str(aa)
@@ -849,6 +890,9 @@ class Hamiltonian:
             "Vpp": op_dict_pp,
             "Vnn": op_dict_nn,
             "Vpn": op_dict_pn,
+            "P": op_dict_p,
+            "N": op_dict_n,
+            "Jz": op_dict_jz
         }
         if opform:
             return Hamildict
@@ -856,7 +900,7 @@ class Hamiltonian:
             Hamildict = sum_over_J(Hamildict)
             return Hamildict
 
-    def mapping_opform(self, Hamildict_opform, mapping_method):
+    def mapping_opform(self, Hamildict_opform, mapping_method, filepath: str|os.PathLike="./tmp"):
         """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
         
         Transforms the fermionic nuclear Hamiltonian into qubit operators using
@@ -881,26 +925,72 @@ class Hamiltonian:
         H_1b = mapping_to_Pauli_string(
             FermionicOp(Hamildict_opform["SPE"], num_spin_orbitals=self.n_qubits),
             self.n_qubits,
-            method=mapping_method,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
+        )
+        H_p = mapping_to_Pauli_string(
+            FermionicOp(Hamildict_opform["P"], num_spin_orbitals=self.n_qubits),
+            self.n_qubits,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
+        )
+        H_n = mapping_to_Pauli_string(
+            FermionicOp(Hamildict_opform["N"], num_spin_orbitals=self.n_qubits),
+            self.n_qubits,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
+        )
+        H_jz = mapping_to_Pauli_string(
+            FermionicOp(Hamildict_opform["Jz"], num_spin_orbitals=self.n_qubits),
+            self.n_qubits,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
         )
         H_pp = mapping_to_Pauli_string(
             FermionicOp(Hamildict_opform["Vpp"], num_spin_orbitals=self.n_qubits),
             self.n_qubits,
-            method=mapping_method,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
         )
         H_nn = mapping_to_Pauli_string(
             FermionicOp(Hamildict_opform["Vnn"], num_spin_orbitals=self.n_qubits),
             self.n_qubits,
-            method=mapping_method,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
         )
+        #ops = [ ]
+        # coeffs = [ ]
+        # for term in Hamildict_opform["Vnn"]:
+        #     print(f"term {term}")
+        #     pauli_str = FermionicOp(term, num_spin_orbitals=self.n_qubits_n)
+        #     pauli_str *= "I"*self.n_qubits_p
+        #     op = mapping_to_Pauli_string(
+        #         pauli_str,
+        #         self.n_qubits,
+        #         mapping_method,
+        #         Hamildict_opform,
+        #         filepath=filepath
+        #     )
+        #     ops.append(op.paulis[0].to_label())
+        #     coeffs.append(op.coeffs[0])
+        # H_nn = SparsePauliOp.from_list(list(zip(ops, coeffs)))
+
         H_pn = mapping_of_pn_hamiltonians(
             Hamildict_opform["Vpn"],
             self.n_qubits_p,
             self.n_qubits_n,
-            method=mapping_method,
+            mapping_method,
+            Hamildict_opform,
+            filepath=filepath
         )
         H_pn = removing_redundant_terms(H_pn)
-        return H_1b, H_pp, H_nn, H_pn
+        return H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn
 
     def get_cG(self, sps_i, sps_j, J):
         """Calculate Clebsch-Gordan coefficient for angular momentum coupling.
@@ -1232,7 +1322,7 @@ class Hamiltonian:
                 op_dict_3b[(p_op_str, n_op_str)] = value
         print("Total number of 3NF pn products", len(list(op_dict_3b.keys())))
         op_list = set_op_list_from_op_dict_3b(
-            op_dict_3b, self.n_qubits_p, self.n_qubits_n, method=method
+            op_dict_3b, self.n_qubits_p, self.n_qubits_n, method,
         )
         mapped_H3b = removing_redundant_ops(op_list)
         return mapped_H3b
@@ -1266,7 +1356,7 @@ def process_op(args):
     op_p = mapping_to_Pauli_string(
         FermionicOp({p_str: 1.0}, num_spin_orbitals=n_qubits_p),
         n_qubits_p,
-        method=method,
+        method,
     )
     op_n = mapping_to_Pauli_string(
         FermionicOp({n_str: 1.0}, num_spin_orbitals=n_qubits_n),
@@ -2257,7 +2347,7 @@ def get_canonical_order_6j(j1: int, j2: int, j3: int, j4: int, j5: int, j6: int)
 
 
 def set_op_list_from_op_dict_3b(
-    op_dict_3b, n_qubits_p, n_qubits_n, method="Jordan-Wigner"
+    op_dict_3b, n_qubits_p, n_qubits_n, method="Jordan-Wigner",
 ):
     """Map three-body force dictionary to Pauli operator list using parallel processing.
     
@@ -2429,7 +2519,6 @@ def removing_redundant_terms(ops: SparsePauliOp):
         for i in range(len(new_coeffs))
         if new_coeffs[i] != 0 and (np.abs(new_coeffs[i]) > 1.0e-16)
     ]
-
     return SparsePauliOp.from_list(list(zip(ops, coeffs)))
 
 
@@ -2452,7 +2541,7 @@ def sum_over_J(Hamil):
     """
     new_Hamil = {}
     for key in Hamil.keys():
-        if key == "SPE":
+        if key == "SPE" or key == "P" or key == "N" or key == "Jz":
             new_Hamil[key] = Hamil[key]
         else:
             new_Hamil[key] = []

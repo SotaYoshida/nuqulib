@@ -16,7 +16,7 @@ def get_Hamil(filename_snt, Z, N, fn_3NF="", emax=100, ncsm=False):
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
+    H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
 
     if fn_3NF != "":
         hamil.set_mscheme_3NF()

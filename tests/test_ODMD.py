@@ -18,7 +18,7 @@ def test_ODMD():
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "JordanWigner")
     H_mapped = H_1b + H_nn
 
     delta_t = 0.01234
@@ -26,7 +26,7 @@ def test_ODMD():
     max_iterations = 20
 
     dummy_params = [ ]
-    U_prep = nucl_ansatz(n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
+    U_prep = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
     U_prep = QuantumCircuit(n_qubits)
     U_prep.x([9, 10])
 

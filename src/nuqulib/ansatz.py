@@ -7,13 +7,75 @@ Givens rotation-based circuits, and pair Unitary Coupled-Cluster Doubles (pUCCD)
 
 from collections.abc import Iterable
 import numpy as np
+import os
 import pennylane as qml
 from pennylane import numpy as qnp
 from qiskit import QuantumCircuit, transpile
+from qiskit.circuit.library import PauliGate, PauliEvolutionGate
+from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from .circuits import G_gate, cG1_gate
+from .encoding import mapping_to_Pauli_string
+
+
+def naive_filling_ansatz_old(proton_qubits: Iterable[int],
+                         neutron_qubits: Iterable[int],
+                         proton_number: int, neutron_number: int):
+    n_qubit = len(proton_qubits) + len(neutron_qubits)
+    ansatz = QuantumCircuit(n_qubit)
+    for i in range(proton_number):
+        ansatz.x(proton_qubits[-1 - i])
+    for i in range(neutron_number):
+        ansatz.x(neutron_qubits[-1 - i])
+    return ansatz
+
+
+def naive_filling_ansatz(
+        proton_qubits: Iterable[int],
+        neutron_qubits: Iterable[int],
+        proton_number: int, neutron_number: int,
+        mapping_method="JordanWigner",
+        Hamildict_opform: dict = {},
+        filepath: str|os.PathLike = "./"
+    ):
+    
+    N_dict = Hamildict_opform['N']
+    P_dict = Hamildict_opform['P']
+    n_keys = [key.split(" -_")[0] for key in N_dict.keys() if N_dict[key]==1]  
+    p_keys = [key.split(" -_")[0] for key in P_dict.keys() if P_dict[key]==1]
+    n_qubits_p = len(p_keys)
+    n_qubits_n = len(n_keys)
+    n_qubits = n_qubits_p + n_qubits_n
+
+    ansatz = QuantumCircuit(n_qubits)
+    for i in range(proton_number):
+        paulistr = mapping_to_Pauli_string(
+            FermionicOp({p_keys[i]: 2.0}, num_spin_orbitals=n_qubits), 
+            n_qubits, method=mapping_method, 
+            Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
+        pauli_op = PauliGate(paulistr)
+        ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))      
+        print(f"Filling proton @{i} p_key={p_keys[i]} => {paulistr}")
+        paulistr_check = mapping_to_Pauli_string(FermionicOp({p_keys[i]: 2.0}, num_spin_orbitals=n_qubits_p),
+                                                 n_qubits_p, method=mapping_method, 
+                                                 Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
+        print(f"paulistr_check {paulistr_check}")
+    for i in range(neutron_number):
+        paulistr = mapping_to_Pauli_string(
+            FermionicOp({n_keys[i]: 2.0}, num_spin_orbitals=n_qubits), 
+            n_qubits, method=mapping_method, Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
+
+        ## neutron aware
+        paulistr = paulistr[:n_qubits_n] + "I" * n_qubits_p
+
+        pauli_op = PauliGate(paulistr)
+        ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))
+        print(f"Filling neutron @{i} {n_keys[i]} => {paulistr}")
+    return ansatz
+
 
 def nucl_ansatz(
+    Hamildict_opform: dict,
     n_qubit: int,
     proton_qubits: Iterable[int],
     neutron_qubits: Iterable[int],
@@ -21,6 +83,8 @@ def nucl_ansatz(
     neutron_number: int,
     params: Iterable[float],
     method: str = "HF",
+    mapping_method: str = "JordanWigner",
+    filepath: str|os.PathLike = "./",
     return_Gdict: bool = False,
 ):
     """Construct nuclear ansatz circuit for proton-neutron systems.
@@ -45,22 +109,31 @@ def nucl_ansatz(
         QuantumCircuit or tuple: Quantum circuit representing the ansatz.
                                 If return_Gdict=True, returns (circuit, gate_dict).
     """
-    n_qubits_p = len(proton_qubits)
+    assert len(proton_qubits) >= proton_number, f"Invalid proton_number={proton_number}"
+    assert len(neutron_qubits) >= neutron_number, f"Invalid neutron_number={neutron_number}"
 
+    n_qubits_p = len(proton_qubits)
     where_is_G_or_cG1 = {}
     if method == "HF": # more precisely, lowest filling
-        ansatz = QuantumCircuit(n_qubit)
-        for i in range(proton_number):
-            ansatz.x(proton_qubits[-1 - i])
-        for i in range(neutron_number):
-            ansatz.x(neutron_qubits[-1 - i])
-        return ansatz
+        return naive_filling_ansatz(
+                proton_qubits=proton_qubits,
+                neutron_qubits=neutron_qubits,
+                proton_number=proton_number,
+                neutron_number=neutron_number,
+                mapping_method=mapping_method,
+                Hamildict_opform=Hamildict_opform,
+                filepath=filepath
+        )
     elif method == "HF+Givens":
-        ansatz = QuantumCircuit(n_qubit)
-        for i in range(proton_number):
-            ansatz.x(proton_qubits[-1 - i])
-        for i in range(neutron_number):
-            ansatz.x(neutron_qubits[-1 - i])
+        ansatz = naive_filling_ansatz(
+            proton_qubits=proton_qubits,
+            neutron_qubits=neutron_qubits,
+            proton_number=proton_number,
+            neutron_number=neutron_number,
+            mapping_method=mapping_method,
+            Hamildict_opform=Hamildict_opform,
+            filepath=filepath
+        )
         ## Givens rotation
         ## on proton qubits
         count = 0
