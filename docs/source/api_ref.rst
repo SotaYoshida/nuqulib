@@ -1,4 +1,4 @@
-NuQuLib
+API reference for NuQuLib
 ===============
 
 Module contents

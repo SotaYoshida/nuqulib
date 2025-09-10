@@ -4,7 +4,7 @@
 
 Nuclear Quantum Computing Library
 
-# Installation & Execution
+# Installation 
 
 We assume you are using a virtual environment. If not, we recommend creating one.
 
