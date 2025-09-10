@@ -198,6 +198,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">API reference for NuQuLib</a></li>
 </ul>
 
 </div>
@@ -251,7 +252,7 @@
 
 
 <div class="viewcode-block" id="mapping_to_Pauli_string">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.mapping_to_Pauli_string">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.mapping_to_Pauli_string">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mapping_to_Pauli_string</span><span class="p">(</span>
     <span class="n">Fermionic_op</span><span class="p">:</span> <span class="n">FermionicOp</span><span class="p">,</span>
     <span class="n">n_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
@@ -282,7 +283,7 @@
 
 
 <div class="viewcode-block" id="mapping_of_pn_hamiltonians">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.mapping_of_pn_hamiltonians">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.mapping_of_pn_hamiltonians">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mapping_of_pn_hamiltonians</span><span class="p">(</span><span class="n">op_pn</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
                                <span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Map proton-neutron coupled Hamiltonians to Pauli operators.</span>
@@ -327,7 +328,7 @@
 
 
 <div class="viewcode-block" id="check_XXYYterm">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.check_XXYYterm">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.check_XXYYterm">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_XXYYterm</span><span class="p">(</span><span class="n">hamiltonian_op_XXYY</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that XX and YY terms have identical coefficients.</span>
 <span class="sd">    </span>
@@ -364,7 +365,7 @@
 
 
 <div class="viewcode-block" id="separate_Hamil_terms">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.separate_Hamil_terms">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.separate_Hamil_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">separate_Hamil_terms</span><span class="p">(</span><span class="n">hamiltonian_op</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Separate Hamiltonian, pairing or pair-wise ones, into diagonal and XX+YY terms.</span>
 <span class="sd">    </span>
@@ -410,7 +411,7 @@
 
 
 <div class="viewcode-block" id="qps_from_sparsepauliop">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.qps_from_sparsepauliop">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.qps_from_sparsepauliop">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">qps_from_sparsepauliop</span><span class="p">(</span><span class="n">paulis</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert SparsePauliOp Pauli strings to PyTKET QubitPauliString.</span>
 <span class="sd">    </span>
@@ -436,7 +437,7 @@
 
 
 <div class="viewcode-block" id="qpo_from_sparsepauliop">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.encoding.qpo_from_sparsepauliop">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.qpo_from_sparsepauliop">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">qpo_from_sparsepauliop</span><span class="p">(</span><span class="n">sp_op</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QubitPauliOperator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Qiskit SparsePauliOp to PyTKET QubitPauliOperator.</span>
 <span class="sd">    </span>

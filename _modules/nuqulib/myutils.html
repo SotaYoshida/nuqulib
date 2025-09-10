@@ -198,6 +198,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">API reference for NuQuLib</a></li>
 </ul>
 
 </div>
@@ -250,7 +251,7 @@
 
 
 <div class="viewcode-block" id="latex_nuc">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.latex_nuc">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.latex_nuc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">latex_nuc</span><span class="p">(</span><span class="n">nuc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert nuclear notation to LaTeX format.</span>
 <span class="sd">    </span>
@@ -270,7 +271,7 @@
 
 
 <div class="viewcode-block" id="read_QiskitPauli">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.read_QiskitPauli">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.read_QiskitPauli">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_QiskitPauli</span><span class="p">(</span><span class="n">ops_qiskit</span><span class="p">,</span> <span class="n">coeffs_qiskit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Qiskit Pauli operators to PennyLane format.</span>
 <span class="sd">    </span>
@@ -295,7 +296,7 @@
 
 
 <div class="viewcode-block" id="get_operator_from_QiskitStr">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.get_operator_from_QiskitStr">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.get_operator_from_QiskitStr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_from_QiskitStr</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">qml</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">Operator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Qiskit Pauli string to a PennyLane operator.</span>
 <span class="sd">    </span>
@@ -342,7 +343,7 @@
 
 
 <div class="viewcode-block" id="transform_pytket_counts_to_qiskit">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.transform_pytket_counts_to_qiskit">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.transform_pytket_counts_to_qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform_pytket_counts_to_qiskit</span><span class="p">(</span><span class="n">counts_pytket</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert PyTKET measurement counts to Qiskit format.</span>
 <span class="sd">    </span>
@@ -367,7 +368,7 @@
 
 
 <div class="viewcode-block" id="transform_qiskitOps_to_pennylane">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.transform_qiskitOps_to_pennylane">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.transform_qiskitOps_to_pennylane">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform_qiskitOps_to_pennylane</span><span class="p">(</span><span class="n">Qiskit_Ops</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform Qiskit SparsePauliOp operator(s) to PennyLane format.</span>
 <span class="sd">    </span>
@@ -390,7 +391,7 @@
 
 
 <div class="viewcode-block" id="write_out_pytketCircuits_from_Qiskit">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.write_out_pytketCircuits_from_Qiskit">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.write_out_pytketCircuits_from_Qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_out_pytketCircuits_from_Qiskit</span><span class="p">(</span>
     <span class="n">qc</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">QuantumCircuit</span><span class="p">],</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">circ_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
@@ -418,7 +419,7 @@
 
 
 <div class="viewcode-block" id="write_out_pytketCircuit_from_Qiskit">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.write_out_pytketCircuit_from_Qiskit">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.write_out_pytketCircuit_from_Qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_out_pytketCircuit_from_Qiskit</span><span class="p">(</span>
     <span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">circ_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="p">):</span>
@@ -442,7 +443,7 @@
 
 
 <div class="viewcode-block" id="Orbit_nljjztz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.Orbit_nljjztz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nljjztz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nljjztz</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j, jz, tz quanta. &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
@@ -456,7 +457,7 @@
 
 
 <div class="viewcode-block" id="Orbit_nljtz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.Orbit_nljtz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nljtz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nljtz</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j, tz quanta. &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
@@ -468,7 +469,7 @@
 
 
 <div class="viewcode-block" id="Orbit_nlj">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.Orbit_nlj">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nlj">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nlj</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j quanta. &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
@@ -480,7 +481,7 @@
 
 
 <div class="viewcode-block" id="get_spsidx_from_nljtz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.myutils.get_spsidx_from_nljtz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.get_spsidx_from_nljtz">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_spsidx_from_nljtz</span><span class="p">(</span><span class="n">single_particle_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sps</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">single_particle_states</span><span class="p">):</span>
         <span class="n">n_</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">n</span>

@@ -198,6 +198,7 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">API reference for NuQuLib</a></li>
 </ul>
 
 </div>
@@ -286,7 +287,7 @@
 
 
 <div class="viewcode-block" id="JTcoupledOrbitals">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JTcoupledOrbitals</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to handle JT-coupled orbitals in the model space.</span>
 <span class="sd">    </span>
@@ -311,7 +312,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dict_sps2JTorbitals</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="JTcoupledOrbitals.add_orbital">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.add_orbital">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.add_orbital">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_orbital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add an orbital to the JT-coupled basis.</span>
 <span class="sd">        </span>
@@ -325,7 +326,7 @@
 
 
 <div class="viewcode-block" id="JTcoupledOrbitals.get_dict_sps2JTsps">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.get_dict_sps2JTsps">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals.get_dict_sps2JTsps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_dict_sps2JTsps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_defined_in_NN</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert single particle states to JT-coupled states.</span>
 <span class="sd">        </span>
@@ -364,7 +365,7 @@
 
 
 <div class="viewcode-block" id="get_Hamiltonian">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_Hamiltonian">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_Hamiltonian">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">emax</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get nuclear Hamiltonian from interaction files.</span>
 
@@ -424,7 +425,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Hamiltonian</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Nuclear Hamiltonian constructor and manager for quantum many-body calculations.</span>
 <span class="sd">    </span>
@@ -592,7 +593,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="Hamiltonian.guess_emax_from_fn">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.guess_emax_from_fn">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.guess_emax_from_fn">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">guess_emax_from_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the model space information from three-body force filename.</span>
 <span class="sd">        </span>
@@ -626,7 +627,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.extract_hw">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.extract_hw">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.extract_hw">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_hw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract harmonic oscillator frequency from NCSM interaction filename.</span>
 <span class="sd">        </span>
@@ -645,7 +646,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.read_snt_file">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_snt_file">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_snt_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_snt_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_NN_in</span><span class="p">):</span>  
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read nuclear interaction file in snt format.</span>
 <span class="sd">        </span>
@@ -789,7 +790,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.get_mscheme_sps">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_sps">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_sps">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_sps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate M-scheme single-particle states from proton-neutron J-coupled states.</span>
 <span class="sd">        </span>
@@ -844,7 +845,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.delta_jj">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.delta_jj">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.delta_jj">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delta_jj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">morb_a</span><span class="p">,</span> <span class="n">morb_b</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if two orbitals are identical in terms of their n, l, j, and tz quantum numbers.</span>
 
@@ -870,7 +871,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.op_dict_T1_permutations">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.op_dict_T1_permutations">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.op_dict_T1_permutations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">op_dict_T1_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_dict</span><span class="p">,</span> <span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">dd</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add two-body operator terms with proper permutation symmetry.</span>
 <span class="sd">        </span>
@@ -912,7 +913,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.get_mscheme_H">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_mscheme_H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opform</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Hamiltonian matrix elements in M-scheme representation.</span>
 <span class="sd">        </span>
@@ -1127,7 +1128,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.mapping_opform">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mapping_opform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Hamildict_opform</span><span class="p">,</span> <span class="n">mapping_method</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.</span>
 <span class="sd">        </span>
@@ -1176,7 +1177,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.get_cG">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_cG">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_cG">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_cG</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_i</span><span class="p">,</span> <span class="n">sps_j</span><span class="p">,</span> <span class="n">J</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Clebsch-Gordan coefficient for angular momentum coupling.</span>
 <span class="sd">        </span>
@@ -1201,7 +1202,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.get_midx_from_nljjztz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_midx_from_nljjztz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_midx_from_nljjztz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_midx_from_nljjztz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Find M-scheme single-particle state index from quantum numbers.</span>
 <span class="sd">        </span>
@@ -1231,7 +1232,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.read_3NF_readable">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.read_3NF_readable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_3NF_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the NuHamil 3NF file in readable.text fmt and store JT-coupled 3NF.</span>
 
@@ -1307,7 +1308,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.set_mscheme_3NF">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mscheme_3NF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the 3NF matrix elements in the mscheme.</span>
 
@@ -1458,7 +1459,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.separate_proton_and_neutron">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.separate_proton_and_neutron">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.separate_proton_and_neutron">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">separate_proton_and_neutron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                                     <span class="n">im_a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                                     <span class="n">im_d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_e</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">im_f</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -1492,7 +1493,7 @@
 
 
 <div class="viewcode-block" id="Hamiltonian.mapping_3NF_Mscheme">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_3NF_Mscheme">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_3NF_Mscheme">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mapping_3NF_Mscheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Map the 3NF matrix elements to the specified scheme.</span>
 
@@ -1531,7 +1532,7 @@
 
 
 <div class="viewcode-block" id="process_op">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.process_op">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.process_op">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">process_op</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process a single proton-neutron operator term for quantum mapping.</span>
 <span class="sd">    </span>
@@ -1578,7 +1579,7 @@
 
 
 <div class="viewcode-block" id="hat">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.hat">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.hat">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">hat</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Angular momentum hat notation: sqrt(2*j + 1).</span>
 <span class="sd">    </span>
@@ -1596,7 +1597,7 @@
 
 
 <div class="viewcode-block" id="permutation_parity">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.permutation_parity">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.permutation_parity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">permutation_parity</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the parity (even/odd) of a permutation.</span>
 <span class="sd">    </span>
@@ -1623,7 +1624,7 @@
 
 
 <div class="viewcode-block" id="sort_3_orbits">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.sort_3_orbits">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sort_3_orbits">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sort_3_orbits</span><span class="p">(</span><span class="n">a_in</span><span class="p">,</span> <span class="n">b_in</span><span class="p">,</span> <span class="n">c_in</span><span class="p">):</span>
     <span class="c1"># Adjust inputs if they&#39;re even</span>
     <span class="n">a_in</span> <span class="o">=</span> <span class="n">a_in</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">a_in</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">a_in</span>
@@ -1649,7 +1650,7 @@
 
 
 <div class="viewcode-block" id="get_CGs_from_dict">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_CGs_from_dict">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_CGs_from_dict">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_CGs_from_dict</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">CG_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve or calculate Clebsch-Gordan coefficient.</span>
 <span class="sd">    </span>
@@ -1686,7 +1687,7 @@
 
 
 <div class="viewcode-block" id="get_nkey6_shift">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_nkey6_shift">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_nkey6_shift">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_nkey6_shift</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">int_shift</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="p">((</span><span class="n">a</span> <span class="o">+</span> <span class="n">int_shift</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">50</span><span class="p">)</span>
@@ -1700,14 +1701,14 @@
 
 
 <div class="viewcode-block" id="get_nkey6">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_nkey6">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_nkey6">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="mi">50</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="mi">40</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">d</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">e</span> <span class="o">&lt;&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span></div>
 
 
 
 <div class="viewcode-block" id="unhash_key6j">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.unhash_key6j">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.unhash_key6j">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unhash_key6j</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">50</span>
     <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">40</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span>
@@ -1719,7 +1720,7 @@
 
 
 <div class="viewcode-block" id="sps_3Blab">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.sps_3Blab">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sps_3Blab">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">sps_3Blab</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Single-particle state manager for three-body matrix element calculations.</span>
 <span class="sd">    </span>
@@ -1777,7 +1778,7 @@
 
 
 <div class="viewcode-block" id="valid_check">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.valid_check">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.valid_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">valid_check</span><span class="p">(</span><span class="n">ea</span><span class="p">,</span> <span class="n">eb</span><span class="p">,</span> <span class="n">ec</span><span class="p">,</span> <span class="n">ed</span><span class="p">,</span> <span class="n">ee</span><span class="p">,</span> <span class="n">ef</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if three-body matrix element satisfies model space truncation limits.</span>
 <span class="sd">    </span>
@@ -1812,7 +1813,7 @@
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReadThBME_me3jgz</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read three-body matrix elements from a me3j.gz file.</span>
 
@@ -1876,7 +1877,7 @@
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.get_modelspace">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.get_modelspace">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.get_modelspace">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_modelspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">):</span>
         <span class="n">sps</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">sps_file</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1917,7 +1918,7 @@
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.count_nreads">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.count_nreads">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.count_nreads">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">count_nreads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;File&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Count the number of elements of floating-point numbers to be read from the interaction file.</span>
 
@@ -2034,7 +2035,7 @@
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.read_me3jgz">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.read_me3jgz">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.read_me3jgz">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_me3jgz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">count_ME_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read three-body matrix elements from a me3j.gz file.</span>
 
@@ -2071,7 +2072,7 @@
 
 
 <div class="viewcode-block" id="ReadThBME_me3jgz.loop_over_JT">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.loop_over_JT">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.loop_over_JT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">loop_over_JT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span> <span class="n">what_you_need</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ME_is_double</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
                      <span class="n">array_in</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
         <span class="p">):</span> 
@@ -2213,7 +2214,7 @@
         
 
 <div class="viewcode-block" id="Trans_JT_into_pn">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Trans_JT_into_pn</span><span class="p">(</span><span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tab</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                      <span class="n">d</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Jde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Tde</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -2304,7 +2305,7 @@
 
 
 <div class="viewcode-block" id="truncate_v3bme">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.truncate_v3bme">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.truncate_v3bme">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">truncate_v3bme</span><span class="p">(</span><span class="n">dim_v3bme_file</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dim_v3bme_ms</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                    <span class="n">sps_3b</span><span class="p">:</span> <span class="n">sps_3Blab</span><span class="p">,</span>
                    <span class="n">ThBME</span><span class="p">,</span> <span class="n">dWS</span><span class="p">,</span> 
@@ -2391,7 +2392,7 @@
 
 
 <div class="viewcode-block" id="RecouplingCG">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.RecouplingCG">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.RecouplingCG">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">RecouplingCG</span><span class="p">(</span><span class="n">idx_abc</span><span class="p">,</span> <span class="n">ja2</span><span class="p">,</span> <span class="n">jb2</span><span class="p">,</span> <span class="n">jc2</span><span class="p">,</span> <span class="n">Jab_in</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">dWS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="c1"># Check angular momentum triangle conditions</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ja2</span> <span class="o">-</span> <span class="n">jb2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;</span> <span class="n">Jab</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ja2</span> <span class="o">+</span> <span class="n">jb2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">Jab</span><span class="p">:</span>
@@ -2434,7 +2435,7 @@
 
 
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">prep_dicts_for_WignerSymbols</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
@@ -2444,7 +2445,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">d6j_lj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prep_d6j_lj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jmax</span><span class="p">)</span>
 
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_dcg_spin">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_dcg_spin">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_dcg_spin">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_dcg_spin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dcg_spin</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">s_a</span> <span class="o">=</span> <span class="mi">1</span>
@@ -2480,7 +2481,7 @@
 
 
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_d6j_lj">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_lj">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_lj">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_d6j_lj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jmax2</span><span class="p">):</span>
         <span class="n">d6j_lj</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">j1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jmax2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -2510,7 +2511,7 @@
 
 
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_d6j_int">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_int">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_int">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_d6j_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">jmax_in</span><span class="p">):</span>
         <span class="c1"># &#39;to&#39; parameter is not used in this function.</span>
         <span class="n">jmax</span> <span class="o">=</span> <span class="n">jmax_in</span> <span class="o">*</span> <span class="mi">2</span>
@@ -2541,7 +2542,7 @@
 
 
 <div class="viewcode-block" id="tri_check">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.tri_check">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.tri_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">tri_check</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">c</span> <span class="ow">or</span> <span class="n">a</span> <span class="o">+</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="ow">or</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -2552,7 +2553,7 @@
 
 
 <div class="viewcode-block" id="get_key6j_sym">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_key6j_sym">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_key6j_sym">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_key6j_sym</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j5</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j4</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j6</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="c1"># Initialize temporary copies.</span>
     <span class="n">tj1</span><span class="p">,</span> <span class="n">tj3</span><span class="p">,</span> <span class="n">tj5</span> <span class="o">=</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j3</span><span class="p">,</span> <span class="n">j5</span>
@@ -2596,14 +2597,14 @@
 
 
 <div class="viewcode-block" id="j_col_score">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.j_col_score">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.j_col_score">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">j_col_score</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">j1</span> <span class="o">+</span> <span class="n">j2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="get_canonical_order_6j">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.get_canonical_order_6j">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_canonical_order_6j">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_canonical_order_6j</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j4</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j5</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j6</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">cscore_12</span> <span class="o">=</span> <span class="n">j_col_score</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">)</span>
     <span class="n">cscore_34</span> <span class="o">=</span> <span class="n">j_col_score</span><span class="p">(</span><span class="n">j3</span><span class="p">,</span> <span class="n">j4</span><span class="p">)</span>
@@ -2627,7 +2628,7 @@
 
 
 <div class="viewcode-block" id="set_op_list_from_op_dict_3b">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.set_op_list_from_op_dict_3b">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.set_op_list_from_op_dict_3b">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">set_op_list_from_op_dict_3b</span><span class="p">(</span>
     <span class="n">op_dict_3b</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span>
 <span class="p">):</span>
@@ -2670,7 +2671,7 @@
 
 
 <div class="viewcode-block" id="worker_cU">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.worker_cU">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.worker_cU">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">worker_cU</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
     <span class="n">term</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">inp</span>
     <span class="n">term</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
@@ -2686,7 +2687,7 @@
 
 
 <div class="viewcode-block" id="worker_U">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.worker_U">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.worker_U">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">worker_U</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
     <span class="n">term</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">inp</span>
     <span class="n">term</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
@@ -2701,7 +2702,7 @@
 
 
 <div class="viewcode-block" id="counting_CNOTs">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.counting_CNOTs">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.counting_CNOTs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">counting_CNOTs</span><span class="p">(</span><span class="n">H_mapped</span><span class="p">,</span> <span class="n">label_int</span><span class="p">,</span> <span class="n">label_op</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Counting CNOTs for </span><span class="si">{</span><span class="n">label_int</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">label_op</span><span class="si">}</span><span class="s2"> operator...&quot;</span><span class="p">)</span>
     <span class="n">nproc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span>
@@ -2736,7 +2737,7 @@
 
 
 <div class="viewcode-block" id="removing_redundant_ops">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.removing_redundant_ops">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.removing_redundant_ops">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">removing_redundant_ops</span><span class="p">(</span><span class="n">op_list</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove redundant Pauli operators by combining terms with same labels.</span>
 <span class="sd">    </span>
@@ -2777,7 +2778,7 @@
 
 
 <div class="viewcode-block" id="removing_redundant_terms">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.removing_redundant_terms">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.removing_redundant_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">removing_redundant_terms</span><span class="p">(</span><span class="n">ops</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove redundant terms from existing SparsePauliOp.</span>
 <span class="sd">    </span>
@@ -2822,7 +2823,7 @@
 
 
 <div class="viewcode-block" id="sum_over_J">
-<a class="viewcode-back" href="../../api_ref.html#nuqulib.nuclear_hamiltonian.sum_over_J">[docs]</a>
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sum_over_J">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sum_over_J</span><span class="p">(</span><span class="n">Hamil</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum two-body matrix elements over total angular momentum J.</span>
 <span class="sd">    </span>
