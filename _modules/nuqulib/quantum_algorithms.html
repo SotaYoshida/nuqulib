@@ -198,7 +198,6 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">NuQuLib</a></li>
 </ul>
 
 </div>
@@ -249,7 +248,7 @@
 
 
 <div class="viewcode-block" id="circuit_HadamardTest">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.circuit_HadamardTest">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.circuit_HadamardTest">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">circuit_HadamardTest</span><span class="p">(</span>
     <span class="n">Norb</span><span class="p">,</span> <span class="n">Uprep</span><span class="p">,</span> <span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="p">,</span> <span class="n">using_statevector</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
@@ -288,7 +287,7 @@
 
 
 <div class="viewcode-block" id="circuit_QPE">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.circuit_QPE">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.circuit_QPE">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">circuit_QPE</span><span class="p">(</span>
     <span class="n">n_ancilla</span><span class="p">,</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">Uprep</span><span class="p">,</span> <span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
@@ -322,7 +321,7 @@
 
 
 <div class="viewcode-block" id="make_U_and_cU">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_U_and_cU">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.make_U_and_cU">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_U_and_cU</span><span class="p">(</span>
     <span class="n">i</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="p">,</span> <span class="n">hamiltonian_op</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">Uprep</span>
 <span class="p">):</span>
@@ -345,7 +344,7 @@
 
 
 <div class="viewcode-block" id="make_overlap_qc">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_overlap_qc">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.make_overlap_qc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_overlap_qc</span><span class="p">(</span>
     <span class="n">Ntar</span><span class="p">,</span> <span class="n">gate_cUi</span><span class="p">,</span> <span class="n">gate_cUj</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">using_statevector</span>
 <span class="p">):</span>
@@ -368,7 +367,7 @@
 
 
 <div class="viewcode-block" id="measure_overlap">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.measure_overlap">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.measure_overlap">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">measure_overlap</span><span class="p">(</span>
     <span class="n">num_shot</span><span class="p">,</span>
     <span class="n">Ntar</span><span class="p">,</span>
@@ -430,7 +429,7 @@
 
 
 <div class="viewcode-block" id="make_cU">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_cU">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.make_cU">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_cU</span><span class="p">(</span><span class="n">Uprep</span><span class="p">,</span> <span class="n">Ui</span><span class="p">,</span> <span class="n">Ntar</span><span class="p">):</span>
     <span class="n">circuit_cUi</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Ntar</span><span class="p">)</span>
     <span class="n">circuit_cUi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Uprep</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
@@ -441,7 +440,7 @@
 
 
 <div class="viewcode-block" id="make_Circ_forNondiagH">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_Circ_forNondiagH">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.make_Circ_forNondiagH">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_Circ_forNondiagH</span><span class="p">(</span><span class="n">term_types</span><span class="p">,</span> <span class="n">Ntar</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> 
                           <span class="n">gate_cUi</span><span class="p">,</span> <span class="n">gate_cUj</span><span class="p">,</span> <span class="n">qcs_re</span><span class="p">,</span> <span class="n">qcs_im</span><span class="p">,</span> <span class="n">using_statevector</span><span class="p">):</span>
     
@@ -485,7 +484,7 @@
 
 
 <div class="viewcode-block" id="get_idx_circuit">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.get_idx_circuit">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.get_idx_circuit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_idx_circuit</span><span class="p">(</span><span class="n">op_string</span><span class="p">,</span> <span class="n">term_types</span><span class="p">):</span>
     <span class="n">idx_circuit</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">op_string</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">}</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">op_string</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;I&#39;</span><span class="p">}:</span>                            
@@ -515,7 +514,7 @@
 
 
 <div class="viewcode-block" id="QuantumKrylov">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.QuantumKrylov">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.QuantumKrylov">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">QuantumKrylov</span><span class="p">(</span>
     <span class="n">Uprep</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>  <span class="c1"># circuit to prepare a reference state</span>
     <span class="n">hamiltonian_op</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">,</span>  <span class="c1"># Hamiltonian operator</span>
@@ -712,7 +711,7 @@
 
 
 <div class="viewcode-block" id="construct_X_and_Y">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.construct_X_and_Y">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.construct_X_and_Y">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">construct_X_and_Y</span><span class="p">(</span><span class="n">snapshots</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>  <span class="c1"># d is the number of delay</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snapshots</span><span class="p">)</span>
     <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">d</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
@@ -726,7 +725,7 @@
 
 
 <div class="viewcode-block" id="lambda_plot">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.lambda_plot">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.lambda_plot">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">lambda_plot</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">Ens</span><span class="p">):</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
@@ -742,7 +741,7 @@
 
 
 <div class="viewcode-block" id="ODMD">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.quantum_algorithms.ODMD">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ODMD</span><span class="p">(</span>
     <span class="n">Uprep</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
     <span class="n">HamiltonianOps</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">,</span>

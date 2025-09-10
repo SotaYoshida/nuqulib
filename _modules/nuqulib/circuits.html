@@ -198,7 +198,6 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">NuQuLib</a></li>
 </ul>
 
 </div>
@@ -245,7 +244,7 @@
 
 
 <div class="viewcode-block" id="cG1">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.cG1">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.cG1">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cG1</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">c_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply controlled Givens rotation to a quantum circuit.</span>
 <span class="sd">    </span>
@@ -274,7 +273,7 @@
 
 
 <div class="viewcode-block" id="cG1_gate">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.cG1_gate">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.cG1_gate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cG1_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a controlled Givens rotation gate.</span>
 <span class="sd">    </span>
@@ -307,7 +306,7 @@
 
 
 <div class="viewcode-block" id="apply_sqrt_iSWAP">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.apply_sqrt_iSWAP">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.apply_sqrt_iSWAP">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_sqrt_iSWAP</span><span class="p">(</span><span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply square root of iSWAP gate to quantum circuit.</span>
 <span class="sd">    </span>
@@ -329,7 +328,7 @@
 
 
 <div class="viewcode-block" id="Givens_iSWAP_Rz">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_iSWAP_Rz">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.Givens_iSWAP_Rz">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Givens_iSWAP_Rz</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Givens rotation implementation using iSWAP and Rz gates.</span>
 <span class="sd">    </span>
@@ -352,7 +351,7 @@
 
 
 <div class="viewcode-block" id="Givens_magic">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_magic">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.Givens_magic">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Givens_magic</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimal Givens rotation using magic basis decomposition.</span>
 <span class="sd">    </span>
@@ -384,7 +383,7 @@
 
 
 <div class="viewcode-block" id="Givens_Xanadu">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_Xanadu">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.Givens_Xanadu">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Givens_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Givens rotation implementation from Xanadu.</span>
 <span class="sd">    </span>
@@ -408,7 +407,7 @@
 
 
 <div class="viewcode-block" id="G_gate">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.G_gate">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.G_gate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">G_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;magic&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Givens rotation gate using specified method.</span>
 <span class="sd">    </span>
@@ -440,7 +439,7 @@
 
 
 <div class="viewcode-block" id="Givens_2_Xanadu">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.Givens_2_Xanadu">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.Givens_2_Xanadu">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Givens_2_Xanadu</span><span class="p">(</span><span class="n">circ</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Two-qubit pair Givens rotation using Xanadu method.</span>
 <span class="sd">    </span>
@@ -488,7 +487,7 @@
 
 
 <div class="viewcode-block" id="G2_gate">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.G2_gate">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.G2_gate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">G2_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Xanadu&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a two-pair Givens rotation gate.</span>
 <span class="sd">    </span>
@@ -514,7 +513,7 @@
 
 
 <div class="viewcode-block" id="get_idx_ancilla_in_string">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.get_idx_ancilla_in_string">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.get_idx_ancilla_in_string">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_idx_ancilla_in_string</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ancilla</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Qiskit_ordering</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get ancilla qubit index in measurement string.</span>
 <span class="sd">    </span>
@@ -538,7 +537,7 @@
 
 
 <div class="viewcode-block" id="additional_qc">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.additional_qc">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.additional_qc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">additional_qc</span><span class="p">(</span><span class="n">qc_in</span><span class="p">,</span> <span class="n">pauli_str</span><span class="p">,</span> <span class="n">register_target</span><span class="p">,</span> <span class="n">Qiskit_order</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add basis rotation gates for Pauli string measurement.</span>
 <span class="sd">    </span>
@@ -573,7 +572,7 @@
 
 
 <div class="viewcode-block" id="get_idx_to_measure">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.get_idx_to_measure">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.get_idx_to_measure">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_idx_to_measure</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Qiskit_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get qubit indices that need to be measured for a Pauli string.</span>
 <span class="sd">    </span>
@@ -596,7 +595,7 @@
 
 
 <div class="viewcode-block" id="expec_Zstring">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.circuits.expec_Zstring">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.circuits.expec_Zstring">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">expec_Zstring</span><span class="p">(</span>
     <span class="n">res</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx_relevant</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Qiskit_ordering</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">ancilla_qubit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>

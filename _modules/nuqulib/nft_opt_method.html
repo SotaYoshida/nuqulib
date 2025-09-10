@@ -198,7 +198,6 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">NuQuLib</a></li>
 </ul>
 
 </div>
@@ -257,7 +256,7 @@
 
 
 <div class="viewcode-block" id="draw_DFT_curve">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.draw_DFT_curve">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.draw_DFT_curve">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">draw_DFT_curve</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">DFTcurve</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw DFT curve with measured points and minimum candidate.</span>
 <span class="sd">    </span>
@@ -281,7 +280,7 @@
 
 
 <div class="viewcode-block" id="eval_DFT_coeff">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.eval_DFT_coeff">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.eval_DFT_coeff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">eval_DFT_coeff</span><span class="p">(</span><span class="n">Es</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate discrete Fourier transform coefficients.</span>
 <span class="sd">    </span>
@@ -322,7 +321,7 @@
 
 
 <div class="viewcode-block" id="func_DFT_coeff">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.func_DFT_coeff">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.func_DFT_coeff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">func_DFT_coeff</span><span class="p">(</span><span class="n">DFT_coef</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">theta_scale_for_DFT</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create function from DFT coefficients for energy landscape reconstruction.</span>
 <span class="sd">    </span>
@@ -351,7 +350,7 @@
 
 
 <div class="viewcode-block" id="DiscreteFT">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.DiscreteFT">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.DiscreteFT">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">DiscreteFT</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Es</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
                <span class="n">spot</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
                <span class="n">theta_scale_for_DFT</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;scipy&quot;</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
@@ -401,7 +400,7 @@
 
 
 <div class="viewcode-block" id="cost_func">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.cost_func">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.cost_func">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cost_func</span><span class="p">(</span>
     <span class="n">hamiltonian_op</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -484,7 +483,7 @@
 
 
 <div class="viewcode-block" id="NFTmethod">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.NFTmethod">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.NFTmethod">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">NFTmethod</span><span class="p">(</span>
     <span class="n">it</span><span class="p">,</span>
     <span class="n">Ecurrent</span><span class="p">,</span>
@@ -590,7 +589,7 @@
 
 
 <div class="viewcode-block" id="optimize_params_with_NFT">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.optimize_params_with_NFT">[docs]</a>
+<a class="viewcode-back" href="../../api_ref.html#nuqulib.nft_opt_method.optimize_params_with_NFT">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">optimize_params_with_NFT</span><span class="p">(</span>
     <span class="n">it_max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">hamiltonian_op</span><span class="p">,</span>
