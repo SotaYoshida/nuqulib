@@ -52,8 +52,10 @@ If you are willing to contribute to this package, please keep in mind the follow
    documentation, please follow the docstring format used in the
    existing code or refer to the Sphinx documentation for guidance.
 
-Since we are using GitHub Actions, only the allowed users can run the test jobs on GitHub Actions.
-If you are not an allowed user, please run the test codes locally before making a pull request with pytest.
+We are using GitHub Actions to manage the tests and documentation build/deploy.
+Please note that, for security and to prevent abuse of GitHub Actions,
+only the allowed users can run through push or pull request events.
+If you are not an allowed user, please run the test codes locally before making a pull request using pytest.
 
 
 ******************************
