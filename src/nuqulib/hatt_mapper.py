@@ -1,11 +1,14 @@
+from qiskit.quantum_info import Pauli, SparsePauliOp
+from qiskit_nature.second_q.operators import FermionicOp
+from qiskit_nature.second_q.mappers.fermionic_mapper import FermionicMapper
+
 from itertools import combinations, permutations
 from functools import reduce
 import math
-from qiskit.quantum_info import Pauli, SparsePauliOp
-from qiskit_nature.second_q.operators import FermionicOp, MajoranaOp
-from qiskit_nature.second_q.mappers.fermionic_mapper import FermionicMapper
-from qiskit_nature.second_q.mappers.mode_based_mapper import ModeBasedMapper
 from tqdm import tqdm
+
+from .majoranaop import MajoranaOp
+from .mode_based_mapper import ModeBasedMapper
 
 
 def _walk_string(

@@ -37,40 +37,31 @@ def naive_filling_ansatz(
         mapping_method="JordanWigner",
         Hamildict_opform: dict = {},
         filepath: str|os.PathLike = "./"
-    ):
-    
-    N_dict = Hamildict_opform['N']
-    P_dict = Hamildict_opform['P']
-    n_keys = [key.split(" -_")[0] for key in N_dict.keys() if N_dict[key]==1]  
-    p_keys = [key.split(" -_")[0] for key in P_dict.keys() if P_dict[key]==1]
+    ):    
+    N_dict = Hamildict_opform['SPE']['n']
+    P_dict = Hamildict_opform['SPE']['p']
+    n_keys = [key.split(" -_")[0] for key in N_dict.keys()]  
+    p_keys = [key.split(" -_")[0] for key in P_dict.keys() ]
+
     n_qubits_p = len(p_keys)
     n_qubits_n = len(n_keys)
     n_qubits = n_qubits_p + n_qubits_n
 
     ansatz = QuantumCircuit(n_qubits)
-    for i in range(proton_number):
+    for i in range(proton_number): 
         paulistr = mapping_to_Pauli_string(
-            FermionicOp({p_keys[i]: 2.0}, num_spin_orbitals=n_qubits), 
-            n_qubits, method=mapping_method, 
-            Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
-        pauli_op = PauliGate(paulistr)
-        ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))      
-        print(f"Filling proton @{i} p_key={p_keys[i]} => {paulistr}")
-        paulistr_check = mapping_to_Pauli_string(FermionicOp({p_keys[i]: 2.0}, num_spin_orbitals=n_qubits_p),
-                                                 n_qubits_p, method=mapping_method, 
-                                                 Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
-        print(f"paulistr_check {paulistr_check}")
-    for i in range(neutron_number):
-        paulistr = mapping_to_Pauli_string(
-            FermionicOp({n_keys[i]: 2.0}, num_spin_orbitals=n_qubits), 
-            n_qubits, method=mapping_method, Hamildict_opform=Hamildict_opform, filepath=filepath).paulis[0].to_label()
-
-        ## neutron aware
-        paulistr = paulistr[:n_qubits_n] + "I" * n_qubits_p
-
+            FermionicOp({p_keys[-1-i]: 2.0}, num_spin_orbitals=n_qubits_p), 
+            n_qubits, 0, method=mapping_method,Hamildict_specified=P_dict, filepath=filepath+'_p',
+            ).paulis[0].to_label()
         pauli_op = PauliGate(paulistr)
         ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))
-        print(f"Filling neutron @{i} {n_keys[i]} => {paulistr}")
+    for i in range(neutron_number):
+        paulistr = mapping_to_Pauli_string(
+            FermionicOp({n_keys[-1-i]: 2.0}, num_spin_orbitals=n_qubits_n), 
+            n_qubits, n_qubits_p, method=mapping_method,Hamildict_specified=N_dict, filepath=filepath+'_n',
+            ).paulis[0].to_label()
+        pauli_op = PauliGate(paulistr)
+        ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))
     return ansatz
 
 

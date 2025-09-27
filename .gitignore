@@ -141,6 +141,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+venv_local
 ENV/
 env.bak/
 venv.bak/
@@ -216,3 +217,5 @@ Thumbs.db
 # Generated files
 *.pdf
 
+devload.sh
+dev_hattmapper.ipynb

@@ -156,13 +156,13 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
 
     if fn_3NF != "":
         hamil.set_mscheme_3NF()
         H_3b = hamil.mapping_3NF_Mscheme()
 
-    Hamil_ShellModel = H_1b 
+    Hamil_ShellModel = H_1b_p + H_1b_n 
     if Z > 1:
         Hamil_ShellModel += H_pp 
     if N > 1:
@@ -311,6 +311,8 @@ class Hamiltonian:
             self.e3max = self.e3max_file
 
         self.CG_dict = {}
+        self.v3b_Mscheme = {}
+
         if fn_3NF != None:
             self.fn_3NF = fn_3NF
             self.JTorbitals = JTcoupledOrbitals(self.emax)
@@ -345,7 +347,6 @@ class Hamiltonian:
                 raise ValueError(
                     "In the current implementation fn_3NF should be in either readable.text or me3j.gz file format"
                 )
-            self.v3b_Mscheme = {}
 
     def _emax_check(self, emax, emax_acceptable=5):
         if emax >= emax_acceptable:
@@ -384,28 +385,40 @@ class Hamiltonian:
             e3max_file = self.emax * 3
         return e1max_file, e2max_file, e3max_file
 
-    def neutron_number_constraint(self, N0, Hamildict_opform, mapping_method, filepath='./tmp'):
+    def neutron_number_constraint(self, N0, mapping_method, filepath='./tmp'):
+        if self.Hamildict is None:
+            _=self.get_mscheme_H(opform=True)
+        V3p, V3n = self.get_V3_p_n()
+        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
         H_n = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["N"], num_spin_orbitals=self.n_qubits), 
-                        self.n_qubits, 
+            FermionicOp(self.Hamildict["SPE"]['n'], 
+                        num_spin_orbitals=self.n_qubits_n),
+                        self.n_qubits, self.n_qubits_p,
                         method=mapping_method, 
-                        Hamildict_opform = Hamildict_opform, filepath=filepath)
-        op = N0**2 * SparsePauliOp('I'*self.n_qubits)
-        for pauli in H_n:
-            op += pauli.dot(pauli)
-            op -= 2*N0*pauli
+                        Hamildict_specified = H_dict_n, filepath=filepath+'_n')
+        op=SparsePauliOp('I'*self.n_qubits,coeffs=N0**2) + H_n.compose(H_n) - 2*N0*H_n
+        # for pauli in H_n:
+        #     op += pauli.dot(pauli)
+        #     op -= 2*N0*pauli
         return op.simplify()
 
-    def proton_number_constraint(self, N0, Hamildict_opform, mapping_method, filepath='./tmp'):
-        H_p = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["P"],num_spin_orbitals=self.n_qubits),
-            self.n_qubits, method=mapping_method, 
-            Hamildict_opform=Hamildict_opform, 
-            filepath=filepath)
-        op=N0**2*SparsePauliOp('I'*self.n_qubits)
-        for pauli in H_p:
-            op += pauli.dot(pauli)
-            op -= 2*N0*pauli
+    def proton_number_constraint(self, N0, mapping_method, filepath='./tmp'):
+        # H_p = mapping_to_Pauli_string(
+        #     FermionicOp(Hamildict_opform["P"],num_spin_orbitals=self.n_qubits),
+        #     self.n_qubits, method=mapping_method, 
+        #     Hamildict_opform=Hamildict_opform, 
+        #     filepath=filepath)
+        # op=N0**2*SparsePauliOp('I'*self.n_qubits)
+        # for pauli in H_p:
+        #     op += pauli.dot(pauli)
+        #     op -= 2*N0*pauli
+        if self.Hamildict is None:
+            _=self.get_mscheme_H(opform=True)
+        V3p, V3n = self.get_V3_p_n()
+        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
+        H_p = mapping_to_Pauli_string(FermionicOp(self.Hamildict['SPE']["p"], num_spin_orbitals=self.n_qubits_p), self.n_qubits, 0, \
+                                      method=mapping_method, Hamildict_specified = H_dict_p, filepath=filepath+'_p')
+        op=SparsePauliOp('I'*self.n_qubits,coeffs=N0**2) + H_p.compose(H_p) - 2*N0*H_p
         return op.simplify()
 
     def extract_hw(self):
@@ -707,9 +720,11 @@ class Hamiltonian:
             and normalization factors for antisymmetrized matrix elements.
         """
         op_dict_1b = {}
-        op_dict_p = {}
-        op_dict_n = {}
-        op_dict_jz = {}
+        op_dict_1b['n'] = { }
+        op_dict_1b['p'] = { }
+        op_dict_jz = { }
+        op_dict_jz['p'] = { }
+        op_dict_jz['n'] = { }
         if opform:
             op_dict_pp = {}
             op_dict_nn = {}
@@ -743,21 +758,33 @@ class Hamiltonian:
                         l_a == l_b and j_a == j_b and jz_a == jz_b and tz_a == tz_b
                     ):
                         if opform:
-                            bitstr = "+_" + str(aa) + " -_" + str(bb)
-                            op_dict_1b[bitstr] = Tab
-                            op_dict_n[bitstr] = (1+tz_a)//2 
-                            op_dict_p[bitstr] = (1-tz_a)//2 
-                            op_dict_jz[bitstr] = jz_a 
+                            if tz_a == -1:
+                                bitstr = "+_"+str(aa)+" -_"+str(bb)
+                                op_dict_1b['p'][bitstr] = Tab
+                                op_dict_jz['p'][bitstr] = jz_a 
+                            elif tz_a==1:
+                                bitstr = "+_"+str(aa-self.n_qubits_p)+" -_"+str(bb-self.n_qubits_p)
+                                op_dict_1b['n'][bitstr] = Tab
+                                op_dict_jz['n'][bitstr] = jz_a 
+                            else:
+                                raise ValueError("tz_a should be either 1 or -1")
                             num_1b_term += 1
-                            if aa != bb:
-                                bitstr = "+_" + str(bb) + " -_" + str(aa)
-                                op_dict_1b[bitstr] = Tab
+                            if aa != bb: 
+                                if tz_a==-1:
+                                    bitstr = "+_"+str(aa)+" -_"+str(bb)
+                                    op_dict_1b['p'][bitstr] = Tab
+                                    op_dict_jz['p'][bitstr] = jz_a 
+                                elif tz_a==1:
+                                    bitstr = "+_"+str(aa-self.n_qubits_p)+" -_"+str(bb-self.n_qubits_p)
+                                    op_dict_1b['n'][bitstr] = Tab
+                                    op_dict_jz['n'][bitstr] = jz_a 
                                 num_1b_term += 1
                         else:
-                            op_dict_1b[(aa + 1, bb + 1)] = Tab
+                            pn_str = "p" if tz_a == -1 else "n"
+                            op_dict_1b[pn_str][(aa + 1, bb + 1)] = Tab
                             num_1b_term += 1
                             if aa != bb:
-                                op_dict_1b[(bb + 1, aa + 1)] = Tab
+                                op_dict_1b[pn_str][(bb + 1, aa + 1)] = Tab
                                 num_1b_term += 1
 
         # for 2-body term
@@ -846,10 +873,15 @@ class Hamiltonian:
                                     )
                             elif Tz == 2:
                                 num_nn += 1
-                                if opform:
+                                if opform: ## 09/18
                                     self.op_dict_T1_permutations(
-                                        op_dict_nn, aa, bb, cc, dd, J, v
-                                    )
+                                        op_dict_nn, 
+                                        aa-self.n_qubits_p, bb-self.n_qubits_p, 
+                                        cc-self.n_qubits_p, dd-self.n_qubits_p, 
+                                        J, v)
+                                    # self.op_dict_T1_permutations(
+                                    #     op_dict_nn, aa, bb, cc, dd, J, v
+                                    # )
                                 else:
                                     op_dict_nn.append(
                                         [aa + 1, bb + 1, cc + 1, dd + 1, J, v]
@@ -884,16 +916,22 @@ class Hamiltonian:
                                     op_dict_pn.append(
                                         [aa + 1, bb + 1, cc + 1, dd + 1, J, v]
                                     )
-        print(f"# of H_m terms, 1b: {num_1b_term}, 2b pp: {num_pp}, nn: {num_nn}, pn: {num_pn}")
+
+        if self.fn_3NF is not None:
+            self.set_mscheme_3NF()
+        
+        op_dict_3b = self.get_3NF_Mscheme()
+        num_V3 = len(op_dict_3b.keys())  
+        print(f"# of H_m terms, 1b: {num_1b_term}, 2b pp: {num_pp}, nn: {num_nn}, pn: {num_pn} v3b {num_V3}")
         Hamildict = {
             "SPE": op_dict_1b,
             "Vpp": op_dict_pp,
             "Vnn": op_dict_nn,
             "Vpn": op_dict_pn,
-            "P": op_dict_p,
-            "N": op_dict_n,
-            "Jz": op_dict_jz
+            "Jz": op_dict_jz,
+            "V3": op_dict_3b
         }
+        self.Hamildict = Hamildict
         if opform:
             return Hamildict
         else:
@@ -922,75 +960,30 @@ class Hamiltonian:
             The proton-neutron terms require special handling due to the tensor
             product structure of the proton-neutron Hilbert space.
         """
-        H_1b = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["SPE"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_p = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["P"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_n = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["N"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_jz = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["Jz"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_pp = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["Vpp"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_nn = mapping_to_Pauli_string(
-            FermionicOp(Hamildict_opform["Vnn"], num_spin_orbitals=self.n_qubits),
-            self.n_qubits,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        #ops = [ ]
-        # coeffs = [ ]
-        # for term in Hamildict_opform["Vnn"]:
-        #     print(f"term {term}")
-        #     pauli_str = FermionicOp(term, num_spin_orbitals=self.n_qubits_n)
-        #     pauli_str *= "I"*self.n_qubits_p
-        #     op = mapping_to_Pauli_string(
-        #         pauli_str,
-        #         self.n_qubits,
-        #         mapping_method,
-        #         Hamildict_opform,
-        #         filepath=filepath
-        #     )
-        #     ops.append(op.paulis[0].to_label())
-        #     coeffs.append(op.coeffs[0])
-        # H_nn = SparsePauliOp.from_list(list(zip(ops, coeffs)))
+        if self.Hamildict is None:
+            _=self.get_mscheme_H(opform=True)
+        V3p, V3n = self.get_V3_p_n()
+        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
+        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
 
-        H_pn = mapping_of_pn_hamiltonians(
-            Hamildict_opform["Vpn"],
-            self.n_qubits_p,
-            self.n_qubits_n,
-            mapping_method,
-            Hamildict_opform,
-            filepath=filepath
-        )
-        H_pn = removing_redundant_terms(H_pn)
-        return H_1b, H_n, H_p, H_jz, H_pp, H_nn, H_pn
+        H_1b_p = mapping_to_Pauli_string(FermionicOp(self.Hamildict["SPE"]['p'], num_spin_orbitals=self.n_qubits_p), self.n_qubits, 0, method=mapping_method, Hamildict_specified= H_dict_p, filepath=filepath+'_p')
+        H_1b_n = mapping_to_Pauli_string(FermionicOp(self.Hamildict["SPE"]['n'], num_spin_orbitals=self.n_qubits_n), self.n_qubits, self.n_qubits_p,method=mapping_method, Hamildict_specified= H_dict_n, filepath=filepath+'_n')
+        H_jz_p = mapping_to_Pauli_string(FermionicOp(self.Hamildict["Jz"]['p'], num_spin_orbitals=self.n_qubits_p), self.n_qubits, 0, method=mapping_method, Hamildict_specified= H_dict_p, filepath=filepath+'_p')
+        H_jz_n = mapping_to_Pauli_string(FermionicOp(self.Hamildict["Jz"]['n'], num_spin_orbitals=self.n_qubits_n), self.n_qubits, self.n_qubits_p,method=mapping_method, Hamildict_specified= H_dict_n, filepath=filepath+'_n')
+        H_pp = mapping_to_Pauli_string(FermionicOp(self.Hamildict["Vpp"], num_spin_orbitals=self.n_qubits_p), self.n_qubits, 0, method=mapping_method, Hamildict_specified= H_dict_p, filepath=filepath+'_p')
+        H_nn = mapping_to_Pauli_string(FermionicOp(self.Hamildict["Vnn"], num_spin_orbitals=self.n_qubits_n), self.n_qubits, self.n_qubits_p, method=mapping_method, Hamildict_specified= H_dict_n, filepath=filepath+'_n')
+        H_pn = mapping_of_pn_hamiltonians(self.Hamildict["Vpn"], self.n_qubits_p, self.n_qubits_n, method=mapping_method, 
+                                          Hamildict_specified_p = H_dict_p, 
+                                          Hamildict_specified_n = H_dict_n, 
+                                          filepath_p=filepath+'_p',
+                                          filepath_n=filepath+'_n')                                          
+        H_pn = removing_redundant_terms(H_pn)       
+        if self.fn_3NF is not None:
+            H_3b = self.mapping_3NF_Mscheme(method=mapping_method, filepath=filepath)
+        else:
+            H_3b = None
+        
+        return H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b
 
     def get_cG(self, sps_i, sps_j, J):
         """Calculate Clebsch-Gordan coefficient for angular momentum coupling.
@@ -1293,39 +1286,104 @@ class Hamiltonian:
                 n_op_str += f"-_{idx_morb - self.n_qubits_p} "
         return p_op_str.rstrip(), n_op_str.rstrip()
 
-    def mapping_3NF_Mscheme(self, method="Jordan-Wigner"):
-        """Map the 3NF matrix elements to the specified scheme.
-
-        """
-        op_dict_3b = {}
-        print("Setting up op_dict_3b...")
+    def get_3NF_Mscheme(self, verbose=False):
+        op_dict_3b = { }
+        if self.v3b_Mscheme is None:
+            return op_dict_3b
+        if verbose:
+            print("Setting up op_dict_3b...")
         for mkey, value in tqdm(self.v3b_Mscheme.items()):
             im_a, im_b, im_c, im_d, im_e, im_f = mkey
-            morb_a = self.msps[im_a]
-            morb_b = self.msps[im_b]
-            morb_c = self.msps[im_c]
-            if abs(value) < 1.0e-8:
+            morb_a = self.msps[im_a]; morb_b = self.msps[im_b]; morb_c = self.msps[im_c]
+            #morb_d = self.msps[im_d]; morb_e = self.msps[im_e]; morb_f = self.msps[im_f]
+            if abs(value) < 1.e-8: 
                 continue
             Tz_bra = morb_a.tz + morb_b.tz + morb_c.tz
             if self.verbose:
-                print(
-                    f"M: <{im_a} {im_b} {im_c} |V| {im_d} {im_e} {im_f}> Chan:{self.channel[Tz_bra]} ME3n_M: {value} "
-                )
-            p_op_str, n_op_str = self.separate_proton_and_neutron(
-                im_a, im_b, im_c, im_d, im_e, im_f
-            )
+                print(f"M: <{im_a} {im_b} {im_c} |V| {im_d} {im_e} {im_f}> Chan:{self.channel[Tz_bra]} ME3n_M: {value} ")
+            p_op_str, n_op_str = self.separate_proton_and_neutron(im_a, im_b, im_c, im_d, im_e, im_f)
             if self.verbose:
-                print(f" => proton_op {p_op_str} x neutron_op {n_op_str}")
+                print(f" => proton_op {p_op_str} x neutron_op {n_op_str}")        
             if (p_op_str, n_op_str) in op_dict_3b:
                 op_dict_3b[(p_op_str, n_op_str)] += value
             else:
                 op_dict_3b[(p_op_str, n_op_str)] = value
-        print("Total number of 3NF pn products", len(list(op_dict_3b.keys())))
-        op_list = set_op_list_from_op_dict_3b(
-            op_dict_3b, self.n_qubits_p, self.n_qubits_n, method,
-        )
+        return op_dict_3b
+
+    def get_V3_p_n(self):
+        result_n = {}
+        result_p = {}
+        if self.Hamildict is None:
+            _=self.get_mscheme_H(opform=True)
+        for (p_str, n_str) in tqdm(self.Hamildict['V3'].keys()):
+            if len(p_str)==0:
+                result_n[n_str] = self.Hamildict['V3'][(p_str, n_str)] 
+            elif len(n_str)==0:
+                result_p[p_str] = self.Hamildict['V3'][(p_str, n_str)]
+        return result_p, result_n
+
+    def mapping_3NF_Mscheme(self, method="Jordan-Wigner", 
+                            filepath: str|os.PathLike="./tmp",
+                            verbose=False):
+        """Map the 3NF matrix elements to the specified scheme.
+
+        """
+        if self.Hamildict is None:
+            _=self.get_mscheme_H(opform=True)
+        V3p, V3n = self.get_V3_p_n()
+        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
+        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
+        if verbose:
+            print("Setting up op_list...")
+        op_list = [ ]
+        for (p_str, n_str) in tqdm(self.Hamildict['V3'].keys()):
+            coeff_overall = self.Hamildict['V3'][(p_str, n_str)]    
+            
+            op_p = mapping_to_Pauli_string(
+                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
+                self.n_qubits, 0, method=method,
+                Hamildict_specified = H_dict_p, filepath=filepath+'_p')
+            op_n = mapping_to_Pauli_string(
+                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
+                self.n_qubits, self.n_qubits_p, method=method,
+                Hamildict_specified = H_dict_n, filepath=filepath+'_n')
+            op = op_p.compose(op_n,front=True).simplify()
+            for pauli,coeff in zip(op.paulis,op.coeffs): 
+                op_list.append((pauli.to_label(),coeff))
+        if verbose:
+            print("# of op_list terms", len(op_list))
         mapped_H3b = removing_redundant_ops(op_list)
-        return mapped_H3b
+        return mapped_H3b        
+
+        # op_dict_3b = {}
+        # print("Setting up op_dict_3b...")
+        # for mkey, value in tqdm(self.v3b_Mscheme.items()):
+        #     im_a, im_b, im_c, im_d, im_e, im_f = mkey
+        #     morb_a = self.msps[im_a]
+        #     morb_b = self.msps[im_b]
+        #     morb_c = self.msps[im_c]
+        #     if abs(value) < 1.0e-8:
+        #         continue
+        #     Tz_bra = morb_a.tz + morb_b.tz + morb_c.tz
+        #     if self.verbose:
+        #         print(
+        #             f"M: <{im_a} {im_b} {im_c} |V| {im_d} {im_e} {im_f}> Chan:{self.channel[Tz_bra]} ME3n_M: {value} "
+        #         )
+        #     p_op_str, n_op_str = self.separate_proton_and_neutron(
+        #         im_a, im_b, im_c, im_d, im_e, im_f
+        #     )
+        #     if self.verbose:
+        #         print(f" => proton_op {p_op_str} x neutron_op {n_op_str}")
+        #     if (p_op_str, n_op_str) in op_dict_3b:
+        #         op_dict_3b[(p_op_str, n_op_str)] += value
+        #     else:
+        #         op_dict_3b[(p_op_str, n_op_str)] = value
+        # print("Total number of 3NF pn products", len(list(op_dict_3b.keys())))
+        # op_list = set_op_list_from_op_dict_3b(
+        #     op_dict_3b, self.n_qubits_p, self.n_qubits_n, method,
+        # )
+        # mapped_H3b = removing_redundant_ops(op_list)
+        # return mapped_H3b
 
 
 def process_op(args):
