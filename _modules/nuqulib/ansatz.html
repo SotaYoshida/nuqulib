@@ -243,15 +243,74 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pennylane</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">qml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pennylane</span><span class="w"> </span><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">qnp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">PauliGate</span><span class="p">,</span> <span class="n">PauliEvolutionGate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_nature.second_q.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermionicOp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.transpiler.preset_passmanagers</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_preset_pass_manager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.circuits</span><span class="w"> </span><span class="kn">import</span> <span class="n">G_gate</span><span class="p">,</span> <span class="n">cG1_gate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.encoding</span><span class="w"> </span><span class="kn">import</span> <span class="n">mapping_to_Pauli_string</span>
+
+
+<div class="viewcode-block" id="naive_filling_ansatz_old">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.ansatz.naive_filling_ansatz_old">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">naive_filling_ansatz_old</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                         <span class="n">neutron_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                         <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span>
+    <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">ansatz</span></div>
+
+
+
+<div class="viewcode-block" id="naive_filling_ansatz">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.ansatz.naive_filling_ansatz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">naive_filling_ansatz</span><span class="p">(</span>
+        <span class="n">proton_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">neutron_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">mapping_method</span><span class="o">=</span><span class="s2">&quot;JordanWigner&quot;</span><span class="p">,</span>
+        <span class="n">Hamildict_opform</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
+    <span class="p">):</span>    
+    <span class="n">N_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">P_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
+    <span class="n">n_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">N_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>  
+    <span class="n">p_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">P_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">]</span>
+
+    <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_keys</span><span class="p">)</span>
+    <span class="n">n_qubits_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_keys</span><span class="p">)</span>
+    <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span>
+
+    <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span> 
+        <span class="n">paulistr</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
+            <span class="n">FermionicOp</span><span class="p">({</span><span class="n">p_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]:</span> <span class="mf">2.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_p</span><span class="p">),</span> 
+            <span class="n">n_qubits</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">P_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">&#39;_p&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
+        <span class="n">pauli_op</span> <span class="o">=</span> <span class="n">PauliGate</span><span class="p">(</span><span class="n">paulistr</span><span class="p">)</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pauli_op</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
+        <span class="n">paulistr</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
+            <span class="n">FermionicOp</span><span class="p">({</span><span class="n">n_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]:</span> <span class="mf">2.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_n</span><span class="p">),</span> 
+            <span class="n">n_qubits</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">N_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">&#39;_n&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
+        <span class="n">pauli_op</span> <span class="o">=</span> <span class="n">PauliGate</span><span class="p">(</span><span class="n">paulistr</span><span class="p">)</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pauli_op</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">ansatz</span></div>
+
+
 
 <div class="viewcode-block" id="nucl_ansatz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.ansatz.nucl_ansatz">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">nucl_ansatz</span><span class="p">(</span>
+    <span class="n">Hamildict_opform</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">n_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">proton_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
     <span class="n">neutron_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -259,6 +318,8 @@
     <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HF&quot;</span><span class="p">,</span>
+    <span class="n">mapping_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;JordanWigner&quot;</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
     <span class="n">return_Gdict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct nuclear ansatz circuit for proton-neutron systems.</span>
@@ -283,22 +344,31 @@
 <span class="sd">        QuantumCircuit or tuple: Quantum circuit representing the ansatz.</span>
 <span class="sd">                                If return_Gdict=True, returns (circuit, gate_dict).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">&quot;</span>
 
+    <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span>
     <span class="n">where_is_G_or_cG1</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HF&quot;</span><span class="p">:</span> <span class="c1"># more precisely, lowest filling</span>
-        <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span>
-            <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
-            <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">ansatz</span>
+        <span class="k">return</span> <span class="n">naive_filling_ansatz</span><span class="p">(</span>
+                <span class="n">proton_qubits</span><span class="o">=</span><span class="n">proton_qubits</span><span class="p">,</span>
+                <span class="n">neutron_qubits</span><span class="o">=</span><span class="n">neutron_qubits</span><span class="p">,</span>
+                <span class="n">proton_number</span><span class="o">=</span><span class="n">proton_number</span><span class="p">,</span>
+                <span class="n">neutron_number</span><span class="o">=</span><span class="n">neutron_number</span><span class="p">,</span>
+                <span class="n">mapping_method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span>
+                <span class="n">Hamildict_opform</span><span class="o">=</span><span class="n">Hamildict_opform</span><span class="p">,</span>
+                <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span>
+        <span class="p">)</span>
     <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HF+Givens&quot;</span><span class="p">:</span>
-        <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span>
-            <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
-            <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+        <span class="n">ansatz</span> <span class="o">=</span> <span class="n">naive_filling_ansatz</span><span class="p">(</span>
+            <span class="n">proton_qubits</span><span class="o">=</span><span class="n">proton_qubits</span><span class="p">,</span>
+            <span class="n">neutron_qubits</span><span class="o">=</span><span class="n">neutron_qubits</span><span class="p">,</span>
+            <span class="n">proton_number</span><span class="o">=</span><span class="n">proton_number</span><span class="p">,</span>
+            <span class="n">neutron_number</span><span class="o">=</span><span class="n">neutron_number</span><span class="p">,</span>
+            <span class="n">mapping_method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span>
+            <span class="n">Hamildict_opform</span><span class="o">=</span><span class="n">Hamildict_opform</span><span class="p">,</span>
+            <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span>
+        <span class="p">)</span>
         <span class="c1">## Givens rotation</span>
         <span class="c1">## on proton qubits</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
