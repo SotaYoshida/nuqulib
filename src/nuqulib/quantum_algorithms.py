@@ -477,6 +477,7 @@ def ODMD(
     HamiltonianOps: SparsePauliOp,
     delta_t: float,
     max_iterations: int,
+    trotter_rank: int,
     trotter_steps: int,
     sampler,
     backend,
@@ -501,7 +502,7 @@ def ODMD(
         Uj = PauliEvolutionGate(
             HamiltonianOps,
             it * delta_t,
-            synthesis=SuzukiTrotter(order=1, reps=trotter_steps),
+            synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps),
         )
         gate_cUj = make_cU(Uprep, Uj, Ntar)
         overlap = measure_overlap(
