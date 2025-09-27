@@ -7,18 +7,24 @@ working with Pauli operators in different quantum computing frameworks.
 
 from collections import defaultdict
 import numpy as np
+import os
 from pytket.pauli import Pauli, QubitPauliString
 from pytket.utils.operators import QubitPauliOperator
 from pytket import Qubit
 from qiskit_nature.second_q.mappers import JordanWignerMapper, BravyiKitaevMapper
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.quantum_info import SparsePauliOp
-
+from .hatt_mapper import HATTMapper
 
 def mapping_to_Pauli_string(
     Fermionic_op: FermionicOp,
     n_qubits: int, 
-    method: str):
+    init_qubit: int=0,
+    method: str="JordanWigner",
+    Hamildict_specified: dict={},
+    filepath: str|os.PathLike="./",
+    add_specutators: int=0,
+    verbose: bool=False):
     """Map fermionic operators to Pauli strings using specified encoding.
     
     Args:
@@ -26,25 +32,56 @@ def mapping_to_Pauli_string(
         n_qubits (int): Number of qubits for the mapping.
         method (str): Encoding method. Options: "JordanWigner"/"JW"/"Jordan-Wigner"
                      or "BravyiKitaev"/"BK"/"Bravyi-Kitaev".
+        Hamildict_specified (dict): Dictionary of Hamiltonian terms in fermionic form.
+                     used in the special case, HATTMapper.
     
     Returns:
         SparsePauliOp: Mapped Pauli operator.
         
     Raises:
         ValueError: If invalid encoding method is provided.
+
+    Note:
+        BravyiKitaev mapping has never been tested in this module.
     """
     if method == "JordanWigner" or method == "JW" or method == "Jordan-Wigner":
         mapper = JordanWignerMapper()
+
     elif method == "BravyiKitaev" or method == "BK" or method == "Bravyi-Kitaev":
         mapper = BravyiKitaevMapper()
+
+    elif method == "HATTMapper":
+        if os.path.exists(filepath):
+            mapper = HATTMapper.load(filepath)
+        else:
+            mapper = HATTMapper(FermionicOp(Hamildict_specified))
+            mapper.save(filepath)
     else:
         raise ValueError("Invalid method for mapping: " + method)
-    qubit_op = mapper.map(Fermionic_op, register_length=n_qubits)
+    
+    op_list=[]
+    qubit_op = mapper.map(Fermionic_op)
+    if verbose:
+        print(f"qubit_op(before) {qubit_op} Hamildict_specified {Hamildict_specified}")
+    for op in qubit_op:
+        nqb=len(op.paulis[0].to_label())
+        nleft=n_qubits-nqb-init_qubit
+        target_pauli = op.paulis[0].to_label()[::-1] # Qiskit ordering
+        pauli_str = init_qubit*'I'+target_pauli+nleft*'I'
+        pauli_str = pauli_str[::-1] 
+        op_list.append(SparsePauliOp(pauli_str,op.coeffs[0]))
+    qubit_op = sum(op_list).simplify()
+    if verbose:
+        print(f"qubit_op(after) {qubit_op}")
     return qubit_op
 
 
 def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
-                               n_qubits_p: int, n_qubits_n: int, method: str):
+                               n_qubits_p: int, n_qubits_n: int, method: str,
+                               Hamildict_specified_p: dict,
+                               Hamildict_specified_n: dict,
+                               filepath_p: str|os.PathLike,
+                               filepath_n: str|os.PathLike):
     """Map proton-neutron coupled Hamiltonians to Pauli operators.
     
     This function handles the mapping of nuclear Hamiltonians that include
@@ -58,31 +95,50 @@ def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
         n_qubits_p (int): Number of qubits for proton sector.
         n_qubits_n (int): Number of qubits for neutron sector.
         method (str): Encoding method (e.g., "Jordan-Wigner", "Bravyi-Kitaev").
-    
-    Returns:
-        SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.
+        Hamildict_specified_p (dict): Dictionary of Hamiltonian terms in fermionic form for protons.
+        Hamildict_specified_n (dict): Dictionary of Hamiltonian terms in fermionic form for neutrons.
+        filepath_p (str|os.PathLike): File path for saving/loading proton mapper.
+        filepath_n (str|os.PathLike): File path for saving/loading neutron mapper.
+
+        Returns:
+            SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.
     """
-    op_list = []
-    for p_str, n_str in op_pn.keys():
+    op_list = [ ]
+    for (p_str, n_str) in op_pn.keys():
         coeff_overall = op_pn[(p_str, n_str)]
-        op_p = mapping_to_Pauli_string(
-            FermionicOp({p_str: 1.0}, num_spin_orbitals=n_qubits_p),
-            n_qubits_p,
-            method=method,
-        )
-        op_n = mapping_to_Pauli_string(
-            FermionicOp({n_str: 1.0}, num_spin_orbitals=n_qubits_n),
-            n_qubits_n,
-            method=method,
-        )
+     
+        if method == "HATTMapper":
+            p_cre, p_ani = p_str.split(" ")
+            n_cre, n_ani = n_str.split(" ")
+            n_cre = "+_" + str( int(n_cre.split("_")[1]) )
+            n_ani = "-_" + str( int(n_ani.split("_")[1]) )
+            #print(f"p_str: {p_str} => {p_cre} {p_ani}, n_str: {n_str} => {n_cre} {n_ani}")
+            op_p = mapping_to_Pauli_string(
+                FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
+                n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
+                add_specutators=-n_qubits_n)
+            op_n = mapping_to_Pauli_string(
+                FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
+                n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
+                add_specutators=n_qubits_p)   
+
+        else:
+            op_p = mapping_to_Pauli_string(FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
+                                        n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
+                                        add_specutators=-n_qubits_n)
+            op_n = mapping_to_Pauli_string(FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
+                                        n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
+                                        add_specutators=n_qubits_p)   
+
         for idx_p, pauli_p in enumerate(op_p.paulis):
             coeff_p = op_p.coeffs[idx_p]
             for idx_n, pauli_n in enumerate(op_n.paulis):
                 coeff_n = op_n.coeffs[idx_n]
+                pauli_n = str(pauli_n)[:n_qubits_n]
                 coeff_pn = coeff_p * coeff_n * coeff_overall
                 pauli = str(pauli_n) + str(pauli_p)
-                op_list.append((pauli, coeff_pn))
-    return SparsePauliOp.from_list(op_list)
+                op_list.append(SparsePauliOp(pauli, coeff_pn))
+    return sum(op_list).simplify()
 
 
 def check_XXYYterm(hamiltonian_op_XXYY):

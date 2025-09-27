@@ -15,6 +15,7 @@ from .myutils import *
 from .ansatz import *
 from .circuits import *
 from .encoding import *
+from .hatt_mapper import *
 from .nft_opt_method import *
 from .pairwise import *
 from .pairing_hamiltonian import *
