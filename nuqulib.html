@@ -2298,7 +2298,7 @@ Falls back to emax_truncate * {1, 2, 3} if parsing fails.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">
-<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Hamildict_opform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
 <dd><p>Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.</p>
 <p>Transforms the fermionic nuclear Hamiltonian into qubit operators using
 standard fermion-to-qubit mappings such as Jordan-Wigner or Bravyi-Kitaev.
@@ -2306,8 +2306,9 @@ Handles the separate proton and neutron subsystems with appropriate mappings.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Hamildict_opform</strong> (<em>dict</em>) – Dictionary of fermionic operators from get_mscheme_H().</p></li>
 <li><p><strong>mapping_method</strong> (<em>str</em>) – Fermion-to-qubit mapping method (e.g., “Jordan-Wigner”).</p></li>
+<li><p><strong>filepath</strong> (<em>str</em><em>|</em><em>os.PathLike</em>) – Path to the file where the mapping results will be saved.</p></li>
+<li><p><strong>&quot;HATTMapper&quot;.</strong> (<em>This is currently used when the mapping_method is</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
