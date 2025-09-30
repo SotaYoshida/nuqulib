@@ -17,8 +17,8 @@ def test_ODMD():
     proton_qubits = list(range(0, hamil.n_qubits_p))
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
-    Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    hamil.get_mscheme_H(opform=True)
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
     H_mapped = H_1b_p + H_1b_n + H_nn 
 
     print(f"H_1b {H_1b_n+H_1b_p}")

@@ -156,7 +156,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "Jordan-Wigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("Jordan-Wigner")
 
     if fn_3NF != "":
         hamil.set_mscheme_3NF()
@@ -397,9 +397,6 @@ class Hamiltonian:
                         method=mapping_method, 
                         Hamildict_specified = H_dict_n, filepath=filepath+'_n')
         op=SparsePauliOp('I'*self.n_qubits,coeffs=N0**2) + H_n.compose(H_n) - 2*N0*H_n
-        # for pauli in H_n:
-        #     op += pauli.dot(pauli)
-        #     op -= 2*N0*pauli
         return op.simplify()
 
     def proton_number_constraint(self, N0, mapping_method, filepath='./tmp'):
@@ -938,7 +935,7 @@ class Hamiltonian:
             Hamildict = sum_over_J(Hamildict)
             return Hamildict
 
-    def mapping_opform(self, Hamildict_opform, mapping_method, filepath: str|os.PathLike="./tmp"):
+    def mapping_opform(self, mapping_method: str, filepath: str|os.PathLike="./tmp"):
         """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
         
         Transforms the fermionic nuclear Hamiltonian into qubit operators using
@@ -946,9 +943,10 @@ class Hamiltonian:
         Handles the separate proton and neutron subsystems with appropriate mappings.
         
         Args:
-            Hamildict_opform (dict): Dictionary of fermionic operators from get_mscheme_H().
             mapping_method (str): Fermion-to-qubit mapping method (e.g., "Jordan-Wigner").
-            
+            filepath (str|os.PathLike): Path to the file where the mapping results will be saved.
+            This is currently used when the mapping_method is "HATTMapper".
+
         Returns:
             tuple: A tuple containing mapped Pauli operators:
                 - H_1b (SparsePauliOp): One-body terms
@@ -1354,37 +1352,6 @@ class Hamiltonian:
             print("# of op_list terms", len(op_list))
         mapped_H3b = removing_redundant_ops(op_list)
         return mapped_H3b        
-
-        # op_dict_3b = {}
-        # print("Setting up op_dict_3b...")
-        # for mkey, value in tqdm(self.v3b_Mscheme.items()):
-        #     im_a, im_b, im_c, im_d, im_e, im_f = mkey
-        #     morb_a = self.msps[im_a]
-        #     morb_b = self.msps[im_b]
-        #     morb_c = self.msps[im_c]
-        #     if abs(value) < 1.0e-8:
-        #         continue
-        #     Tz_bra = morb_a.tz + morb_b.tz + morb_c.tz
-        #     if self.verbose:
-        #         print(
-        #             f"M: <{im_a} {im_b} {im_c} |V| {im_d} {im_e} {im_f}> Chan:{self.channel[Tz_bra]} ME3n_M: {value} "
-        #         )
-        #     p_op_str, n_op_str = self.separate_proton_and_neutron(
-        #         im_a, im_b, im_c, im_d, im_e, im_f
-        #     )
-        #     if self.verbose:
-        #         print(f" => proton_op {p_op_str} x neutron_op {n_op_str}")
-        #     if (p_op_str, n_op_str) in op_dict_3b:
-        #         op_dict_3b[(p_op_str, n_op_str)] += value
-        #     else:
-        #         op_dict_3b[(p_op_str, n_op_str)] = value
-        # print("Total number of 3NF pn products", len(list(op_dict_3b.keys())))
-        # op_list = set_op_list_from_op_dict_3b(
-        #     op_dict_3b, self.n_qubits_p, self.n_qubits_n, method,
-        # )
-        # mapped_H3b = removing_redundant_ops(op_list)
-        # return mapped_H3b
-
 
 def process_op(args):
     """Process a single proton-neutron operator term for quantum mapping.

@@ -24,7 +24,7 @@ def test_valence_2n(filename_snt=int_dir+"ckpot.snt",
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
     #print(qc.decompose(reps=1).draw())
     # measurement of Hamiltonian
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
 
     h_mapped =  H_1b_n + H_nn #+ H_pp + H_pn
 
@@ -52,7 +52,7 @@ def test_valence_pn(filename_snt=int_dir+"ckpot.snt",
     qc = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, proton_number, neutron_number, [], "HF")
 
     # measurement of Hamiltonian
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
     h_mapped = H_1b_p + H_1b_n + H_pp + H_nn + H_pn
     estimator = StatevectorEstimator()
     job = estimator.run([(qc, h_mapped)])
@@ -76,7 +76,7 @@ def test_valence_16O(filename_snt=int_dir+"ckpot.snt",
     qc = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, proton_number, neutron_number, [], "HF")
 
     # measurement of Hamiltonian
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, "JordanWigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
     h_mapped = H_1b_p + H_1b_n + H_pp + H_nn + H_pn
 
     estimator = StatevectorEstimator()
@@ -96,7 +96,7 @@ def test_ncsm_2n_emax0(Eref=5.90409, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
     mapping_method = "JordanWigner"
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, mapping_method)
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
     qc = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, Z, N, [], "HF")
 
     # measurement of Hamiltonian
@@ -119,7 +119,7 @@ def test_ncsm_4He_emax0(Eref=-22.99767, filename_snt=int_dir+"TwBME-HO_NN-only_N
 
     mapping_method = "JordanWigner"
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, mapping_method)
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
     qc = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, proton_number, neutron_number, [], "HF")
 
     # measurement of Hamiltonian
@@ -142,7 +142,7 @@ def test_ncsm_16O_emax1(Eref=-148.36879, filename_snt=int_dir+"TwBME-HO_NN-only_
 
     mapping_method = "JordanWigner"
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, mapping_method)
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
 
     qc = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, proton_number, neutron_number, [], "HF")
 
@@ -169,7 +169,7 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     print("get_mscheme_H...")
     Hdict_M = hamil.get_mscheme_H(opform=True)
     print("mapping_opform...")
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(Hdict_M, mapping_method)
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
     print("2NF done!")
     Hamil_NCSM_NN = H_1b_p + H_1b_n
     if Z >= 2:
