@@ -15,6 +15,7 @@ from pytket import Qubit
 from qiskit_nature.second_q.mappers import JordanWignerMapper, BravyiKitaevMapper
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.quantum_info import SparsePauliOp
+import time
 from tqdm import tqdm
 from .hatt_mapper import HATTMapper
 
@@ -25,7 +26,6 @@ def mapping_to_Pauli_string(
     method: str="JordanWigner",
     Hamildict_specified: dict={},
     filepath: str|os.PathLike="./",
-    add_specutators: int=0,
     verbose: bool=False):
     """Map fermionic operators to Pauli strings using specified encoding.
     
@@ -92,19 +92,15 @@ def task_pn_mapping(op_pn_key, op_pn, n_qubits_p, n_qubits_n, method,
         #print(f"p_str: {p_str} => {p_cre} {p_ani}, n_str: {n_str} => {n_cre} {n_ani}")
         op_p = mapping_to_Pauli_string(
             FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
-            n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
-            add_specutators=-n_qubits_n)
+            n_qubits_p, 0, method, Hamildict_specified_p, filepath_p)
         op_n = mapping_to_Pauli_string(
             FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
-            n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
-            add_specutators=n_qubits_p)   
+            n_qubits_n, 0, method, Hamildict_specified_n, filepath_n)
     else:
         op_p = mapping_to_Pauli_string(FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
-                                    n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
-                                    add_specutators=-n_qubits_n)
+                                    n_qubits_p, 0, method)
         op_n = mapping_to_Pauli_string(FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
-                                    n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
-                                    add_specutators=n_qubits_p)   
+                                    n_qubits_n, 0, method)
 
     for idx_p, pauli_p in enumerate(op_p.paulis):
         coeff_p = op_p.coeffs[idx_p]
@@ -145,6 +141,12 @@ def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
             SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.
     """
     print(f"Mapping p-n Hamiltonian terms to Pauli strings using {method}...")
+    if method != "HATTMapper":
+        Hamildict_specified_p = {}
+        Hamildict_specified_n = {}
+        filepath_p = "./"
+        filepath_n = "./"
+        
     results = Parallel(n_jobs=-1, backend="loky")(
         delayed(task_pn_mapping)(tkey, op_pn, n_qubits_p, n_qubits_n, method,
                                   Hamildict_specified_p, Hamildict_specified_n,
