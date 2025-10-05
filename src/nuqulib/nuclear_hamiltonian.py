@@ -31,6 +31,7 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import PauliEvolutionGate
 from sympy.physics.quantum.cg import CG as ClebschGordan
 from sympy.physics.wigner import wigner_6j
+import time
 from tqdm import tqdm
 from .encoding import *
 from .myutils import Orbit_nlj, Orbit_nljjztz, Orbit_nljtz, get_spsidx_from_nljtz
@@ -963,7 +964,6 @@ class Hamiltonian:
         """
         if self.Hamildict is None:
             _=self.get_mscheme_H(opform=True)
-        V3p, V3n = self.get_V3_p_n()
         H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] 
         H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] 
 
@@ -1361,30 +1361,25 @@ class Hamiltonian:
         if method != "HATTMapper":
             H_dict_p = H_dict_n = None
         print(f"Encoding 3NF in {method} mapping... # of 3NF terms: {len(self.Hamildict['V3'].keys())}")
+        ti = time.time()
 
-        # results = Parallel(n_jobs=-1, prefer="threads")(
-        #     delayed(self.task_3NF_pn)(p_str, n_str, coeff_overall, method, filepath)
-        #     for (p_str, n_str), coeff_overall in tqdm(self.Hamildict['V3'].items())
-        # )
-        # op = [ (pauli.to_label(), coeff) for r in results for pauli, coeff in zip(r.paulis, r.coeffs) ]
-        # mapped_H3b = removing_redundant_ops(op)
+        tasks = [
+            (p_str, n_str, coeff_overall, method, filepath)
+            for (p_str, n_str), coeff_overall in self.Hamildict["V3"].items()
+        ]
+        nproc = max(multiprocessing.cpu_count() - 2, 1)
+        with get_context("fork").Pool(processes=nproc) as pool:
+            results = list(pool.starmap(self.task_3NF_pn, tasks))
+        op = [
+            (pauli.to_label(), coeff)
+            for r in results
+            for pauli, coeff in zip(r.paulis, r.coeffs)
+        ]
+        mapped_H3b = removing_redundant_ops(op)
 
-        ## Sequential version
-        op_list = [  ]
-        for (p_str, n_str) in tqdm(self.Hamildict['V3'].keys()):
-            coeff_overall = self.Hamildict['V3'][(p_str, n_str)]                
-            op_p = mapping_to_Pauli_string(
-                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
-                self.n_qubits, 0, method=method,
-                Hamildict_specified = H_dict_p, filepath=filepath+'_p')
-            op_n = mapping_to_Pauli_string(
-                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
-                self.n_qubits, self.n_qubits_p, method=method,
-                Hamildict_specified = H_dict_n, filepath=filepath+'_n')
-            op = op_p.compose(op_n,front=True).simplify()
-            for pauli,coeff in zip(op.paulis,op.coeffs): 
-                op_list.append((pauli.to_label(),coeff))
-        mapped_H3b = removing_redundant_ops(op_list)
+        tf = time.time()
+        print(f"3NF mapping done in {tf - ti:.2f} sec.  {len(mapped_H3b)/(tf - ti):.2f} terms/sec")
+
         return mapped_H3b    
 
 def export_encoded_Hamil(Hamil: SparsePauliOp,
@@ -2533,7 +2528,7 @@ def removing_redundant_ops(op_list):
     """
     print("Removing redundant terms... len=", len(op_list), end=" => ")
     new_dict = {}
-    for label, c in tqdm(op_list):
+    for label, c in op_list:
         new_dict[label] = new_dict.get(label, 0) + c
 
     new_ops = list(new_dict.keys())

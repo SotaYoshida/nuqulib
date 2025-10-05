@@ -223,3 +223,14 @@ def get_spsidx_from_nljtz(single_particle_states: list, n, l, j, tz):
         if n == n_ and l == l_ and j == j_ and tz == tz_:
             return idx
     raise ValueError(f"Single particle state with n={n}, l={l}, j={j}, tz={tz} not found in the model space.")
+
+def Hermite_check(op: SparsePauliOp, tol=1.e-5):
+    paulis = op.paulis
+    coeffs = op.coeffs
+    tf = True
+    for i, pauli in enumerate(paulis):
+        coeff = coeffs[i]
+        if np.abs(np.imag(coeff) > tol):
+            print(f"Hermitian error @{pauli} coeff = {coeff}")
+            tf = False
+    return tf   
