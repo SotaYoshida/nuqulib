@@ -8,12 +8,14 @@ working with Pauli operators in different quantum computing frameworks.
 from collections import defaultdict
 import numpy as np
 import os
+from joblib import Parallel, delayed
 from pytket.pauli import Pauli, QubitPauliString
 from pytket.utils.operators import QubitPauliOperator
 from pytket import Qubit
 from qiskit_nature.second_q.mappers import JordanWignerMapper, BravyiKitaevMapper
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.quantum_info import SparsePauliOp
+from tqdm import tqdm
 from .hatt_mapper import HATTMapper
 
 def mapping_to_Pauli_string(
@@ -76,6 +78,45 @@ def mapping_to_Pauli_string(
     return qubit_op
 
 
+def task_pn_mapping(op_pn_key, op_pn, n_qubits_p, n_qubits_n, method,
+                    Hamildict_specified_p, Hamildict_specified_n,
+                    filepath_p, filepath_n):
+    worker_list = [ ]
+    p_str, n_str = op_pn_key
+    coeff_overall = op_pn[op_pn_key]
+     
+    if method == "HATTMapper":
+        n_cre, n_ani = n_str.split(" ")
+        n_cre = "+_" + str( int(n_cre.split("_")[1]) )
+        n_ani = "-_" + str( int(n_ani.split("_")[1]) )
+        #print(f"p_str: {p_str} => {p_cre} {p_ani}, n_str: {n_str} => {n_cre} {n_ani}")
+        op_p = mapping_to_Pauli_string(
+            FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
+            n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
+            add_specutators=-n_qubits_n)
+        op_n = mapping_to_Pauli_string(
+            FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
+            n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
+            add_specutators=n_qubits_p)   
+    else:
+        op_p = mapping_to_Pauli_string(FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
+                                    n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
+                                    add_specutators=-n_qubits_n)
+        op_n = mapping_to_Pauli_string(FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
+                                    n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
+                                    add_specutators=n_qubits_p)   
+
+    for idx_p, pauli_p in enumerate(op_p.paulis):
+        coeff_p = op_p.coeffs[idx_p]
+        for idx_n, pauli_n in enumerate(op_n.paulis):
+            coeff_n = op_n.coeffs[idx_n]
+            pauli_n = str(pauli_n)[:n_qubits_n]
+            coeff_pn = coeff_p * coeff_n * coeff_overall
+            pauli = str(pauli_n) + str(pauli_p)
+            worker_list.append([pauli, coeff_pn])
+    return worker_list
+
+
 def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
                                n_qubits_p: int, n_qubits_n: int, method: str,
                                Hamildict_specified_p: dict,
@@ -103,43 +144,21 @@ def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
         Returns:
             SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.
     """
-    op_list = [ ]
-    for (p_str, n_str) in op_pn.keys():
-        coeff_overall = op_pn[(p_str, n_str)]
-     
-        if method == "HATTMapper":
-            p_cre, p_ani = p_str.split(" ")
-            n_cre, n_ani = n_str.split(" ")
-            n_cre = "+_" + str( int(n_cre.split("_")[1]) )
-            n_ani = "-_" + str( int(n_ani.split("_")[1]) )
-            #print(f"p_str: {p_str} => {p_cre} {p_ani}, n_str: {n_str} => {n_cre} {n_ani}")
-            op_p = mapping_to_Pauli_string(
-                FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
-                n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
-                add_specutators=-n_qubits_n)
-            op_n = mapping_to_Pauli_string(
-                FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
-                n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
-                add_specutators=n_qubits_p)   
+    print(f"Mapping p-n Hamiltonian terms to Pauli strings using {method}...")
+    results = Parallel(n_jobs=-1, backend="loky")(
+        delayed(task_pn_mapping)(tkey, op_pn, n_qubits_p, n_qubits_n, method,
+                                  Hamildict_specified_p, Hamildict_specified_n,
+                                  filepath_p, filepath_n) for tkey in tqdm(op_pn.keys())
+    )
 
-        else:
-            op_p = mapping_to_Pauli_string(FermionicOp({p_str : 1.0}, num_spin_orbitals=n_qubits_p), \
-                                        n_qubits_p, 0, method, Hamildict_specified_p, filepath_p,
-                                        add_specutators=-n_qubits_n)
-            op_n = mapping_to_Pauli_string(FermionicOp({n_str : 1.0}, num_spin_orbitals=n_qubits_n), \
-                                        n_qubits_n, 0, method, Hamildict_specified_n, filepath_n,
-                                        add_specutators=n_qubits_p)   
-
-        for idx_p, pauli_p in enumerate(op_p.paulis):
-            coeff_p = op_p.coeffs[idx_p]
-            for idx_n, pauli_n in enumerate(op_n.paulis):
-                coeff_n = op_n.coeffs[idx_n]
-                pauli_n = str(pauli_n)[:n_qubits_n]
-                coeff_pn = coeff_p * coeff_n * coeff_overall
-                pauli = str(pauli_n) + str(pauli_p)
-                op_list.append(SparsePauliOp(pauli, coeff_pn))
-    return sum(op_list).simplify()
-
+    paulis = [ ]
+    coeffs = [ ]
+    for res in results:
+        for pauli, coeff in res: 
+            paulis.append(pauli)
+            coeffs.append(coeff)
+    new_op = SparsePauliOp.from_list(list(zip(paulis, coeffs)))
+    return new_op
 
 def check_XXYYterm(hamiltonian_op_XXYY):
     """Check that XX and YY terms have identical coefficients.
