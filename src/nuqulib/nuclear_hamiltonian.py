@@ -20,6 +20,7 @@ import copy
 from collections import Counter
 import gzip
 import itertools
+from joblib import Parallel, delayed
 import multiprocessing
 from multiprocessing import get_context
 import numpy as np
@@ -935,7 +936,9 @@ class Hamiltonian:
             Hamildict = sum_over_J(Hamildict)
             return Hamildict
 
-    def mapping_opform(self, mapping_method: str, filepath: str|os.PathLike="./tmp"):
+    def mapping_opform(self, mapping_method: str, 
+                       filepath: str|os.PathLike="./tmp",
+                       write_hamil_txt: str=""):
         """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
         
         Transforms the fermionic nuclear Hamiltonian into qubit operators using
@@ -961,8 +964,8 @@ class Hamiltonian:
         if self.Hamildict is None:
             _=self.get_mscheme_H(opform=True)
         V3p, V3n = self.get_V3_p_n()
-        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
-        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
+        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] 
+        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] 
 
         H_1b_p = mapping_to_Pauli_string(FermionicOp(self.Hamildict["SPE"]['p'], num_spin_orbitals=self.n_qubits_p), self.n_qubits, 0, method=mapping_method, Hamildict_specified= H_dict_p, filepath=filepath+'_p')
         H_1b_n = mapping_to_Pauli_string(FermionicOp(self.Hamildict["SPE"]['n'], num_spin_orbitals=self.n_qubits_n), self.n_qubits, self.n_qubits_p,method=mapping_method, Hamildict_specified= H_dict_n, filepath=filepath+'_n')
@@ -1320,6 +1323,27 @@ class Hamiltonian:
                 result_p[p_str] = self.Hamildict['V3'][(p_str, n_str)]
         return result_p, result_n
 
+    def task_3NF_pn(self, p_str, n_str, coeff_overall, method: str, filepath: str|os.PathLike):
+        if method != "HATTMapper":
+            op_p = mapping_to_Pauli_string(
+                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
+                self.n_qubits, 0, method=method)
+            op_n = mapping_to_Pauli_string(
+                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
+                self.n_qubits, self.n_qubits_p, method=method)
+        else:
+            op_p = mapping_to_Pauli_string(
+                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
+                self.n_qubits, 0, method=method,
+                Hamildict_specified = GLOBAL_H_DICT_P, filepath=filepath+'_p')
+            op_n = mapping_to_Pauli_string(
+                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
+                self.n_qubits, self.n_qubits_p, method=method,
+                Hamildict_specified = GLOBAL_H_DICT_N, filepath=filepath+'_n')
+        
+        op_list = op_p.compose(op_n,front=True).simplify()
+        return op_list
+        
     def mapping_3NF_Mscheme(self, method="Jordan-Wigner", 
                             filepath: str|os.PathLike="./tmp",
                             verbose=False):
@@ -1331,12 +1355,24 @@ class Hamiltonian:
         V3p, V3n = self.get_V3_p_n()
         H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
         H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
-        if verbose:
-            print("Setting up op_list...")
-        op_list = [ ]
+        global GLOBAL_H_DICT_P, GLOBAL_H_DICT_N
+        GLOBAL_H_DICT_P = H_dict_p
+        GLOBAL_H_DICT_N = H_dict_n
+        if method != "HATTMapper":
+            H_dict_p = H_dict_n = None
+        print(f"Encoding 3NF in {method} mapping... # of 3NF terms: {len(self.Hamildict['V3'].keys())}")
+
+        # results = Parallel(n_jobs=-1, prefer="threads")(
+        #     delayed(self.task_3NF_pn)(p_str, n_str, coeff_overall, method, filepath)
+        #     for (p_str, n_str), coeff_overall in tqdm(self.Hamildict['V3'].items())
+        # )
+        # op = [ (pauli.to_label(), coeff) for r in results for pauli, coeff in zip(r.paulis, r.coeffs) ]
+        # mapped_H3b = removing_redundant_ops(op)
+
+        ## Sequential version
+        op_list = [  ]
         for (p_str, n_str) in tqdm(self.Hamildict['V3'].keys()):
-            coeff_overall = self.Hamildict['V3'][(p_str, n_str)]    
-            
+            coeff_overall = self.Hamildict['V3'][(p_str, n_str)]                
             op_p = mapping_to_Pauli_string(
                 FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
                 self.n_qubits, 0, method=method,
@@ -1348,10 +1384,21 @@ class Hamiltonian:
             op = op_p.compose(op_n,front=True).simplify()
             for pauli,coeff in zip(op.paulis,op.coeffs): 
                 op_list.append((pauli.to_label(),coeff))
-        if verbose:
-            print("# of op_list terms", len(op_list))
         mapped_H3b = removing_redundant_ops(op_list)
-        return mapped_H3b        
+        return mapped_H3b    
+
+def export_encoded_Hamil(Hamil: SparsePauliOp,
+                         fn: str|os.PathLike):
+    """Export the encoded Hamiltonian to a text file.
+
+    Args:
+        label (str): Prefix for the output filename.
+
+    """
+    oup  = open(fn, "w")
+    for pauli, coeff in zip(Hamil.paulis, Hamil.coeffs):
+        oup.write(f"{pauli.to_label()} {np.real(coeff)}\n")
+    oup.close()
 
 def process_op(args):
     """Process a single proton-neutron operator term for quantum mapping.
@@ -2544,7 +2591,10 @@ def removing_redundant_terms(ops: SparsePauliOp):
         for i in range(len(new_coeffs))
         if new_coeffs[i] != 0 and (np.abs(new_coeffs[i]) > 1.0e-16)
     ]
-    return SparsePauliOp.from_list(list(zip(ops, coeffs)))
+    tmp = SparsePauliOp.from_list(list(zip(ops, coeffs)))
+    tmp = sum(tmp).simplify()
+    print("Finally, len => ", len(tmp.paulis))
+    return tmp
 
 
 def sum_over_J(Hamil):
