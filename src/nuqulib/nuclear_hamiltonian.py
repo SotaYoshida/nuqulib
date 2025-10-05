@@ -321,8 +321,6 @@ class Hamiltonian:
             if "readable.txt" in self.fn_3NF:
                 self.v3b_pn = self.read_3NF_readable(verbose=verbose)
             elif "me3j.gz" in self.fn_3NF:
-                assert self.e3max==self.e3max_file, f"In the current implementation, e3max ({self.e3max}) should be the same as e3max_file ({self.e3max_file})"
-
                 idx_sps = 0
                 for sps in self.single_particle_states:
                     idx_sps += 1
