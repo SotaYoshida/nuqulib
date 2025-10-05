@@ -850,6 +850,11 @@ and assumes real coefficients.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="nuqulib.encoding.task_pn_mapping">
+<span class="sig-prename descclassname"><span class="pre">nuqulib.encoding.</span></span><span class="sig-name descname"><span class="pre">task_pn_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_pn_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_pn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_qubits_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_qubits_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Hamildict_specified_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Hamildict_specified_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath_p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath_n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/encoding.html#task_pn_mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.encoding.task_pn_mapping" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-nuqulib.myutils">
 <span id="myutils-submodule"></span><h2>myutils submodule<a class="headerlink" href="#module-nuqulib.myutils" title="Link to this heading">¶</a></h2>
@@ -2298,7 +2303,7 @@ Falls back to emax_truncate * {1, 2, 3} if parsing fails.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">
-<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./tmp'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./tmp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_hamil_txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
 <dd><p>Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.</p>
 <p>Transforms the fermionic nuclear Hamiltonian into qubit operators using
 standard fermion-to-qubit mappings such as Jordan-Wigner or Bravyi-Kitaev.
@@ -2467,6 +2472,11 @@ The factor of 9 is to take account of this.</p>
 </div>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.task_3NF_pn">
+<span class="sig-name descname"><span class="pre">task_3NF_pn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeff_overall</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.task_3NF_pn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.task_3NF_pn" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -2621,6 +2631,17 @@ destructively updated in this method.</p>
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.counting_CNOTs">
 <span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">counting_CNOTs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_mapped</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_qubits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#counting_CNOTs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.counting_CNOTs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.export_encoded_Hamil">
+<span class="sig-prename descclassname"><span class="pre">nuqulib.nuclear_hamiltonian.</span></span><span class="sig-name descname"><span class="pre">export_encoded_Hamil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Hamil</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SparsePauliOp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#export_encoded_Hamil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.export_encoded_Hamil" title="Link to this definition">¶</a></dt>
+<dd><p>Export the encoded Hamiltonian to a text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>label</strong> (<em>str</em>) – Prefix for the output filename.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.get_CGs_from_dict">
@@ -3275,6 +3296,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 <li><a class="reference internal" href="#nuqulib.encoding.qpo_from_sparsepauliop"><code class="docutils literal notranslate"><span class="pre">qpo_from_sparsepauliop()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.encoding.qps_from_sparsepauliop"><code class="docutils literal notranslate"><span class="pre">qps_from_sparsepauliop()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.encoding.separate_Hamil_terms"><code class="docutils literal notranslate"><span class="pre">separate_Hamil_terms()</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.encoding.task_pn_mapping"><code class="docutils literal notranslate"><span class="pre">task_pn_mapping()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-nuqulib.myutils">myutils submodule</a><ul>
@@ -3393,6 +3415,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.read_snt_file"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.read_snt_file()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.separate_proton_and_neutron"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.separate_proton_and_neutron()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.set_mscheme_3NF()</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.task_3NF_pn"><code class="docutils literal notranslate"><span class="pre">Hamiltonian.task_3NF_pn()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.JTcoupledOrbitals"><code class="docutils literal notranslate"><span class="pre">JTcoupledOrbitals</span></code></a><ul>
@@ -3413,6 +3436,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.RecouplingCG"><code class="docutils literal notranslate"><span class="pre">RecouplingCG()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.Trans_JT_into_pn"><code class="docutils literal notranslate"><span class="pre">Trans_JT_into_pn()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.counting_CNOTs"><code class="docutils literal notranslate"><span class="pre">counting_CNOTs()</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.export_encoded_Hamil"><code class="docutils literal notranslate"><span class="pre">export_encoded_Hamil()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.get_CGs_from_dict"><code class="docutils literal notranslate"><span class="pre">get_CGs_from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.get_Hamiltonian"><code class="docutils literal notranslate"><span class="pre">get_Hamiltonian()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.nuclear_hamiltonian.get_canonical_order_6j"><code class="docutils literal notranslate"><span class="pre">get_canonical_order_6j()</span></code></a></li>
