@@ -279,7 +279,15 @@ class Hamiltonian:
             self._emax_check(self.emax)
         self.Qiskit_order = Qiskit_order
         self.hw = None
-        self.fn_3NF = fn_3NF
+        self.fn_3NF = None
+        self.Hamildict = None
+        self.v3b_Mscheme = None
+        if fn_3NF != None:
+            self.fn_3NF = fn_3NF
+            self.JTorbitals = JTcoupledOrbitals(self.emax)
+            self.v3b_pn = self._read_3NF_readable(verbose=verbose)
+            self.v3b_Mscheme = { }
+    
         self.Jz = jz
         if ncsm:
             self.hw = self.extract_hw()

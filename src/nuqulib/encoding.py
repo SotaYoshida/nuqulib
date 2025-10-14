@@ -19,64 +19,92 @@ import time
 from tqdm import tqdm
 from .hatt_mapper import HATTMapper
 
-def mapping_to_Pauli_string(
-    Fermionic_op: FermionicOp,
-    n_qubits: int, 
-    init_qubit: int=0,
-    method: str="JordanWigner",
-    Hamildict_specified: dict={},
-    filepath: str|os.PathLike="./",
-    verbose: bool=False):
-    """Map fermionic operators to Pauli strings using specified encoding.
+# def mapping_to_Pauli_string(
+#     Fermionic_op: FermionicOp,
+#     n_qubits: int, 
+#     init_qubit: int=0,
+#     method: str="JordanWigner",
+#     Hamildict_specified: dict={},
+#     filepath: str|os.PathLike="./",
+#     verbose: bool=False):
+#     """Map fermionic operators to Pauli strings using specified encoding.
     
-    Args:
-        Fermionic_op (FermionicOp): Fermionic operator to be mapped.
-        n_qubits (int): Number of qubits for the mapping.
-        method (str): Encoding method. Options: "JordanWigner"/"JW"/"Jordan-Wigner"
-                     or "BravyiKitaev"/"BK"/"Bravyi-Kitaev".
-        Hamildict_specified (dict): Dictionary of Hamiltonian terms in fermionic form.
-                     used in the special case, HATTMapper.
+#     Args:
+#         Fermionic_op (FermionicOp): Fermionic operator to be mapped.
+#         n_qubits (int): Number of qubits for the mapping.
+#         method (str): Encoding method. Options: "JordanWigner"/"JW"/"Jordan-Wigner"
+#                      or "BravyiKitaev"/"BK"/"Bravyi-Kitaev".
+#         Hamildict_specified (dict): Dictionary of Hamiltonian terms in fermionic form.
+#                      used in the special case, HATTMapper.
     
-    Returns:
-        SparsePauliOp: Mapped Pauli operator.
+#     Returns:
+#         SparsePauliOp: Mapped Pauli operator.
         
-    Raises:
-        ValueError: If invalid encoding method is provided.
+#     Raises:
+#         ValueError: If invalid encoding method is provided.
 
-    Note:
-        BravyiKitaev mapping has never been tested in this module.
-    """
+#     Note:
+#         BravyiKitaev mapping has never been tested in this module.
+#     """
+#     if method == "JordanWigner" or method == "JW" or method == "Jordan-Wigner":
+#         mapper = JordanWignerMapper()
+
+#     elif method == "BravyiKitaev" or method == "BK" or method == "Bravyi-Kitaev":
+#         mapper = BravyiKitaevMapper()
+
+#     elif method == "HATTMapper":
+#         if os.path.exists(filepath):
+#             mapper = HATTMapper.load(filepath)
+#         else:
+#             mapper = HATTMapper(FermionicOp(Hamildict_specified))
+#             mapper.save(filepath)
+#     else:
+#         raise ValueError("Invalid method for mapping: " + method)
+    
+#     op_list=[]
+#     qubit_op = mapper.map(Fermionic_op)
+#     if verbose:
+#         print(f"qubit_op(before) {qubit_op} Hamildict_specified {Hamildict_specified}")
+#     for op in qubit_op:
+#         nqb=len(op.paulis[0].to_label())
+#         nleft=n_qubits-nqb-init_qubit
+#         target_pauli = op.paulis[0].to_label()[::-1] # Qiskit ordering
+#         pauli_str = init_qubit*'I'+target_pauli+nleft*'I'
+#         pauli_str = pauli_str[::-1] 
+#         op_list.append(SparsePauliOp(pauli_str,op.coeffs[0]))
+#     qubit_op = sum(op_list).simplify()
+#     if verbose:
+#         print(f"qubit_op(after) {qubit_op}")
+#     return qubit_op
+
+def mapping_to_Pauli_string(
+    Fermionic_op: FermionicOp, 
+    n_qubits: int, 
+    init_qubit: int=0, 
+    method: str="JordanWigner", 
+    Hamildict_specified: dict={}, 
+    filepath: str|os.PathLike="./"):
     if method == "JordanWigner" or method == "JW" or method == "Jordan-Wigner":
         mapper = JordanWignerMapper()
-
     elif method == "BravyiKitaev" or method == "BK" or method == "Bravyi-Kitaev":
         mapper = BravyiKitaevMapper()
-
     elif method == "HATTMapper":
         if os.path.exists(filepath):
             mapper = HATTMapper.load(filepath)
         else:
-            mapper = HATTMapper(FermionicOp(Hamildict_specified))
+            mapper = HATTMapper(FermionicOp(Hamildict_opform))
             mapper.save(filepath)
     else:
-        raise ValueError("Invalid method for mapping: " + method)
+        raise ValueError("Invalid method for mapping: "+method)
     
     op_list=[]
     qubit_op = mapper.map(Fermionic_op)
-    if verbose:
-        print(f"qubit_op(before) {qubit_op} Hamildict_specified {Hamildict_specified}")
     for op in qubit_op:
         nqb=len(op.paulis[0].to_label())
         nleft=n_qubits-nqb-init_qubit
-        target_pauli = op.paulis[0].to_label()[::-1] # Qiskit ordering
-        pauli_str = init_qubit*'I'+target_pauli+nleft*'I'
-        pauli_str = pauli_str[::-1] 
-        op_list.append(SparsePauliOp(pauli_str,op.coeffs[0]))
+        op_list.append(SparsePauliOp(init_qubit*'I'+op.paulis[0].to_label()+nleft*'I',op.coeffs[0]))
     qubit_op = sum(op_list).simplify()
-    if verbose:
-        print(f"qubit_op(after) {qubit_op}")
     return qubit_op
-
 
 def task_pn_mapping(op_pn_key, op_pn, n_qubits_p, n_qubits_n, method,
                     Hamildict_specified_p, Hamildict_specified_n,
