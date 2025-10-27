@@ -8,9 +8,11 @@ Givens rotation-based circuits, and pair Unitary Coupled-Cluster Doubles (pUCCD)
 from collections.abc import Iterable
 import numpy as np
 import os
+import sys
 import pennylane as qml
 from pennylane import numpy as qnp
 from qiskit import QuantumCircuit, transpile
+from qiskit.circuit import ParameterVector
 from qiskit.circuit.library import PauliGate, PauliEvolutionGate
 from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
@@ -31,8 +33,8 @@ def naive_filling_ansatz_old(proton_qubits: Iterable[int],
 
 
 def naive_filling_ansatz(
-        proton_qubits: Iterable[int],
-        neutron_qubits: Iterable[int],
+        #proton_qubits: Iterable[int],
+        #neutron_qubits: Iterable[int],
         proton_number: int, neutron_number: int,
         mapping_method="JordanWigner",
         Hamildict_opform: dict = {},
@@ -64,15 +66,46 @@ def naive_filling_ansatz(
         ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))
     return ansatz
 
+def Givens_param_count(proton_number, neutron_number, n_qubits_p, n_qubits_n, n_qubits):
+    count = 0
+    for turn in range(proton_number):
+        i_lowest = n_qubits_p - proton_number + turn
+        if turn == 0:
+            for G_lower in range(n_qubits_p - proton_number, 0, -1):
+                G_upper = G_lower - 1
+                count += 1
+        else:
+            for G_lower in range(i_lowest, 0, -1):
+                G_upper = G_lower - 1
+                for c in range(G_upper - 1, -1, -1):
+                    count += 1
+
+    # on neutron qubits
+    first_neutron_qubit = n_qubits_p
+    for turn in range(neutron_number):
+        i_lowest = n_qubits - neutron_number + turn
+        if turn == 0:
+            for G_lower in range(i_lowest, n_qubits_p, -1):
+                G_upper = G_lower - 1
+                count += 1
+        else:  # c-G1
+            for G_lower in range(i_lowest, n_qubits_p, -1):
+                G_upper = G_lower - 1
+                for c in range(G_upper - 1, -1, -1):
+                    if c < first_neutron_qubit:
+                        break
+                    count += 1
+    return count+1
+
 
 def nucl_ansatz(
     Hamildict_opform: dict,
-    n_qubit: int,
-    proton_qubits: Iterable[int],
-    neutron_qubits: Iterable[int],
+    n_qubits: int,
+    #proton_qubits: Iterable[int],
+    #neutron_qubits: Iterable[int],
     proton_number: int,
     neutron_number: int,
-    params: Iterable[float],
+    params: Iterable[float] = None,
     method: str = "HF",
     mapping_method: str = "JordanWigner",
     filepath: str|os.PathLike = "./",
@@ -85,7 +118,7 @@ def nucl_ansatz(
     and Givens rotation-based variational ansätze.
     
     Args:
-        n_qubit (int): Total number of qubits.
+        n_qubits (int): Total number of qubits.
         proton_qubits (Iterable[int]): Indices of proton qubits.
         neutron_qubits (Iterable[int]): Indices of neutron qubits.
         proton_number (int): Number of protons.
@@ -100,31 +133,42 @@ def nucl_ansatz(
         QuantumCircuit or tuple: Quantum circuit representing the ansatz.
                                 If return_Gdict=True, returns (circuit, gate_dict).
     """
-    assert len(proton_qubits) >= proton_number, f"Invalid proton_number={proton_number}"
-    assert len(neutron_qubits) >= neutron_number, f"Invalid neutron_number={neutron_number}"
+    #assert len(proton_qubits) >= proton_number, f"Invalid proton_number={proton_number}"
+    #assert len(neutron_qubits) >= neutron_number, f"Invalid neutron_number={neutron_number}"
+    N_dict = Hamildict_opform['SPE']['n']
+    P_dict = Hamildict_opform['SPE']['p']
+    n_keys = [key[:3] for key in N_dict.keys()]  
+    n_keys_a = [key[3:] for key in N_dict.keys()]  
+    p_keys = [key[:3] for key in P_dict.keys()]
+    p_keys_a = [key[3:] for key in P_dict.keys()]
+    n_qubits_p = len(p_keys)
+    n_qubits_n = len(n_keys)
+    
+    
+    assert proton_number <= n_qubits_p, f"Invalid proton_number={proton_number}"
+    assert neutron_number <= n_qubits_n, f"Invalid proton_number={neutron_number}"
+    assert n_qubits_p + n_qubits_n == n_qubits, f"Invalid qubit_number={n_qubits}"
 
-    n_qubits_p = len(proton_qubits)
+    
+    
     where_is_G_or_cG1 = {}
-    if method == "HF": # more precisely, lowest filling
-        return naive_filling_ansatz(
-                proton_qubits=proton_qubits,
-                neutron_qubits=neutron_qubits,
-                proton_number=proton_number,
-                neutron_number=neutron_number,
-                mapping_method=mapping_method,
-                Hamildict_opform=Hamildict_opform,
-                filepath=filepath
-        )
-    elif method == "HF+Givens":
-        ansatz = naive_filling_ansatz(
-            proton_qubits=proton_qubits,
-            neutron_qubits=neutron_qubits,
+    ansatz = naive_filling_ansatz(
+            #proton_qubits=proton_qubits,
+            #neutron_qubits=neutron_qubits,
             proton_number=proton_number,
             neutron_number=neutron_number,
             mapping_method=mapping_method,
             Hamildict_opform=Hamildict_opform,
             filepath=filepath
         )
+    
+    # if method == "HF": # more precisely, lowest filling
+    if method == "HF+Givens":
+        if params is None:
+            ParamsGivens = ParameterVector('PG', Givens_param_count(proton_number, neutron_number, n_qubits_p, n_qubits_n, n_qubits))
+        else:
+            ParamsGivens = params
+        
         ## Givens rotation
         ## on proton qubits
         count = 0
@@ -133,26 +177,25 @@ def nucl_ansatz(
             if turn == 0:
                 for G_lower in range(n_qubits_p - proton_number, 0, -1):
                     G_upper = G_lower - 1
-                    ansatz.append(G_gate(params[count]), [G_upper, G_lower])
+                    ansatz.append(G_gate(ParamsGivens[count]), [G_upper, G_lower])
                     where_is_G_or_cG1[count] = "G"
                     count += 1
             else:
                 for G_lower in range(i_lowest, 0, -1):
                     G_upper = G_lower - 1
                     for c in range(G_upper - 1, -1, -1):
-                        ansatz.append(cG1_gate(params[count]), [c, G_upper, G_lower])
+                        ansatz.append(cG1_gate(ParamsGivens[count]), [c, G_upper, G_lower])
                         where_is_G_or_cG1[count] = "cG1"
                         count += 1
 
         # on neutron qubits
-        n_qubits_p = len(proton_qubits)
-        first_neutron_qubit = len(proton_qubits)
+        first_neutron_qubit = n_qubits_p
         for turn in range(neutron_number):
-            i_lowest = n_qubit - neutron_number + turn
+            i_lowest = n_qubits - neutron_number + turn
             if turn == 0:
                 for G_lower in range(i_lowest, n_qubits_p, -1):
                     G_upper = G_lower - 1
-                    ansatz.append(G_gate(params[count]), [G_upper, G_lower])
+                    ansatz.append(G_gate(ParamsGivens[count]), [G_upper, G_lower])
                     where_is_G_or_cG1[count] = "G"
                     count += 1
             else:  # c-G1
@@ -161,7 +204,7 @@ def nucl_ansatz(
                     for c in range(G_upper - 1, -1, -1):
                         if c < first_neutron_qubit:
                             break
-                        ansatz.append(cG1_gate(params[count]), [c, G_upper, G_lower])
+                        ansatz.append(cG1_gate(ParamsGivens[count]), [c, G_upper, G_lower])
                         where_is_G_or_cG1[count] = "cG1"
                         count += 1
         if return_Gdict:
