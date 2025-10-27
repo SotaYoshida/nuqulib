@@ -121,7 +121,7 @@ class JTcoupledOrbitals:
         return dict_sps2JTorbitals
 
 
-def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0, ncsm=False):
+def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF=None, emax: int=20, e3max: int=0, ncsm=False):
     """Get nuclear Hamiltonian from interaction files.
 
     This is a convenience wrapper function that constructs a Hamiltonian object
@@ -148,7 +148,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
         >>> hamil, H_mapped, p_qubits, n_qubits = get_Hamiltonian("interaction.snt", 8, 8)
         >>> print(f"Total qubits: {len(p_qubits) + len(n_qubits)}")
     """
-    if fn_3NF != "":
+    if fn_3NF is not None:
         hamil = Hamiltonian(fn_NN, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF)
     else:
         hamil = Hamiltonian(fn_NN, Z, N, ncsm=ncsm, emax_truncate=emax)
@@ -160,7 +160,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     Hdict_M = hamil.get_mscheme_H(opform=True)
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("Jordan-Wigner")
 
-    if fn_3NF != "":
+    if fn_3NF is not None:
         hamil.set_mscheme_3NF()
         H_3b = hamil.mapping_3NF_Mscheme()
 
@@ -172,7 +172,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     if Z > 0 and N > 0:
         Hamil_ShellModel += H_pn
 
-    if fn_3NF != "":
+    if fn_3NF is not None:
         Hamil_ShellModel += H_3b
 
     return hamil, Hamil_ShellModel, proton_qubits, neutron_qubits
@@ -279,15 +279,10 @@ class Hamiltonian:
             self._emax_check(self.emax)
         self.Qiskit_order = Qiskit_order
         self.hw = None
-        self.fn_3NF = None
-        self.Hamildict = None
-        self.v3b_Mscheme = None
-        if fn_3NF != None:
+        if self.Anum>2:
             self.fn_3NF = fn_3NF
-            self.JTorbitals = JTcoupledOrbitals(self.emax)
-            self.v3b_pn = self._read_3NF_readable(verbose=verbose)
-            self.v3b_Mscheme = { }
-    
+        else:
+            self.fn_3NF = None
         self.Jz = jz
         if ncsm:
             self.hw = self.extract_hw()
@@ -309,6 +304,7 @@ class Hamiltonian:
         self.n_qubits_p = len(self.proton_qubits)
         self.n_qubits_n = len(self.neutron_qubits)
         self.e3max = e3max if e3max != None else emax_truncate
+        self.Hamildict = None
         if ncsm:
             self.e1max_file, self.e2max, self.e3max_file = self.guess_emax_from_fn(
                 self.fn_3NF
@@ -323,8 +319,7 @@ class Hamiltonian:
         self.CG_dict = {}
         self.v3b_Mscheme = {}
 
-        if fn_3NF != None:
-            self.fn_3NF = fn_3NF
+        if self.fn_3NF != None:
             self.JTorbitals = JTcoupledOrbitals(self.emax)
             if "readable.txt" in self.fn_3NF:
                 self.v3b_pn = self.read_3NF_readable(verbose=verbose)
