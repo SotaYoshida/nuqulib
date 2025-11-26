@@ -20,7 +20,6 @@ import copy
 from collections import Counter
 import gzip
 import itertools
-from joblib import Parallel, delayed
 import multiprocessing
 from multiprocessing import get_context
 import numpy as np
@@ -160,10 +159,6 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     Hdict_M = hamil.get_mscheme_H(opform=True)
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("Jordan-Wigner")
 
-    if fn_3NF != "":
-        hamil.set_mscheme_3NF()
-        H_3b = hamil.mapping_3NF_Mscheme()
-
     Hamil_ShellModel = H_1b_p + H_1b_n 
     if Z > 1:
         Hamil_ShellModel += H_pp 
@@ -301,6 +296,7 @@ class Hamiltonian:
         self.n_qubits_p = len(self.proton_qubits)
         self.n_qubits_n = len(self.neutron_qubits)
         self.e3max = e3max if e3max != None else emax_truncate
+        self.Hamildict = None
         if ncsm:
             self.e1max_file, self.e2max, self.e3max_file = self.guess_emax_from_fn(
                 self.fn_3NF
@@ -552,6 +548,8 @@ class Hamiltonian:
                     b = dict_sps[b]
                     Tab = float(Tab) * Sfactor
                     v1b.append((a, b, Tab))
+                    if a != b: # for hermitian
+                        v1b.append((b, a, Tab))
 
             if sector == 2:  # reading 2b
                 if len(tl) == 7:  # for NuHamil output
@@ -678,9 +676,9 @@ class Hamiltonian:
                 op_dict[bitstr] = v
         else:
             if bitstr in op_dict:
-                op_dict[bitstr] += v
+                op_dict[bitstr] += v 
             else:
-                op_dict[bitstr] = v
+                op_dict[bitstr] = v 
 
             # exchange bra and ket
             bitstr = (
@@ -689,9 +687,9 @@ class Hamiltonian:
             if bitstr in op_dict:
                 op_dict[bitstr] += v
             else:
-                op_dict[bitstr] = v
+                op_dict[bitstr] = v 
 
-    def get_mscheme_H(self, opform=False):
+    def get_mscheme_H(self, opform=False, verbose=0):
         """Construct Hamiltonian matrix elements in M-scheme representation.
         
         Transforms the JT-coupled nuclear interaction matrix elements into
@@ -799,6 +797,10 @@ class Hamiltonian:
                 c, d = d, c
                 V *= flip_cd
 
+            # Some interaction terms are not "canonical-ordered"
+            if a > c or (a == c and b > d):
+                a, b, c, d = c, d, a, b
+
             for aa in self.dict_sps2msps[a]:
                 morb_a = self.msps[aa]
                 n_a = morb_a.n
@@ -830,9 +832,16 @@ class Hamiltonian:
                         jz_c = morb_c.jz
                         tz_c = morb_c.tz
                         for dd in self.dict_sps2msps[d]:
+
+                            if verbose > 1:
+                                if (a == 0 and b == 1 and c == 0 and d == 2 ) :
+                                    print(
+                                        f"aa = {aa} bb = {bb} cc = {cc} dd = {dd}, bra: {a,b}, ket: {c,d}"
+                                    )
+
                             if cc >= dd:
                                 continue
-                            if Tz != 0 and aa > cc:  # or (aa == cc and bb > dd):
+                            if Tz != 0 and (set([a, b]) == set([c, d])) and aa > cc:  # or (aa == cc and bb > dd):
                                 continue
                             if Tz == 0 and (set([a, b]) == set([c, d])) and aa > cc:
                                 continue
@@ -878,9 +887,6 @@ class Hamiltonian:
                                         aa-self.n_qubits_p, bb-self.n_qubits_p, 
                                         cc-self.n_qubits_p, dd-self.n_qubits_p, 
                                         J, v)
-                                    # self.op_dict_T1_permutations(
-                                    #     op_dict_nn, aa, bb, cc, dd, J, v
-                                    # )
                                 else:
                                     op_dict_nn.append(
                                         [aa + 1, bb + 1, cc + 1, dd + 1, J, v]
@@ -938,7 +944,7 @@ class Hamiltonian:
             return Hamildict
 
     def mapping_opform(self, mapping_method: str, 
-                       filepath: str|os.PathLike="./tmp",
+                       filepath: str|os.PathLike="./",
                        write_hamil_txt: str=""):
         """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
         
@@ -1108,7 +1114,7 @@ class Hamiltonian:
         return pnME_3NF
 
 
-    def set_mscheme_3NF(self, dev_mode=True, verbose=False):
+    def set_mscheme_3NF(self, verbose=False):
         """Calculate the 3NF matrix elements in the mscheme.
 
         Returns:
@@ -1152,14 +1158,20 @@ class Hamiltonian:
                 1
             else:
                 ME_3n_pn *= 9
-                if dev_mode and (
-                    orb_a.tz != orb_d.tz or orb_b.tz != orb_e.tz or orb_c.tz != orb_f.tz
-                ):
-                    continue
+                # if dev_mode and (
+                #     orb_a.tz != orb_d.tz or orb_b.tz != orb_e.tz or orb_c.tz != orb_f.tz
+                # ):
+                #     continue
+
+            verbose_inner = False
+            #print(f"pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} | pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} ME_3n_pn {ME_3n_pn}")
+            if set([pn_a, pn_b, pn_c]) == set([2, 4]) : #and 4 in [pn_d, pn_e, pn_f] and 0 in [pn_d, pn_e, pn_f]:
+                verbose_inner = True
+                print(f"pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} | pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} ME_3n_pn {ME_3n_pn}")
 
             for m_a, m_b, m_c, m_d, m_e, m_f in itertools.product(
                 ja_range, jb_range, jc_range, jd_range, je_range, jf_range
-            ):
+            ):        
                 if (m_a + m_b + m_c) != (m_d + m_e + m_f):
                     continue
                 if abs(m_a + m_b) > 2 * Jab:
@@ -1170,7 +1182,7 @@ class Hamiltonian:
                     continue
                 if abs(m_d + m_e + m_f) > Jabc:
                     continue
-
+                
                 im_a = self.get_midx_from_nljjztz(
                     orb_a.n, orb_a.l, orb_a.j, m_a, orb_a.tz
                 )
@@ -1193,7 +1205,7 @@ class Hamiltonian:
                 )
                 if im_d == im_e or im_e == im_f or im_d == im_f:
                     continue
-                # print("Tz_bra", Tz_bra, "Tz_ket", Tz_ket, im_a, im_b, im_c, im_d, im_e, im_f)
+                
                 cg1 = get_CGs_from_dict(
                     orb_a.j, m_a, orb_b.j, m_b, 2 * Jab, (m_a + m_b), self.CG_dict
                 )
@@ -2055,10 +2067,11 @@ def Trans_JT_into_pn(Z: int, N: int,
     ):
         if (tz_a + tz_b + tz_c) != (tz_d + tz_e + tz_f):
             continue
-        if (tz_a + tz_b) > 2 * Tab:
+        if abs(tz_a + tz_b) > 2 * Tab:
             continue
-        if (tz_d + tz_e) > 2 * Tde:
+        if abs(tz_d + tz_e) > 2 * Tde:
             continue
+
         pn_a = get_spsidx_from_nljtz(
             single_particle_states, orb_a.n, orb_a.l, orb_a.j, tz_a
         )
@@ -2078,6 +2091,8 @@ def Trans_JT_into_pn(Z: int, N: int,
             single_particle_states, orb_f.n, orb_f.l, orb_f.j, tz_f
         )
         Tz_bra = tz_a + tz_b + tz_c
+
+
         if Tz_bra == 3 and N < 3: # nnn
             continue
         if Tz_bra == 1 and (Z == 0 or N <= 1): # pnn
@@ -2088,6 +2103,7 @@ def Trans_JT_into_pn(Z: int, N: int,
             continue
         if abs(Tz_bra) > T3:
             continue
+
         pnkey = (pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, J3)
         cg_1 = get_CGs_from_dict(
             1, tz_a, 1, tz_b, Tab * 2, (tz_a + tz_b), CGdict
