@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API reference for NuQuLib" href="nuqulib.html" /><link rel="prev" title="Nuclear Quantum computing Library" href="index.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API reference for NuQuLib" href="nuqulib.html"><link rel="prev" title="Nuclear Quantum computing Library" href="index.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>Contributing to NuQuLib - NuQuLib 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -226,8 +219,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -235,8 +227,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -284,6 +275,36 @@ existing code or refer to the Sphinx documentation for guidance.</p>
 </ul>
 <p>Since we are using GitHub Actions, only the allowed users can run the test jobs on GitHub Actions.
 If you are not an allowed user, please run the test codes locally before making a pull request with pytest.</p>
+</section>
+<section id="how-to-test-your-changes-locally">
+<h2>How to test your changes locally<a class="headerlink" href="#how-to-test-your-changes-locally" title="Link to this heading">¶</a></h2>
+<p>To test your changes locally before making a pull request, please follow these steps:</p>
+<ol class="arabic">
+<li><p>Clone the repository to your local machine if you haven’t already:</p></li>
+<li><p>Create a new branch for your changes:</p></li>
+<li><p>Make your changes to the codebase.</p></li>
+<li><p>Install the required dependencies for testing. You can do this by running:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span>
+<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span>
+<span class="pre">`</span></code></p>
+<p>Note that we assume you have a virtual environment set up for development.</p>
+</li>
+<li><p>Run the test suite using <cite>pytest`</cite> to ensure that your changes do not break any existing functionality:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">pytest</span> <span class="pre">-s</span> <span class="pre">tests/</span>
+<span class="pre">`</span></code></p>
+<p>If all tests pass, you can proceed to commit your changes and push your branch to GitHub for a pull request.
+Of course, you can also run specific test files or test cases as needed.</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">pytest</span> <span class="pre">-s</span> <span class="pre">tests/test_specific_file.py</span>
+<span class="pre">`</span></code></p>
+<p>If you are willing to check the coverage of your changes, you can use the following command:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
+<span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--cov=src/nuqulib/</span> <span class="pre">-s</span> <span class="pre">--cov-report=html</span>
+<span class="pre">`</span></code></p>
+</li>
+</ol>
 </section>
 <section id="license">
 <h2>LICENSE<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
@@ -348,6 +369,7 @@ If you are not an allowed user, please run the test codes locally before making 
             <ul>
 <li><a class="reference internal" href="#">Contributing to NuQuLib</a><ul>
 <li><a class="reference internal" href="#workflow-of-code-development">Workflow of code development</a></li>
+<li><a class="reference internal" href="#how-to-test-your-changes-locally">How to test your changes locally</a></li>
 <li><a class="reference internal" href="#license">LICENSE</a></li>
 </ul>
 </li>

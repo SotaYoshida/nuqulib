@@ -1,14 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Contributing to NuQuLib" href="contributing.html" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Contributing to NuQuLib" href="contributing.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>API reference for NuQuLib - NuQuLib 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -22,14 +22,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -144,14 +144,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -161,8 +157,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -170,8 +165,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -179,8 +173,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -226,8 +219,7 @@
   </a>
 </div>
 <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -235,8 +227,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -862,30 +853,31 @@ and assumes real coefficients.</p>
 <p>This module provides various utility functions for NuQuLib,
 including format conversions between different quantum computing
 frameworks, LaTeX formatting for nuclear notation, etc.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="nuqulib.myutils.Hermite_check">
-<span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Hermite_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SparsePauliOp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Hermite_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Hermite_check" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="nuqulib.myutils.Orbit_nlj">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nlj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nlj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nlj" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nlj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nlj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nlj" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Single particle state in the model space with n, l, j quanta.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nuqulib.myutils.Orbit_nljjztz">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nljjztz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nljjztz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nljjztz" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nljjztz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nljjztz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nljjztz" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Single particle state in the model space with n, l, j, jz, tz quanta.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nuqulib.myutils.Orbit_nljtz">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nljtz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nljtz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nljtz" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">Orbit_nljtz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#Orbit_nljtz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.Orbit_nljtz" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Single particle state in the model space with n, l, j, tz quanta.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nuqulib.myutils.count_msps">
+<span class="sig-prename descclassname"><span class="pre">nuqulib.myutils.</span></span><span class="sig-name descname"><span class="pre">count_msps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vemin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vemax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/myutils.html#count_msps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.myutils.count_msps" title="Link to this definition">¶</a></dt>
+<dd><p>Count the number of single particle states in the model space up to emax.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2202,7 +2194,7 @@ specified quantum numbers in the model space.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H">
-<span class="sig-name descname"><span class="pre">get_mscheme_H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.get_mscheme_H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_mscheme_H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.get_mscheme_H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.get_mscheme_H" title="Link to this definition">¶</a></dt>
 <dd><p>Construct Hamiltonian matrix elements in M-scheme representation.</p>
 <p>Transforms the JT-coupled nuclear interaction matrix elements into
 M-scheme (magnetic quantum number resolved) representation, which is
@@ -2308,7 +2300,7 @@ Falls back to emax_truncate * {1, 2, 3} if parsing fails.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">
-<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./tmp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_hamil_txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">mapping_opform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'./'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_hamil_txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.mapping_opform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform" title="Link to this definition">¶</a></dt>
 <dd><p>Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.</p>
 <p>Transforms the fermionic nuclear Hamiltonian into qubit operators using
 standard fermion-to-qubit mappings such as Jordan-Wigner or Bravyi-Kitaev.
@@ -2453,7 +2445,7 @@ shell model interactions.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF">
-<span class="sig-name descname"><span class="pre">set_mscheme_3NF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dev_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.set_mscheme_3NF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_mscheme_3NF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/nuclear_hamiltonian.html#Hamiltonian.set_mscheme_3NF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF" title="Link to this definition">¶</a></dt>
 <dd><p>Calculate the 3NF matrix elements in the mscheme.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -3305,10 +3297,10 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 </ul>
 </li>
 <li><a class="reference internal" href="#module-nuqulib.myutils">myutils submodule</a><ul>
-<li><a class="reference internal" href="#nuqulib.myutils.Hermite_check"><code class="docutils literal notranslate"><span class="pre">Hermite_check()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.Orbit_nlj"><code class="docutils literal notranslate"><span class="pre">Orbit_nlj</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.Orbit_nljjztz"><code class="docutils literal notranslate"><span class="pre">Orbit_nljjztz</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.Orbit_nljtz"><code class="docutils literal notranslate"><span class="pre">Orbit_nljtz</span></code></a></li>
+<li><a class="reference internal" href="#nuqulib.myutils.count_msps"><code class="docutils literal notranslate"><span class="pre">count_msps()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.get_operator_from_QiskitStr"><code class="docutils literal notranslate"><span class="pre">get_operator_from_QiskitStr()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.get_spsidx_from_nljtz"><code class="docutils literal notranslate"><span class="pre">get_spsidx_from_nljtz()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.myutils.latex_nuc"><code class="docutils literal notranslate"><span class="pre">latex_nuc()</span></code></a></li>

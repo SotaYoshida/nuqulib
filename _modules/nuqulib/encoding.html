@@ -1,13 +1,13 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="../../">
-  <head><meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>nuqulib.encoding - NuQuLib 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -21,14 +21,14 @@
   }
   @media not print {
     body[data-theme="dark"] {
-      --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
     }
     @media (prefers-color-scheme: dark) {
       body:not([data-theme="light"]) {
-        --color-code-background: #2b2b2b;
-  --color-code-foreground: #f8f8f2;
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
   
       }
     }
@@ -143,14 +143,10 @@
   </symbol>
 </svg>
 
-<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
-<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
-<label class="overlay sidebar-overlay" for="__navigation">
-  <div class="visually-hidden">Hide navigation sidebar</div>
-</label>
-<label class="overlay toc-overlay" for="__toc">
-  <div class="visually-hidden">Hide table of contents sidebar</div>
-</label>
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
 
 <a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
 
@@ -160,8 +156,7 @@
   <header class="mobile-header">
     <div class="header-left">
       <label class="nav-overlay-icon" for="__navigation">
-        <div class="visually-hidden">Toggle site navigation sidebar</div>
-        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
       </label>
     </div>
     <div class="header-center">
@@ -169,8 +164,7 @@
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
-        <button class="theme-toggle">
-          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
           <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
           <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
           <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -178,8 +172,7 @@
         </button>
       </div>
       <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
-        <div class="visually-hidden">Toggle table of contents sidebar</div>
-        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
   </header>
@@ -219,8 +212,7 @@
         </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
-            <button class="theme-toggle">
-              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
               <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
               <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
@@ -228,8 +220,7 @@
             </button>
           </div>
           <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
-            <div class="visually-hidden">Toggle table of contents sidebar</div>
-            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
@@ -244,7 +235,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Parallel</span><span class="p">,</span> <span class="n">delayed</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytket.pauli</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pauli</span><span class="p">,</span> <span class="n">QubitPauliString</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytket.utils.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">QubitPauliOperator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytket</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qubit</span>
@@ -390,12 +382,14 @@
         <span class="n">Hamildict_specified_n</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">filepath_p</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
         <span class="n">filepath_n</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
-        
-    <span class="n">results</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">)(</span>
-        <span class="n">delayed</span><span class="p">(</span><span class="n">task_pn_mapping</span><span class="p">)(</span><span class="n">tkey</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
-                                  <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">Hamildict_specified_n</span><span class="p">,</span>
-                                  <span class="n">filepath_p</span><span class="p">,</span> <span class="n">filepath_n</span><span class="p">)</span> <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">op_pn</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="p">)</span>
+
+    <span class="n">nproc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
+            <span class="n">task_pn_mapping</span><span class="p">,</span> <span class="p">[(</span><span class="n">tkey</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
+                               <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">Hamildict_specified_n</span><span class="p">,</span>
+                               <span class="n">filepath_p</span><span class="p">,</span> <span class="n">filepath_n</span><span class="p">)</span> <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">op_pn</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="p">)))</span>
 
     <span class="n">paulis</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
