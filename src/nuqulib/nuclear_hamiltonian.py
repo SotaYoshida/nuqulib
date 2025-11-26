@@ -1158,16 +1158,6 @@ class Hamiltonian:
                 1
             else:
                 ME_3n_pn *= 9
-                # if dev_mode and (
-                #     orb_a.tz != orb_d.tz or orb_b.tz != orb_e.tz or orb_c.tz != orb_f.tz
-                # ):
-                #     continue
-
-            verbose_inner = False
-            #print(f"pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} | pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} ME_3n_pn {ME_3n_pn}")
-            if set([pn_a, pn_b, pn_c]) == set([2, 4]) : #and 4 in [pn_d, pn_e, pn_f] and 0 in [pn_d, pn_e, pn_f]:
-                verbose_inner = True
-                print(f"pn_a {pn_a} pn_b {pn_b} pn_c {pn_c} | pn_d {pn_d} pn_e {pn_e} pn_f {pn_f} Jab {Jab} Jde {Jde} Jabc {Jabc} ME_3n_pn {ME_3n_pn}")
 
             for m_a, m_b, m_c, m_d, m_e, m_f in itertools.product(
                 ja_range, jb_range, jc_range, jd_range, je_range, jf_range
