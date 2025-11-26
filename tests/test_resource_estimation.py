@@ -77,8 +77,12 @@ def test_resource_estimation( ):
     N_a = 4
     Niter = 20
     N_q = hamil.n_qubits
-    dt=0.1
-    trotter_steps=1
+    dt = 0.1
+    trotter_steps=1  
+
+    terms = set([ pauli.to_label() for pauli in H_mapped.paulis ])
+    print("len(H_mapped.paulis): ", len(H_mapped.paulis))
+    print("Number of unique Pauli terms: ", len(terms))
 
     ## QPE
     dict_ops_QPE = resource_estimation_QPE(N_a, N_q, H_mapped, dt=dt, trotter_steps=trotter_steps)

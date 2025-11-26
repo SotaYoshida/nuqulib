@@ -8,7 +8,8 @@ working with Pauli operators in different quantum computing frameworks.
 from collections import defaultdict
 import numpy as np
 import os
-from joblib import Parallel, delayed
+import multiprocessing
+from multiprocessing import get_context
 from pytket.pauli import Pauli, QubitPauliString
 from pytket.utils.operators import QubitPauliOperator
 from pytket import Qubit
@@ -146,12 +147,14 @@ def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
         Hamildict_specified_n = {}
         filepath_p = "./"
         filepath_n = "./"
-        
-    results = Parallel(n_jobs=-1, backend="loky")(
-        delayed(task_pn_mapping)(tkey, op_pn, n_qubits_p, n_qubits_n, method,
-                                  Hamildict_specified_p, Hamildict_specified_n,
-                                  filepath_p, filepath_n) for tkey in tqdm(op_pn.keys())
-    )
+
+    nproc = max(multiprocessing.cpu_count() - 2, 1)
+    with get_context("fork").Pool(processes=nproc) as pool:
+        results = list(tqdm(pool.starmap(
+            task_pn_mapping, [(tkey, op_pn, n_qubits_p, n_qubits_n, method,
+                               Hamildict_specified_p, Hamildict_specified_n,
+                               filepath_p, filepath_n) for tkey in op_pn.keys()]
+        )))
 
     paulis = [ ]
     coeffs = [ ]

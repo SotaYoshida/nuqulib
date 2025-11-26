@@ -2,6 +2,7 @@ import os
 import pytest
 from nuqulib import *
 
+
 chdir = os.path.dirname(os.path.abspath(__file__))
 int_dir = os.path.join(chdir, "interaction_file/")
 
@@ -14,8 +15,6 @@ def test_ODMD():
   
     hamil = Hamiltonian(fn_snt, Z, N)
     n_qubits = hamil.n_qubits
-    proton_qubits = list(range(0, hamil.n_qubits_p))
-    neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     hamil.get_mscheme_H(opform=True)
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
@@ -28,11 +27,12 @@ def test_ODMD():
 
     delta_t = 0.01234
     trotter_rank = 1; trotter_steps = 15
-    #trotter_rank = 2; trotter_steps = 3
-    max_iterations = 20
+    trotter_rank = 2; trotter_steps = 7
+    max_iterations = 15
 
-    dummy_params = [ ]
-    #U_prep = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
+    # dummy_params = [ ]
+    # U_prep = nucl_ansatz(Hdict_M, n_qubits, proton_qubits, neutron_qubits, Z, N, dummy_params, method="HF")
+
     U_prep = QuantumCircuit(n_qubits)
     U_prep.x([9, 10])
 

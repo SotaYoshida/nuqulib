@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 from qiskit import QuantumCircuit, transpile
+from qiskit_aer.primitives import SamplerV2
 from qiskit.quantum_info import SparsePauliOp, Statevector
 from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
@@ -140,6 +141,9 @@ def measure_overlap(
         qc_re = transpile(qc_re, backend=backend, optimization_level=2)
         qc_im = transpile(qc_im, backend=backend, optimization_level=2)
         print(f"after transpile...:", qc_re.count_ops())
+    else: #transpile without backend
+        qc_re = transpile(qc_re, optimization_level=2)
+        qc_im = transpile(qc_im, optimization_level=2)
     if do_simulation:
         if using_statevector:
             results = [
@@ -149,6 +153,7 @@ def measure_overlap(
             prob_Re = results[0]
             prob_Im = results[1]
         else:
+            sampler = SamplerV2() if sampler is None else sampler
             job = sampler.run([qc_re, qc_im], shots=num_shot)
             results = job.result()
             prob_Re = results[0].data.c.get_counts()
@@ -516,7 +521,7 @@ def ODMD(
             backend,
             using_statevector,
         )
-        print(f"overlap {it:3d}: {overlap}")
+        print(f"overlap @{it:3d}: {overlap}")
         snapshots[it] = overlap
     print(
         f"Max iteration: {max_iterations:5d} trotter_steps: {trotter_steps:5d} delta_t: {delta_t:12.8f}",

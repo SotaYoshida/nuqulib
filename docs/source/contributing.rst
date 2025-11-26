@@ -57,6 +57,46 @@ If you are not an allowed user, please run the test codes locally before making 
 
 
 ******************************
+How to test your changes locally
+******************************
+
+To test your changes locally before making a pull request, please follow these steps:
+
+1. Clone the repository to your local machine if you haven't already:
+
+2. Create a new branch for your changes:
+
+3. Make your changes to the codebase.
+
+4. Install the required dependencies for testing. You can do this by running:
+
+   ```bash
+   pip install -r requirements.txt
+   pip install -e .
+   ```
+
+   Note that we assume you have a virtual environment set up for development.
+
+5. Run the test suite using `pytest`` to ensure that your changes do not break any existing functionality:
+
+   ```bash
+   pytest -s tests/
+   ```
+
+   If all tests pass, you can proceed to commit your changes and push your branch to GitHub for a pull request.
+   Of course, you can also run specific test files or test cases as needed.
+
+   ```bash
+   pytest -s tests/test_specific_file.py
+   ```
+
+   If you are willing to check the coverage of your changes, you can use the following command:
+
+   ```bash
+   pytest -v --cov=src/nuqulib/ -s --cov-report=html
+   ```
+
+******************************
 LICENSE
 ******************************
 

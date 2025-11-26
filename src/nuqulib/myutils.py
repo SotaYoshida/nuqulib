@@ -187,7 +187,7 @@ def write_out_pytketCircuit_from_Qiskit(
 
 class Orbit_nljjztz:
     """ Single particle state in the model space with n, l, j, jz, tz quanta. """
-    def __init__(self, n, l, j, jz, tz):
+    def __init__(self, n:int, l:int, j:int, jz:int, tz:int):
         self.n = n
         self.l = l
         self.j = j
@@ -198,7 +198,7 @@ class Orbit_nljjztz:
 
 class Orbit_nljtz:
     """ Single particle state in the model space with n, l, j, tz quanta. """
-    def __init__(self, n, l, j, tz):
+    def __init__(self, n:int, l:int, j:int, tz:int):
         self.n = n
         self.l = l
         self.j = j
@@ -207,7 +207,7 @@ class Orbit_nljtz:
 
 class Orbit_nlj:
     """ Single particle state in the model space with n, l, j quanta. """
-    def __init__(self, n, l, j):
+    def __init__(self, n:int, l:int, j:int):
         self.n = n
         self.l = l
         self.j = j
@@ -224,13 +224,24 @@ def get_spsidx_from_nljtz(single_particle_states: list, n, l, j, tz):
             return idx
     raise ValueError(f"Single particle state with n={n}, l={l}, j={j}, tz={tz} not found in the model space.")
 
-def Hermite_check(op: SparsePauliOp, tol=1.e-5):
-    paulis = op.paulis
-    coeffs = op.coeffs
-    tf = True
-    for i, pauli in enumerate(paulis):
-        coeff = coeffs[i]
-        if np.abs(np.imag(coeff) > tol):
-            print(f"Hermitian error @{pauli} coeff = {coeff}")
-            tf = False
-    return tf   
+
+def count_msps(emax: int, vemin: int=0, vemax:int = 100):
+    """ Count the number of single particle states in the model space up to emax. """
+    count = 0
+    msps_p = []
+    msps_n = []
+    for te in range(emax+1):
+        if te < vemin or te > vemax:
+            continue
+        for l in range(te + 1):
+            n = (te - l) // 2
+            if n < 0 or 2*n + l != te:
+                continue
+            j_vals = [l - 0.5, l + 0.5] if l > 0 else [0.5]
+            for j in j_vals:
+                j2 = int(2*j)
+                count += j2 + 1
+                for jz in np.arange(-j2, j2+1, 2):
+                    msps_p.append(Orbit_nljjztz(n, l, j2, jz, -1))
+                    msps_n.append(Orbit_nljjztz(n, l, j2, jz, +1))
+    return msps_p, msps_n
