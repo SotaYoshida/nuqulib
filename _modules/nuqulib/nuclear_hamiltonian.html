@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>nuqulib.nuclear_hamiltonian - NuQuLib 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -398,11 +398,11 @@
     <span class="n">H_1b_p</span><span class="p">,</span> <span class="n">H_1b_n</span><span class="p">,</span> <span class="n">H_jz_p</span><span class="p">,</span> <span class="n">H_jz_n</span><span class="p">,</span> <span class="n">H_pp</span><span class="p">,</span> <span class="n">H_nn</span><span class="p">,</span> <span class="n">H_pn</span><span class="p">,</span> <span class="n">H_3b</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">mapping_opform</span><span class="p">(</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">)</span>
 
     <span class="n">Hamil_ShellModel</span> <span class="o">=</span> <span class="n">H_1b_p</span> <span class="o">+</span> <span class="n">H_1b_n</span> 
-    <span class="k">if</span> <span class="n">Z</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">hamil</span><span class="o">.</span><span class="n">vZ</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">Hamil_ShellModel</span> <span class="o">+=</span> <span class="n">H_pp</span> 
-    <span class="k">if</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">hamil</span><span class="o">.</span><span class="n">vN</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">Hamil_ShellModel</span> <span class="o">+=</span> <span class="n">H_nn</span>
-    <span class="k">if</span> <span class="n">Z</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">hamil</span><span class="o">.</span><span class="n">vZ</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">hamil</span><span class="o">.</span><span class="n">vN</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">Hamil_ShellModel</span> <span class="o">+=</span> <span class="n">H_pn</span>
 
     <span class="k">if</span> <span class="n">fn_3NF</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -811,23 +811,39 @@
                     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">tl</span><span class="p">[:</span><span class="mi">5</span><span class="p">]))</span>
                     <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-                    <span class="n">b</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-                    <span class="n">d</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                    <span class="n">idx_a</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                    <span class="n">idx_b</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                    <span class="n">idx_c</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                    <span class="n">idx_d</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
                     <span class="n">vint</span><span class="p">,</span> <span class="n">vkin</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">tl</span><span class="p">[</span><span class="mi">5</span><span class="p">:]))</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="n">vint</span> <span class="o">+</span> <span class="n">vkin</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hw</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">Anum</span>
-                    <span class="n">v2b</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+                    <span class="n">phase</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">idx_a</span> <span class="o">&gt;</span> <span class="n">idx_b</span><span class="p">:</span>
+                        <span class="n">phase</span> <span class="o">*=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">J</span> <span class="o">+</span> <span class="p">(</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_a</span><span class="p">]</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_b</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_a</span> <span class="o">=</span> <span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span>
+                    <span class="k">if</span> <span class="n">idx_c</span> <span class="o">&gt;</span> <span class="n">idx_d</span><span class="p">:</span>
+                        <span class="n">phase</span> <span class="o">*=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">J</span> <span class="o">+</span> <span class="p">(</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_c</span><span class="p">]</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_d</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">idx_d</span><span class="p">,</span> <span class="n">idx_c</span> <span class="o">=</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">phase</span> <span class="o">*</span> <span class="n">Vfactor</span>
+                    <span class="n">v2b</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tl</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>  <span class="c1"># valence snt files used in KSHELL code</span>
                     <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">J</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">tl</span><span class="p">[:</span><span class="mi">5</span><span class="p">]))</span>
                     <span class="k">if</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">excluded</span> <span class="ow">or</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">excluded</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="n">a</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
-                    <span class="n">b</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
-                    <span class="n">d</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                    <span class="n">idx_a</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+                    <span class="n">idx_b</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+                    <span class="n">idx_c</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                    <span class="n">idx_d</span> <span class="o">=</span> <span class="n">dict_sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="n">vint</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tl</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="o">*</span> <span class="n">Vfactor</span>
-                    <span class="n">v2b</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+                    <span class="n">phase</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">idx_a</span> <span class="o">&gt;</span> <span class="n">idx_b</span><span class="p">:</span>
+                        <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">J</span> <span class="o">+</span> <span class="p">(</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_a</span><span class="p">]</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_b</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_a</span> <span class="o">=</span> <span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span>
+                    <span class="k">if</span> <span class="n">idx_c</span> <span class="o">&gt;</span> <span class="n">idx_d</span><span class="p">:</span>
+                        <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">J</span> <span class="o">+</span> <span class="p">(</span><span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_c</span><span class="p">]</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">single_particle_states</span><span class="p">[</span><span class="n">idx_d</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">idx_d</span><span class="p">,</span> <span class="n">idx_c</span> <span class="o">=</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span>
+                    <span class="n">v</span> <span class="o">*=</span> <span class="n">phase</span>   
+                    <span class="n">v2b</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx_a</span><span class="p">,</span> <span class="n">idx_b</span><span class="p">,</span> <span class="n">idx_c</span><span class="p">,</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">nsp_p</span><span class="p">,</span> <span class="n">nsp_n</span><span class="p">,</span> <span class="n">core_p</span><span class="p">,</span> <span class="n">core_n</span><span class="p">,</span> <span class="n">single_particle_states</span><span class="p">,</span> <span class="n">v1b</span><span class="p">,</span> <span class="n">v2b</span></div>
 
 
@@ -1100,12 +1116,6 @@
                         <span class="n">tz_c</span> <span class="o">=</span> <span class="n">morb_c</span><span class="o">.</span><span class="n">tz</span>
                         <span class="k">for</span> <span class="n">dd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">d</span><span class="p">]:</span>
 
-                            <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                                <span class="k">if</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">d</span> <span class="o">==</span> <span class="mi">2</span> <span class="p">)</span> <span class="p">:</span>
-                                    <span class="nb">print</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s2">&quot;aa = </span><span class="si">{</span><span class="n">aa</span><span class="si">}</span><span class="s2"> bb = </span><span class="si">{</span><span class="n">bb</span><span class="si">}</span><span class="s2"> cc = </span><span class="si">{</span><span class="n">cc</span><span class="si">}</span><span class="s2"> dd = </span><span class="si">{</span><span class="n">dd</span><span class="si">}</span><span class="s2">, bra: </span><span class="si">{</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="si">}</span><span class="s2">, ket: </span><span class="si">{</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span>
-                                    <span class="p">)</span>
-
                             <span class="k">if</span> <span class="n">cc</span> <span class="o">&gt;=</span> <span class="n">dd</span><span class="p">:</span>
                                 <span class="k">continue</span>
                             <span class="k">if</span> <span class="n">Tz</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span> <span class="o">==</span> <span class="nb">set</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">]))</span> <span class="ow">and</span> <span class="n">aa</span> <span class="o">&gt;</span> <span class="n">cc</span><span class="p">:</span>  <span class="c1"># or (aa == cc and bb &gt; dd):</span>
@@ -1135,7 +1145,6 @@
                             <span class="n">v</span> <span class="o">=</span> <span class="n">V</span> <span class="o">*</span> <span class="n">CG1</span> <span class="o">*</span> <span class="n">CG2</span> <span class="o">*</span> <span class="n">N_ab</span> <span class="o">*</span> <span class="n">N_cd</span>
                             <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="k">continue</span>
-
                             <span class="k">if</span> <span class="n">Tz</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
                                 <span class="n">num_pp</span> <span class="o">+=</span> <span class="mi">1</span>
                                 <span class="k">if</span> <span class="n">opform</span><span class="p">:</span>
@@ -1162,17 +1171,20 @@
                                 <span class="n">num_pn</span> <span class="o">+=</span> <span class="mi">1</span>
                                 <span class="c1"># for pn interaction, we need to consider operators separately</span>
                                 <span class="k">if</span> <span class="n">opform</span><span class="p">:</span>
+                                    <span class="n">diag_factor</span> <span class="o">=</span> <span class="mf">1.0</span>
+                                    <span class="k">if</span> <span class="n">aa</span> <span class="o">==</span> <span class="n">cc</span> <span class="ow">and</span> <span class="n">bb</span> <span class="o">==</span> <span class="n">dd</span><span class="p">:</span>
+                                        <span class="n">diag_factor</span> <span class="o">=</span> <span class="mf">0.5</span>
                                     <span class="n">p_str</span> <span class="o">=</span> <span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; -_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
                                     <span class="n">n_str</span> <span class="o">=</span> <span class="p">(</span>
                                         <span class="s2">&quot;+_&quot;</span>
                                         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bb</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits_p</span><span class="p">)</span>
                                         <span class="o">+</span> <span class="s2">&quot; -_&quot;</span>
                                         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dd</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits_p</span><span class="p">)</span>
-                                    <span class="p">)</span>
+                                    <span class="p">)</span>                                    
                                     <span class="k">if</span> <span class="p">(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)</span> <span class="ow">in</span> <span class="n">op_dict_pn</span><span class="p">:</span>
-                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">2</span>
+                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">diag_factor</span>
                                     <span class="k">else</span><span class="p">:</span>
-                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">2</span>
+                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">diag_factor</span>
                                     <span class="n">p_str</span> <span class="o">=</span> <span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; -_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span>
                                     <span class="n">n_str</span> <span class="o">=</span> <span class="p">(</span>
                                         <span class="s2">&quot;+_&quot;</span>
@@ -1181,9 +1193,9 @@
                                         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bb</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits_p</span><span class="p">)</span>
                                     <span class="p">)</span>
                                     <span class="k">if</span> <span class="p">(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)</span> <span class="ow">in</span> <span class="n">op_dict_pn</span><span class="p">:</span>
-                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">2</span>
+                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">diag_factor</span>
                                     <span class="k">else</span><span class="p">:</span>
-                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="mi">2</span>
+                                        <span class="n">op_dict_pn</span><span class="p">[(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">diag_factor</span>
                                 <span class="k">else</span><span class="p">:</span>
                                     <span class="n">op_dict_pn</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                         <span class="p">[</span><span class="n">aa</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span>
@@ -1210,7 +1222,7 @@
             <span class="n">Hamildict</span> <span class="o">=</span> <span class="n">sum_over_J</span><span class="p">(</span><span class="n">Hamildict</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Hamildict</span></div>
 
-
+        
 <div class="viewcode-block" id="Hamiltonian.mapping_opform">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.mapping_opform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">mapping_opform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping_method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
@@ -1540,6 +1552,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="n">v3b_Mscheme</span>
         <span class="k">return</span> <span class="n">v3b_Mscheme</span></div>
 
+    
+<div class="viewcode-block" id="Hamiltonian.write_v3b_Mscheme">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.write_v3b_Mscheme">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_v3b_Mscheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn_out</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="o">=</span><span class="s2">&quot;v3b_Mscheme.txt&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the 3NF matrix elements in M-scheme to a file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fn_out (str|os.PathLike): Output filename to write the 3NF matrix elements.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_mscheme_3NF</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn_out</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">me</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">im_a</span><span class="p">,</span> <span class="n">im_b</span><span class="p">,</span> <span class="n">im_c</span><span class="p">,</span> <span class="n">im_d</span><span class="p">,</span> <span class="n">im_e</span><span class="p">,</span> <span class="n">im_f</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">me</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.e-8</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">im_a</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">im_b</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">im_c</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">im_d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">im_e</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">im_f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">me</span><span class="si">:</span><span class="s2">.8e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3NF matrix elements in M-scheme written to </span><span class="si">{</span><span class="n">fn_out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Hamiltonian.separate_proton_and_neutron">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.separate_proton_and_neutron">[docs]</a>
@@ -1666,7 +1700,7 @@
             <span class="p">(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">,</span> <span class="n">coeff_overall</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span><span class="p">),</span> <span class="n">coeff_overall</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s2">&quot;V3&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">]</span>
-        <span class="n">nproc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">nproc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
             <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task_3NF_pn</span><span class="p">,</span> <span class="n">tasks</span><span class="p">))</span>
         <span class="n">op</span> <span class="o">=</span> <span class="p">[</span>
@@ -3065,8 +3099,8 @@
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=01f34227"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>

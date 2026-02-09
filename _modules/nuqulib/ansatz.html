@@ -4,10 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>nuqulib.ansatz - NuQuLib 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=580074bf" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
     
     
@@ -243,21 +243,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.transpiler.preset_passmanagers</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_preset_pass_manager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.circuits</span><span class="w"> </span><span class="kn">import</span> <span class="n">G_gate</span><span class="p">,</span> <span class="n">cG1_gate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.encoding</span><span class="w"> </span><span class="kn">import</span> <span class="n">mapping_to_Pauli_string</span>
-
-
-<div class="viewcode-block" id="naive_filling_ansatz_old">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.ansatz.naive_filling_ansatz_old">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">naive_filling_ansatz_old</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-                         <span class="n">neutron_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-                         <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="n">n_qubit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span>
-    <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span>
-        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
-        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">ansatz</span></div>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">.nuclear_hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
 
 
 <div class="viewcode-block" id="naive_filling_ansatz">
@@ -294,6 +280,134 @@
             <span class="p">)</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
         <span class="n">pauli_op</span> <span class="o">=</span> <span class="n">PauliGate</span><span class="p">(</span><span class="n">paulistr</span><span class="p">)</span>
         <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pauli_op</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">ansatz</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">direct_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> -_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">direct_key</span> <span class="ow">in</span> <span class="n">spe_dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spe_dict</span><span class="p">[</span><span class="n">direct_key</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">spe_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;-_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">val</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Diagonal SPE term not found for index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_entries</span><span class="p">(</span><span class="n">Hamiltonian_obj</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">is_proton</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">is_proton</span><span class="p">:</span>
+        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits_p</span><span class="p">):</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">jz</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits_n</span><span class="p">):</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="n">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">jz</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_qubits_p</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">entries</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_dp_select</span><span class="p">(</span><span class="n">entries</span><span class="p">,</span> <span class="n">n_select</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)}}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">n_select</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">entries</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dp</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">prev_layer</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">cur_layer</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="p">(</span><span class="n">e_prev</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">prev_layer</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new_m</span> <span class="o">=</span> <span class="n">m</span> <span class="o">+</span> <span class="n">jz</span>
+                <span class="n">new_e</span> <span class="o">=</span> <span class="n">e_prev</span> <span class="o">+</span> <span class="n">energy</span>
+                <span class="k">if</span> <span class="n">new_m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cur_layer</span> <span class="ow">or</span> <span class="n">new_e</span> <span class="o">&lt;</span> <span class="n">cur_layer</span><span class="p">[</span><span class="n">new_m</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">cur_layer</span><span class="p">[</span><span class="n">new_m</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_e</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dp</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_backtrack</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="n">n_select</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">m_target</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">m_target</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_select</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">energy</span><span class="p">,</span> <span class="n">prev_m</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">m</span><span class="p">]</span>
+        <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">prev_m</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">selected</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="lowest_filling_ansatz">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.ansatz.lowest_filling_ansatz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lowest_filling_ansatz</span><span class="p">(</span>
+    <span class="n">Hamiltonian_obj</span><span class="p">:</span> <span class="n">Hamiltonian</span><span class="p">,</span>
+    <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">Mtot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_idxs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a lowest-filling ansatz circuit for protons and neutrons.</span>
+
+<span class="sd">    This function creates a quantum circuit that initializes the qubits</span>
+<span class="sd">    corresponding to protons and neutrons in their lowest energy states</span>
+<span class="sd">    by applying X gates to the appropriate qubits.</span>
+<span class="sd">    The ordering of single-particle states (msps_p and msps_n) can vary</span>
+<span class="sd">    with a specific choice of the interaction.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Hamiltonian_obj (Hamiltonian): The Hamiltonian object containing system information.</span>
+<span class="sd">        proton_number (int): Number of protons to be placed in the lowest energy states.</span>
+<span class="sd">        neutron_number (int): Number of neutrons to be placed in the lowest energy states.</span>
+<span class="sd">        Mtot: int | None: Total magnetic quantum number (optional).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        QuantumCircuit: A quantum circuit representing the lowest-filling ansatz.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_Mtot</span> <span class="o">=</span> <span class="p">(</span><span class="n">proton_number</span> <span class="o">+</span> <span class="n">neutron_number</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">Mtot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Mtot</span>
+    <span class="n">proton_qubits</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">proton_qubits</span>
+    <span class="n">neutron_qubits</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">neutron_qubits</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Hamiltonian.Hamildict is None. Cannot proceed with lowest_filling_ansatz.&quot;</span><span class="p">)</span>
+
+    <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span>
+    <span class="n">n_qubits_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span>
+    <span class="n">n_qubit</span> <span class="o">=</span> <span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span>
+
+    <span class="n">entries_p</span> <span class="o">=</span> <span class="n">_build_entries</span><span class="p">(</span><span class="n">Hamiltonian_obj</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">is_proton</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">entries_n</span> <span class="o">=</span> <span class="n">_build_entries</span><span class="p">(</span><span class="n">Hamiltonian_obj</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">is_proton</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">dp_p</span> <span class="o">=</span> <span class="n">_dp_select</span><span class="p">(</span><span class="n">entries_p</span><span class="p">,</span> <span class="n">proton_number</span><span class="p">)</span>
+    <span class="n">dp_n</span> <span class="o">=</span> <span class="n">_dp_select</span><span class="p">(</span><span class="n">entries_n</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">proton_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dp_p</span> <span class="ow">or</span> <span class="n">neutron_number</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dp_n</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to build DP tables for requested particle numbers.&quot;</span><span class="p">)</span>
+
+    <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">m_p</span><span class="p">,</span> <span class="p">(</span><span class="n">e_p</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">dp_p</span><span class="p">[</span><span class="n">proton_number</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">m_n</span> <span class="o">=</span> <span class="n">_Mtot</span> <span class="o">-</span> <span class="n">m_p</span>
+        <span class="k">if</span> <span class="n">m_n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dp_n</span><span class="p">[</span><span class="n">neutron_number</span><span class="p">]:</span>
+            <span class="k">continue</span>
+        <span class="n">e_n</span> <span class="o">=</span> <span class="n">dp_n</span><span class="p">[</span><span class="n">neutron_number</span><span class="p">][</span><span class="n">m_n</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">total_e</span> <span class="o">=</span> <span class="n">e_p</span> <span class="o">+</span> <span class="n">e_n</span>
+        <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">total_e</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_e</span><span class="p">,</span> <span class="n">m_p</span><span class="p">,</span> <span class="n">m_n</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;No lowest-filling configuration satisfies total M=</span><span class="si">{</span><span class="n">_Mtot</span><span class="si">}</span><span class="s2"> with Z=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">, N=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">m_p_best</span><span class="p">,</span> <span class="n">m_n_best</span> <span class="o">=</span> <span class="n">best</span>
+    <span class="n">selected_p</span> <span class="o">=</span> <span class="n">_backtrack</span><span class="p">(</span><span class="n">dp_p</span><span class="p">,</span> <span class="n">proton_number</span><span class="p">,</span> <span class="n">m_p_best</span><span class="p">)</span>
+    <span class="n">selected_n</span> <span class="o">=</span> <span class="n">_backtrack</span><span class="p">(</span><span class="n">dp_n</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="n">m_n_best</span><span class="p">)</span>
+
+    <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubit</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">selected_p</span><span class="p">:</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">selected_n</span><span class="p">:</span>
+        <span class="n">ansatz</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">return_idxs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ansatz</span><span class="p">,</span> <span class="n">selected_p</span><span class="p">,</span> <span class="n">selected_n</span>
     <span class="k">return</span> <span class="n">ansatz</span></div>
 
 
@@ -743,8 +857,8 @@
     </aside>
   </div>
 </div><script src="../../_static/documentation_options.js?v=01f34227"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
     </body>
 </html>
