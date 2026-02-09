@@ -1,9 +1,11 @@
 import numpy as np
 import pytest
-import pennylane as qml
-from qiskit_aer.primitives import SamplerV2
-from qiskit.quantum_info import Statevector
+from qiskit_aer import AerSimulator
+from qiskit.circuit.library import PauliEvolutionGate, phase_estimation, UnitaryGate
 from nuqulib import *
+from qiskit.quantum_info import Operator
+from scipy.linalg import expm
+
 
 def test_pairingHamiltonian():
     Norb = 4
@@ -52,7 +54,13 @@ def test_ansatz_pairing():
     trotter_steps = 15
     qc_Htest = circuit_HadamardTest(Nq, qc, hamiltonian_op, dt, trotter_steps, using_statevector=True)
 
-    state_vector = Statevector.from_instruction(qc_Htest)
+    sim = AerSimulator(method='statevector')
+    qc_sv = transpile(qc_Htest, sim)
+    qc_sv.save_statevector()
+    job = sim.run(qc_sv)
+    result = job.result()
+    state_vector = result.get_statevector(qc_sv)
+
     sv_arr = np.array(state_vector)
 
     p0 = p1 = 0
@@ -92,28 +100,74 @@ def test_QPE():
 
     Uprep = pair_ansatz_qiskit(params_NFT, Nq, Nocc, method=method_ansatz)
 
+    # For check the ansatz
+    qc_emeas = QuantumCircuit(Nq)
+    qc_emeas.append(Uprep.to_gate(), range(Nq))
+    sim = AerSimulator(method='statevector')
+    qc_sv = transpile(qc_emeas, sim)
+    qc_sv.save_statevector()
+    job = sim.run(qc_sv)
+    result = job.result()
+    state_vector = result.get_statevector(qc_sv)
+    E_meas = np.real(state_vector.expectation_value(hamiltonian_op))
+    print(f"E_meas (before QPE): {E_meas} Egs_exact: {Egs_exact} diff. {E_meas - Egs_exact}")
+    assert abs(E_meas - Egs_exact) < 1e-5, f"Expected energy {Egs_exact} but got {E_meas} with difference {abs(E_meas - Egs_exact)}"
+
     Na = 6
     dt = - 1.0 # dt < 0 because Egs > 0
-    trotter_steps = 15
     buffer = 10
-    print("max(|E|):", (2**Na-1) * 2 *np.pi / -dt)
-    qc_QPE = circuit_QPE(Na, Nq, Uprep, hamiltonian_op, dt, trotter_steps, measure=True)
-    qc_QPE = qc_QPE.decompose(reps=5)
+    print("max(|E|):",  2 *np.pi / -dt)
 
-    n_shot = 128
-    sampler = SamplerV2()
-    job = sampler.run([qc_QPE], shots=n_shot)
+    Umat = expm(-1j * hamiltonian_op.to_matrix() * dt)
+    unitU = UnitaryGate(Operator(Umat))
+    pe = phase_estimation(Na, unitU)
+
+    anc = QuantumRegister(Na, 'ancilla')
+    tgt = QuantumRegister(Nq, 'target')
+    qc_QPE = QuantumCircuit(anc, tgt)
+    qc_QPE.append(Uprep.to_gate(), tgt[:])
+    qc_QPE.append(pe.to_gate(), anc[:] + tgt[:])
+
+    qc_sv = qc_QPE.remove_final_measurements(inplace=False)
+    qc_sv.save_statevector()
+
+    # Run Aer statevector simulator
+    sim = AerSimulator(method='statevector')
+    tqc = transpile(qc_sv, sim)
+    job = sim.run(tqc)
     result = job.result()
-    print(f"QPE result: {result[0].data.c}")
-    counts = result[0].data.c.get_counts()
+    psi_final = result.get_statevector(tqc)
 
-    float_from_bitstr = lambda bitstr: int(bitstr, 2)/(2**Na) * 2 * np.pi / -dt
+    # Get probabilities on ancilla register only
+    #probs = psi_final.probabilities_dict(range(Na+Nq))
+    probs = psi_final.probabilities_dict(range(Na))
+    list_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
+    for bitstring_whole, p in list_probs:
+        if p < 1e-3:
+            continue
+        print(f"bitstring whole: {bitstring_whole} prob.: {p:.6f}")
 
-    key_most_freq = list(counts.keys())[int(np.argmax(list(counts.values())))]
-    print("Most frequent key:", key_most_freq)
-    E_estimated = float_from_bitstr(key_most_freq)
+    summarized_probs = {} 
+    for bitstring, p in list_probs:
+        #bitstring = bitstring[:Na]
+        bitstring = bitstring
+        if bitstring in summarized_probs:
+            summarized_probs[bitstring] += p
+        else:
+            summarized_probs[bitstring] = p
+    list_probs = sorted(summarized_probs.items(), key=lambda x: x[1], reverse=True)
+    for bitstring, p in list_probs:
+        energy = int(bitstring[::-1], 2)/(2**Na) * 2 * np.pi / -dt
+        if p < 1e-3:
+            continue
+        print(f"bitstring: {bitstring} energy: {energy:.6f}  prob.: {p:.6f}")
+
+    bitstring_most_prob = list_probs[0][0]
+    E_estimated = int(bitstring_most_prob[::-1], 2)/(2**Na) * 2 * np.pi / -dt
+
     print(f"E_estimated(QPE): {E_estimated:.8f} Egs_exact: {Egs_exact:.8f} diff. {E_estimated - Egs_exact:.2e}")
     assert abs(E_estimated - Egs_exact) < buffer * 2*np.pi/(2**Na), f"Expected energy {Egs_exact} but got {E_estimated} with difference {abs(E_estimated - Egs_exact)}"
+
 
 def test_QKrylov():
     Nq = 4
@@ -131,7 +185,7 @@ def test_QKrylov():
     Hmat, Nmat, Ens = QuantumKrylov(
         Uprep, hamiltonian_op, sampler, backend,
         ancilla_qubits, target_qubits, delta_t=1.0,
-        max_iterations=6, trotter_steps=10,
+        max_iterations=6, trotter_steps=5,
         using_statevector=True)
     
     Eestimated = np.min(Ens[-1])

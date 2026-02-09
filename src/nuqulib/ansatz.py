@@ -16,18 +16,7 @@ from qiskit_nature.second_q.operators import FermionicOp
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 from .circuits import G_gate, cG1_gate
 from .encoding import mapping_to_Pauli_string
-
-
-def naive_filling_ansatz_old(proton_qubits: Iterable[int],
-                         neutron_qubits: Iterable[int],
-                         proton_number: int, neutron_number: int):
-    n_qubit = len(proton_qubits) + len(neutron_qubits)
-    ansatz = QuantumCircuit(n_qubit)
-    for i in range(proton_number):
-        ansatz.x(proton_qubits[-1 - i])
-    for i in range(neutron_number):
-        ansatz.x(neutron_qubits[-1 - i])
-    return ansatz
+from .nuclear_hamiltonian import Hamiltonian
 
 
 def naive_filling_ansatz(
@@ -62,6 +51,131 @@ def naive_filling_ansatz(
             ).paulis[0].to_label()
         pauli_op = PauliGate(paulistr)
         ansatz.append(pauli_op, list(range(pauli_op.num_qubits)))
+    return ansatz
+
+def _diag_spe(spe_dict: dict, idx: int) -> float:
+    direct_key = f"+_{idx} -_{idx}"
+    if direct_key in spe_dict:
+        return spe_dict[direct_key]
+    for key, val in spe_dict.items():
+        parts = key.split()
+        if len(parts) >= 2 and parts[0] == f"+_{idx}" and parts[1] == f"-_{idx}":
+            return val
+    raise KeyError(f"Diagonal SPE term not found for index {idx}")
+
+def _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton: bool):
+    entries = []
+    if is_proton:
+        spe_dict = Hamiltonian_obj.Hamildict['SPE']['p']
+        for i in range(n_qubits_p):
+            energy = _diag_spe(spe_dict, i)
+            jz = Hamiltonian_obj.msps[i].jz
+            entries.append((i, energy, jz))
+    else:
+        spe_dict = Hamiltonian_obj.Hamildict['SPE']['n']
+        for i in range(n_qubits_n):
+            energy = _diag_spe(spe_dict, i)
+            jz = Hamiltonian_obj.msps[i + n_qubits_p].jz
+            entries.append((i, energy, jz))
+    return entries
+
+def _dp_select(entries, n_select: int):
+    dp = {0: {0: (0.0, None, None)}}
+    for idx, energy, jz in entries:
+        for k in range(min(n_select, len(entries)), 0, -1):
+            if (k - 1) not in dp:
+                continue
+            prev_layer = dp[k - 1]
+            cur_layer = dp.setdefault(k, {})
+            for m, (e_prev, _, _) in prev_layer.items():
+                new_m = m + jz
+                new_e = e_prev + energy
+                if new_m not in cur_layer or new_e < cur_layer[new_m][0]:
+                    cur_layer[new_m] = (new_e, m, idx)
+    return dp
+
+def _backtrack(dp, n_select: int, m_target: int):
+    selected = []
+    m = m_target
+    for k in range(n_select, 0, -1):
+        energy, prev_m, idx = dp[k][m]
+        selected.append(idx)
+        m = prev_m
+    return list(reversed(selected))
+
+
+def lowest_filling_ansatz(
+    Hamiltonian_obj: Hamiltonian,
+    proton_number: int,
+    neutron_number: int,
+    Mtot: int | None = None,
+    return_idxs: bool = False,
+):
+    """Constructs a lowest-filling ansatz circuit for protons and neutrons.
+
+    This function creates a quantum circuit that initializes the qubits
+    corresponding to protons and neutrons in their lowest energy states
+    by applying X gates to the appropriate qubits.
+    The ordering of single-particle states (msps_p and msps_n) can vary
+    with a specific choice of the interaction.
+
+    Args:
+        Hamiltonian_obj (Hamiltonian): The Hamiltonian object containing system information.
+        proton_number (int): Number of protons to be placed in the lowest energy states.
+        neutron_number (int): Number of neutrons to be placed in the lowest energy states.
+        Mtot: int | None: Total magnetic quantum number (optional).
+
+    Returns:
+        QuantumCircuit: A quantum circuit representing the lowest-filling ansatz.
+    """
+    _Mtot = (proton_number + neutron_number) % 2 if Mtot is None else Mtot
+    proton_qubits = Hamiltonian_obj.proton_qubits
+    neutron_qubits = Hamiltonian_obj.neutron_qubits
+
+    assert len(proton_qubits) >= proton_number, f"Invalid proton_number={proton_number}"
+    assert len(neutron_qubits) >= neutron_number, f"Invalid neutron_number={neutron_number}"
+    if Hamiltonian_obj.Hamildict is None:
+        raise ValueError("Hamiltonian.Hamildict is None. Cannot proceed with lowest_filling_ansatz.")
+
+    n_qubits_p = len(proton_qubits)
+    n_qubits_n = len(neutron_qubits)
+    n_qubit = n_qubits_p + n_qubits_n
+
+    entries_p = _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton=True)
+    entries_n = _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton=False)
+
+    dp_p = _dp_select(entries_p, proton_number)
+    dp_n = _dp_select(entries_n, neutron_number)
+
+    if proton_number not in dp_p or neutron_number not in dp_n:
+        raise ValueError("Unable to build DP tables for requested particle numbers.")
+
+    best = None
+    for m_p, (e_p, _, _) in dp_p[proton_number].items():
+        m_n = _Mtot - m_p
+        if m_n not in dp_n[neutron_number]:
+            continue
+        e_n = dp_n[neutron_number][m_n][0]
+        total_e = e_p + e_n
+        if best is None or total_e < best[0]:
+            best = (total_e, m_p, m_n)
+
+    if best is None:
+        raise ValueError(
+            f"No lowest-filling configuration satisfies total M={_Mtot} with Z={proton_number}, N={neutron_number}."
+        )
+
+    _, m_p_best, m_n_best = best
+    selected_p = _backtrack(dp_p, proton_number, m_p_best)
+    selected_n = _backtrack(dp_n, neutron_number, m_n_best)
+
+    ansatz = QuantumCircuit(n_qubit)
+    for idx in selected_p:
+        ansatz.x(proton_qubits[idx])
+    for idx in selected_n:
+        ansatz.x(neutron_qubits[idx])
+    if return_idxs:
+        return ansatz, selected_p, selected_n
     return ansatz
 
 

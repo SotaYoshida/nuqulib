@@ -2,8 +2,9 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import SamplerV2
-from qiskit.quantum_info import SparsePauliOp, Statevector
+from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.synthesis import SuzukiTrotter
 from qiskit.circuit.library import QFT
@@ -17,7 +18,8 @@ def circuit_HadamardTest(
     Norb, Uprep, Hamiltonian_op, t, trotter_steps, using_statevector=True
 ):
     op = PauliEvolutionGate(
-        Hamiltonian_op, t, synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
+        Hamiltonian_op, t, 
+        synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
     )
     U = op.definition
     U.name = "$U$"
@@ -49,28 +51,36 @@ def circuit_HadamardTest(
         return qc_1.decompose(reps=3)
 
 
-def circuit_QPE(
-    n_ancilla, Norb, Uprep, Hamiltonian_op, time, trotter_steps, measure=False
+def circuit_my_QPE(n_ancilla: int,
+    Norb: int, 
+    Hamiltonian_op: SparsePauliOp,
+    Uprep: QuantumCircuit,
+    time: float, 
+    measure=False,
+    trotter_order: int = 2,
+    trotter_steps: int = 1
 ):
     qc_QPE = QuantumCircuit(n_ancilla + Norb, n_ancilla)
     register_ancilla = range(Norb, Norb + n_ancilla)
     register_target = range(Norb)
     # State preparation
     qc_QPE.append(Uprep, register_target)
+
     # Hadamard on ancilla
     for qubit in register_ancilla:
         qc_QPE.h(qubit)
+
     # Controlled-U operations
-    U = PauliEvolutionGate(
-        Hamiltonian_op, time, synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
-    )
-    repetitions = 1
-    for counting_qubit in register_ancilla:
-        for _ in range(repetitions):
-            U.label = f"U_(2^{int(np.log2(repetitions))})"
-            U_ctrl = U.control(1)
-            qc_QPE.append(U_ctrl, [counting_qubit] + list(register_target))
-        repetitions *= 2
+    for iter, counting_qubit in enumerate(register_ancilla):
+        U_pow_circ = QuantumCircuit(Norb)
+        Upow = PauliEvolutionGate(Hamiltonian_op, time*(2**iter), 
+                                synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
+        U_pow_circ.append(Upow, range(Norb))
+        U_pow_gate = U_pow_circ.to_gate(label=f"U^{2**iter}")
+        cU = U_pow_gate.control()
+        cU.name = "$U^{2^{" + str(iter) + "}}$"
+        qc_QPE.compose(cU, qubits=[counting_qubit] + list(register_target), inplace=True)
+
     # Inverse QFT
     qft_dagger = QFT(n_ancilla, inverse=True)
     qc_QPE.append(qft_dagger, register_ancilla)
@@ -146,10 +156,15 @@ def measure_overlap(
         qc_im = transpile(qc_im, optimization_level=2)
     if do_simulation:
         if using_statevector:
-            results = [
-                Statevector.from_instruction(qc).probabilities_dict()
-                for qc in [qc_re, qc_im]
-            ]
+            results = [ ]
+            sim = AerSimulator(method='statevector')
+            for qc in [qc_re, qc_im]:
+                qc_sv = transpile(qc, sim)
+                qc_sv.save_statevector()
+                job = sim.run(qc_sv)
+                result = job.result()
+                psi_final = result.get_statevector(qc_sv)
+                results.append(psi_final.probabilities_dict())
             prob_Re = results[0]
             prob_Im = results[1]
         else:
@@ -268,6 +283,7 @@ def QuantumKrylov(
     target_qubits,
     delta_t=0.01,
     max_iterations=10,
+    trotter_rank=2,
     trotter_steps=1,
     num_shot=10**4,
     using_statevector=False,
@@ -302,13 +318,13 @@ def QuantumKrylov(
 
     # To estimate the resource...
     Ui = PauliEvolutionGate(
-        hamiltonian_op, delta_t, synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
+        hamiltonian_op, delta_t, synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps)
     )
     gate_cUi = make_cU(Uprep, Ui, Ntar)
     Uj = PauliEvolutionGate(
         hamiltonian_op,
         2 * delta_t,
-        synthesis=SuzukiTrotter(order=1, reps=trotter_steps),
+        synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps),
     )
     gate_cUj = make_cU(Uprep, Uj, Ntar)
 
@@ -336,7 +352,8 @@ def QuantumKrylov(
     for it in tqdm(range(max_iterations)):
         print("iteration: ", it)
         ## make controlled U = exp(-iHδt * it)
-        Ui = PauliEvolutionGate(hamiltonian_op, it*delta_t, synthesis=SuzukiTrotter(order=1,reps=trotter_steps))
+        Ui = PauliEvolutionGate(hamiltonian_op, it*delta_t, 
+                                synthesis=SuzukiTrotter(order=2,reps=trotter_steps))
         gate_cUi = make_cU(Uprep, Ui, Ntar)
         Unitaries.append(gate_cUi)
         N[it, it] = 1.0
@@ -369,16 +386,25 @@ def QuantumKrylov(
             qcs.append(qc)
                       
         if using_statevector:
-            results = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs]
+            sim = AerSimulator(method='statevector')
+            results = [ ]
+            for qc in qcs:
+                qc_sv = transpile(qc, sim)
+                qc_sv.save_statevector()
+                job = sim.run(qc_sv)
+                result = job.result()
+                psi_final = result.get_statevector(qc_sv)
+                results.append(psi_final.probabilities_dict())
         else:
             job = sampler.run(qcs, shots=num_shot)
             results  = job.result()
+
+        # Comparison with Aer statevector simulator
 
         Hsum = 0.0
         for idx_H in range(len(Hamil_paulis)):
             op_string = Hamil_paulis[idx_H].to_label()
             idx_relevant = get_idx_to_measure(op_string)
-
             idx_circuit = get_idx_circuit(op_string, term_types)
             if using_statevector:
                 res = results[idx_circuit]
@@ -398,8 +424,23 @@ def QuantumKrylov(
 
             # Re part
             if using_statevector:
-                results_Re = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs_re]
-                results_Im = [ Statevector.from_instruction(qc).probabilities_dict() for qc in qcs_im]
+                results_Re = []
+                results_Im = []
+                sim = AerSimulator(method='statevector')
+                for qc in qcs_re:
+                    qc_sv = transpile(qc, sim)
+                    qc_sv.save_statevector()
+                    job = sim.run(qc_sv)
+                    result = job.result()
+                    psi_final = result.get_statevector(qc_sv)
+                    results_Re.append(psi_final.probabilities_dict())
+                for qc in qcs_im:
+                    qc_sv = transpile(qc, sim)
+                    qc_sv.save_statevector()
+                    job = sim.run(qc_sv)
+                    result = job.result()
+                    psi_final = result.get_statevector(qc_sv)
+                    results_Im.append(psi_final.probabilities_dict())
             else:
                 job = sampler.run(qcs_re, shots=num_shot)
                 results_Re = job.result()
@@ -446,7 +487,6 @@ def QuantumKrylov(
 
         w_r = w[-r:]
         ws += [w_r]
-
         print("eigs of N: ", lam, "cond", np.linalg.cond(Nsub), "r:", r)
         print(f"w: {w_r}")
         print("")
