@@ -48,7 +48,6 @@ def read_QiskitPauli(ops_qiskit, coeffs_qiskit):
     for idx in range(len(ops_qiskit)):
         pauli_str = ops_qiskit[idx]
         coeff = coeffs_qiskit[idx]
-        #coeffs += [float(coeff)]
         obs += [get_operator_from_QiskitStr(pauli_str)]
     return coeffs, obs
 

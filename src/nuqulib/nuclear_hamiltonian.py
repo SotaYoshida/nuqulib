@@ -160,11 +160,11 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("Jordan-Wigner")
 
     Hamil_ShellModel = H_1b_p + H_1b_n 
-    if Z > 1:
+    if hamil.vZ > 1:
         Hamil_ShellModel += H_pp 
-    if N > 1:
+    if hamil.vN > 1:
         Hamil_ShellModel += H_nn
-    if Z > 0 and N > 0:
+    if hamil.vZ > 0 and hamil.vN > 0:
         Hamil_ShellModel += H_pn
 
     if fn_3NF != "":
@@ -556,23 +556,39 @@ class Hamiltonian:
                     a, b, c, d, J = list(map(int, tl[:5]))
                     if a in excluded or b in excluded or c in excluded or d in excluded:
                         continue
-                    a = dict_sps[a]
-                    b = dict_sps[b]
-                    c = dict_sps[c]
-                    d = dict_sps[d]
+                    idx_a = dict_sps[a]
+                    idx_b = dict_sps[b]
+                    idx_c = dict_sps[c]
+                    idx_d = dict_sps[d]
                     vint, vkin = list(map(float, tl[5:]))
                     v = vint + vkin * self.hw / self.Anum
-                    v2b.append((a, b, c, d, J, v))
+                    phase = 1
+                    if idx_a > idx_b:
+                        phase *= (-1)**(J + (single_particle_states[idx_a].j + single_particle_states[idx_b].j)//2 - 1)
+                        idx_b, idx_a = idx_a, idx_b
+                    if idx_c > idx_d:
+                        phase *= (-1)**(J + (single_particle_states[idx_c].j + single_particle_states[idx_d].j)//2 - 1)
+                        idx_d, idx_c = idx_c, idx_d
+                    v = v * phase * Vfactor
+                    v2b.append((idx_a, idx_b, idx_c, idx_d, J, v))
                 if len(tl) == 6:  # valence snt files used in KSHELL code
                     a, b, c, d, J = list(map(int, tl[:5]))
                     if a in excluded or b in excluded or c in excluded or d in excluded:
                         continue
-                    a = dict_sps[a]
-                    b = dict_sps[b]
-                    c = dict_sps[c]
-                    d = dict_sps[d]
+                    idx_a = dict_sps[a]
+                    idx_b = dict_sps[b]
+                    idx_c = dict_sps[c]
+                    idx_d = dict_sps[d]
                     v = vint = float(tl[5]) * Vfactor
-                    v2b.append((a, b, c, d, J, v))
+                    phase = 1
+                    if idx_a > idx_b:
+                        phase = (-1)**(J + (single_particle_states[idx_a].j + single_particle_states[idx_b].j)//2 - 1)
+                        idx_b, idx_a = idx_a, idx_b
+                    if idx_c > idx_d:
+                        phase = (-1)**(J + (single_particle_states[idx_c].j + single_particle_states[idx_d].j)//2 - 1)
+                        idx_d, idx_c = idx_c, idx_d
+                    v *= phase   
+                    v2b.append((idx_a, idx_b, idx_c, idx_d, J, v))
         return nsp_p, nsp_n, core_p, core_n, single_particle_states, v1b, v2b
 
     def get_mscheme_sps(self):
@@ -833,12 +849,6 @@ class Hamiltonian:
                         tz_c = morb_c.tz
                         for dd in self.dict_sps2msps[d]:
 
-                            if verbose > 1:
-                                if (a == 0 and b == 1 and c == 0 and d == 2 ) :
-                                    print(
-                                        f"aa = {aa} bb = {bb} cc = {cc} dd = {dd}, bra: {a,b}, ket: {c,d}"
-                                    )
-
                             if cc >= dd:
                                 continue
                             if Tz != 0 and (set([a, b]) == set([c, d])) and aa > cc:  # or (aa == cc and bb > dd):
@@ -868,7 +878,6 @@ class Hamiltonian:
                             v = V * CG1 * CG2 * N_ab * N_cd
                             if v == 0:
                                 continue
-
                             if Tz == -2:
                                 num_pp += 1
                                 if opform:
@@ -895,17 +904,20 @@ class Hamiltonian:
                                 num_pn += 1
                                 # for pn interaction, we need to consider operators separately
                                 if opform:
+                                    diag_factor = 1.0
+                                    if aa == cc and bb == dd:
+                                        diag_factor = 0.5
                                     p_str = "+_" + str(aa) + " -_" + str(cc)
                                     n_str = (
                                         "+_"
                                         + str(bb - self.n_qubits_p)
                                         + " -_"
                                         + str(dd - self.n_qubits_p)
-                                    )
+                                    )                                    
                                     if (p_str, n_str) in op_dict_pn:
-                                        op_dict_pn[(p_str, n_str)] += v / 2
+                                        op_dict_pn[(p_str, n_str)] += v * diag_factor
                                     else:
-                                        op_dict_pn[(p_str, n_str)] = v / 2
+                                        op_dict_pn[(p_str, n_str)] = v * diag_factor
                                     p_str = "+_" + str(cc) + " -_" + str(aa)
                                     n_str = (
                                         "+_"
@@ -914,9 +926,9 @@ class Hamiltonian:
                                         + str(bb - self.n_qubits_p)
                                     )
                                     if (p_str, n_str) in op_dict_pn:
-                                        op_dict_pn[(p_str, n_str)] += v / 2
+                                        op_dict_pn[(p_str, n_str)] += v * diag_factor
                                     else:
-                                        op_dict_pn[(p_str, n_str)] = v / 2
+                                        op_dict_pn[(p_str, n_str)] = v * diag_factor
                                 else:
                                     op_dict_pn.append(
                                         [aa + 1, bb + 1, cc + 1, dd + 1, J, v]
@@ -942,7 +954,7 @@ class Hamiltonian:
         else:
             Hamildict = sum_over_J(Hamildict)
             return Hamildict
-
+        
     def mapping_opform(self, mapping_method: str, 
                        filepath: str|os.PathLike="./",
                        write_hamil_txt: str=""):
@@ -1257,6 +1269,25 @@ class Hamiltonian:
         )
         self.v3b_Mscheme = v3b_Mscheme
         return v3b_Mscheme
+    
+    def write_v3b_Mscheme(self, fn_out: str|os.PathLike="v3b_Mscheme.txt"):
+        """Write the 3NF matrix elements in M-scheme to a file.
+
+        Args:
+            fn_out (str|os.PathLike): Output filename to write the 3NF matrix elements.
+
+        """
+        if self.v3b_Mscheme is None:
+            self.set_mscheme_3NF()
+        with open(fn_out, "w") as f:
+            for key, me in self.v3b_Mscheme.items():
+                im_a, im_b, im_c, im_d, im_e, im_f = key
+                if abs(me) < 1.e-8:
+                    continue
+                f.write(
+                    f"{im_a} {im_b} {im_c} {im_d} {im_e} {im_f} {me:.8e}\n"
+                )
+        print(f"3NF matrix elements in M-scheme written to {fn_out}")
 
     def separate_proton_and_neutron(self, 
                                     im_a: int, im_b: int, im_c: int,
@@ -1369,7 +1400,7 @@ class Hamiltonian:
             (p_str, n_str, coeff_overall, method, filepath)
             for (p_str, n_str), coeff_overall in self.Hamildict["V3"].items()
         ]
-        nproc = max(multiprocessing.cpu_count() - 2, 1)
+        nproc = max(multiprocessing.cpu_count() - 4, 1)
         with get_context("fork").Pool(processes=nproc) as pool:
             results = list(pool.starmap(self.task_3NF_pn, tasks))
         op = [

@@ -13,6 +13,7 @@ import numpy as np
 import itertools
 from qiskit.quantum_info import SparsePauliOp
 import openfermion as of
+from .myutils import Orbit_nljjztz
 
 
 def read_msnt(
@@ -477,3 +478,31 @@ def make_pw_hamil_qiskit(Hamil: dict, h1b: np.ndarray,
             coeffs.append(coeff)
 
     return SparsePauliOp.from_list(list(zip(ops, coeffs)))
+
+
+def get_v0_pairs(msps_p: Orbit_nljjztz,
+                 msps_n: Orbit_nljjztz
+                 ):
+    """Get the list of time-reversal pairs with Jz=0"""
+    v0_pairs = [ [ ], [ ] ]
+    for pn in ["proton", "neutron"]:
+        idx_pn = 0 if pn == "proton" else 1
+        print(f"--- {pn} pairs ---")
+        if pn == "proton":
+            msps = msps_p
+            ofst = 0
+        else:
+            msps = msps_n
+            ofst = len(msps_p)
+
+        for idx1, m_1 in enumerate(msps):
+            nljtz_1 = (m_1.n, m_1.l, m_1.j, m_1.tz)
+            if m_1.jz > 0:
+                continue
+            for idx2, m_2 in enumerate(msps):
+                nljtz_2 = (m_2.n, m_2.l, m_2.j, m_2.tz)
+                if (m_1.jz + m_2.jz != 0) or (nljtz_1 != nljtz_2):
+                    continue
+                print((idx1+ofst, idx2+ofst))
+                v0_pairs[idx_pn].append((idx1+ofst, idx2+ofst))
+    return v0_pairs

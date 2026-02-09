@@ -1,12 +1,13 @@
 from itertools import combinations
 import pytest
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import Statevector
+from qiskit_aer import AerSimulator
 from nuqulib import *
 
 
 def test_GivensRotations():
     theta = 2 * (np.pi / 4)
+    sim = AerSimulator(method='statevector')
 
     # Check different implementations
     state_vectors = [ ]
@@ -14,7 +15,11 @@ def test_GivensRotations():
         qc = QuantumCircuit(2)
         qc.x(0)
         qc.append(G_gate(theta, method=method), [0, 1])
-        state_vector = Statevector.from_instruction(qc)
+        qc_sv = transpile(qc, sim)
+        qc_sv.save_statevector()
+        job = sim.run(qc_sv)
+        result = job.result()
+        state_vector = result.get_statevector(qc_sv)
         state_vectors.append(state_vector)
     print(state_vectors)    
     for i, j in combinations(range(len(state_vectors)), 2):
@@ -30,7 +35,11 @@ def test_GivensRotations():
         qc = QuantumCircuit(2)
         qc.x(0)
         qc.append(G_gate(theta, method=method), [0, 1])
-        state_vector = Statevector.from_instruction(qc)
+        qc_sv = transpile(qc, sim)
+        qc_sv.save_statevector()
+        job = sim.run(qc_sv)
+        result = job.result()
+        state_vector = result.get_statevector(qc_sv)
         state_vectors.append(state_vector)
     for i, j in combinations(range(len(state_vectors)), 2):
         sv_i = state_vectors[i]

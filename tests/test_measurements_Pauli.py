@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
 from qiskit.quantum_info import SparsePauliOp
-from qiskit.quantum_info import Statevector
 from qiskit.primitives import StatevectorEstimator
 from qiskit_aer.primitives import SamplerV2
 from nuqulib import expec_Zstring, pair_ansatz_qiskit, circuit_XXYY
@@ -19,7 +19,13 @@ def test_meas_Paulis( ):
     qc_state.ry(np.random.randn(), 1)
 
     # Statevector
-    state_vector = Statevector.from_instruction(qc_state)
+    sim = AerSimulator(method='statevector')
+    qc_sv = transpile(qc_state, sim)
+    qc_sv.save_statevector()
+    job = sim.run(qc_sv)
+    result = job.result()
+    state_vector = result.get_statevector(qc_sv)
+    
     a, b, c, d = state_vector.data
     print(f"a = {a}, b = {b}, c = {c}, d = {d}")
     E_sv = np.conj(a)*d + np.conj(c)*b + np.conj(b)*c + np.conj(d)*a

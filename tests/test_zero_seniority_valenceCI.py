@@ -35,9 +35,9 @@ def test_O18_zero_seniority():
     ops = [op.to_label() for op in hamiltonian_op.paulis]
     coeffs = np.array([coeff for coeff in hamiltonian_op.coeffs])
     coeffs_pl, obs_pl = read_QiskitPauli(ops, coeffs)
+    coeffs_pl = np.real(coeffs_pl)
     Hamil_pl = qml.Hamiltonian(coeffs_pl, obs_pl)
     params = np.random.rand(100)
-
     dev = qml.device("default.qubit", wires=Nq)
 
     @qml.qnode(dev)
@@ -114,6 +114,7 @@ def test_O20_zero_seniority():
 
     ## Translating the Hamiltonian (Qiskit) to pennylane format
     coeffs_pl, obs_pl = transform_qiskitOps_to_pennylane(hamiltonian_op)
+    coeffs_pl = np.real(coeffs_pl)
     Hamil_pl = qml.Hamiltonian(coeffs_pl, obs_pl)
     params = np.random.rand(100)
     dev = qml.device("default.qubit", wires=Nq)

@@ -20,10 +20,10 @@ def test_ODMD():
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("JordanWigner")
     H_mapped = H_1b_p + H_1b_n + H_nn 
 
-    print(f"H_1b {H_1b_n+H_1b_p}")
-    print(f"H_1b_p {H_1b_p}")
-    print(f"H_1b_n {H_1b_n}")
-    print(f"H_nn {H_nn}")
+    # print(f"H_1b {H_1b_n+H_1b_p}")
+    # print(f"H_1b_p {H_1b_p}")
+    # print(f"H_1b_n {H_1b_n}")
+    # print(f"H_nn {H_nn}")
 
     delta_t = 0.01234
     trotter_rank = 1; trotter_steps = 15
