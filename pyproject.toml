@@ -146,3 +146,10 @@ sphinx = "^9.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+[project.optional-dependencies]
+docs = [
+  "sphinx",
+  "furo",
+]
