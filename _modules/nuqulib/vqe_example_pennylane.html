@@ -282,8 +282,6 @@
     <span class="n">H_1b_of</span><span class="p">,</span> <span class="n">H_pp_of</span><span class="p">,</span> <span class="n">H_nn_of</span><span class="p">,</span> <span class="n">H_pn_of</span> <span class="o">=</span> <span class="n">define_Hamil_in_OpenFermion</span><span class="p">(</span>
         <span class="n">Hdict</span><span class="p">,</span> <span class="n">proton_number</span><span class="p">,</span> <span class="n">neutron_number</span>
     <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;H_1b_of: </span><span class="si">{</span><span class="n">H_1b_of</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;H_nn_of: </span><span class="si">{</span><span class="n">H_nn_of</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">H</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">using_chs</span><span class="p">:</span>
@@ -430,6 +428,7 @@
     <span class="n">Hpp</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">()</span>
     <span class="n">Hnn</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">()</span>
     <span class="n">Hpn</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">()</span>
+
     <span class="c1">## One-body terms</span>
     <span class="n">h1b</span> <span class="o">=</span> <span class="n">Hamil_dict</span><span class="p">[</span><span class="s2">&quot;SPE&quot;</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">h1b</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -440,7 +439,7 @@
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">key</span>  <span class="c1"># now assuming i = j</span>
         <span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="n">H1b</span> <span class="o">+=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;H1b(qml): </span><span class="si">{</span><span class="n">H1b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="c1"># Two-body tems</span>
     <span class="k">if</span> <span class="n">proton_number</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">Hamil_dict</span><span class="p">[</span><span class="s2">&quot;Vpp&quot;</span><span class="p">]:</span>
@@ -456,8 +455,6 @@
                 <span class="n">Hpp</span> <span class="o">+=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">neutron_number</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">n_qubits_p</span>  <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">Hamil_dict</span><span class="p">[</span><span class="s2">&quot;SPE&quot;</span><span class="p">][</span><span class="s2">&quot;p&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n_qubits_p&quot;</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">Hamil_dict</span><span class="p">[</span><span class="s2">&quot;Vnn&quot;</span><span class="p">]:</span>
             <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">tmp</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="mi">1</span> 
@@ -479,6 +476,7 @@
             <span class="n">d</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="mi">1</span>
             <span class="n">Hpn</span> <span class="o">+=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">Hpn</span> <span class="o">+=</span> <span class="n">of</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">FermionOperator</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">^ </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">V</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            
     <span class="k">return</span> <span class="n">H1b</span><span class="p">,</span> <span class="n">Hpp</span><span class="p">,</span> <span class="n">Hnn</span><span class="p">,</span> <span class="n">Hpn</span></div>
 
 </pre></div>
