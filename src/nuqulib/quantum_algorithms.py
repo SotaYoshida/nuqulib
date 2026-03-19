@@ -1,13 +1,15 @@
+from tabnanny import verbose
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from qiskit_aer.primitives import SamplerV2
-from qiskit.quantum_info import SparsePauliOp
 from qiskit.circuit.library import PauliEvolutionGate
-from qiskit.synthesis import SuzukiTrotter
 from qiskit.circuit.library import QFT
+from qiskit.quantum_info import SparsePauliOp
+from qiskit.synthesis import SuzukiTrotter
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 import scipy
 from .circuits import get_idx_to_measure, expec_Zstring
@@ -58,7 +60,8 @@ def circuit_my_QPE(n_ancilla: int,
     time: float, 
     measure=False,
     trotter_order: int = 2,
-    trotter_steps: int = 1
+    trotter_steps: int = 1,
+    repeat: bool = False
 ):
     qc_QPE = QuantumCircuit(n_ancilla + Norb, n_ancilla)
     register_ancilla = range(Norb, Norb + n_ancilla)
@@ -71,13 +74,17 @@ def circuit_my_QPE(n_ancilla: int,
         qc_QPE.h(qubit)
 
     # Controlled-U operations
+    unitU = PauliEvolutionGate(Hamiltonian_op, time,
+                               synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
     for iter, counting_qubit in enumerate(register_ancilla):
-        U_pow_circ = QuantumCircuit(Norb)
-        Upow = PauliEvolutionGate(Hamiltonian_op, time*(2**iter), 
-                                synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
-        U_pow_circ.append(Upow, range(Norb))
-        U_pow_gate = U_pow_circ.to_gate(label=f"U^{2**iter}")
-        cU = U_pow_gate.control()
+        Upow = QuantumCircuit(Norb)
+        if repeat:
+            for _ in range(2**iter):
+                Upow.compose(unitU, inplace=True)
+        else:
+            Upow = PauliEvolutionGate(Hamiltonian_op, time * (2**iter),
+                                      synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
+        cU = Upow.control()
         cU.name = "$U^{2^{" + str(iter) + "}}$"
         qc_QPE.compose(cU, qubits=[counting_qubit] + list(register_target), inplace=True)
 
@@ -138,22 +145,16 @@ def measure_overlap(
     ancilla_qubits,
     target_qubits,
     sampler,
-    backend,
     using_statevector,
     do_simulation=True,
 ):
     qc_re, qc_im = make_overlap_qc(
         Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, using_statevector
     )
-    if backend != None:
-        print("transpile: w/ backend=", backend)
-        print(f"before transpile...:", qc_re.count_ops())
-        qc_re = transpile(qc_re, backend=backend, optimization_level=2)
-        qc_im = transpile(qc_im, backend=backend, optimization_level=2)
-        print(f"after transpile...:", qc_re.count_ops())
-    else: #transpile without backend
-        qc_re = transpile(qc_re, optimization_level=2)
-        qc_im = transpile(qc_im, optimization_level=2)
+    #print(f"before transpile...:", qc_re.count_ops())
+    qc_re = transpile(qc_re, sampler, optimization_level=2)
+    qc_im = transpile(qc_im, sampler, optimization_level=2)
+    #print(f"after transpile...:", qc_re.count_ops())
     if do_simulation:
         if using_statevector:
             results = [ ]
@@ -202,27 +203,29 @@ def make_cU(Uprep, Ui, Ntar):
     circuit_cUi = QuantumCircuit(Ntar)
     circuit_cUi.append(Uprep, range(Ntar))
     circuit_cUi.append(Ui, range(Ntar))
-    circuit_cUi = circuit_cUi.decompose(reps=1)
-    return circuit_cUi.to_gate().control(1)
+    return circuit_cUi.decompose().to_gate().control(1)
 
 
-def make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits, 
+def make_Circ_forNondiagH(term_types,
+                          Ntar, ancilla_qubits, target_qubits, 
                           gate_cUi, gate_cUj, qcs_re, qcs_im, using_statevector):
     
     for idx_term in range(len(term_types)):
         term = term_types[idx_term]
 
         qc = QuantumCircuit(1+Ntar)
+        
+        # gate for the ancilla qubit
         qc.h(0)
         qc.append(gate_cUi, ancilla_qubits + target_qubits)
         qc.x(0)
         qc.append(gate_cUj, ancilla_qubits + target_qubits)
         qc_im = qc.copy() # copy here
         qc.h(0)
-
         qc_im.sdg(0)
         qc_im.h(0)
 
+        # gates for target qubits
         if term == "IZ":
             pass
         elif term == "XX":
@@ -234,7 +237,20 @@ def make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits,
             qc_im.sdg(target_qubits)
             qc_im.h(target_qubits)
         else:
-            raise ValueError(f"Unsupported term type: {term}")
+            pauli_locs = term.split(",")
+            for loc in pauli_locs:
+                if loc.startswith("X_"):
+                    qubit_idx = int(loc[2:]) 
+                    qc.h(target_qubits[qubit_idx])
+                elif loc.startswith("Y_"):
+                    qubit_idx = int(loc[2:])
+                    qc.sdg(target_qubits[qubit_idx])
+                    qc.h(target_qubits[qubit_idx])
+                elif loc.strip() == "":
+                    continue
+                else:
+                    raise ValueError(f"Unexpected term in XYstr: {loc}. Supported formats are 'IZ', 'XX', 'YY' or 'X_i', 'Y_i' for i-th qubit.")
+
         if not(using_statevector):
             qc.measure_all()
             qc_im.measure_all()
@@ -274,11 +290,118 @@ def get_idx_circuit(op_string, term_types):
         raise ValueError(f"Unexpected operator string: {op_string}. Supported types are 'IZ', 'XX', 'YY' for now.")
     return idx_circuit     
 
+
+def prepare_qc_for_QKrylov(Hamiltonian_op, Uprep, Ui, Ntar, Bosonic, using_statevector=False, verbose=True):
+    """
+    Prepare quantum circuits for evaluating Hamiltonian terms in QKrylov method.
+    This could be also used for VQE-type algorithms where one needs to evaluate the expectation value of Hamiltonian terms.
+    """
+    qcs = [ ] 
+    term_types = [ ]
+    idxs_circuit = [ None for _ in range(len(Hamiltonian_op.paulis)) ]
+    for idx_H in range(len(Hamiltonian_op.paulis)):
+        op_string = Hamiltonian_op.paulis[idx_H].to_label()
+        Xloc = [Ntar - 1 - i for i, char in enumerate(op_string) if char == 'X']
+        Yloc = [Ntar - 1 - i for i, char in enumerate(op_string) if char == 'Y']
+        Xloc = list(set(Xloc))
+        Yloc = list(set(Yloc))
+        dupricate = False
+        # Check whether the term to be measured the circuits already prepared 
+        XYstr = trans_XYloc_str(Xloc, Yloc, Bosonic)
+        if XYstr not in term_types:
+            term_types.append(XYstr)
+        else:
+            dupricate = True    
+        
+        idx_G = term_types.index(XYstr)
+        idxs_circuit[idx_H] = idx_G
+
+        if dupricate:
+            continue
+        qc = QuantumCircuit(Ntar)
+        qc.append(Uprep, range(Ntar))
+        qc.append(Ui, range(Ntar))
+        if XYstr == "IZ":
+            pass
+        elif XYstr == "XX":
+            qc.h(range(Ntar))
+        elif XYstr == "YY":
+            qc.sdg(range(Ntar))
+            qc.h(range(Ntar))
+        else:
+            pauli_locs = XYstr.split(",")
+            for loc in pauli_locs:
+                if loc.startswith("X_"):
+                    qubit_idx = int(loc[2:])
+                    qc.h(qubit_idx)
+                elif loc.startswith("Y_"):
+                    qubit_idx = int(loc[2:])
+                    qc.sdg(qubit_idx)
+                    qc.h(qubit_idx)
+                elif loc.strip() == "":
+                    continue
+                else:
+                    raise ValueError(f"Unexpected term in XYstr: {loc}. Supported formats are 'IZ', 'XX', 'YY' or 'X_i', 'Y_i' for i-th qubit.")
+        qcs.append(qc)
+    return qcs, term_types, idxs_circuit
+
+
+def trans_XYloc_str(Xloc, Yloc, Bosonic):
+    if len(Xloc) == 0 and len(Yloc) == 0:
+        return "IZ"
+    elif len(Xloc) > 0 and len(Yloc) == 0:
+        if Bosonic:
+            txt = "XX"
+        else:
+            txt = ""
+            for Xi in Xloc:
+                txt += "X_"+str(Xi)+","
+        return txt
+    elif len(Xloc) == 0 and len(Yloc) > 0:
+        if Bosonic:
+            txt = "YY"
+        else:
+            txt = ""
+            for Yi in Yloc:
+                txt += "Y_"+str(Yi)+","
+        return txt
+    elif len(Xloc) > 0 and len(Yloc) > 0:
+        if Bosonic:
+            raise ValueError(f"Bosonic case does not support terms with both X and Y. But got Xloc: {Xloc} and Yloc: {Yloc}.")
+        else:
+            txt = ""
+            for Xi in Xloc:
+                txt += "X_"+str(Xi)+","
+            for Yi in Yloc:
+                txt += "Y_"+str(Yi)+","
+            return txt
+    else:
+        raise ValueError(f"Unsupported term with Xloc: {Xloc} and Yloc: {Yloc}.")
+
+
+def reorder_based_on_layout(res, 
+                            qlayout):
+    """
+    Transpilors sometimes change the order of qubits, so we need to reorder the bitstrings according to the mapping given by `qlayout`.
+    """
+    if qlayout is None:
+        return res
+    new_res = { }
+    q_measured = qlayout.routing_permutation() 
+    for bitstring, value in res.items():
+        new_bitstring = ["0"] * len(bitstring)
+        for idx, bit in enumerate(bitstring):
+            phys_q = q_measured[idx]
+            new_bitstring[phys_q] = bit
+        new_bitstring = "".join(new_bitstring)
+        new_res[new_bitstring] = value
+    return new_res
+
+
 def QuantumKrylov(
     Uprep: QuantumCircuit,  # circuit to prepare a reference state
     hamiltonian_op: SparsePauliOp,  # Hamiltonian operator
     sampler,
-    backend,
     ancilla_qubits,
     target_qubits,
     delta_t=0.01,
@@ -288,6 +411,8 @@ def QuantumKrylov(
     num_shot=10**4,
     using_statevector=False,
     do_simulation=True,
+    Bosonic=True,
+    verbose=False
 ):
     """Function to perform Quantum Krylov subspace method.
 
@@ -331,29 +456,20 @@ def QuantumKrylov(
     qc_Ui = QuantumCircuit(1 + Ntar)
     qc_Ui.append(gate_cUi, range(Ntar + 1))
     qc_Ui = qc_Ui.decompose()
-    U_ij = measure_overlap(
-        num_shot,
-        Ntar,
-        gate_cUi,
-        gate_cUj,
-        ancilla_qubits,
-        target_qubits,
-        sampler,
-        backend,
-        using_statevector,
-        do_simulation,
-    )
+
     num_of_Hamil_term = len(hamiltonian_op.paulis)
     print("num of Hamil term: ", num_of_Hamil_term)
     if not (do_simulation):
         return None
 
-    term_types = { 0:"IZ", 1:"XX", 2:"YY"}  # general case => "XXYZ..."
+    #term_types = { 0:"IZ", 1:"XX", 2:"YY"}  # general case => "XXYZ..."
     for it in tqdm(range(max_iterations)):
         print("iteration: ", it)
         ## make controlled U = exp(-iHδt * it)
         Ui = PauliEvolutionGate(hamiltonian_op, it*delta_t, 
-                                synthesis=SuzukiTrotter(order=2,reps=trotter_steps))
+                                synthesis=SuzukiTrotter(order=trotter_rank,reps=trotter_steps))
+        qcs, term_types, idxs_circuit = prepare_qc_for_QKrylov(hamiltonian_op, Uprep, Ui, Ntar, Bosonic, using_statevector=using_statevector, verbose=True)
+
         gate_cUi = make_cU(Uprep, Ui, Ntar)
         Unitaries.append(gate_cUi)
         N[it, it] = 1.0
@@ -361,30 +477,10 @@ def QuantumKrylov(
         for j in range(it-1, -1, -1):
             gate_cUj = Unitaries[j]
             U_ij = measure_overlap(num_shot, Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, 
-                                   sampler, backend, using_statevector, do_simulation)
+                                   sampler, using_statevector, do_simulation)
             N[it, j] = U_ij
             N[j, it] = np.conj(U_ij)
-        ### evaluate H_ii no need ancilla qubit
-        # ansatz, ansatz+All-H, ansatz+All-SdagH
-        qcs = [ ]
-        for idx_term in range(len(term_types)):
-            term = term_types[idx_term]
-            qc = QuantumCircuit(Ntar)
-            qc.append(Uprep, range(Ntar))
-            qc.append(Ui, range(Ntar))
-            if term == "IZ":
-                pass
-            elif term == "XX":
-                qc.h(range(Ntar))
-            elif term == "YY":
-                qc.sdg(range(Ntar))
-                qc.h(range(Ntar))
-            else:
-                raise ValueError(f"Unsupported term type: {term}")
-            if not(using_statevector):
-                qc.measure_all()
-            qcs.append(qc)
-                      
+        ### evaluate H_ii no need ancilla qubit                      
         if using_statevector:
             sim = AerSimulator(method='statevector')
             results = [ ]
@@ -394,33 +490,41 @@ def QuantumKrylov(
                 job = sim.run(qc_sv)
                 result = job.result()
                 psi_final = result.get_statevector(qc_sv)
-                results.append(psi_final.probabilities_dict())
+                results.append([psi_final.probabilities_dict(), qc_sv.layout])
         else:
             job = sampler.run(qcs, shots=num_shot)
             results  = job.result()
 
         # Comparison with Aer statevector simulator
-
         Hsum = 0.0
         for idx_H in range(len(Hamil_paulis)):
             op_string = Hamil_paulis[idx_H].to_label()
             idx_relevant = get_idx_to_measure(op_string)
-            idx_circuit = get_idx_circuit(op_string, term_types)
+            idx_circuit = idxs_circuit[idx_H]
             if using_statevector:
-                res = results[idx_circuit]
+                res, qlayout = results[idx_circuit]
+                res = reorder_based_on_layout(res, qlayout)
             else:
-                res = results[idx_circuit].data.meas.get_counts()
+                res = results[idx_circuit].data.meas.get_counts()                    
             expval, dummy, dummy_ = expec_Zstring(res, idx_relevant)
+            # if verbose:
+            #     print(f"idx_H: {idx_H}, op_string: {op_string},",
+            #           f"idx_rel: {idx_relevant}, <op> ", expval,
+            #           f"expval: {expval * Hamil_coeffs[idx_H]}")
             Hsum += Hamil_coeffs[idx_H] * expval
         H[it, it] = Hsum
+        if verbose:
+            print(f"H[diag={it}] = {Hsum}")
 
-        ### evaluate H_ij ancilla qubit is needed
+        ### evaluate H_ij non-diagonal terms where an ancilla qubit is needed
         for j in range(it-1, -1, -1):
             gate_cUj = Unitaries[j]
             qcs_re = []
             qcs_im = []
-            make_Circ_forNondiagH(term_types, Ntar, ancilla_qubits, target_qubits,
-                                  gate_cUi, gate_cUj, qcs_re, qcs_im, using_statevector)
+            make_Circ_forNondiagH(term_types,
+                                  Ntar, ancilla_qubits, target_qubits,
+                                  gate_cUi, gate_cUj, qcs_re, qcs_im, 
+                                  using_statevector)
 
             # Re part
             if using_statevector:
@@ -433,14 +537,14 @@ def QuantumKrylov(
                     job = sim.run(qc_sv)
                     result = job.result()
                     psi_final = result.get_statevector(qc_sv)
-                    results_Re.append(psi_final.probabilities_dict())
+                    results_Re.append([psi_final.probabilities_dict(), qc_sv.layout])
                 for qc in qcs_im:
                     qc_sv = transpile(qc, sim)
                     qc_sv.save_statevector()
                     job = sim.run(qc_sv)
                     result = job.result()
                     psi_final = result.get_statevector(qc_sv)
-                    results_Im.append(psi_final.probabilities_dict())
+                    results_Im.append([psi_final.probabilities_dict(), qc_sv.layout])
             else:
                 job = sampler.run(qcs_re, shots=num_shot)
                 results_Re = job.result()
@@ -450,12 +554,13 @@ def QuantumKrylov(
             Re_H_ij = Im_H_ij = 0.0
             for idx_H in range(len(Hamil_paulis)):
                 op_string = Hamil_paulis[idx_H].to_label()
-                idx_circuit = get_idx_circuit(op_string, term_types)
-
                 idx_relevant = get_idx_to_measure(op_string)
+                idx_circuit = idxs_circuit[idx_H]
                 if using_statevector:
-                    res_Re = results_Re[idx_circuit]
-                    res_Im = results_Im[idx_circuit]
+                    res_Re, layout_Re = results_Re[idx_circuit]
+                    res_Re = reorder_based_on_layout(res_Re, layout_Re)
+                    res_Im, layout_Im = results_Im[idx_circuit]
+                    res_Im = reorder_based_on_layout(res_Im, layout_Im)
                 else:
                     res_Re = results_Re[idx_circuit].data.meas.get_counts()
                     res_Im = results_Im[idx_circuit].data.meas.get_counts()
@@ -469,6 +574,7 @@ def QuantumKrylov(
 
             H[it, j] = Re_H_ij + 1j * Im_H_ij
             H[j, it] = Re_H_ij - 1j * Im_H_ij
+            print(f"H[off-diag={it},{j}] = {H[it, j]}")
 
         # solve generalized eigenvalue problem
         Nsub = N[: it + 1, : it + 1]
@@ -504,6 +610,7 @@ def construct_X_and_Y(snapshots, d=8):  # d is the number of delay
             Y[i, j] = snapshots[idx + 1]
     return X, Y
 
+
 def lambda_plot(lam, Ens):
     fig = plt.figure(figsize=(5, 5))
     ax = fig.add_subplot(111)
@@ -517,6 +624,7 @@ def lambda_plot(lam, Ens):
     plt.savefig("lambda_plot.pdf", bbox_inches='tight', pad_inches = 0.05)
     plt.close()
 
+
 def ODMD(
     Uprep: QuantumCircuit,
     HamiltonianOps: SparsePauliOp,
@@ -525,16 +633,16 @@ def ODMD(
     trotter_rank: int,
     trotter_steps: int,
     sampler,
-    backend,
     ancilla_qubits,
     target_qubits,
     num_shot: int = 10**4,
     using_statevector: bool = True,
-    d: int = 8,
+    dim_Hankel: int = 8,
     tol_SVD: float = 1.0e-8,
     verbose: bool = False,
     plot_lambda=False,
-    tol_lambda = 1.e-2
+    tol_lambda = 1.e-2,
+    energy_shift=0.0
 ):
     Ntar = len(target_qubits)
 
@@ -558,7 +666,6 @@ def ODMD(
             ancilla_qubits,
             target_qubits,
             sampler,
-            backend,
             using_statevector,
         )
         print(f"overlap @{it:3d}: {overlap}")
@@ -571,7 +678,11 @@ def ODMD(
     # Observable DMD
     if verbose:
         print("snapshots of <U0|Uj>:", snapshots)
-    X, Y = construct_X_and_Y(snapshots, d)
+    if dim_Hankel >= max_iterations:
+        dim_Hankel = max_iterations // 2 + 1
+        print(f"dim_Hankel is set to {dim_Hankel} since the original value is too large for the number of snapshots.")
+
+    X, Y = construct_X_and_Y(snapshots, dim_Hankel)
 
     # SVD of X
     U, Sigma, Vh = np.linalg.svd(X, full_matrices=False)
@@ -601,13 +712,13 @@ def ODMD(
             print("Increasing the tolerance by a factor of 10.")
             tol_lambda *= 10
 
-    print("lam", lam)
     print("|lam|", np.abs(lam))
     idx_remax = np.argmin(np.abs(np.abs(lam)-1))
 
     ## argument of eigenvalues
     arg_lam = np.angle(lam)
     Ens = list(-(arg_lam) / delta_t)
+    Ens = [ E + energy_shift for E in Ens]
     print("Ens:", Ens)
 
     arg_in0to2pi = arg_lam % (2 * np.pi)
@@ -615,9 +726,6 @@ def ODMD(
     E0 = -arg_lam[idx_E0] / delta_t
     Eremax = -arg_lam[idx_remax] / delta_t
 
-    print(f"E0: {E0:12.8f} E closest to unit circle: {Eremax:12.8f}")
-    print("")
-
     if plot_lambda:
         lambda_plot(lam, Ens)
-    return Eremax
+    return Ens

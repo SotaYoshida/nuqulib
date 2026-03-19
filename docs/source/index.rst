@@ -25,29 +25,50 @@ and try a subspace method called QSCI (a.k.a. SQD) through `NuclearToolkit.jl <h
 Installation
 *************************
 
-We assume you are using a virtual environment. If not, we recommend creating one.
-
-A recommended environment to set up the dependencies and run NuQuLib is one like `poetry`.
+A recommended environment to set up the dependencies and run NuQuLib is one like `uv`, which is a tool for managing Python virtual environments and dependencies.
+You can create a new environment and install the dependencies using the following commands:
 
 .. code-block:: bash
-   :caption: poetry
+   :caption: uv
 
-   poetry install
-   poetry run <your_command> <your_args>
+   uv init --package your_project
 
-If you are using `pip`, we recommend installing the dependencies as follows:
+Then you will get directory structure like this:
+
+.. code-block:: bash
+
+   your_project/
+   ├── .git
+   ├── .gitignore
+   ├── .python-version
+   ├── pyproject.toml   
+   └── README.md
+   ├── src
+   
+In the root directory of NuQuLib (or your project), you can install the dependencies using the following command:
+
+.. code-block:: bash
+   :caption: uv
+
+   uv sync
+
+If you are using `pip`, you may install the dependencies using the following command:
 
 .. code-block:: bash
    :caption: pip
 
-   pip install -r requirements.txt
-   pip install -e .
+   pip install -e /path/to/nuqulib
+
+However, compatibility with `pip` is not guaranteed, and we recommend using `uv` instead.
+
+When a GPU is available, you need to remove `qiskit-aer` installed by default and install `qiskit-aer-gpu` instead.
+
 
 **************************
 Tutorials
 **************************
 
-A tutorial notebook is available at `here <https://github.com/SotaYoshida/nuqulib/blob/main/examples/tutorial_NuQuLib.ipynb>`_.
+A tutorial notebook is available at `here <https://github.com/SotaYoshida/nuqulib/blob/main/tutorial_NuQuLib.ipynb>`_.
 
 
 *************************

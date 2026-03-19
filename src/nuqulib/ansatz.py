@@ -69,39 +69,112 @@ def _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton: bool):
         spe_dict = Hamiltonian_obj.Hamildict['SPE']['p']
         for i in range(n_qubits_p):
             energy = _diag_spe(spe_dict, i)
-            jz = Hamiltonian_obj.msps[i].jz
-            entries.append((i, energy, jz))
+            msp = Hamiltonian_obj.msps[i]
+            entries.append((i, energy, msp.n, msp.l, msp.j, msp.jz))
     else:
         spe_dict = Hamiltonian_obj.Hamildict['SPE']['n']
         for i in range(n_qubits_n):
             energy = _diag_spe(spe_dict, i)
-            jz = Hamiltonian_obj.msps[i + n_qubits_p].jz
-            entries.append((i, energy, jz))
+            msp = Hamiltonian_obj.msps[i + n_qubits_p]
+            entries.append((i, energy, msp.n, msp.l, msp.j, msp.jz))
     return entries
 
-def _dp_select(entries, n_select: int):
-    dp = {0: {0: (0.0, None, None)}}
-    for idx, energy, jz in entries:
-        for k in range(min(n_select, len(entries)), 0, -1):
-            if (k - 1) not in dp:
-                continue
-            prev_layer = dp[k - 1]
-            cur_layer = dp.setdefault(k, {})
-            for m, (e_prev, _, _) in prev_layer.items():
-                new_m = m + jz
-                new_e = e_prev + energy
-                if new_m not in cur_layer or new_e < cur_layer[new_m][0]:
-                    cur_layer[new_m] = (new_e, m, idx)
-    return dp
+def _build_pair_groups(entries):
+    grouped = {}
+    standalone = []
+    for idx, energy, n, l, j, jz in entries:
+        if jz == 0:
+            standalone.append({
+                "plus": None,
+                "minus": None,
+                "single": (idx, energy, jz, j),
+            })
+            continue
+        key = (n, l, j, abs(jz))
+        slot = grouped.setdefault(key, {"plus": None, "minus": None, "single": None})
+        if jz > 0:
+            slot["plus"] = (idx, energy, jz, j)
+        else:
+            slot["minus"] = (idx, energy, jz, j)
 
-def _backtrack(dp, n_select: int, m_target: int):
+    groups = []
+    for key in sorted(grouped.keys()):
+        groups.append(grouped[key])
+    groups.extend(standalone)
+    return groups
+
+
+def _score_is_better(candidate, current, tol: float = 1e-12):
+    if current is None:
+        return True
+    pair_c, energy_c, jscore_c = candidate
+    pair_o, energy_o, jscore_o = current
+    if pair_c != pair_o:
+        return pair_c > pair_o
+    if abs(energy_c - energy_o) > tol:
+        return energy_c < energy_o
+    return jscore_c > jscore_o
+
+
+def _dp_select_pair_first(entries, n_select: int):
+    groups = _build_pair_groups(entries)
+    layers = [{(0, 0): (0, 0.0, 0)}]
+    parents = []
+
+    for group in groups:
+        prev_layer = layers[-1]
+        cur_layer = {}
+        cur_parent = {}
+
+        options = [(0, 0, 0, 0.0, 0, [])]
+
+        if group["single"] is not None:
+            idx, energy, jz, j = group["single"]
+            options.append((1, jz, 0, energy, j, [idx]))
+        else:
+            minus = group["minus"]
+            plus = group["plus"]
+            if minus is not None:
+                idx, energy, jz, j = minus
+                options.append((1, jz, 0, energy, j, [idx]))
+            if plus is not None:
+                idx, energy, jz, j = plus
+                options.append((1, jz, 0, energy, j, [idx]))
+            if minus is not None and plus is not None:
+                idx_m, e_m, _, j = minus
+                idx_p, e_p, _, _ = plus
+                options.append((2, 0, 1, e_m + e_p, 2 * j, [idx_m, idx_p]))
+
+        for (k_prev, m_prev), score_prev in prev_layer.items():
+            for n_add, m_add, pair_add, e_add, j_add, picked in options:
+                k_new = k_prev + n_add
+                if k_new > n_select:
+                    continue
+                m_new = m_prev + m_add
+                score_new = (
+                    score_prev[0] + pair_add,
+                    score_prev[1] + e_add,
+                    score_prev[2] + j_add,
+                )
+                state_new = (k_new, m_new)
+                if _score_is_better(score_new, cur_layer.get(state_new)):
+                    cur_layer[state_new] = score_new
+                    cur_parent[state_new] = ((k_prev, m_prev), picked)
+
+        layers.append(cur_layer)
+        parents.append(cur_parent)
+
+    return layers, parents
+
+
+def _backtrack_pair_first(parents, n_select: int, m_target: int):
+    state = (n_select, m_target)
     selected = []
-    m = m_target
-    for k in range(n_select, 0, -1):
-        energy, prev_m, idx = dp[k][m]
-        selected.append(idx)
-        m = prev_m
-    return list(reversed(selected))
+    for group_idx in range(len(parents) - 1, -1, -1):
+        prev_state, picked = parents[group_idx][state]
+        selected.extend(picked)
+        state = prev_state
+    return sorted(selected)
 
 
 def lowest_filling_ansatz(
@@ -113,9 +186,9 @@ def lowest_filling_ansatz(
 ):
     """Constructs a lowest-filling ansatz circuit for protons and neutrons.
 
-    This function creates a quantum circuit that initializes the qubits
-    corresponding to protons and neutrons in their lowest energy states
-    by applying X gates to the appropriate qubits.
+    This function creates a quantum circuit by first preferring
+    zero-seniority (jz, -jz) pair fillings and then occupying additional
+    orbitals to satisfy the requested total magnetic quantum number Mtot.
     The ordering of single-particle states (msps_p and msps_n) can vary
     with a specific choice of the interaction.
 
@@ -144,30 +217,52 @@ def lowest_filling_ansatz(
     entries_p = _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton=True)
     entries_n = _build_entries(Hamiltonian_obj, n_qubits_p, n_qubits_n, is_proton=False)
 
-    dp_p = _dp_select(entries_p, proton_number)
-    dp_n = _dp_select(entries_n, neutron_number)
+    layers_p, parents_p = _dp_select_pair_first(entries_p, proton_number)
+    layers_n, parents_n = _dp_select_pair_first(entries_n, neutron_number)
 
-    if proton_number not in dp_p or neutron_number not in dp_n:
+    final_p = {
+        m: score for (k, m), score in layers_p[-1].items() if k == proton_number
+    }
+    final_n = {
+        m: score for (k, m), score in layers_n[-1].items() if k == neutron_number
+    }
+
+    if not final_p or not final_n:
         raise ValueError("Unable to build DP tables for requested particle numbers.")
 
     best = None
-    for m_p, (e_p, _, _) in dp_p[proton_number].items():
+    for m_p, score_p in final_p.items():
         m_n = _Mtot - m_p
-        if m_n not in dp_n[neutron_number]:
+        if m_n not in final_n:
             continue
-        e_n = dp_n[neutron_number][m_n][0]
-        total_e = e_p + e_n
-        if best is None or total_e < best[0]:
-            best = (total_e, m_p, m_n)
+        score_n = final_n[m_n]
+        total_pairs = score_p[0] + score_n[0]
+        total_e = score_p[1] + score_n[1]
+        total_jscore = score_p[2] + score_n[2]
+        candidate = (total_pairs, total_e, total_jscore, m_p, m_n)
+        if best is None:
+            best = candidate
+        else:
+            best_pairs, best_e, best_jscore, _, _ = best
+            if (
+                total_pairs > best_pairs
+                or (total_pairs == best_pairs and total_e < best_e - 1e-12)
+                or (
+                    total_pairs == best_pairs
+                    and abs(total_e - best_e) <= 1e-12
+                    and total_jscore > best_jscore
+                )
+            ):
+                best = candidate
 
     if best is None:
         raise ValueError(
             f"No lowest-filling configuration satisfies total M={_Mtot} with Z={proton_number}, N={neutron_number}."
         )
 
-    _, m_p_best, m_n_best = best
-    selected_p = _backtrack(dp_p, proton_number, m_p_best)
-    selected_n = _backtrack(dp_n, neutron_number, m_n_best)
+    _, _, _, m_p_best, m_n_best = best
+    selected_p = _backtrack_pair_first(parents_p, proton_number, m_p_best)
+    selected_n = _backtrack_pair_first(parents_n, neutron_number, m_n_best)
 
     ansatz = QuantumCircuit(n_qubit)
     for idx in selected_p:
