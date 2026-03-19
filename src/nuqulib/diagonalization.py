@@ -35,7 +35,10 @@ def Diagonalize_Hamiltonian(
     num_evals = len(evals)
     num_show = min(10, num_evals)
     print(np.sort(evals.real)[:num_show])
-    return basis, Hsub, evals
+    # Sort idxs by their contribution to ground state energy
+    idxs_sorted = np.argsort(np.abs(evecs[:, 0]))[::-1]
+    return {"basis": basis, "Hsub": Hsub, "evals": evals, "idxs_sorted": idxs_sorted,
+            "evecs": evecs}
 
 
 def fixed_N_P_M_basis_neutron(n_qubits, n_particles, msps, parity, M_tot): # M is doubled

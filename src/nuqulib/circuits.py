@@ -324,7 +324,10 @@ def get_idx_to_measure(pauli_str: str, Qiskit_order: bool = True) -> list[int]:
 
 
 def expec_Zstring(
-    res: dict, idx_relevant: list[int], Qiskit_ordering: bool = True, target_qubits: list[int] = [], ancilla_qubit: int | None = None
+    res: dict, idx_relevant: list[int],
+    Qiskit_ordering: bool = True, 
+    target_qubits: list[int] = [], 
+    ancilla_qubit: int | None = None
 ):
     """Calculate expectation value of Z-string measurement from results.
     

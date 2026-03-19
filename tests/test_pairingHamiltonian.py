@@ -180,13 +180,14 @@ def test_QKrylov():
     Uprep = pair_ansatz_qiskit([ ], Nq, Nocc, method="HF")
     ancilla_qubits=[0]
     target_qubits=list(range(1,Nq+1))
-    sampler = backend = None
+    sampler = None
 
     Hmat, Nmat, Ens = QuantumKrylov(
-        Uprep, hamiltonian_op, sampler, backend,
+        Uprep, hamiltonian_op, sampler, 
         ancilla_qubits, target_qubits, delta_t=1.0,
         max_iterations=6, trotter_steps=5,
-        using_statevector=True)
+        using_statevector=True,
+        Bosonic=True)
     
     Eestimated = np.min(Ens[-1])
     assert abs(Egs - Eestimated) < 1.e-3, f"Expected energy {Egs} but got {Eestimated} with difference {abs(Egs - Eestimated)}"

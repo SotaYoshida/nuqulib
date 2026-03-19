@@ -53,8 +53,6 @@ def vqe_example_pennylane(
     H_1b_of, H_pp_of, H_nn_of, H_pn_of = define_Hamil_in_OpenFermion(
         Hdict, proton_number, neutron_number
     )
-    print(f"H_1b_of: {H_1b_of}")
-    print(f"H_nn_of: {H_nn_of}")
 
     H = of.ops.FermionOperator()
     for ch in using_chs:
@@ -198,6 +196,7 @@ def define_Hamil_in_OpenFermion(Hamil_dict, proton_number=1, neutron_number=1):
     Hpp = of.ops.FermionOperator()
     Hnn = of.ops.FermionOperator()
     Hpn = of.ops.FermionOperator()
+
     ## One-body terms
     h1b = Hamil_dict["SPE"]
     for key, value in h1b["p"].items():
@@ -208,7 +207,7 @@ def define_Hamil_in_OpenFermion(Hamil_dict, proton_number=1, neutron_number=1):
         i, j = key  # now assuming i = j
         i -= 1
         H1b += of.ops.FermionOperator(f"{i}^ {i}", value)
-    print(f"H1b(qml): {H1b}")
+
     # Two-body tems
     if proton_number > 0:
         for tmp in Hamil_dict["Vpp"]:
@@ -224,8 +223,6 @@ def define_Hamil_in_OpenFermion(Hamil_dict, proton_number=1, neutron_number=1):
                 Hpp += of.ops.FermionOperator(f"{c}^ {d}^ {b} {a}", V)
 
     if neutron_number > 0:
-        n_qubits_p  = max(Hamil_dict["SPE"]["p"].keys(), key=lambda x: x[0])[0]
-        print("n_qubits_p", n_qubits_p)
         for tmp in Hamil_dict["Vnn"]:
             a, b, c, d, V = tmp
             a = a - 1 
@@ -247,4 +244,5 @@ def define_Hamil_in_OpenFermion(Hamil_dict, proton_number=1, neutron_number=1):
             d = d - 1
             Hpn += of.ops.FermionOperator(f"{a}^ {b}^ {d} {c}", V / 2)
             Hpn += of.ops.FermionOperator(f"{d}^ {c}^ {a} {b}", V / 2)
+            
     return H1b, Hpp, Hnn, Hpn
