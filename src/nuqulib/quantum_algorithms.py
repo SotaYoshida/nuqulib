@@ -412,7 +412,8 @@ def QuantumKrylov(
     using_statevector=False,
     do_simulation=True,
     Bosonic=True,
-    verbose=False
+    verbose=False,
+    tol_eig=1.e-6
 ):
     """Function to perform Quantum Krylov subspace method.
 
@@ -581,7 +582,7 @@ def QuantumKrylov(
         Hsub = H[: it + 1, : it + 1]
         lam, v = scipy.linalg.eigh(Nsub)
         # truncate orthogonal basis with small eigenvalues
-        cols = [i for i in range(it + 1) if lam[i] >= 1.0e-6]
+        cols = [i for i in range(it + 1) if lam[i] >= tol_eig]
         r = len(cols)
         Ur = v[:, cols]
         sq_Sigma_inv = np.diag(lam[cols] ** (-0.5))
@@ -712,20 +713,18 @@ def ODMD(
             print("Increasing the tolerance by a factor of 10.")
             tol_lambda *= 10
 
-    print("|lam|", np.abs(lam))
-    idx_remax = np.argmin(np.abs(np.abs(lam)-1))
+    #print("E(ODMD)", "".join([f"{-np.angle(lams[i])/delta_t:8.3f} " for i in range(len(lams))]))
+    #print("|lams| ", "".join([f"{np.abs(lams[i]):8.3f} " for i in range(len(lams))]))
+
+    idx_mask = [ i for i in range(len(lams)) if np.abs((np.abs(lams[i])-1)) < tol_lambda]
+    ## argument of eigenvalues
+    arg_lam = np.angle(lams[idx_mask])
+    Ens = list(-(arg_lam) / delta_t)
+    Ens = [ E + energy_shift for E in Ens]
 
     ## argument of eigenvalues
     arg_lam = np.angle(lam)
     Ens = list(-(arg_lam) / delta_t)
     Ens = [ E + energy_shift for E in Ens]
-    print("Ens:", Ens)
 
-    arg_in0to2pi = arg_lam % (2 * np.pi)
-    idx_E0 = np.argmax(arg_in0to2pi)
-    E0 = -arg_lam[idx_E0] / delta_t
-    Eremax = -arg_lam[idx_remax] / delta_t
-
-    if plot_lambda:
-        lambda_plot(lam, Ens)
-    return Ens
+    return Ens, lams[idx_mask]

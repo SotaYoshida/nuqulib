@@ -33,12 +33,12 @@ def test_ODMD():
     ancilla_qubits=[0]
     target_qubits=list(range(1,n_qubits+1))
 
-    Ens = ODMD(U_prep, H_mapped, delta_t, max_iterations, 
-              trotter_rank, trotter_steps, 
-              sampler,  
-              ancilla_qubits, target_qubits,
-              using_statevector=using_statevector, dim_Hankel=10,
-              plot_lambda=False)
+    Ens, lams = ODMD(U_prep, H_mapped, delta_t, max_iterations, 
+                     trotter_rank, trotter_steps, 
+                     sampler,  
+                     ancilla_qubits, target_qubits,
+                     using_statevector=using_statevector, dim_Hankel=10,
+                     plot_lambda=False)
     print("ODMD estimated energies:", Ens)
     E0 = np.min(Ens)
     assert ( 100*abs(E0 - Eexact)/abs(Eexact) < 5), f"ODMD test failed: {E0} != {Eexact} within 5% tolerance"
