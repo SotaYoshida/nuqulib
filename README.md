@@ -8,3 +8,7 @@ Nuclear Quantum Computing Library
 
 Detailed information on how to use NuQuLib, please refer to the official documentation:
 https://sotayoshida.github.io/nuqulib/
+
+# Authors
+
+Primary developers: Sota Yoshida, Alessandro Baroni, Takayuki Miyagi, Ermal Rrapaj
