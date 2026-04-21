@@ -507,6 +507,19 @@
                     <span class="n">msps_n</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Orbit_nljjztz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">msps_p</span><span class="p">,</span> <span class="n">msps_n</span></div>
 
+
+
+<div class="viewcode-block" id="t_count">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.t_count">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">t_count</span><span class="p">(</span><span class="n">eps_tol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ross-selinger&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">eps_tol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;precision must be positive, got </span><span class="si">{</span><span class="n">eps_tol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;bocharov&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">1.149</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">eps_tol</span><span class="p">)</span> <span class="o">+</span> <span class="mf">9.2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;ross-selinger&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">eps_tol</span><span class="p">)))</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown rotation model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 </pre></div>
         </article>
       </div>

@@ -248,11 +248,8 @@ and try a subspace method called QSCI (a.k.a. SQD) through <a class="reference e
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>A recommended environment to set up the dependencies and run NuQuLib is one like <cite>uv</cite>, which is a tool for managing Python virtual environments and dependencies.
 You can create a new environment and install the dependencies using the following commands:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">uv</span><a class="headerlink" href="#id1" title="Link to this code">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>init<span class="w"> </span>--package<span class="w"> </span>your_project
 </pre></div>
-</div>
 </div>
 <p>Then you will get directory structure like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>your_project/
@@ -265,18 +262,12 @@ You can create a new environment and install the dependencies using the followin
 </pre></div>
 </div>
 <p>In the root directory of NuQuLib (or your project), you can install the dependencies using the following command:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">uv</span><a class="headerlink" href="#id2" title="Link to this code">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync
 </pre></div>
 </div>
-</div>
 <p>If you are using <cite>pip</cite>, you may install the dependencies using the following command:</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">pip</span><a class="headerlink" href="#id3" title="Link to this code">¶</a></div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>/path/to/nuqulib
 </pre></div>
-</div>
 </div>
 <p>However, compatibility with <cite>pip</cite> is not guaranteed, and we recommend using <cite>uv</cite> instead.</p>
 <p>When a GPU is available, you need to remove <cite>qiskit-aer</cite> installed by default and install <cite>qiskit-aer-gpu</cite> instead.</p>

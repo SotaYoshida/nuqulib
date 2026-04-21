@@ -272,6 +272,13 @@ should be accompanied by docstrings. Since we are using sphinx for
 documentation, please follow the docstring format used in the
 existing code or refer to the Sphinx documentation for guidance.</p>
 </li>
+<li><p>Managing the dependencies:</p>
+<blockquote>
+<div><p>Please consider to use <code class="docutils literal notranslate"><span class="pre">uv</span></code> to manage the dependencies for development, and
+do not modify the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file directly.
+If you need to add a new dependency, please do it with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">add</span> <span class="pre">&lt;package-name&gt;</span></code> and then commit the changes in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code>.</p>
+</div></blockquote>
+</li>
 </ul>
 <p>Since we are using GitHub Actions, only the allowed users can run the test jobs on GitHub Actions.
 If you are not an allowed user, please run the test codes locally before making a pull request with pytest.</p>
@@ -284,25 +291,24 @@ If you are not an allowed user, please run the test codes locally before making 
 <li><p>Create a new branch for your changes:</p></li>
 <li><p>Make your changes to the codebase.</p></li>
 <li><p>Install the required dependencies for testing. You can do this by running:</p>
-<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span>
-<span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span>
-<span class="pre">`</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
 <p>Note that we assume you have a virtual environment set up for development.</p>
 </li>
 <li><p>Run the test suite using <cite>pytest`</cite> to ensure that your changes do not break any existing functionality:</p>
-<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">pytest</span> <span class="pre">-s</span> <span class="pre">tests/</span>
-<span class="pre">`</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-s<span class="w"> </span>tests/
+</pre></div>
+</div>
 <p>If all tests pass, you can proceed to commit your changes and push your branch to GitHub for a pull request.
 Of course, you can also run specific test files or test cases as needed.</p>
-<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">pytest</span> <span class="pre">-s</span> <span class="pre">tests/test_specific_file.py</span>
-<span class="pre">`</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-s<span class="w"> </span>tests/test_specific_file.py
+</pre></div>
+</div>
 <p>If you are willing to check the coverage of your changes, you can use the following command:</p>
-<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">pytest</span> <span class="pre">-v</span> <span class="pre">--cov=src/nuqulib/</span> <span class="pre">-s</span> <span class="pre">--cov-report=html</span>
-<span class="pre">`</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-v<span class="w"> </span>--cov<span class="o">=</span>src/nuqulib/<span class="w"> </span>-s<span class="w"> </span>--cov-report<span class="o">=</span>html
+</pre></div>
+</div>
 </li>
 </ol>
 </section>

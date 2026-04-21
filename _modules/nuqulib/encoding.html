@@ -262,10 +262,13 @@
 <span class="sd">    Args:</span>
 <span class="sd">        Fermionic_op (FermionicOp): Fermionic operator to be mapped.</span>
 <span class="sd">        n_qubits (int): Number of qubits for the mapping.</span>
+<span class="sd">        init_qubit (int): Starting index for qubits in the mapping.</span>
 <span class="sd">        method (str): Encoding method. Options: &quot;JordanWigner&quot;/&quot;JW&quot;/&quot;Jordan-Wigner&quot;</span>
 <span class="sd">                     or &quot;BravyiKitaev&quot;/&quot;BK&quot;/&quot;Bravyi-Kitaev&quot;.</span>
 <span class="sd">        Hamildict_specified (dict): Dictionary of Hamiltonian terms in fermionic form.</span>
 <span class="sd">                     used in the special case, HATTMapper.</span>
+<span class="sd">        filepath (str|os.PathLike): File path for saving/loading mapper in the case of HATTMapper.</span>
+<span class="sd">        verbose (bool): If True, print intermediate mapping results for debugging.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        SparsePauliOp: Mapped Pauli operator.</span>
@@ -317,12 +320,12 @@
     <span class="n">worker_list</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
     <span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span> <span class="o">=</span> <span class="n">op_pn_key</span>
     <span class="n">coeff_overall</span> <span class="o">=</span> <span class="n">op_pn</span><span class="p">[</span><span class="n">op_pn_key</span><span class="p">]</span>
-     
+    <span class="n">show_verbose</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HATTMapper&quot;</span><span class="p">:</span>
         <span class="n">n_cre</span><span class="p">,</span> <span class="n">n_ani</span> <span class="o">=</span> <span class="n">n_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="n">n_cre</span> <span class="o">=</span> <span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_cre</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
         <span class="n">n_ani</span> <span class="o">=</span> <span class="s2">&quot;-_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_ani</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
-        <span class="c1">#print(f&quot;p_str: {p_str} =&gt; {p_cre} {p_ani}, n_str: {n_str} =&gt; {n_cre} {n_ani}&quot;)</span>
         <span class="n">op_p</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
             <span class="n">FermionicOp</span><span class="p">({</span><span class="n">p_str</span> <span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_p</span><span class="p">),</span> \
             <span class="n">n_qubits_p</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">filepath_p</span><span class="p">)</span>
@@ -336,6 +339,7 @@
                                     <span class="n">n_qubits_n</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">idx_p</span><span class="p">,</span> <span class="n">pauli_p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">op_p</span><span class="o">.</span><span class="n">paulis</span><span class="p">):</span>
+        <span class="n">pauli_p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_p</span><span class="p">)</span>
         <span class="n">coeff_p</span> <span class="o">=</span> <span class="n">op_p</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">idx_p</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">idx_n</span><span class="p">,</span> <span class="n">pauli_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">op_n</span><span class="o">.</span><span class="n">paulis</span><span class="p">):</span>
             <span class="n">coeff_n</span> <span class="o">=</span> <span class="n">op_n</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="n">idx_n</span><span class="p">]</span>
@@ -343,6 +347,7 @@
             <span class="n">coeff_pn</span> <span class="o">=</span> <span class="n">coeff_p</span> <span class="o">*</span> <span class="n">coeff_n</span> <span class="o">*</span> <span class="n">coeff_overall</span>
             <span class="n">pauli</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_n</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pauli_p</span><span class="p">)</span>
             <span class="n">worker_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pauli</span><span class="p">,</span> <span class="n">coeff_pn</span><span class="p">])</span>
+
     <span class="k">return</span> <span class="n">worker_list</span></div>
 
 
@@ -350,7 +355,8 @@
 <div class="viewcode-block" id="mapping_of_pn_hamiltonians">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.mapping_of_pn_hamiltonians">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mapping_of_pn_hamiltonians</span><span class="p">(</span><span class="n">op_pn</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
-                               <span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                               <span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                               <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
                                <span class="n">Hamildict_specified_p</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                                <span class="n">Hamildict_specified_n</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                                <span class="n">filepath_p</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
@@ -373,8 +379,8 @@
 <span class="sd">        filepath_p (str|os.PathLike): File path for saving/loading proton mapper.</span>
 <span class="sd">        filepath_n (str|os.PathLike): File path for saving/loading neutron mapper.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mapping p-n Hamiltonian terms to Pauli strings using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">&quot;HATTMapper&quot;</span><span class="p">:</span>
@@ -384,6 +390,7 @@
         <span class="n">filepath_n</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
 
     <span class="n">nproc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
     <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
             <span class="n">task_pn_mapping</span><span class="p">,</span> <span class="p">[(</span><span class="n">tkey</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
@@ -397,8 +404,8 @@
         <span class="k">for</span> <span class="n">pauli</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span> 
             <span class="n">paulis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli</span><span class="p">)</span>
             <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
-    <span class="n">new_op</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">paulis</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">new_op</span></div>
+    <span class="k">return</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">paulis</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">)))</span></div>
+
 
 
 <div class="viewcode-block" id="check_XXYYterm">
