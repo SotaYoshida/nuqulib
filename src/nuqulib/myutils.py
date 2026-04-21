@@ -244,3 +244,13 @@ def count_msps(emax: int, vemin: int=0, vemax:int = 100):
                     msps_p.append(Orbit_nljjztz(n, l, j2, jz, -1))
                     msps_n.append(Orbit_nljjztz(n, l, j2, jz, +1))
     return msps_p, msps_n
+
+
+def t_count(eps_tol=1.e-9, model="ross-selinger", precision=None):
+    if eps_tol <= 0:
+        raise ValueError(f"precision must be positive, got {eps_tol}")
+    if model == "bocharov":
+        return int(round(1.149 * np.log2(1.0 / eps_tol) + 9.2))
+    if model == "ross-selinger":
+        return int(np.ceil(3.0 * np.log2(1.0 / eps_tol)))
+    raise ValueError(f"Unknown rotation model: {model}")

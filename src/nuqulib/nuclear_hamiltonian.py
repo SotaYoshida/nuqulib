@@ -17,7 +17,7 @@ Key Classes:
 """
 
 import copy
-from collections import Counter
+from collections import Counter, defaultdict
 import gzip
 import itertools
 import multiprocessing
@@ -120,7 +120,8 @@ class JTcoupledOrbitals:
         return dict_sps2JTorbitals
 
 
-def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0, ncsm=False):
+def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF=None, emax: int=20, e3max: int=0, ncsm=False,
+                    mapping_method="Jordan-Wigner"):
     """Get nuclear Hamiltonian from interaction files.
 
     This is a convenience wrapper function that constructs a Hamiltonian object
@@ -135,6 +136,7 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
         emax (int, optional): Maximum excitation energy for truncation. Defaults to 20.
         e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.
         ncsm (bool, optional): Whether using no-core shell model. Defaults to False.
+        mapping_method (str, optional): The mapping method for converting fermionic operators to Pauli operators. Defaults to "Jordan-Wigner".
 
     Returns:
         tuple: A tuple containing:
@@ -147,7 +149,9 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
         >>> hamil, H_mapped, p_qubits, n_qubits = get_Hamiltonian("interaction.snt", 8, 8)
         >>> print(f"Total qubits: {len(p_qubits) + len(n_qubits)}")
     """
-    if fn_3NF != "":
+    assert mapping_method == "Jordan-Wigner", f"Only Jordan-Wigner mapping is implemented, but {mapping_method} was specified."
+
+    if fn_3NF != None:
         hamil = Hamiltonian(fn_NN, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF)
     else:
         hamil = Hamiltonian(fn_NN, Z, N, ncsm=ncsm, emax_truncate=emax)
@@ -157,9 +161,13 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     neutron_qubits = list(range(hamil.n_qubits_p, n_qubits))
 
     Hdict_M = hamil.get_mscheme_H(opform=True)
-    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform("Jordan-Wigner")
+    H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
 
-    Hamil_ShellModel = H_1b_p + H_1b_n 
+    Hamil_ShellModel = 0 * H_1b_p 
+    if hamil.vZ > 0:
+        Hamil_ShellModel += H_1b_p 
+    if hamil.vN > 0:
+        Hamil_ShellModel += H_1b_n
     if hamil.vZ > 1:
         Hamil_ShellModel += H_pp 
     if hamil.vN > 1:
@@ -167,9 +175,10 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF="", emax: int=20, e3max: int=0
     if hamil.vZ > 0 and hamil.vN > 0:
         Hamil_ShellModel += H_pn
 
-    if fn_3NF != "":
+    if fn_3NF != None:
         Hamil_ShellModel += H_3b
 
+    Hamil_ShellModel = Hamil_ShellModel.simplify()
     return hamil, Hamil_ShellModel, proton_qubits, neutron_qubits
 
 
@@ -218,7 +227,7 @@ class Hamiltonian:
     
     References:
         - T. Miyagi et al., Eur. Phys. J. A 59, 150 (2023)
-        - Standard snt format documentation
+        - Standard snt format used by KSHELL and NuclearToolkit.jl for nuclear interactions
     """
 
     def __init__(
@@ -240,6 +249,7 @@ class Hamiltonian:
             fn_NN (str or PathLike): Path to two-body nuclear interaction file in snt format.
             Z (int): Number of protons in the nucleus.
             N (int): Number of neutrons in the nucleus.
+            jz (int or None, optional): Total Jz for the M-scheme basis. If None, no Jz constraint is applied. Defaults to None.
             fn_3NF (str, PathLike, or None, optional): Path to three-body force file.
                 Supports "readable.txt" and "me3j.gz" formats. Defaults to None.
             ncsm (bool, optional): Whether to use no-core shell model. If True,
@@ -374,10 +384,11 @@ class Hamiltonian:
             txt = fn_3NF.split("_ms")[-1].split(".")[0].split("_")
             e1max_file, e2max_file, e3max_file = list(map(int, txt))
         if e1max_file is None or e2max_file is None or e3max_file is None:
-            print(
-                "Warning: e1max_file, e2max, e3max_file are not set from the file name. ",
-                "For now, we used emax_truncate value for them multiplied by 1/2/3",
-            )
+            if fn_3NF is not None:
+                print(
+                    "Warning: e1max_file, e2max, e3max_file are not set from the file name. ",
+                    "For now, we used emax_truncate value for them multiplied by 1/2/3",
+                )
             e1max_file = self.emax
             e2max_file = self.emax * 2
             e3max_file = self.emax * 3
@@ -497,7 +508,6 @@ class Hamiltonian:
                         excluded.append(idx)
                         continue
                     dict_sps[idx] = count
-                    # single_particle_states.append((count, n, l, j, tz))
                     single_particle_states.append(Orbit_nljtz(n, l, j, tz))
 
                     count += 1
@@ -848,13 +858,13 @@ class Hamiltonian:
                         jz_c = morb_c.jz
                         tz_c = morb_c.tz
                         for dd in self.dict_sps2msps[d]:
-
                             if cc >= dd:
                                 continue
                             if Tz != 0 and (set([a, b]) == set([c, d])) and aa > cc:  # or (aa == cc and bb > dd):
                                 continue
                             if Tz == 0 and (set([a, b]) == set([c, d])) and aa > cc:
                                 continue
+
 
                             morb_d = self.msps[dd]
                             n_d = morb_d.n
@@ -913,7 +923,7 @@ class Hamiltonian:
                                         + str(bb - self.n_qubits_p)
                                         + " -_"
                                         + str(dd - self.n_qubits_p)
-                                    )                                    
+                                    )            
                                     if (p_str, n_str) in op_dict_pn:
                                         op_dict_pn[(p_str, n_str)] += v * diag_factor
                                     else:
@@ -955,9 +965,10 @@ class Hamiltonian:
             Hamildict = sum_over_J(Hamildict)
             return Hamildict
         
-    def mapping_opform(self, mapping_method: str, 
-                       filepath: str|os.PathLike="./",
-                       write_hamil_txt: str=""):
+    def mapping_opform(self, 
+                       mapping_method: str="Jordan-Wigner", 
+                       filepath: str|os.PathLike="./"
+                       ):
         """Map nuclear Hamiltonian to qubit operators using specified fermion-to-qubit mapping.
         
         Transforms the fermionic nuclear Hamiltonian into qubit operators using
@@ -971,8 +982,11 @@ class Hamiltonian:
 
         Returns:
             tuple: A tuple containing mapped Pauli operators:
-                - H_1b (SparsePauliOp): One-body terms
-                - H_pp (SparsePauliOp): Proton-proton terms  
+                - H_1b_p (SparsePauliOp): One-body terms for protons
+                - H_1b_n (SparsePauliOp): One-body terms for neutrons
+                - H_jz_p (SparsePauliOp): Jz terms for protons
+                - H_jz_n (SparsePauliOp): Jz terms for neutrons
+                - H_pp (SparsePauliOp): Proton-proton terms
                 - H_nn (SparsePauliOp): Neutron-neutron terms
                 - H_pn (SparsePauliOp): Proton-neutron terms
                 
@@ -995,12 +1009,13 @@ class Hamiltonian:
                                           Hamildict_specified_p = H_dict_p, 
                                           Hamildict_specified_n = H_dict_n, 
                                           filepath_p=filepath+'_p',
-                                          filepath_n=filepath+'_n')                                          
-        H_pn = removing_redundant_terms(H_pn)       
+                                          filepath_n=filepath+'_n')   
+        H_pn = removing_redundant_terms(H_pn)     
+
         if self.fn_3NF is not None:
             H_3b = self.mapping_3NF_Mscheme(method=mapping_method, filepath=filepath)
         else:
-            H_3b = None
+            H_3b = SparsePauliOp('I'*self.n_qubits, coeffs=0.0)
         
         return H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b
 
@@ -1043,14 +1058,14 @@ class Hamiltonian:
             ValueError: If the requested M-scheme state is not found.
 
         """
-        for idx, target in enumerate(self.msps):
-            n_ = target.n
-            l_ = target.l
-            j_ = target.j
-            jz_ = target.jz
-            tz_ = target.tz
-            if n == n_ and l == l_ and j == j_ and jz == jz_ and tz == tz_:
-                return idx
+        if not hasattr(self, "_midx_cache"):
+            self._midx_cache = {
+                (target.n, target.l, target.j, target.jz, target.tz): idx
+                for idx, target in enumerate(self.msps)
+            }
+        tkey = (n, l, j, jz, tz)
+        if tkey in self._midx_cache:
+            return self._midx_cache[tkey]
         raise ValueError("Requested M-scheme state not found.")
 
     def read_3NF_readable(self, verbose=False):
@@ -1125,6 +1140,15 @@ class Hamiltonian:
             )
         return pnME_3NF
 
+    def perms(selt, i1, i2, i3):
+        return {
+                (i1, i2, i3): 1,
+                (i2, i3, i1): 1,
+                (i3, i1, i2): 1,
+                (i2, i1, i3): -1,
+                (i1, i3, i2): -1,
+                (i3, i2, i1): -1,
+        }
 
     def set_mscheme_3NF(self, verbose=False):
         """Calculate the 3NF matrix elements in the mscheme.
@@ -1148,6 +1172,16 @@ class Hamiltonian:
         if verbose:
             print("Converting pn J-coupled 3NF to mscheme...")
         print("Setting up 3NF matrix elements in mscheme...")
+
+        if not hasattr(self, "_midx_cache"):
+            self._midx_cache = {
+                (target.n, target.l, target.j, target.jz, target.tz): idx
+                for idx, target in enumerate(self.msps)
+            }
+
+        cg_dict = self.CG_dict
+        get_midx = self.get_midx_from_nljjztz
+
         for key, ME_3n_pn in tqdm(self.v3b_pn.items()):
             pn_a, pn_b, pn_c, pn_d, pn_e, pn_f, Jab, Jde, Jabc = key
             orb_a = self.single_particle_states[pn_a]
@@ -1171,82 +1205,79 @@ class Hamiltonian:
             else:
                 ME_3n_pn *= 9
 
-            for m_a, m_b, m_c, m_d, m_e, m_f in itertools.product(
-                ja_range, jb_range, jc_range, jd_range, je_range, jf_range
-            ):        
+            # precalc smaller dict for CG coefficients
+            cg_ab = {}
+            for m_a in ja_range:
+                for m_b in jb_range:
+                    mab = m_a + m_b
+                    if abs(mab) > 2 * Jab:
+                        continue
+                    cg1 = get_CGs_from_dict(orb_a.j, m_a, orb_b.j, m_b, 2 * Jab, mab, cg_dict)
+                    if abs(cg1) < 1.0e-16:
+                        continue
+                    cg_ab[(m_a, m_b)] = (mab, cg1)
+            cg_de = {}
+            for m_d in jd_range:
+                for m_e in je_range:
+                    mde = m_d + m_e
+                    if abs(mde) > 2 * Jde:
+                        continue
+                    cg2 = get_CGs_from_dict(orb_d.j, m_d, orb_e.j, m_e, 2 * Jde, mde, cg_dict)
+                    if abs(cg2) < 1.0e-16:
+                        continue
+                    cg_de[(m_d, m_e)] = (mde, cg2)
+            # for m_a, m_b, m_c, m_d, m_e, m_f in itertools.product(
+            #     ja_range, jb_range, jc_range, jd_range, je_range, jf_range
+            # ):    
+            for m_a, m_b, m_c, m_d, m_e in itertools.product(
+                ja_range, jb_range, jc_range, jd_range, je_range
+            ):  
+                m_f = (m_a + m_b + m_c) - (m_d + m_e)
+                if m_f not in jf_range:
+                    continue
+
+                ab_key = (m_a, m_b)
+                de_key = (m_d, m_e)
+                if ab_key not in cg_ab or de_key not in cg_de:
+                    continue
+
+                mab, cg1 = cg_ab[ab_key]
+                mde, cg2 = cg_de[de_key]
+
                 if (m_a + m_b + m_c) != (m_d + m_e + m_f):
-                    continue
-                if abs(m_a + m_b) > 2 * Jab:
-                    continue
-                if abs(m_d + m_e) > 2 * Jde:
                     continue
                 if abs(m_a + m_b + m_c) > Jabc:
                     continue
                 if abs(m_d + m_e + m_f) > Jabc:
                     continue
-                
-                im_a = self.get_midx_from_nljjztz(
-                    orb_a.n, orb_a.l, orb_a.j, m_a, orb_a.tz
-                )
-                im_b = self.get_midx_from_nljjztz(
-                    orb_b.n, orb_b.l, orb_b.j, m_b, orb_b.tz
-                )
-                im_c = self.get_midx_from_nljjztz(
-                    orb_c.n, orb_c.l, orb_c.j, m_c, orb_c.tz
-                )
+
+                im_a = get_midx(orb_a.n, orb_a.l, orb_a.j, m_a, orb_a.tz)
+                im_b = get_midx(orb_b.n, orb_b.l, orb_b.j, m_b, orb_b.tz)
+                im_c = get_midx(orb_c.n, orb_c.l, orb_c.j, m_c, orb_c.tz)
                 if im_a == im_b or im_b == im_c or im_a == im_c:
                     continue
-                im_d = self.get_midx_from_nljjztz(
-                    orb_d.n, orb_d.l, orb_d.j, m_d, orb_d.tz
-                )
-                im_e = self.get_midx_from_nljjztz(
-                    orb_e.n, orb_e.l, orb_e.j, m_e, orb_e.tz
-                )
-                im_f = self.get_midx_from_nljjztz(
-                    orb_f.n, orb_f.l, orb_f.j, m_f, orb_f.tz
-                )
+
+                im_d = get_midx(orb_d.n, orb_d.l, orb_d.j, m_d, orb_d.tz)
+                im_e = get_midx(orb_e.n, orb_e.l, orb_e.j, m_e, orb_e.tz)
+                im_f = get_midx(orb_f.n, orb_f.l, orb_f.j, m_f, orb_f.tz)
                 if im_d == im_e or im_e == im_f or im_d == im_f:
                     continue
-                
-                cg1 = get_CGs_from_dict(
-                    orb_a.j, m_a, orb_b.j, m_b, 2 * Jab, (m_a + m_b), self.CG_dict
-                )
-                cg2 = get_CGs_from_dict(
-                    orb_d.j, m_d, orb_e.j, m_e, 2 * Jde, (m_d + m_e), self.CG_dict   
-                )
-                if abs(cg1 * cg2) < 1.0e-16:
-                    continue
-                cg3 = get_CGs_from_dict(
-                    Jab * 2, (m_a + m_b), orb_c.j, m_c, Jabc, (m_a + m_b + m_c), self.CG_dict
-                )
-                cg4 = get_CGs_from_dict(
-                    Jde * 2, (m_d + m_e), orb_f.j, m_f, Jabc, (m_d + m_e + m_f), self.CG_dict
-                )
+
+                cg3 = get_CGs_from_dict(2 * Jab, mab, orb_c.j, m_c, Jabc, (m_a + m_b + m_c), cg_dict)
+                cg4 = get_CGs_from_dict(2 * Jde, mde, orb_f.j, m_f, Jabc, (m_d + m_e + m_f), cg_dict)
+
                 cgfact = cg1 * cg2 * cg3 * cg4
                 if abs(cgfact) < 1.0e-8:
                     continue
 
                 mkey = (im_a, im_b, im_c, im_d, im_e, im_f)
-                if mkey in v3b_Mscheme.keys():
-                    v3b_Mscheme[mkey] += ME_3n_pn * cgfact
-                else:
-                    v3b_Mscheme[mkey] = ME_3n_pn * cgfact
-
-        def perms(i1, i2, i3):
-            return {
-                (i1, i2, i3): 1,
-                (i2, i3, i1): 1,
-                (i3, i1, i2): 1,
-                (i2, i1, i3): -1,
-                (i1, i3, i2): -1,
-                (i3, i2, i1): -1,
-            }
+                v3b_Mscheme[mkey] = v3b_Mscheme.get(mkey, 0.0) + ME_3n_pn * cgfact
 
         tmp = copy.copy(v3b_Mscheme)
         for key, me in tmp.items():
             i1, i2, i3, i4, i5, i6 = key
-            perms_bra = perms(i1, i2, i3)
-            perms_ket = perms(i4, i5, i6)
+            perms_bra = self.perms(i1, i2, i3)
+            perms_ket = self.perms(i4, i5, i6)
             for i123, sign_123 in perms_bra.items():
                 for i456, sign_456 in perms_ket.items():
                     v3b_Mscheme[(*i123, *i456)] = me * sign_123 * sign_456
@@ -1356,64 +1387,125 @@ class Hamiltonian:
                 result_p[p_str] = self.Hamildict['V3'][(p_str, n_str)]
         return result_p, result_n
 
-    def task_3NF_pn(self, p_str, n_str, coeff_overall, method: str, filepath: str|os.PathLike):
-        if method != "HATTMapper":
-            op_p = mapping_to_Pauli_string(
-                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
-                self.n_qubits, 0, method=method)
-            op_n = mapping_to_Pauli_string(
-                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
-                self.n_qubits, self.n_qubits_p, method=method)
+    def _map_3NF_sector_cached(self, op_str: str, is_proton: bool,
+                               method: str, filepath: str|os.PathLike):
+        """Map one proton/neutron sector operator and cache the result.
+
+        Returns:
+            tuple[list[str], np.ndarray]: Pauli labels and coefficients.
+        """
+        if not hasattr(self, "_cache_3nf_map_p"):
+            self._cache_3nf_map_p = {}
+            self._cache_3nf_map_n = {}
+
+        cache = self._cache_3nf_map_p if is_proton else self._cache_3nf_map_n
+        key = (method, str(filepath), op_str) if method == "HATTMapper" else (method, op_str)
+        if key in cache:
+            return cache[key]
+
+        if is_proton:
+            num_orb = self.n_qubits_p
+            hdict = GLOBAL_H_DICT_P
+            fn = filepath + "_p"
         else:
-            op_p = mapping_to_Pauli_string(
-                FermionicOp({p_str:coeff_overall}, num_spin_orbitals=self.n_qubits_p),
-                self.n_qubits, 0, method=method,
-                Hamildict_specified = GLOBAL_H_DICT_P, filepath=filepath+'_p')
-            op_n = mapping_to_Pauli_string(
-                FermionicOp({n_str:1.0}, num_spin_orbitals=self.n_qubits_n),
-                self.n_qubits, self.n_qubits_p, method=method,
-                Hamildict_specified = GLOBAL_H_DICT_N, filepath=filepath+'_n')
-        
-        op_list = op_p.compose(op_n,front=True).simplify()
-        return op_list
-        
-    def mapping_3NF_Mscheme(self, method="Jordan-Wigner", 
+            num_orb = self.n_qubits_n
+            hdict = GLOBAL_H_DICT_N
+            fn = filepath + "_n"
+
+        if method == "HATTMapper":
+            mapped = mapping_to_Pauli_string(
+                FermionicOp({op_str: 1.0}, num_spin_orbitals=num_orb),
+                num_orb,
+                0,
+                method=method,
+                Hamildict_specified=hdict,
+                filepath=fn,
+            )
+        else:
+            mapped = mapping_to_Pauli_string(
+                FermionicOp({op_str: 1.0}, num_spin_orbitals=num_orb),
+                num_orb,
+                0,
+                method=method,
+            )
+
+        labels = [p.to_label() for p in mapped.paulis]
+        coeffs = mapped.coeffs
+        cache[key] = (labels, coeffs)
+        return labels, coeffs
+
+    def _build_3NF_out(self, p_labels, p_coeffs, n_labels, n_coeffs, coeff_overall):
+        """Build cartesian-product Pauli terms for one 3NF p-n term."""
+        n_p = len(p_labels)
+        n_n = len(n_labels)
+        out = [None] * (n_p * n_n)
+        idx = 0
+        for i, p_label in enumerate(p_labels):
+            cp_scaled = coeff_overall * p_coeffs[i]
+            for j, n_label in enumerate(n_labels):
+                out[idx] = (n_label + p_label, cp_scaled * n_coeffs[j])
+                idx += 1
+        return out
+
+
+    def task_3NF_pn(self, p_str, n_str, coeff_overall, method: str, filepath: str|os.PathLike):
+        """Map one p-n 3NF term into Pauli-label tuples.
+
+        This path is split into two stages:
+        1) map each sector (with cache),
+        2) build output tuples from cartesian products.
+        """
+        p_labels, p_coeffs = self._map_3NF_sector_cached(
+            p_str, is_proton=True, method=method, filepath=filepath
+        )
+        n_labels, n_coeffs = self._map_3NF_sector_cached(
+            n_str, is_proton=False, method=method, filepath=filepath
+        )
+        return self._build_3NF_out(p_labels, p_coeffs, n_labels, n_coeffs, coeff_overall)
+
+    def mapping_3NF_Mscheme(self, method="Jordan-Wigner",
                             filepath: str|os.PathLike="./tmp",
                             verbose=False):
         """Map the 3NF matrix elements to the specified scheme.
-
+    
         """
         if self.Hamildict is None:
             _=self.get_mscheme_H(opform=True)
-        V3p, V3n = self.get_V3_p_n()
-        H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
-        H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
+        if method != "HATTMapper":
+            H_dict_p = H_dict_n = None
+        else:
+            V3p, V3n = self.get_V3_p_n()
+            H_dict_p = self.Hamildict['SPE']['p'] | self.Hamildict['Vpp'] | V3p
+            H_dict_n = self.Hamildict['SPE']['n'] | self.Hamildict['Vnn'] | V3n
         global GLOBAL_H_DICT_P, GLOBAL_H_DICT_N
         GLOBAL_H_DICT_P = H_dict_p
         GLOBAL_H_DICT_N = H_dict_n
-        if method != "HATTMapper":
-            H_dict_p = H_dict_n = None
         print(f"Encoding 3NF in {method} mapping... # of 3NF terms: {len(self.Hamildict['V3'].keys())}")
         ti = time.time()
-
-        tasks = [
-            (p_str, n_str, coeff_overall, method, filepath)
-            for (p_str, n_str), coeff_overall in self.Hamildict["V3"].items()
-        ]
+       
         nproc = max(multiprocessing.cpu_count() - 4, 1)
-        with get_context("fork").Pool(processes=nproc) as pool:
-            results = list(pool.starmap(self.task_3NF_pn, tasks))
-        op = [
-            (pauli.to_label(), coeff)
-            for r in results
-            for pauli, coeff in zip(r.paulis, r.coeffs)
-        ]
-        mapped_H3b = removing_redundant_ops(op)
-
+        with get_context("fork").Pool(
+            processes=nproc,
+            initializer=_init_task_3nf_worker,
+            initargs=(self,),
+        ) as pool:
+            task_iter = (
+                (p_str, n_str, coeff_overall, method, filepath)
+                for (p_str, n_str), coeff_overall in self.Hamildict["V3"].items()
+            )
+            mapped_H3b = removing_redundant_ops(
+                (
+                    item
+                    for sublist in pool.imap(_task_3nf_worker, task_iter, chunksize=256)
+                    for item in sublist
+                )
+            )
+    
         tf = time.time()
         print(f"3NF mapping done in {tf - ti:.2f} sec.  {len(mapped_H3b)/(tf - ti):.2f} terms/sec")
+    
+        return mapped_H3b
 
-        return mapped_H3b    
 
 def export_encoded_Hamil(Hamil: SparsePauliOp,
                          fn: str|os.PathLike):
@@ -1487,6 +1579,7 @@ def hat(a):
     """
     return np.sqrt(2 * a + 1)
 
+
 def permutation_parity(lst):
     """Calculate the parity (even/odd) of a permutation.
     
@@ -1511,6 +1604,7 @@ def permutation_parity(lst):
                 par *= -1
     return 0 if par > 0 else 1
 
+
 def sort_3_orbits(a_in, b_in, c_in):
     # Adjust inputs if they're even
     a_in = a_in - 1 if a_in % 2 == 0 else a_in
@@ -1533,6 +1627,7 @@ def sort_3_orbits(a_in, b_in, c_in):
     else:
         idx = 2 if b_in == a else 5
     return a, b, c, idx
+
 
 def get_CGs_from_dict(j1, m1, j2, m2, J, M, CG_dict: dict):
     """Retrieve or calculate Clebsch-Gordan coefficient.
@@ -1592,6 +1687,7 @@ def unhash_key6j(i):
     f = i & 0x3FF
     return a, b, c, d, e, f
 
+
 class sps_3Blab:
     """Single-particle state manager for three-body matrix element calculations.
     
@@ -1645,6 +1741,22 @@ class sps_3Blab:
         self.norbits_file = norbits_file
         self.sps = sps
         self.sps_file = sps_file
+
+
+# Worker globals for streaming 3NF mapping without starmap bulk materialization.
+_TASK_3NF_INSTANCE = None
+
+
+def _init_task_3nf_worker(instance):
+    global _TASK_3NF_INSTANCE
+    _TASK_3NF_INSTANCE = instance
+
+
+def _task_3nf_worker(args):
+    p_str, n_str, coeff_overall, method, filepath = args
+    return _TASK_3NF_INSTANCE.task_3NF_pn(
+        p_str, n_str, coeff_overall, method, filepath
+    )
 
 
 def valid_check(ea, eb, ec, ed, ee, ef, e1max, e2max, e3max):
@@ -2563,9 +2675,11 @@ def removing_redundant_ops(op_list):
         Terms with coefficients smaller than 1e-16 are discarded to avoid
         numerical precision issues in quantum simulations.
     """
-    print("Removing redundant terms... len=", len(op_list), end=" => ")
+    print("Removing redundant terms...", end=" ")
     new_dict = {}
+    num_input = 0
     for label, c in op_list:
+        num_input += 1
         new_dict[label] = new_dict.get(label, 0) + c
 
     new_ops = list(new_dict.keys())
@@ -2581,11 +2695,11 @@ def removing_redundant_ops(op_list):
         for i in range(len(new_coeffs))
         if new_coeffs[i] != 0 and (np.abs(new_coeffs[i]) > 1.0e-16)
     ]
-    print(len(ops))
+    print(f"len= {num_input} => {len(ops)}")
     return SparsePauliOp.from_list(list(zip(ops, coeffs)))
 
 
-def removing_redundant_terms(ops: SparsePauliOp):
+def removing_redundant_terms(ops: SparsePauliOp, verbose=False):
     """Remove redundant terms from existing SparsePauliOp.
     
     Similar to removing_redundant_ops but works on existing SparsePauliOp objects.
@@ -2604,7 +2718,6 @@ def removing_redundant_terms(ops: SparsePauliOp):
     """
     paulis = ops.paulis
     coeffs = ops.coeffs
-    print("Removing redundant terms... len=", len(paulis))
     new_dict = {}
     for p, c in tqdm(zip(ops.paulis, ops.coeffs)):
         label = p.to_label()
@@ -2625,7 +2738,7 @@ def removing_redundant_terms(ops: SparsePauliOp):
     ]
     tmp = SparsePauliOp.from_list(list(zip(ops, coeffs)))
     tmp = sum(tmp).simplify()
-    print("Finally, len => ", len(tmp.paulis))
+    print("Removing redundant terms... len=", len(paulis) , " => ", len(tmp.paulis))
     return tmp
 
 

@@ -29,8 +29,7 @@ A recommended environment to set up the dependencies and run NuQuLib is one like
 You can create a new environment and install the dependencies using the following commands:
 
 .. code-block:: bash
-   :caption: uv
-
+   
    uv init --package your_project
 
 Then you will get directory structure like this:
@@ -48,14 +47,12 @@ Then you will get directory structure like this:
 In the root directory of NuQuLib (or your project), you can install the dependencies using the following command:
 
 .. code-block:: bash
-   :caption: uv
 
    uv sync
 
 If you are using `pip`, you may install the dependencies using the following command:
 
 .. code-block:: bash
-   :caption: pip
 
    pip install -e /path/to/nuqulib
 

@@ -52,6 +52,12 @@ If you are willing to contribute to this package, please keep in mind the follow
    documentation, please follow the docstring format used in the
    existing code or refer to the Sphinx documentation for guidance.
 
+- Managing the dependencies:
+
+   Please consider to use ``uv`` to manage the dependencies for development, and
+   do not modify the ``pyproject.toml`` file directly.
+   If you need to add a new dependency, please do it with ``uv add <package-name>`` and then commit the changes in ``pyproject.toml`` and ``uv.lock``.
+   
 Since we are using GitHub Actions, only the allowed users can run the test jobs on GitHub Actions.
 If you are not an allowed user, please run the test codes locally before making a pull request with pytest.
 
@@ -70,31 +76,33 @@ To test your changes locally before making a pull request, please follow these s
 
 4. Install the required dependencies for testing. You can do this by running:
 
-   ```bash
-   pip install -r requirements.txt
-   pip install -e .
-   ```
+   .. code-block:: bash
+
+      pip install -e .
 
    Note that we assume you have a virtual environment set up for development.
 
 5. Run the test suite using `pytest`` to ensure that your changes do not break any existing functionality:
 
-   ```bash
-   pytest -s tests/
-   ```
+   .. code-block:: bash
+
+      pytest -s tests/
+
 
    If all tests pass, you can proceed to commit your changes and push your branch to GitHub for a pull request.
    Of course, you can also run specific test files or test cases as needed.
 
-   ```bash
-   pytest -s tests/test_specific_file.py
-   ```
+   .. code-block:: bash
+
+      pytest -s tests/test_specific_file.py
+
 
    If you are willing to check the coverage of your changes, you can use the following command:
 
-   ```bash
-   pytest -v --cov=src/nuqulib/ -s --cov-report=html
-   ```
+   .. code-block:: bash
+
+      pytest -v --cov=src/nuqulib/ -s --cov-report=html
+
 
 ******************************
 LICENSE
