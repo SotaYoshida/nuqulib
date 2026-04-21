@@ -12,6 +12,7 @@ from qiskit.quantum_info import SparsePauliOp
 from qiskit.synthesis import SuzukiTrotter
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 import scipy
+from .myutils import t_count
 from .circuits import get_idx_to_measure, expec_Zstring
 from tqdm import tqdm
 
@@ -51,6 +52,11 @@ def circuit_HadamardTest(
         return qc_2.decompose(reps=3)
     else:
         return qc_1.decompose(reps=3)
+
+
+def T_formula_QFT(N_ancilla, eps_rotation: float=1.e-10):
+    Teps = np.ceil( 3 * np.log2(1/eps_rotation))
+    return N_ancilla * (N_ancilla - 1) // 2 * 2 * Teps
 
 
 def circuit_my_QPE(n_ancilla: int,
@@ -95,6 +101,48 @@ def circuit_my_QPE(n_ancilla: int,
     if measure:
         qc_QPE.measure(register_ancilla, range(n_ancilla))
     return qc_QPE
+
+
+class myTextBookQPE:
+    def __init__(self, n_ancilla, Norb, Hamiltonian_op,
+                  Uprep, time, trotter_order=2, trotter_steps=1):
+        self.Na = n_ancilla
+        self.Norb = Norb
+        self.Hamiltonian_op = Hamiltonian_op
+        self.Uprep = Uprep
+        self.time = time
+        self.trotter_order = trotter_order
+        self.trotter_steps = trotter_steps
+
+
+    def construct_circuit(self):
+        return circuit_my_QPE(
+            self.Na,
+            self.Norb,
+            self.Hamiltonian_op,
+            self.Uprep,
+            self.time,
+            measure=True,
+            trotter_order=self.trotter_order,
+            trotter_steps=self.trotter_steps,
+            repeat=False
+        )
+
+
+    def estimate_resource(self, tol=1.e-10, verbose=False):
+        T_epsilon = t_count(tol)
+        T_U = self.trotter_steps * self.trotter_order * ( len(self.Hamiltonian_op.paulis) - 1 ) * T_epsilon
+        T_cU = 2 * T_U
+        N_cU = (2**self.Na - 1)
+        TQFT = T_formula_QFT(self.Na)
+        Tcount = T_cU * N_cU + TQFT
+        print(f"Estimated T-count for textbook QPE: {Tcount} (log10={np.log10(Tcount):.1f})")
+        if verbose:
+            print(f"  T_epsilon (for rotation synthesis): {T_epsilon}")
+            print(f"  T_cU (for one controlled-U including rotation synthesis): {T_cU}")
+            print(f"  N_cU (number of controlled-U's): {N_cU}")
+            print(f"  TQFT (for inverse QFT): {TQFT}")
+        return Tcount
 
 
 def make_U_and_cU(
@@ -382,7 +430,7 @@ def trans_XYloc_str(Xloc, Yloc, Bosonic):
 def reorder_based_on_layout(res, 
                             qlayout):
     """
-    Transpilors sometimes change the order of qubits, so we need to reorder the bitstrings according to the mapping given by `qlayout`.
+    Transpilers sometimes change the order of qubits, so we need to reorder the bitstrings according to the mapping given by `qlayout`.
     """
     if qlayout is None:
         return res
@@ -396,6 +444,293 @@ def reorder_based_on_layout(res,
         new_bitstring = "".join(new_bitstring)
         new_res[new_bitstring] = value
     return new_res
+
+
+class QuantumKrylovSolver:
+    """
+
+    Design:
+      - prepare_* methods: circuit construction only
+      - evaluate_* methods: execute circuits and compute matrix elements
+      - run: iterative Krylov loop
+      - estimate_resource: coarse resource estimate without simulation
+    """
+
+    def __init__(
+        self,
+        Uprep: QuantumCircuit,
+        hamiltonian_op: SparsePauliOp,
+        sampler,
+        ancilla_qubits,
+        target_qubits,
+        delta_t: float = 0.01,
+        max_iterations: int = 10,
+        trotter_rank: int = 2,
+        trotter_steps: int = 1,
+        num_shot: int = 10**4,
+        using_statevector: bool = False,
+        do_simulation: bool = True,
+        Bosonic: bool = False,
+        verbose: bool = False,
+        tol_eig: float = 1.0e-6,
+    ):
+        self.Uprep = Uprep
+        self.hamiltonian_op = hamiltonian_op
+        self.sampler = sampler
+        self.ancilla_qubits = ancilla_qubits
+        self.target_qubits = target_qubits
+        self.delta_t = delta_t
+        self.max_iterations = max_iterations
+        self.trotter_rank = trotter_rank
+        self.trotter_steps = trotter_steps
+        self.num_shot = num_shot
+        self.using_statevector = using_statevector
+        self.do_simulation = do_simulation
+        self.Bosonic = Bosonic
+        self.verbose = verbose
+        self.tol_eig = tol_eig
+
+        if len(self.ancilla_qubits) == 0:
+            raise ValueError(
+                "ancilla_qubits = []! You may need ancilla qubits for the Quantum Krylov method."
+            )
+        if len(self.target_qubits) == 0:
+            raise ValueError(
+                "target_qubits = []! You may need target qubits for the Quantum Krylov method."
+            )
+
+        self.Ntar = len(self.target_qubits)
+        self.Hamil_coeffs = self.hamiltonian_op.coeffs
+        self.Hamil_paulis = self.hamiltonian_op.paulis
+
+        # Cached results
+        self.N = None
+        self.H = None
+        self.ws = None
+        self.Unitaries = []
+
+    def prepare_iteration_circuits(self, it):
+        """Build all circuits needed at iteration it."""
+        Ui = PauliEvolutionGate(
+            self.hamiltonian_op,
+            it * self.delta_t,
+            synthesis=SuzukiTrotter(order=self.trotter_rank, reps=self.trotter_steps),
+        )
+        qcs, term_types, idxs_circuit = prepare_qc_for_QKrylov(
+            self.hamiltonian_op,
+            self.Uprep,
+            Ui,
+            self.Ntar,
+            self.Bosonic,
+            using_statevector=self.using_statevector,
+            verbose=self.verbose,
+        )
+        gate_cUi = make_cU(self.Uprep, Ui, self.Ntar)
+        return gate_cUi, qcs, term_types, idxs_circuit
+
+    def evaluate_diag_element(self, qcs, idxs_circuit):
+        """Evaluate diagonal matrix element H[it, it]."""
+        if self.using_statevector:
+            sim = AerSimulator(method='statevector')
+            results = []
+            for qc in qcs:
+                qc_sv = transpile(qc, sim)
+                qc_sv.save_statevector()
+                job = sim.run(qc_sv)
+                result = job.result()
+                psi_final = result.get_statevector(qc_sv)
+                results.append([psi_final.probabilities_dict(), qc_sv.layout])
+        else:
+            job = self.sampler.run(qcs, shots=self.num_shot)
+            results = job.result()
+
+        Hsum = 0.0
+        for idx_H in range(len(self.Hamil_paulis)):
+            op_string = self.Hamil_paulis[idx_H].to_label()
+            idx_relevant = get_idx_to_measure(op_string)
+            idx_circuit = idxs_circuit[idx_H]
+            if self.using_statevector:
+                res, qlayout = results[idx_circuit]
+                res = reorder_based_on_layout(res, qlayout)
+            else:
+                res = results[idx_circuit].data.meas.get_counts()
+            expval, _, _ = expec_Zstring(res, idx_relevant)
+            Hsum += self.Hamil_coeffs[idx_H] * expval
+        return Hsum
+
+    def evaluate_offdiag_element(self, gate_cUi, gate_cUj, term_types, idxs_circuit):
+        """Evaluate off-diagonal matrix element H[it, j]."""
+        qcs_re = []
+        qcs_im = []
+        make_Circ_forNondiagH(
+            term_types,
+            self.Ntar,
+            self.ancilla_qubits,
+            self.target_qubits,
+            gate_cUi,
+            gate_cUj,
+            qcs_re,
+            qcs_im,
+            self.using_statevector,
+        )
+
+        if self.using_statevector:
+            results_Re = []
+            results_Im = []
+            sim = AerSimulator(method='statevector')
+            for qc in qcs_re:
+                qc_sv = transpile(qc, sim)
+                qc_sv.save_statevector()
+                job = sim.run(qc_sv)
+                result = job.result()
+                psi_final = result.get_statevector(qc_sv)
+                results_Re.append([psi_final.probabilities_dict(), qc_sv.layout])
+            for qc in qcs_im:
+                qc_sv = transpile(qc, sim)
+                qc_sv.save_statevector()
+                job = sim.run(qc_sv)
+                result = job.result()
+                psi_final = result.get_statevector(qc_sv)
+                results_Im.append([psi_final.probabilities_dict(), qc_sv.layout])
+        else:
+            job = self.sampler.run(qcs_re, shots=self.num_shot)
+            results_Re = job.result()
+            job = self.sampler.run(qcs_im, shots=self.num_shot)
+            results_Im = job.result()
+
+        Re_H_ij = Im_H_ij = 0.0
+        for idx_H in range(len(self.Hamil_paulis)):
+            op_string = self.Hamil_paulis[idx_H].to_label()
+            idx_relevant = get_idx_to_measure(op_string)
+            idx_circuit = idxs_circuit[idx_H]
+            if self.using_statevector:
+                res_Re, layout_Re = results_Re[idx_circuit]
+                res_Re = reorder_based_on_layout(res_Re, layout_Re)
+                res_Im, layout_Im = results_Im[idx_circuit]
+                res_Im = reorder_based_on_layout(res_Im, layout_Im)
+            else:
+                res_Re = results_Re[idx_circuit].data.meas.get_counts()
+                res_Im = results_Im[idx_circuit].data.meas.get_counts()
+
+            _, p0, p1 = expec_Zstring(
+                res_Re,
+                idx_relevant,
+                target_qubits=range(len(self.target_qubits)),
+                ancilla_qubit=0,
+            )
+            Re_H_ij += self.Hamil_coeffs[idx_H] * (p0 - p1)
+
+            _, p0, p1 = expec_Zstring(
+                res_Im,
+                idx_relevant,
+                target_qubits=range(len(self.target_qubits)),
+                ancilla_qubit=0,
+            )
+            Im_H_ij += self.Hamil_coeffs[idx_H] * (p0 - p1)
+
+        return Re_H_ij + 1j * Im_H_ij
+
+    def solve_projected_eigenproblem(self, Nsub, Hsub):
+        """Solve projected generalized eigenvalue problem for current Krylov subspace."""
+        lam, v = scipy.linalg.eigh(Nsub)
+        cols = [i for i in range(len(lam)) if lam[i] >= self.tol_eig]
+        r = len(cols)
+        if r == 0:
+            raise ValueError(
+                f"All overlap eigenvalues are below tol_eig={self.tol_eig:.2e}. "
+                "Try reducing tol_eig or increasing shot count."
+            )
+
+        Ur = v[:, cols]
+        sq_Sigma_inv = np.diag(lam[cols] ** (-0.5))
+        X = Ur @ sq_Sigma_inv @ Ur.conj().T
+        tildeH = X @ Hsub @ X.conj().T
+        w, _ = scipy.linalg.eigh(tildeH)
+        return lam, r, w[-r:]
+
+    def run(self):
+        """Execute Quantum Krylov iterations and return (Hsub, Nsub, ws)."""
+        print("num of Hamil term: ", len(self.Hamil_paulis))
+        if not self.do_simulation:
+            return None
+
+        self.N = np.zeros((self.max_iterations, self.max_iterations), dtype=np.complex128)
+        self.H = np.zeros((self.max_iterations, self.max_iterations), dtype=np.complex128)
+        self.ws = []
+        self.Unitaries = []
+
+        for it in tqdm(range(self.max_iterations)):
+            print("iteration: ", it)
+            gate_cUi, qcs, term_types, idxs_circuit = self.prepare_iteration_circuits(it)
+
+            self.Unitaries.append(gate_cUi)
+            self.N[it, it] = 1.0
+
+            for j in range(it - 1, -1, -1):
+                gate_cUj = self.Unitaries[j]
+                U_ij = measure_overlap(
+                    self.num_shot,
+                    self.Ntar,
+                    gate_cUi,
+                    gate_cUj,
+                    self.ancilla_qubits,
+                    self.target_qubits,
+                    self.sampler,
+                    self.using_statevector,
+                    self.do_simulation,
+                )
+                self.N[it, j] = U_ij
+                self.N[j, it] = np.conj(U_ij)
+
+            self.H[it, it] = self.evaluate_diag_element(qcs, idxs_circuit)
+            if self.verbose:
+                print(f"H[diag={it}] = {self.H[it, it]}")
+
+            for j in range(it - 1, -1, -1):
+                gate_cUj = self.Unitaries[j]
+                Hij = self.evaluate_offdiag_element(gate_cUi, gate_cUj, term_types, idxs_circuit)
+                self.H[it, j] = Hij
+                self.H[j, it] = np.conj(Hij)
+                print(f"H[off-diag={it},{j}] = {Hij}")
+
+            Nsub = self.N[: it + 1, : it + 1]
+            Hsub = self.H[: it + 1, : it + 1]
+            lam, r, w_r = self.solve_projected_eigenproblem(Nsub, Hsub)
+
+            self.ws.append(w_r)
+            print("eigs of N: ", lam, "cond", np.linalg.cond(Nsub), "r:", r)
+            print(f"w: {w_r}")
+            print("")
+
+        return self.H[: it + 1, : it + 1], self.N[: it + 1, : it + 1], self.ws
+
+    def estimate_resource(self, tol=1.0e-10, model="ross-selinger", 
+                          reduction_factor=1,
+                          verbose=False):
+        """
+        Coarse resource estimate without running simulation.
+        """
+        if self.trotter_rank > 2:
+            print(
+                "Warning: T-count estimation assumes Suzuki-Trotter rank 1 or 2. "
+                f"But got trotter_rank = {self.trotter_rank}."
+            )
+
+        num_terms = len(self.Hamil_paulis)
+        term_groups = 3 if self.Bosonic else num_terms
+        if reduction_factor > 1:
+            term_groups = term_groups // reduction_factor
+        print(f"term_groups: {term_groups} (reduction_factor: {reduction_factor})")
+        Niter = self.max_iterations
+        controlled_u_uses = (4 * Niter**3 + Niter**2 - 3 * Niter) // 2
+        T_epsilon = t_count(tol, model=model)
+        T_cU = 2 * max(num_terms - 1, 0) * self.trotter_steps * self.trotter_rank
+        Tcount = self.num_shot * T_cU * term_groups * T_epsilon * controlled_u_uses
+
+        if Tcount > 0:
+            print(f"T-count (rough): {Tcount} (log10={np.log10(Tcount):.1f})")
+        else:
+            print("T-count (rough): 0")
 
 
 def QuantumKrylov(
@@ -415,201 +750,25 @@ def QuantumKrylov(
     verbose=False,
     tol_eig=1.e-6
 ):
-    """Function to perform Quantum Krylov subspace method.
-
-    This function implements the Quantum Krylov subspace method for simulating quantum dynamics.
-
-    Note:
-      Within the current implementation, we assume that the Hamiltonian is pairing or pair-wise one,
-      leading to only I, Z, and XX+YY terms. Under this condition, the number of additional
-      quantum circuits needed is only two.
-      One consists of ansatz + Hadamard on all target qubits, and the other consists of
-      ansatz + Sdg followed by Hadamard gate on all target qubits.
-    """
-    if len(ancilla_qubits) == 0:
-        raise ValueError(
-            "ancilla_qubits = []! You may need ancilla qubits for the Quantum Krylov method."
-        )
-    if len(target_qubits) == 0:
-        raise ValueError(
-            "target_qubits = []! You may need target qubits for the Quantum Krylov method."
-        )
-    Hamil_coeffs = hamiltonian_op.coeffs
-    Hamil_paulis = hamiltonian_op.paulis
-    Ntar = len(target_qubits)
-    N = np.zeros((max_iterations, max_iterations), dtype=np.complex128)
-    H = np.zeros((max_iterations, max_iterations), dtype=np.complex128)
-    ws = []
-    Unitaries = []
-
-    # To estimate the resource...
-    Ui = PauliEvolutionGate(
-        hamiltonian_op, delta_t, synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps)
+    """Backward-compatible wrapper around QuantumKrylovSolver."""
+    solver = QuantumKrylovSolver(
+        Uprep=Uprep,
+        hamiltonian_op=hamiltonian_op,
+        sampler=sampler,
+        ancilla_qubits=ancilla_qubits,
+        target_qubits=target_qubits,
+        delta_t=delta_t,
+        max_iterations=max_iterations,
+        trotter_rank=trotter_rank,
+        trotter_steps=trotter_steps,
+        num_shot=num_shot,
+        using_statevector=using_statevector,
+        do_simulation=do_simulation,
+        Bosonic=Bosonic,
+        verbose=verbose,
+        tol_eig=tol_eig,
     )
-    gate_cUi = make_cU(Uprep, Ui, Ntar)
-    Uj = PauliEvolutionGate(
-        hamiltonian_op,
-        2 * delta_t,
-        synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps),
-    )
-    gate_cUj = make_cU(Uprep, Uj, Ntar)
-
-    qc_Ui = QuantumCircuit(1 + Ntar)
-    qc_Ui.append(gate_cUi, range(Ntar + 1))
-    qc_Ui = qc_Ui.decompose()
-
-    num_of_Hamil_term = len(hamiltonian_op.paulis)
-    print("num of Hamil term: ", num_of_Hamil_term)
-    if not (do_simulation):
-        return None
-
-    #term_types = { 0:"IZ", 1:"XX", 2:"YY"}  # general case => "XXYZ..."
-    for it in tqdm(range(max_iterations)):
-        print("iteration: ", it)
-        ## make controlled U = exp(-iHδt * it)
-        Ui = PauliEvolutionGate(hamiltonian_op, it*delta_t, 
-                                synthesis=SuzukiTrotter(order=trotter_rank,reps=trotter_steps))
-        qcs, term_types, idxs_circuit = prepare_qc_for_QKrylov(hamiltonian_op, Uprep, Ui, Ntar, Bosonic, using_statevector=using_statevector, verbose=True)
-
-        gate_cUi = make_cU(Uprep, Ui, Ntar)
-        Unitaries.append(gate_cUi)
-        N[it, it] = 1.0
-        ## evaluate overlap to previous states
-        for j in range(it-1, -1, -1):
-            gate_cUj = Unitaries[j]
-            U_ij = measure_overlap(num_shot, Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, 
-                                   sampler, using_statevector, do_simulation)
-            N[it, j] = U_ij
-            N[j, it] = np.conj(U_ij)
-        ### evaluate H_ii no need ancilla qubit                      
-        if using_statevector:
-            sim = AerSimulator(method='statevector')
-            results = [ ]
-            for qc in qcs:
-                qc_sv = transpile(qc, sim)
-                qc_sv.save_statevector()
-                job = sim.run(qc_sv)
-                result = job.result()
-                psi_final = result.get_statevector(qc_sv)
-                results.append([psi_final.probabilities_dict(), qc_sv.layout])
-        else:
-            job = sampler.run(qcs, shots=num_shot)
-            results  = job.result()
-
-        # Comparison with Aer statevector simulator
-        Hsum = 0.0
-        for idx_H in range(len(Hamil_paulis)):
-            op_string = Hamil_paulis[idx_H].to_label()
-            idx_relevant = get_idx_to_measure(op_string)
-            idx_circuit = idxs_circuit[idx_H]
-            if using_statevector:
-                res, qlayout = results[idx_circuit]
-                res = reorder_based_on_layout(res, qlayout)
-            else:
-                res = results[idx_circuit].data.meas.get_counts()                    
-            expval, dummy, dummy_ = expec_Zstring(res, idx_relevant)
-            # if verbose:
-            #     print(f"idx_H: {idx_H}, op_string: {op_string},",
-            #           f"idx_rel: {idx_relevant}, <op> ", expval,
-            #           f"expval: {expval * Hamil_coeffs[idx_H]}")
-            Hsum += Hamil_coeffs[idx_H] * expval
-        H[it, it] = Hsum
-        if verbose:
-            print(f"H[diag={it}] = {Hsum}")
-
-        ### evaluate H_ij non-diagonal terms where an ancilla qubit is needed
-        for j in range(it-1, -1, -1):
-            gate_cUj = Unitaries[j]
-            qcs_re = []
-            qcs_im = []
-            make_Circ_forNondiagH(term_types,
-                                  Ntar, ancilla_qubits, target_qubits,
-                                  gate_cUi, gate_cUj, qcs_re, qcs_im, 
-                                  using_statevector)
-
-            # Re part
-            if using_statevector:
-                results_Re = []
-                results_Im = []
-                sim = AerSimulator(method='statevector')
-                for qc in qcs_re:
-                    qc_sv = transpile(qc, sim)
-                    qc_sv.save_statevector()
-                    job = sim.run(qc_sv)
-                    result = job.result()
-                    psi_final = result.get_statevector(qc_sv)
-                    results_Re.append([psi_final.probabilities_dict(), qc_sv.layout])
-                for qc in qcs_im:
-                    qc_sv = transpile(qc, sim)
-                    qc_sv.save_statevector()
-                    job = sim.run(qc_sv)
-                    result = job.result()
-                    psi_final = result.get_statevector(qc_sv)
-                    results_Im.append([psi_final.probabilities_dict(), qc_sv.layout])
-            else:
-                job = sampler.run(qcs_re, shots=num_shot)
-                results_Re = job.result()
-                job = sampler.run(qcs_im, shots=num_shot)
-                results_Im = job.result()
-
-            Re_H_ij = Im_H_ij = 0.0
-            for idx_H in range(len(Hamil_paulis)):
-                op_string = Hamil_paulis[idx_H].to_label()
-                idx_relevant = get_idx_to_measure(op_string)
-                idx_circuit = idxs_circuit[idx_H]
-                if using_statevector:
-                    res_Re, layout_Re = results_Re[idx_circuit]
-                    res_Re = reorder_based_on_layout(res_Re, layout_Re)
-                    res_Im, layout_Im = results_Im[idx_circuit]
-                    res_Im = reorder_based_on_layout(res_Im, layout_Im)
-                else:
-                    res_Re = results_Re[idx_circuit].data.meas.get_counts()
-                    res_Im = results_Im[idx_circuit].data.meas.get_counts()
-                dummy_e, p0, p1 = expec_Zstring(res_Re, idx_relevant, target_qubits=range(len(target_qubits)), ancilla_qubit=0)
-                expval = p0 - p1
-                Re_H_ij += Hamil_coeffs[idx_H] * expval
-
-                dummy_e, p0, p1 = expec_Zstring(res_Im, idx_relevant, target_qubits=range(len(target_qubits)), ancilla_qubit=0)
-                expval = p0 - p1
-                Im_H_ij += Hamil_coeffs[idx_H] * expval
-
-            H[it, j] = Re_H_ij + 1j * Im_H_ij
-            H[j, it] = Re_H_ij - 1j * Im_H_ij
-            print(f"H[off-diag={it},{j}] = {H[it, j]}")
-
-        # solve generalized eigenvalue problem
-        Nsub = N[: it + 1, : it + 1]
-        Hsub = H[: it + 1, : it + 1]
-        lam, v = scipy.linalg.eigh(Nsub)
-        # truncate orthogonal basis with small eigenvalues
-        cols = [i for i in range(it + 1) if lam[i] >= tol_eig]
-        r = len(cols)
-        Ur = v[:, cols]
-        sq_Sigma_inv = np.diag(lam[cols] ** (-0.5))
-
-        X = Ur @ sq_Sigma_inv @ Ur.conj().T
-        Xdag = X.conj().T
-        tildeH = X @ Hsub @ Xdag
-        w, v = scipy.linalg.eigh(tildeH)
-
-        w_r = w[-r:]
-        ws += [w_r]
-        print("eigs of N: ", lam, "cond", np.linalg.cond(Nsub), "r:", r)
-        print(f"w: {w_r}")
-        print("")
-    return H[: it + 1, : it + 1], N[: it + 1, : it + 1], ws
-
-
-def construct_X_and_Y(snapshots, d=8):  # d is the number of delay
-    N = len(snapshots)
-    X = np.zeros((d, N - d), dtype=np.complex128)
-    Y = np.zeros((d, N - d), dtype=np.complex128)
-    for j in range(N - d):
-        for i in range(d):
-            idx = j + i
-            X[i, j] = snapshots[idx]
-            Y[i, j] = snapshots[idx + 1]
-    return X, Y
+    return solver.run()
 
 
 def lambda_plot(lam, Ens):
@@ -626,105 +785,188 @@ def lambda_plot(lam, Ens):
     plt.close()
 
 
-def ODMD(
-    Uprep: QuantumCircuit,
-    HamiltonianOps: SparsePauliOp,
-    delta_t: float,
-    max_iterations: int,
-    trotter_rank: int,
-    trotter_steps: int,
-    sampler,
-    ancilla_qubits,
-    target_qubits,
-    num_shot: int = 10**4,
-    using_statevector: bool = True,
-    dim_Hankel: int = 8,
-    tol_SVD: float = 1.0e-8,
-    verbose: bool = False,
-    plot_lambda=False,
-    tol_lambda = 1.e-2,
-    energy_shift=0.0
-):
-    Ntar = len(target_qubits)
+class ODMD:
+    def __init__(
+        self,
+        Uprep: QuantumCircuit,
+        HamiltonianOps: SparsePauliOp,
+        delta_t: float,
+        max_iterations: int,
+        trotter_rank: int,
+        trotter_steps: int,
+        sampler,
+        ancilla_qubits,
+        target_qubits,
+        num_shot: int = 1,
+        using_statevector: bool = True,
+        dim_Hankel: int = 8,
+        tol_SVD: float = 1.0e-8,
+        verbose: bool = False,
+        plot_lambda: bool = False,
+        tol_lambda: float = 1.0e-2
+    ):
+        self.Uprep = Uprep
+        self.HamiltonianOps = HamiltonianOps
+        self.delta_t = delta_t
+        self.max_iterations = max_iterations
+        self.trotter_rank = trotter_rank
+        self.trotter_steps = trotter_steps
+        self.sampler = sampler
+        self.ancilla_qubits = ancilla_qubits
+        self.target_qubits = target_qubits
+        self.num_shot = num_shot
+        self.using_statevector = using_statevector
+        self.dim_Hankel = dim_Hankel
+        self.tol_SVD = tol_SVD
+        self.verbose = verbose
+        self.plot_lambda = plot_lambda
+        self.tol_lambda = tol_lambda
 
-    cU0 = Uprep
-    cU0 = cU0.to_gate().control(1)
+        # Cached results (set by run)
+        self.snapshots = None
+        self.X = None
+        self.Y = None
+        self.U = None
+        self.Sigma = None
+        self.Vh = None
+        self.trank = None
+        self.A = None
+        self.fit_error = None
+        self.lams = None
+        self.evecs = None
+        self.selected_indices = None
+        self.selected_lams = None
+        self.energies = None
+        self.tol_lambda_used = None
 
-    snapshots = np.zeros(max_iterations, dtype=np.complex128)
-    snapshots[0] = 1.0
-    for it in tqdm(range(1, max_iterations)):
-        Uj = PauliEvolutionGate(
-            HamiltonianOps,
-            it * delta_t,
-            synthesis=SuzukiTrotter(order=trotter_rank, reps=trotter_steps),
+    def run(self):
+        Ntar = len(self.target_qubits)
+
+        cU0 = self.Uprep.to_gate().control(1)
+
+        snapshots = np.zeros(self.max_iterations, dtype=np.complex128)
+        snapshots[0] = 1.0
+        for it in tqdm(range(1, self.max_iterations)):
+            Uj = PauliEvolutionGate(
+                self.HamiltonianOps,
+                it * self.delta_t,
+                synthesis=SuzukiTrotter(order=self.trotter_rank, reps=self.trotter_steps),
+            )
+            gate_cUj = make_cU(self.Uprep, Uj, Ntar)
+            overlap = measure_overlap(
+                self.num_shot,
+                Ntar,
+                cU0,
+                gate_cUj,
+                self.ancilla_qubits,
+                self.target_qubits,
+                self.sampler,
+                self.using_statevector,
+            )
+            print(f"overlap @{it:3d}: {overlap}")
+            snapshots[it] = overlap
+        print(
+            f"Max iteration: {self.max_iterations:5d} trotter_steps: {self.trotter_steps:5d} delta_t: {self.delta_t:12.8f}",
+            f" tol for lambda = {self.tol_lambda:8.2e}",
         )
-        gate_cUj = make_cU(Uprep, Uj, Ntar)
-        overlap = measure_overlap(
-            num_shot,
-            Ntar,
-            cU0,
-            gate_cUj,
-            ancilla_qubits,
-            target_qubits,
-            sampler,
-            using_statevector,
-        )
-        print(f"overlap @{it:3d}: {overlap}")
-        snapshots[it] = overlap
-    print(
-        f"Max iteration: {max_iterations:5d} trotter_steps: {trotter_steps:5d} delta_t: {delta_t:12.8f}",
-        f" tol for lambda = {tol_lambda:8.2e}",
-    )
 
-    # Observable DMD
-    if verbose:
-        print("snapshots of <U0|Uj>:", snapshots)
-    if dim_Hankel >= max_iterations:
-        dim_Hankel = max_iterations // 2 + 1
-        print(f"dim_Hankel is set to {dim_Hankel} since the original value is too large for the number of snapshots.")
+        if self.verbose:
+            print("snapshots of <U0|Uj>:", snapshots)
 
-    X, Y = construct_X_and_Y(snapshots, dim_Hankel)
+        dim_Hankel = self.dim_Hankel
+        if dim_Hankel >= self.max_iterations:
+            dim_Hankel = self.max_iterations // 2 + 1
+            print(f"dim_Hankel is set to {dim_Hankel} since the original value is too large for the number of snapshots.")
 
-    # SVD of X
-    U, Sigma, Vh = np.linalg.svd(X, full_matrices=False)
-    if verbose:
-        print("Sigma", Sigma)
+        X, Y = self.construct_X_and_Y(snapshots, dim_Hankel)
 
-    trank = np.sum(Sigma > tol_SVD)
-    Ur = U[:, :trank]
-    Sigmar = np.diag(Sigma[:trank])
-    Vhr = Vh[:trank, :]
+        A = self.construct_A_from_XY(X, Y)
 
-    # A =Y X^+ = Y (V Sigma^-1 Udag)
-    A = Y @ Vhr.T.conj() @ np.linalg.inv(Sigmar) @ Ur.T.conj()
+        fit_error = np.linalg.norm(A @ X - Y)
+        print("Check |AX - Y|", fit_error)
 
-    # Check |AX - Y|
-    print("Check |AX - Y|", np.linalg.norm(A @ X - Y))
+        # Eigen values of A would be exp(-iE_j dt)
+        lams, v = np.linalg.eig(A)
 
-    # Eigen values of A would be exp(-iE_j dt)
-    lams, v = np.linalg.eig(A)
+        tol_lambda_used = self.tol_lambda
+        selected_indices = []
+        while len(selected_indices) == 0:
+            selected_indices = [
+                i for i in range(len(lams)) if np.abs(np.abs(lams[i]) - 1) < tol_lambda_used
+            ]
+            if len(selected_indices) == 0:
+                print(f"No eigenvalue found within |lambda|=1 +/- {tol_lambda_used:8.2e}.")
+                print("Increasing the tolerance by a factor of 10.")
+                tol_lambda_used *= 10
 
-    idxs = [ ]
-    while len(idxs) ==0:
-        idxs = [ i for i in range(len(lams)) if np.abs((np.abs(lams[i])-1)) < tol_lambda]
-        lam = lams[idxs]
-        if len(idxs) == 0:
-            print(f"No eigenvalue found within |lambda|=1 +/- {tol_lambda:8.2e}.")
-            print("Increasing the tolerance by a factor of 10.")
-            tol_lambda *= 10
+        selected_lams = lams[selected_indices]
+        arg_lam = np.angle(selected_lams)
+        energies = list(-(arg_lam) / self.delta_t)
 
-    #print("E(ODMD)", "".join([f"{-np.angle(lams[i])/delta_t:8.3f} " for i in range(len(lams))]))
-    #print("|lams| ", "".join([f"{np.abs(lams[i]):8.3f} " for i in range(len(lams))]))
+        # Cache results for post-analysis
+        self.snapshots = snapshots
+        self.X = X
+        self.Y = Y
+        self.A = A
+        self.fit_error = fit_error
+        self.lams = lams
+        self.evecs = v
+        self.selected_indices = selected_indices
+        self.selected_lams = selected_lams
+        self.energies = energies
+        self.tol_lambda_used = tol_lambda_used
+        self.dim_Hankel = dim_Hankel
 
-    idx_mask = [ i for i in range(len(lams)) if np.abs((np.abs(lams[i])-1)) < tol_lambda]
-    ## argument of eigenvalues
-    arg_lam = np.angle(lams[idx_mask])
-    Ens = list(-(arg_lam) / delta_t)
-    Ens = [ E + energy_shift for E in Ens]
+        return energies, selected_lams
+    
+    def construct_X_and_Y(self, snapshots, dim_Hankel):
+        N = len(snapshots)
+        X = np.zeros((dim_Hankel, N - dim_Hankel), dtype=np.complex128)
+        Y = np.zeros((dim_Hankel, N - dim_Hankel), dtype=np.complex128)
+        for j in range(N - dim_Hankel):
+            for i in range(dim_Hankel):
+                idx = j + i
+                X[i, j] = snapshots[idx]
+                Y[i, j] = snapshots[idx + 1]
+        return X, Y
 
-    ## argument of eigenvalues
-    arg_lam = np.angle(lam)
-    Ens = list(-(arg_lam) / delta_t)
-    Ens = [ E + energy_shift for E in Ens]
+    
+    def construct_A_from_XY(self, X, Y):            
+        # SVD of X
+        U, Sigma, Vh = np.linalg.svd(X, full_matrices=False)
+        if self.verbose:
+            print("Sigma", Sigma)
 
-    return Ens, lams[idx_mask]
+        trank = np.sum(Sigma > self.tol_SVD)
+        Ur = U[:, :trank]
+        Sigmar = np.diag(Sigma[:trank])
+        Vhr = Vh[:trank, :]
+
+        # A = Y X^+ = Y (V Sigma^-1 Udag)
+        A = Y @ Vhr.T.conj() @ np.linalg.inv(Sigmar) @ Ur.T.conj()
+        return A 
+
+    
+    def get_results(self):
+        return {
+            "energies": self.energies,
+            "selected_lams": self.selected_lams,
+            "selected_indices": self.selected_indices,
+            "all_lams": self.lams,
+            "fit_error": self.fit_error,
+            "tol_lambda_used": self.tol_lambda_used,
+            "trank": self.trank,
+            "dim_Hankel": self.dim_Hankel,
+        }
+    
+    def estimate_resource(self, tol=1.e-10, model="ross-selinger", verbose=False):
+        print(f"Estimating resource for ODMD with Niter={self.max_iterations}, eps={tol:.1e}: ")
+        if self.trotter_rank > 2:
+            print(f"Warning: The T-count estimation is based on the assumption of using Suzuki-Trotter decomposition with rank 1 or 2. But got trotter_rank = {self.trotter_rank}. The estimation may not be accurate in this case.")
+        T_epsilon = t_count(tol, model=model)
+        T_cU = 2 * (len(self.HamiltonianOps.paulis)-1) * self.trotter_steps * self.trotter_rank  # very rough estimation for the T-count of controlled-U operation
+        if verbose:
+            print(f"T_cU: {T_cU}, T_epsilon: {T_epsilon}")
+        Tcount = self.num_shot * T_cU * T_epsilon * self.max_iterations * (self.max_iterations + 1) 
+        print(f"T-count formula: Nshot * T_cU * T_epsilon * max_iterations * (max_iterations + 1) = {Tcount} log10: {np.log10(Tcount):.1f}")
+
