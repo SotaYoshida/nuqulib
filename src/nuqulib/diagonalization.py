@@ -62,35 +62,6 @@ def fixed_N_P_M_basis_neutron(n_qubits, n_particles, msps, parity, M_tot): # M i
     return basis, index
 
 
-def fixed_N_P_M_basis(n_qubits_p, n_qubits_n, 
-                    Z, N, msps, parity, M_tot): # M is doubled
-    basis = []
-    for s in range(1 << (n_qubits_p + n_qubits_n)):
-        if s.bit_count() == Z + N: # A check
-            # then, Z check (lower n_qubits_p should have Z hot bits)
-            Zcount = 0
-            for i in range(n_qubits_n, n_qubits_p + n_qubits_n):
-                bit = (s >> (n_qubits_p + n_qubits_n - 1 - i)) & 1
-                if bit == 1:
-                    Zcount += 1
-            if Zcount != Z:
-                continue
-
-            Mz = 0
-            parity_ = 1
-            for i in range(n_qubits_p + n_qubits_n):
-                bit = (s >> (n_qubits_p + n_qubits_n - 1 - i)) & 1
-                if bit == 0:
-                    continue
-                m = msps[-1-i].jz
-                Mz += m
-                parity_ *= (-1)**(msps[-1-i].l)
-            if Mz == M_tot and parity_ == parity:
-                basis.append(s)
-
-    index = {s: i for i, s in enumerate(basis)}
-    return basis, index
-
 
 def Mprojected_hamiltonian_single(hamiltonian, n_qubits, basis, index):
     dim = len(basis)
@@ -158,7 +129,6 @@ def Mprojected_hamiltonian(hamiltonian: SparsePauliOp,
     act on protons, neutrons, or both. Treat proton and neutron parts independently
     by padding shorter Pauli labels appropriately.
     """
-    total = n_qubits_p + n_qubits_n
     dim = len(basis)
     H = np.zeros((dim, dim), dtype=complex)
     coeffs = hamiltonian.coeffs
@@ -254,7 +224,7 @@ def selected_ci_sequential(basis_configs, Hmat, sampled_counts,
                            max_iter=100, add_per_iter=15, 
                            threshold=None, initial_size=None):
     """
-    Selected CI: これまでsampleした配位に加えて、遷移行列要素(|H_ij|)が大きい配位を逐次的に追加する。
+    Selected CI: sequentially grow a subspace by adding configurations with the largest coupling to the current subspace.
 
     Parameters
     ----------

@@ -48,14 +48,13 @@ def get_paulis(target):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--which", default=1, type=int, help="which target to use")
+    parser.add_argument("--which", default=0, type=int, help="which target to use")
     args = parser.parse_args()
 
     return args
 
 def main():
     args = parse_args()
-
     
     keys = ["p_shell","sd_shell","pf_shell","psd_shell","NN-only_0","NN-only_1","NN-only_2","NN+3NF_1_2_3","NN+3NF_2_4_6"]
     target = keys[args.which]
@@ -73,7 +72,7 @@ def main():
     red_factor = (len(paulis) * (len(paulis)-1) / 2) / total_noncomm if total_noncomm > 0 else float('inf')
     print(f"Reduction factor: {red_factor}")
 
-    if target == "NN-only_0" or target == "p_shell":  # print details for small cases
+    if target == "NN-only_0" :  # print details for small cases
         print("This is a small test case, printing all details:")
         for i, group in enumerate(groups):
             print(f"Group {i}: size {len(group)}")

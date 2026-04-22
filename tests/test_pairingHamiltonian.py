@@ -1,9 +1,7 @@
 import numpy as np
 import pytest
 from qiskit_aer import AerSimulator
-from qiskit.circuit.library import PauliEvolutionGate, phase_estimation, UnitaryGate
 from nuqulib import *
-from qiskit.quantum_info import Operator
 from scipy.linalg import expm
 
 
@@ -115,23 +113,16 @@ def test_QPE():
 
     Na = 6
     dt = - 1.0 # dt < 0 because Egs > 0
-    buffer = 10
     print("max(|E|):",  2 *np.pi / -dt)
 
-    Umat = expm(-1j * hamiltonian_op.to_matrix() * dt)
-    unitU = UnitaryGate(Operator(Umat))
-    pe = phase_estimation(Na, unitU)
-
-    anc = QuantumRegister(Na, 'ancilla')
-    tgt = QuantumRegister(Nq, 'target')
-    qc_QPE = QuantumCircuit(anc, tgt)
-    qc_QPE.append(Uprep.to_gate(), tgt[:])
-    qc_QPE.append(pe.to_gate(), anc[:] + tgt[:])
-
+    objQPE = myTextBookQPE(Na, Nq, hamiltonian_op, Uprep, dt, 
+                           trotter_order=2, trotter_steps=20)
+    qc_QPE = objQPE.construct_circuit()
     qc_sv = qc_QPE.remove_final_measurements(inplace=False)
     qc_sv.save_statevector()
 
     # Run Aer statevector simulator
+    print("Running QPE circuit with statevector simulator...")
     sim = AerSimulator(method='statevector')
     tqc = transpile(qc_sv, sim)
     job = sim.run(tqc)
@@ -139,34 +130,28 @@ def test_QPE():
     psi_final = result.get_statevector(tqc)
 
     # Get probabilities on ancilla register only
-    #probs = psi_final.probabilities_dict(range(Na+Nq))
-    probs = psi_final.probabilities_dict(range(Na))
-    list_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
-    for bitstring_whole, p in list_probs:
-        if p < 1e-3:
-            continue
-        print(f"bitstring whole: {bitstring_whole} prob.: {p:.6f}")
+    anc_idx = [qc_QPE.qubits.index(q) for q in qc_QPE.qregs[0]]
+    probs = psi_final.probabilities_dict(qargs=anc_idx)
 
+    list_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
     summarized_probs = {} 
-    for bitstring, p in list_probs:
-        #bitstring = bitstring[:Na]
-        bitstring = bitstring
+    for bitstring_whole, p in list_probs:
+        bitstring = bitstring_whole[:Na]
         if bitstring in summarized_probs:
             summarized_probs[bitstring] += p
         else:
             summarized_probs[bitstring] = p
     list_probs = sorted(summarized_probs.items(), key=lambda x: x[1], reverse=True)
-    for bitstring, p in list_probs:
-        energy = int(bitstring[::-1], 2)/(2**Na) * 2 * np.pi / -dt
-        if p < 1e-3:
-            continue
-        print(f"bitstring: {bitstring} energy: {energy:.6f}  prob.: {p:.6f}")
 
-    bitstring_most_prob = list_probs[0][0]
-    E_estimated = int(bitstring_most_prob[::-1], 2)/(2**Na) * 2 * np.pi / -dt
-
-    print(f"E_estimated(QPE): {E_estimated:.8f} Egs_exact: {Egs_exact:.8f} diff. {E_estimated - Egs_exact:.2e}")
-    assert abs(E_estimated - Egs_exact) < buffer * 2*np.pi/(2**Na), f"Expected energy {Egs_exact} but got {E_estimated} with difference {abs(E_estimated - Egs_exact)}"
+    Energy_list = []
+    for idx, (bitstring, p) in enumerate(list_probs):
+        energy = 2 * np.pi * int(bitstring[::-1], 2) / (-dt * (2**Na))
+        Energy_list.append((energy, p))
+        if idx < 5:  # Print only the top 5 most probable bitstrings
+            print(f"Bitstring: {bitstring}, Energy: {energy:.6f} MeV, Probability: {p:.6f}")
+    Egs_QPE = Energy_list[0][0]
+    print(f"Egs_QPE: {Egs_QPE:.6f} MeV, Egs_exact: {Egs_exact:.6f} MeV, Difference: {Egs_QPE - Egs_exact:.2e} MeV")
+    assert abs(Egs_QPE - Egs_exact) < 10 * 2*np.pi/(2**Na * -dt), f"Expected energy {Egs_exact} but got {Egs_QPE} with difference {abs(Egs_QPE - Egs_exact)}"
 
 
 def test_QKrylov():
