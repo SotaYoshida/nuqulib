@@ -209,7 +209,6 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Poetry stuffs
 
 # OS generated files
 *.DS_Store
@@ -218,3 +217,6 @@ Thumbs.db
 # Generated files
 *.pdf
 encoded_*
+
+# my stuff
+my_examples

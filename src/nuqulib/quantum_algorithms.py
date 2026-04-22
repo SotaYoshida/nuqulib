@@ -125,7 +125,7 @@ class myTextBookQPE:
             measure=True,
             trotter_order=self.trotter_order,
             trotter_steps=self.trotter_steps,
-            repeat=False
+            repeat=True
         )
 
 
