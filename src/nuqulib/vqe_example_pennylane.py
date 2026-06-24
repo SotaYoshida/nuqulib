@@ -21,6 +21,7 @@ def vqe_example_pennylane(
     n_qubits_n,
     using_chs,
     mapping_method="JordanWigner",
+    save_plot=False,
 ):
     """Run VQE optimization for nuclear systems using PennyLane.
     
@@ -161,7 +162,8 @@ def vqe_example_pennylane(
     plt.xlabel("Iterations")
     plt.ylabel("Energy")
     plt.legend()
-    plt.savefig("vqe_example_pennylane_" + mapping_method + ".pdf")
+    if save_plot:
+        plt.savefig("vqe_example_pennylane_" + mapping_method + ".pdf")
 
     return np.array(params_opt), np.min(energies)
 

@@ -722,10 +722,16 @@ class QuantumKrylovSolver:
             term_groups = term_groups // reduction_factor
         print(f"term_groups: {term_groups} (reduction_factor: {reduction_factor})")
         Niter = self.max_iterations
-        controlled_u_uses = (4 * Niter**3 + Niter**2 - 3 * Niter) // 2
+
+        # For diaonal terms, we first apply U and measure them, which costs T_U. 
+        # Since we are counting T-count in the unit of 'unit' time-evolution, we have to take a sum over \sum_{i=1}^{Niter} i = Niter*(Niter+1)/2, which gives the factor of Niter^2.
+        u_uses = (Niter * (Niter + 1)) // 2
+        T_U = 2 * max(num_terms - 1, 0) * self.trotter_steps * self.trotter_rank
+        # For off-diagonal terms, we have to apply controlled-U_i and controlled-U_j.
+        controlled_u_uses = Niter**3 - Niter
         T_epsilon = t_count(tol, model=model)
         T_cU = 2 * max(num_terms - 1, 0) * self.trotter_steps * self.trotter_rank
-        Tcount = self.num_shot * T_cU * term_groups * T_epsilon * controlled_u_uses
+        Tcount = self.num_shot * term_groups * (u_uses * T_U + controlled_u_uses * T_cU) * T_epsilon
 
         if Tcount > 0:
             print(f"T-count (rough): {Tcount} (log10={np.log10(Tcount):.1f})")
