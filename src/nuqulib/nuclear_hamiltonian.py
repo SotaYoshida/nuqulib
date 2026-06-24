@@ -120,8 +120,11 @@ class JTcoupledOrbitals:
         return dict_sps2JTorbitals
 
 
-def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF=None, emax: int=20, e3max: int=0, ncsm=False,
-                    mapping_method="Jordan-Wigner"):
+def get_Hamiltonian(fn_NN, Z: int, N: int,
+                    fn_3NF=None, emax: int=20, e3max: int=0,
+                    ncsm=False,
+                    mapping_method="Jordan-Wigner",
+                    single_spiecies=0):
     """Get nuclear Hamiltonian from interaction files.
 
     This is a convenience wrapper function that constructs a Hamiltonian object
@@ -152,9 +155,9 @@ def get_Hamiltonian(fn_NN, Z: int, N: int, fn_3NF=None, emax: int=20, e3max: int
     assert mapping_method == "Jordan-Wigner", f"Only Jordan-Wigner mapping is implemented, but {mapping_method} was specified."
 
     if fn_3NF != None:
-        hamil = Hamiltonian(fn_NN, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF)
+        hamil = Hamiltonian(fn_NN, Z, N, ncsm=True, emax_truncate=emax, e3max=e3max, fn_3NF=fn_3NF, mapping_method=mapping_method, single_spiecies=single_spiecies)
     else:
-        hamil = Hamiltonian(fn_NN, Z, N, ncsm=ncsm, emax_truncate=emax)
+        hamil = Hamiltonian(fn_NN, Z, N, ncsm=ncsm, emax_truncate=emax, mapping_method=mapping_method, single_spiecies=single_spiecies)
 
     n_qubits = hamil.n_qubits
     proton_qubits = list(range(0, hamil.n_qubits_p))
@@ -242,6 +245,8 @@ class Hamiltonian:
         Qiskit_order: bool=True,
         verbose: bool=False,
         e3max: int|None=None,
+        mapping_method: str="Jordan-Wigner",
+        single_spiecies: int=0,
     ):
         """Initialize nuclear Hamiltonian from interaction files.
         
@@ -261,6 +266,8 @@ class Hamiltonian:
             verbose (bool, optional): Enable verbose output for debugging. Defaults to False.
             e3max (int, optional): Maximum excitation energy for three-body forces.
                 If None, uses emax_truncate value. Defaults to None.
+            mapping_method (str, optional): Method for mapping fermionic operators to Pauli operators.
+            single_spiecies (int, optional): If 0, treat protons and neutrons, it 1/2, treat only protons/neutrons. Defaults to 0.
         
         Raises:
             ValueError: If three-body file format is not supported.
@@ -286,8 +293,11 @@ class Hamiltonian:
         self.hw = None
         self.fn_3NF = fn_3NF
         self.Jz = jz
+        self.mapping_method = mapping_method
+        self.single_spiecies = single_spiecies
         if ncsm:
             self.hw = self.extract_hw()
+
         (
             self.nsp_p,
             self.nsp_n,
@@ -306,6 +316,7 @@ class Hamiltonian:
         self.n_qubits_p = len(self.proton_qubits)
         self.n_qubits_n = len(self.neutron_qubits)
         self.e3max = e3max if e3max != None else emax_truncate
+
         self.Hamildict = None
         if ncsm:
             self.e1max_file, self.e2max, self.e3max_file = self.guess_emax_from_fn(
@@ -346,6 +357,7 @@ class Hamiltonian:
                     self.e3max,
                     self.e3max_file,
                     self.CG_dict,
+                    self.single_spiecies !=0 ,
                     verbose=self.verbose
                 )
                 self.v3b_pn = obj.pnME_3NF
@@ -507,6 +519,12 @@ class Hamiltonian:
                     if te > self.emax:
                         excluded.append(idx)
                         continue
+
+                    if self.single_spiecies == 1 and tz == 1: # proton only
+                        excluded.append(idx)
+                    if self.single_spiecies == 2 and tz == -1: # neutron only
+                        excluded.append(idx)
+
                     dict_sps[idx] = count
                     single_particle_states.append(Orbit_nljtz(n, l, j, tz))
 
@@ -628,6 +646,8 @@ class Hamiltonian:
             tz = sps.tz
             if tz != -1:
                 continue
+            if self.single_spiecies == 2:
+                continue
             dict_sps2msps[idx] = []
             for jz in range(-j, j + 2, 2):
                 mps.append(Orbit_nljjztz(n, l, j, jz, tz))
@@ -641,6 +661,8 @@ class Hamiltonian:
             tz = sps.tz
             if tz != 1:
                 continue
+            if self.single_spiecies == 1:
+                continue
             dict_sps2msps[idx] = []
             for jz in range(-j, j + 2, 2):
                 mps.append(Orbit_nljjztz(n, l, j, jz, tz))
@@ -648,7 +670,8 @@ class Hamiltonian:
                 count += 1
         if self.verbose:
             print("mps", mps)
-            print("dict_sps2msps", dict_sps2msps)
+        print("single_particle_states", self.single_spiecies)
+        print("dict_sps2msps", dict_sps2msps)
         proton_register = range(num_proton)
         neutron_register = range(num_proton, count)
         return proton_register, neutron_register, mps, dict_sps2msps
@@ -1812,6 +1835,7 @@ class ReadThBME_me3jgz:
         e3max: int,
         e3max_file: int,
         CG_dict_fromHamiltonian: dict,
+        single_species: bool = False,
         verbose:bool =False,
     ):
         self.filename = filename
@@ -2602,61 +2626,61 @@ def set_op_list_from_op_dict_3b(
     return op_list
 
 
-def worker_cU(inp):
-    term, dt, n_qubits = inp
-    term = term.to_label()
-    op = SparsePauliOp.from_list(list(zip([term], [1.0])))
-    u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))
-    u = u.control(1)
-    qc = QuantumCircuit(n_qubits + 1)
-    qc.append(u, [0] + list(range(1, n_qubits + 1)))
-    qc = qc.decompose(reps=5)
-    counts = qc.count_ops()
-    return counts
+# def worker_cU(inp):
+#     term, dt, n_qubits = inp
+#     term = term.to_label()
+#     op = SparsePauliOp.from_list(list(zip([term], [1.0])))
+#     u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))
+#     u = u.control(1)
+#     qc = QuantumCircuit(n_qubits + 1)
+#     qc.append(u, [0] + list(range(1, n_qubits + 1)))
+#     qc = qc.decompose(reps=5)
+#     counts = qc.count_ops()
+#     return counts
 
 
-def worker_U(inp):
-    term, dt, n_qubits = inp
-    term = term.to_label()
-    op = SparsePauliOp.from_list(list(zip([term], [1.0])))
-    u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))
-    qc = QuantumCircuit(n_qubits)
-    qc.append(u, range(n_qubits))
-    qc = qc.decompose(reps=5)
-    counts = qc.count_ops()
-    return counts
+# def worker_U(inp):
+#     term, dt, n_qubits = inp
+#     term = term.to_label()
+#     op = SparsePauliOp.from_list(list(zip([term], [1.0])))
+#     u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))
+#     qc = QuantumCircuit(n_qubits)
+#     qc.append(u, range(n_qubits))
+#     qc = qc.decompose(reps=5)
+#     counts = qc.count_ops()
+#     return counts
 
 
-def counting_CNOTs(H_mapped, label_int, label_op, dt, n_qubits):
-    print(f"Counting CNOTs for {label_int} with {label_op} operator...")
-    nproc = multiprocessing.cpu_count() - 2
-    Ntasks = len(H_mapped.paulis)
-    t = tqdm(total=Ntasks)
-    p = get_context("fork").Pool(processes=nproc)
-    if label_op == "c-U":
-        worker_func = worker_cU
-    elif label_op == "U":
-        worker_func = worker_U
-    else:
-        raise ValueError(f"Unknown label_op: {label_op}. Use 'c-U' or 'U'.")
+# def counting_CNOTs(H_mapped, label_int, label_op, dt, n_qubits):
+#     print(f"Counting CNOTs for {label_int} with {label_op} operator...")
+#     nproc = multiprocessing.cpu_count() - 2
+#     Ntasks = len(H_mapped.paulis)
+#     t = tqdm(total=Ntasks)
+#     p = get_context("fork").Pool(processes=nproc)
+#     if label_op == "c-U":
+#         worker_func = worker_cU
+#     elif label_op == "U":
+#         worker_func = worker_U
+#     else:
+#         raise ValueError(f"Unknown label_op: {label_op}. Use 'c-U' or 'U'.")
 
-    results_all = {}
-    with get_context("fork").Pool(processes=nproc) as p:
-        results = []
-        for counts in p.imap_unordered(
-            worker_func,
-            [(term, dt, n_qubits) for term in H_mapped.paulis],
-            chunksize=1000,
-        ):
-            results.append(counts)
-            t.update()
-    total_counts = Counter()
-    for counts in results:
-        total_counts.update(counts)
-    results_all = dict(total_counts)
+#     results_all = {}
+#     with get_context("fork").Pool(processes=nproc) as p:
+#         results = []
+#         for counts in p.imap_unordered(
+#             worker_func,
+#             [(term, dt, n_qubits) for term in H_mapped.paulis],
+#             chunksize=1000,
+#         ):
+#             results.append(counts)
+#             t.update()
+#     total_counts = Counter()
+#     for counts in results:
+#         total_counts.update(counts)
+#     results_all = dict(total_counts)
 
-    p.close()
-    print(f"{label_int}: # of gates in (multi-processing) {label_op}: {results_all}")
+#     p.close()
+#     print(f"{label_int}: # of gates in (multi-processing) {label_op}: {results_all}")
 
 
 def removing_redundant_ops(op_list):
@@ -2716,6 +2740,8 @@ def removing_redundant_terms(ops: SparsePauliOp, verbose=False):
         quantum algorithm applications. Without this step, imaginary
         terms may persist and affect the results.
     """
+    if len(ops) <= 1:
+        return ops
     paulis = ops.paulis
     coeffs = ops.coeffs
     new_dict = {}

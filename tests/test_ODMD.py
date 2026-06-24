@@ -1,7 +1,5 @@
 import os
-import pytest
 from nuqulib import *
-
 
 chdir = os.path.dirname(os.path.abspath(__file__))
 int_dir = os.path.join(chdir, "interaction_file/")
@@ -10,7 +8,7 @@ def test_ODMD():
     using_statevector = True
     sampler = None
 
-    Z = 0; N = 2
+    Z = 2; N = 4
     Eexact = - 3.910
 
     fn_snt = int_dir+"ckpot.snt"

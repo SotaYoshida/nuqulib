@@ -169,7 +169,10 @@ def mapping_of_pn_hamiltonians(op_pn: dict[tuple[str, str], float],
         for pauli, coeff in res: 
             paulis.append(pauli)
             coeffs.append(coeff)
-    return SparsePauliOp.from_list(list(zip(paulis, coeffs)))
+    if len(paulis) == 0:
+        return SparsePauliOp.from_list([("I"* (n_qubits_p + n_qubits_n), 0.0)])
+    else:
+        return SparsePauliOp.from_list(list(zip(paulis, coeffs)))
 
 
 def check_XXYYterm(hamiltonian_op_XXYY):
