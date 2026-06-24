@@ -358,8 +358,11 @@
 
 <div class="viewcode-block" id="get_Hamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_Hamiltonian">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emax</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">mapping_method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">fn_3NF</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">emax</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                    <span class="n">ncsm</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">mapping_method</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">,</span>
+                    <span class="n">single_spiecies</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get nuclear Hamiltonian from interaction files.</span>
 
 <span class="sd">    This is a convenience wrapper function that constructs a Hamiltonian object</span>
@@ -390,9 +393,9 @@
     <span class="k">assert</span> <span class="n">mapping_method</span> <span class="o">==</span> <span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Only Jordan-Wigner mapping is implemented, but </span><span class="si">{</span><span class="n">mapping_method</span><span class="si">}</span><span class="s2"> was specified.&quot;</span>
 
     <span class="k">if</span> <span class="n">fn_3NF</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="n">e3max</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="n">fn_3NF</span><span class="p">)</span>
+        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">e3max</span><span class="o">=</span><span class="n">e3max</span><span class="p">,</span> <span class="n">fn_3NF</span><span class="o">=</span><span class="n">fn_3NF</span><span class="p">,</span> <span class="n">mapping_method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span> <span class="n">single_spiecies</span><span class="o">=</span><span class="n">single_spiecies</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="n">ncsm</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">)</span>
+        <span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="n">fn_NN</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="n">ncsm</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="n">emax</span><span class="p">,</span> <span class="n">mapping_method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span> <span class="n">single_spiecies</span><span class="o">=</span><span class="n">single_spiecies</span><span class="p">)</span>
 
     <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits</span>
     <span class="n">proton_qubits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits_p</span><span class="p">))</span>
@@ -483,6 +486,8 @@
         <span class="n">Qiskit_order</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="o">|</span><span class="kc">None</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mapping_method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">,</span>
+        <span class="n">single_spiecies</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize nuclear Hamiltonian from interaction files.</span>
 <span class="sd">        </span>
@@ -502,6 +507,8 @@
 <span class="sd">            verbose (bool, optional): Enable verbose output for debugging. Defaults to False.</span>
 <span class="sd">            e3max (int, optional): Maximum excitation energy for three-body forces.</span>
 <span class="sd">                If None, uses emax_truncate value. Defaults to None.</span>
+<span class="sd">            mapping_method (str, optional): Method for mapping fermionic operators to Pauli operators.</span>
+<span class="sd">            single_spiecies (int, optional): If 0, treat protons and neutrons, it 1/2, treat only protons/neutrons. Defaults to 0.</span>
 <span class="sd">        </span>
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If three-body file format is not supported.</span>
@@ -527,8 +534,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hw</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span> <span class="o">=</span> <span class="n">fn_3NF</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Jz</span> <span class="o">=</span> <span class="n">jz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping_method</span> <span class="o">=</span> <span class="n">mapping_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">=</span> <span class="n">single_spiecies</span>
         <span class="k">if</span> <span class="n">ncsm</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_hw</span><span class="p">()</span>
+
         <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nsp_p</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nsp_n</span><span class="p">,</span>
@@ -547,6 +557,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proton_qubits</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neutron_qubits</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e3max</span> <span class="o">=</span> <span class="n">e3max</span> <span class="k">if</span> <span class="n">e3max</span> <span class="o">!=</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">emax_truncate</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">Hamildict</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">ncsm</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">e1max_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e2max</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e3max_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_emax_from_fn</span><span class="p">(</span>
@@ -587,6 +598,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">e3max</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">e3max_file</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">!=</span><span class="mi">0</span> <span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">pnME_3NF</span>
@@ -762,6 +774,12 @@
                     <span class="k">if</span> <span class="n">te</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">emax</span><span class="p">:</span>
                         <span class="n">excluded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
                         <span class="k">continue</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">tz</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># proton only</span>
+                        <span class="n">excluded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">tz</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># neutron only</span>
+                        <span class="n">excluded</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
                     <span class="n">dict_sps</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
                     <span class="n">single_particle_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Orbit_nljtz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">tz</span><span class="p">))</span>
 
@@ -886,6 +904,8 @@
             <span class="n">tz</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">tz</span>
             <span class="k">if</span> <span class="n">tz</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">jz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
                 <span class="n">mps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Orbit_nljjztz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">))</span>
@@ -899,6 +919,8 @@
             <span class="n">tz</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">tz</span>
             <span class="k">if</span> <span class="n">tz</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">jz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
                 <span class="n">mps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Orbit_nljjztz</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">tz</span><span class="p">))</span>
@@ -906,7 +928,8 @@
                 <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;mps&quot;</span><span class="p">,</span> <span class="n">mps</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dict_sps2msps&quot;</span><span class="p">,</span> <span class="n">dict_sps2msps</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;single_particle_states&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_spiecies</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dict_sps2msps&quot;</span><span class="p">,</span> <span class="n">dict_sps2msps</span><span class="p">)</span>
         <span class="n">proton_register</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_proton</span><span class="p">)</span>
         <span class="n">neutron_register</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_proton</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proton_register</span><span class="p">,</span> <span class="n">neutron_register</span><span class="p">,</span> <span class="n">mps</span><span class="p">,</span> <span class="n">dict_sps2msps</span></div>
@@ -2152,6 +2175,7 @@
         <span class="n">e3max</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">e3max_file</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">CG_dict_fromHamiltonian</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="n">single_species</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
@@ -2991,70 +3015,61 @@
 
 
 
-<div class="viewcode-block" id="worker_cU">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.worker_cU">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">worker_cU</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
-    <span class="n">term</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">inp</span>
-    <span class="n">term</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
-    <span class="n">op</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">term</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">])))</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">control</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
-    <span class="n">qc</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">reps</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">counts</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">count_ops</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">counts</span></div>
+<span class="c1"># def worker_cU(inp):</span>
+<span class="c1">#     term, dt, n_qubits = inp</span>
+<span class="c1">#     term = term.to_label()</span>
+<span class="c1">#     op = SparsePauliOp.from_list(list(zip([term], [1.0])))</span>
+<span class="c1">#     u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))</span>
+<span class="c1">#     u = u.control(1)</span>
+<span class="c1">#     qc = QuantumCircuit(n_qubits + 1)</span>
+<span class="c1">#     qc.append(u, [0] + list(range(1, n_qubits + 1)))</span>
+<span class="c1">#     qc = qc.decompose(reps=5)</span>
+<span class="c1">#     counts = qc.count_ops()</span>
+<span class="c1">#     return counts</span>
 
 
-
-<div class="viewcode-block" id="worker_U">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.worker_U">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">worker_U</span><span class="p">(</span><span class="n">inp</span><span class="p">):</span>
-    <span class="n">term</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">inp</span>
-    <span class="n">term</span> <span class="o">=</span> <span class="n">term</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
-    <span class="n">op</span> <span class="o">=</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">term</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">])))</span>
-    <span class="n">u</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
-    <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">))</span>
-    <span class="n">qc</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">reps</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-    <span class="n">counts</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">count_ops</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">counts</span></div>
+<span class="c1"># def worker_U(inp):</span>
+<span class="c1">#     term, dt, n_qubits = inp</span>
+<span class="c1">#     term = term.to_label()</span>
+<span class="c1">#     op = SparsePauliOp.from_list(list(zip([term], [1.0])))</span>
+<span class="c1">#     u = PauliEvolutionGate(op, dt, synthesis=SuzukiTrotter(order=1, reps=1))</span>
+<span class="c1">#     qc = QuantumCircuit(n_qubits)</span>
+<span class="c1">#     qc.append(u, range(n_qubits))</span>
+<span class="c1">#     qc = qc.decompose(reps=5)</span>
+<span class="c1">#     counts = qc.count_ops()</span>
+<span class="c1">#     return counts</span>
 
 
+<span class="c1"># def counting_CNOTs(H_mapped, label_int, label_op, dt, n_qubits):</span>
+<span class="c1">#     print(f&quot;Counting CNOTs for {label_int} with {label_op} operator...&quot;)</span>
+<span class="c1">#     nproc = multiprocessing.cpu_count() - 2</span>
+<span class="c1">#     Ntasks = len(H_mapped.paulis)</span>
+<span class="c1">#     t = tqdm(total=Ntasks)</span>
+<span class="c1">#     p = get_context(&quot;fork&quot;).Pool(processes=nproc)</span>
+<span class="c1">#     if label_op == &quot;c-U&quot;:</span>
+<span class="c1">#         worker_func = worker_cU</span>
+<span class="c1">#     elif label_op == &quot;U&quot;:</span>
+<span class="c1">#         worker_func = worker_U</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         raise ValueError(f&quot;Unknown label_op: {label_op}. Use &#39;c-U&#39; or &#39;U&#39;.&quot;)</span>
 
-<div class="viewcode-block" id="counting_CNOTs">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.counting_CNOTs">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">counting_CNOTs</span><span class="p">(</span><span class="n">H_mapped</span><span class="p">,</span> <span class="n">label_int</span><span class="p">,</span> <span class="n">label_op</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Counting CNOTs for </span><span class="si">{</span><span class="n">label_int</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">label_op</span><span class="si">}</span><span class="s2"> operator...&quot;</span><span class="p">)</span>
-    <span class="n">nproc</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span>
-    <span class="n">Ntasks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">H_mapped</span><span class="o">.</span><span class="n">paulis</span><span class="p">)</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Ntasks</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">label_op</span> <span class="o">==</span> <span class="s2">&quot;c-U&quot;</span><span class="p">:</span>
-        <span class="n">worker_func</span> <span class="o">=</span> <span class="n">worker_cU</span>
-    <span class="k">elif</span> <span class="n">label_op</span> <span class="o">==</span> <span class="s2">&quot;U&quot;</span><span class="p">:</span>
-        <span class="n">worker_func</span> <span class="o">=</span> <span class="n">worker_U</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown label_op: </span><span class="si">{</span><span class="n">label_op</span><span class="si">}</span><span class="s2">. Use &#39;c-U&#39; or &#39;U&#39;.&quot;</span><span class="p">)</span>
+<span class="c1">#     results_all = {}</span>
+<span class="c1">#     with get_context(&quot;fork&quot;).Pool(processes=nproc) as p:</span>
+<span class="c1">#         results = []</span>
+<span class="c1">#         for counts in p.imap_unordered(</span>
+<span class="c1">#             worker_func,</span>
+<span class="c1">#             [(term, dt, n_qubits) for term in H_mapped.paulis],</span>
+<span class="c1">#             chunksize=1000,</span>
+<span class="c1">#         ):</span>
+<span class="c1">#             results.append(counts)</span>
+<span class="c1">#             t.update()</span>
+<span class="c1">#     total_counts = Counter()</span>
+<span class="c1">#     for counts in results:</span>
+<span class="c1">#         total_counts.update(counts)</span>
+<span class="c1">#     results_all = dict(total_counts)</span>
 
-    <span class="n">results_all</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">counts</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span>
-            <span class="n">worker_func</span><span class="p">,</span>
-            <span class="p">[(</span><span class="n">term</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">)</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">H_mapped</span><span class="o">.</span><span class="n">paulis</span><span class="p">],</span>
-            <span class="n">chunksize</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-        <span class="p">):</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-    <span class="n">total_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">counts</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-        <span class="n">total_counts</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
-    <span class="n">results_all</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">total_counts</span><span class="p">)</span>
-
-    <span class="n">p</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label_int</span><span class="si">}</span><span class="s2">: # of gates in (multi-processing) </span><span class="si">{</span><span class="n">label_op</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">results_all</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
+<span class="c1">#     p.close()</span>
+<span class="c1">#     print(f&quot;{label_int}: # of gates in (multi-processing) {label_op}: {results_all}&quot;)</span>
 
 
 <div class="viewcode-block" id="removing_redundant_ops">
@@ -3119,6 +3134,8 @@
 <span class="sd">        quantum algorithm applications. Without this step, imaginary</span>
 <span class="sd">        terms may persist and affect the results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ops</span>
     <span class="n">paulis</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">coeffs</span>
     <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
