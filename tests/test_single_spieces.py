@@ -1,3 +1,5 @@
+from qiskit import transpile
+from qiskit_aer import AerSimulator
 from nuqulib import *
 
 chdir = os.path.dirname(os.path.abspath(__file__))
@@ -17,6 +19,34 @@ def test_pshell_Hamil():
     print("<J>:", J_expect)
     Hvals_ref = [-3.90981246, 0.6322095, 4.1172905, 4.2824, 7.92111246]
     assert np.allclose(np.sort(obj_Diag["evals"]), np.sort(Hvals_ref))
+
+
+def test_pshell_ckpot_lowest_filling(Eref=-18.69821):
+    Z = N = 4
+    fn_snt = int_dir+"ckpot.snt"
+ 
+    hamil, H_mapped, proton_qubits, neutron_qubits = get_Hamiltonian(fn_snt, Z, N)
+    Zc = hamil.core_p
+    Nc = hamil.core_n
+    Mtot = 0
+    return_idxs = True
+
+    Uprep, selected_p, selected_n = lowest_filling_ansatz(hamil, Z-Zc, N-Nc, Mtot, return_idxs)
+    print("lowest filling ansatz circuit:")
+    print("Selected proton qubits: ", selected_p)
+    print("Selected neutron qubits:", selected_n)
+
+    sim = AerSimulator(method='statevector')
+    psi = Uprep.remove_final_measurements(inplace=False)
+    psi.save_statevector()
+
+    tqc = transpile(psi, sim)
+    job = sim.run(tqc)
+    result = job.result()
+    psi_final = result.get_statevector(tqc)
+    E_expect = psi_final.expectation_value(H_mapped).real
+    print(f"Energy expectation value of the prepared state: {E_expect:.6f} MeV")
+    assert np.isclose(E_expect, Eref, rtol=1e-4)
 
 def test_NCSM_NN3N_Hamil():
 
