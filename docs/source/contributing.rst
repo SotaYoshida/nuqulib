@@ -52,12 +52,13 @@ If you are willing to contribute to this package, please keep in mind the follow
    documentation, please follow the docstring format used in the
    existing code or refer to the Sphinx documentation for guidance.
 
-- Managing the dependencies:
+- Managing the dependencies: 
 
    Please consider to use ``uv`` to manage the dependencies for development, and
    do not modify the ``pyproject.toml`` file directly.
    If you need to add a new dependency, please do it with ``uv add <package-name>`` and then commit the changes in ``pyproject.toml`` and ``uv.lock``.
    
+
 Since we are using GitHub Actions, only the allowed users can run the test jobs on GitHub Actions.
 If you are not an allowed user, please run the test codes locally before making a pull request with pytest.
 
@@ -70,7 +71,15 @@ To test your changes locally before making a pull request, please follow these s
 
 1. Clone the repository to your local machine if you haven't already:
 
+   .. code-block:: bash
+
+      git clone https://github.com/SotaYoshida/nuqulib
+
 2. Create a new branch for your changes:
+
+   .. code-block:: bash
+
+      git checkout -b your_branch
 
 3. Make your changes to the codebase.
 
@@ -78,11 +87,19 @@ To test your changes locally before making a pull request, please follow these s
 
    .. code-block:: bash
 
-      pip install -e .
+      uv sync
 
-   Note that we assume you have a virtual environment set up for development.
+   Note that we assume you have ``uv`` installed and set up for this project.
+   You can also try a virtual environment liks ``venv`` and ``pip`` if you prefer.
+   However, the ``pip install -e .`` command can be not perfect to resolve the dependencies.
 
-5. Run the test suite using `pytest`` to ensure that your changes do not break any existing functionality:
+5. After installing the dependencies, you can activate your virtual environment:
+
+   .. code-block:: bash
+
+      source .venv/bin/activate
+
+6. Run the test suite using `pytest`` to ensure that your changes do not break any existing functionality:
 
    .. code-block:: bash
 
@@ -108,4 +125,4 @@ To test your changes locally before making a pull request, please follow these s
 LICENSE
 ******************************
 
-Any contribution from you will be under the MIT License.
+Any contribution from you will be licensed under the same license as this project, which is MIT License.

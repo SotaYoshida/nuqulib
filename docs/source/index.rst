@@ -41,8 +41,8 @@ Then you will get directory structure like this:
    ├── .gitignore
    ├── .python-version
    ├── pyproject.toml   
-   └── README.md
-   ├── src
+   ├── README.md
+   └── src
    
 In the root directory of NuQuLib (or your project), you can install the dependencies using the following command:
 

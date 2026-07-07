@@ -267,7 +267,7 @@ class Hamiltonian:
             e3max (int, optional): Maximum excitation energy for three-body forces.
                 If None, uses emax_truncate value. Defaults to None.
             mapping_method (str, optional): Method for mapping fermionic operators to Pauli operators.
-            single_spiecies (int, optional): If 0, treat protons and neutrons, it 1/2, treat only protons/neutrons. Defaults to 0.
+            single_spiecies (int, optional): If 0, treat protons and neutrons, if 1/2, treat only protons/neutrons. Defaults to 0.
         
         Raises:
             ValueError: If three-body file format is not supported.
@@ -786,7 +786,6 @@ class Hamiltonian:
             # print("1b in MS", a, b, Tab)
             for aa in self.dict_sps2msps[a]:
                 morb_a = self.msps[aa]
-                # idx_ma, n_a, l_a, j_a, jz_a, tz_a = morb_a
                 n_a = morb_a.n
                 l_a = morb_a.l
                 j_a = morb_a.j
@@ -794,7 +793,6 @@ class Hamiltonian:
                 tz_a = morb_a.tz
                 for bb in self.dict_sps2msps[b]:
                     morb_b = self.msps[bb]
-                    # idx_mb, n_b, l_b, j_b, jz_b, tz_b = morb_b
                     n_b = morb_b.n
                     l_b = morb_b.l
                     j_b = morb_b.j
@@ -888,7 +886,6 @@ class Hamiltonian:
                             if Tz == 0 and (set([a, b]) == set([c, d])) and aa > cc:
                                 continue
 
-
                             morb_d = self.msps[dd]
                             n_d = morb_d.n
                             l_d = morb_d.l
@@ -911,6 +908,8 @@ class Hamiltonian:
                             v = V * CG1 * CG2 * N_ab * N_cd
                             if v == 0:
                                 continue
+                            # if  Tz == 2 and (set([aa, bb]) == set([cc, dd])) and aa == 8:
+                            #     print(f"2b in MS: {aa, bb, cc, dd, J, v} Nfac {N_ab*N_cd} CG {CG1} {CG2}")
                             if Tz == -2:
                                 num_pp += 1
                                 if opform:
@@ -1181,7 +1180,7 @@ class Hamiltonian:
 
         Note:
             Q. Why do we need to devide the 3NF matrix elements by 36?
-            A. All the permutations of the 3NF matrix elements are counted below.
+            A. All the permutations of the 3NF matrix elements are explicitly counted below.
             It would be more efficient to avoid redundancy in the first place. It is left for the future.
 
             Q. Why do we need to multiply the 3NF matrix elements by 9 for pnn and npp?
@@ -1924,7 +1923,7 @@ class ReadThBME_me3jgz:
         In the nested loops, the number of reads is counted by considering possible (allowed) <a, b, c [Jab]|V| d, e, f [Jde]>
         in isospin space, i.e. a~e are indices for Orbit_nlj.
         The factors ((twoJCMax - twoJCMin) // 2 + 1) and 5 represents the number of allowed J_3 and T_3.
-        Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0) (1,1), while T_3 = 0 case has only 1 component.
+        Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0), (1, 1), while T_3 = 0 case has only 1 component.
         The Tindex will be 2 * Tab + Tde + ((T2 - 1) // 2), i.e. 0: (0, 0, 1), 1: (0, 1, 0), 2: (1, 0, 0), 3: (1, 1, 1), 4: (1, 1, 3).
 
         :nreads: is a list of the head indices relevant to the first index in bra/ket for 3NF matrix elements.

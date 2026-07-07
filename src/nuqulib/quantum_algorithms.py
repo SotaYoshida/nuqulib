@@ -145,26 +145,6 @@ class myTextBookQPE:
         return Tcount
 
 
-def make_U_and_cU(
-    i, delta_t, trotter_steps, hamiltonian_op, ancilla_qubits, target_qubits, Uprep
-):
-    Ntar = len(target_qubits)
-    time = i * delta_t
-    circuit_U = QuantumCircuit(Ntar)
-    expiHt = PauliEvolutionGate(
-        hamiltonian_op, time, synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
-    )
-    circuit_U.append(expiHt, range(Ntar))
-    qc_U = circuit_U.decompose().decompose()
-
-    qc_cU = QuantumCircuit(Ntar)
-    qc_cU.append(Uprep, range(Ntar))
-    qc_cU.append(expiHt, range(Ntar))
-    qc_cU = qc_cU.decompose().decompose()
-    qc_cU = qc_cU.to_gate().control(1)
-    return qc_U, qc_cU
-
-
 def make_overlap_qc(
     Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, using_statevector
 ):
