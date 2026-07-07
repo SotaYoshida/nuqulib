@@ -1961,11 +1961,6 @@ number conservation. Defaults to True.</p></li>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="nuqulib.quantum_algorithms.make_U_and_cU">
-<span class="sig-prename descclassname"><span class="pre">nuqulib.quantum_algorithms.</span></span><span class="sig-name descname"><span class="pre">make_U_and_cU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trotter_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hamiltonian_op</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancilla_qubits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_qubits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Uprep</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/quantum_algorithms.html#make_U_and_cU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.quantum_algorithms.make_U_and_cU" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="nuqulib.quantum_algorithms.make_cU">
 <span class="sig-prename descclassname"><span class="pre">nuqulib.quantum_algorithms.</span></span><span class="sig-name descname"><span class="pre">make_cU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Uprep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ntar</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nuqulib/quantum_algorithms.html#make_cU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#nuqulib.quantum_algorithms.make_cU" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2609,7 +2604,7 @@ shell model interactions.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Q. Why do we need to devide the 3NF matrix elements by 36?
-A. All the permutations of the 3NF matrix elements are counted below.
+A. All the permutations of the 3NF matrix elements are explicitly counted below.
 It would be more efficient to avoid redundancy in the first place. It is left for the future.</p>
 <p>Q. Why do we need to multiply the 3NF matrix elements by 9 for pnn and npp?
 A. At first, proton and neutron operators commute.
@@ -2741,7 +2736,7 @@ One should take this into account when processing the data when working in JT-co
 <p>In the nested loops, the number of reads is counted by considering possible (allowed) &lt;a, b, c [Jab]|V| d, e, f [Jde]&gt;
 in isospin space, i.e. a~e are indices for Orbit_nlj.
 The factors ((twoJCMax - twoJCMin) // 2 + 1) and 5 represents the number of allowed J_3 and T_3.
-Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0) (1,1), while T_3 = 0 case has only 1 component.
+Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0), (1, 1), while T_3 = 0 case has only 1 component.
 The Tindex will be 2 * Tab + Tde + ((T2 - 1) // 2), i.e. 0: (0, 0, 1), 1: (0, 1, 0), 2: (1, 0, 0), 3: (1, 1, 1), 4: (1, 1, 3).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Nreads<span class="colon">:</span></dt>
@@ -3541,7 +3536,6 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.get_idx_circuit"><code class="docutils literal notranslate"><span class="pre">get_idx_circuit()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.lambda_plot"><code class="docutils literal notranslate"><span class="pre">lambda_plot()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.make_Circ_forNondiagH"><code class="docutils literal notranslate"><span class="pre">make_Circ_forNondiagH()</span></code></a></li>
-<li><a class="reference internal" href="#nuqulib.quantum_algorithms.make_U_and_cU"><code class="docutils literal notranslate"><span class="pre">make_U_and_cU()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.make_cU"><code class="docutils literal notranslate"><span class="pre">make_cU()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.make_overlap_qc"><code class="docutils literal notranslate"><span class="pre">make_overlap_qc()</span></code></a></li>
 <li><a class="reference internal" href="#nuqulib.quantum_algorithms.measure_overlap"><code class="docutils literal notranslate"><span class="pre">measure_overlap()</span></code></a></li>

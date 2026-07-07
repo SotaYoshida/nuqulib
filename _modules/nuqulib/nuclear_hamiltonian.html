@@ -508,7 +508,7 @@
 <span class="sd">            e3max (int, optional): Maximum excitation energy for three-body forces.</span>
 <span class="sd">                If None, uses emax_truncate value. Defaults to None.</span>
 <span class="sd">            mapping_method (str, optional): Method for mapping fermionic operators to Pauli operators.</span>
-<span class="sd">            single_spiecies (int, optional): If 0, treat protons and neutrons, it 1/2, treat only protons/neutrons. Defaults to 0.</span>
+<span class="sd">            single_spiecies (int, optional): If 0, treat protons and neutrons, if 1/2, treat only protons/neutrons. Defaults to 0.</span>
 <span class="sd">        </span>
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: If three-body file format is not supported.</span>
@@ -1053,7 +1053,6 @@
             <span class="c1"># print(&quot;1b in MS&quot;, a, b, Tab)</span>
             <span class="k">for</span> <span class="n">aa</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">a</span><span class="p">]:</span>
                 <span class="n">morb_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">aa</span><span class="p">]</span>
-                <span class="c1"># idx_ma, n_a, l_a, j_a, jz_a, tz_a = morb_a</span>
                 <span class="n">n_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">n</span>
                 <span class="n">l_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">l</span>
                 <span class="n">j_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">j</span>
@@ -1061,7 +1060,6 @@
                 <span class="n">tz_a</span> <span class="o">=</span> <span class="n">morb_a</span><span class="o">.</span><span class="n">tz</span>
                 <span class="k">for</span> <span class="n">bb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_sps2msps</span><span class="p">[</span><span class="n">b</span><span class="p">]:</span>
                     <span class="n">morb_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">bb</span><span class="p">]</span>
-                    <span class="c1"># idx_mb, n_b, l_b, j_b, jz_b, tz_b = morb_b</span>
                     <span class="n">n_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">n</span>
                     <span class="n">l_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">l</span>
                     <span class="n">j_b</span> <span class="o">=</span> <span class="n">morb_b</span><span class="o">.</span><span class="n">j</span>
@@ -1155,7 +1153,6 @@
                             <span class="k">if</span> <span class="n">Tz</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span> <span class="o">==</span> <span class="nb">set</span><span class="p">([</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">]))</span> <span class="ow">and</span> <span class="n">aa</span> <span class="o">&gt;</span> <span class="n">cc</span><span class="p">:</span>
                                 <span class="k">continue</span>
 
-
                             <span class="n">morb_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span>
                             <span class="n">n_d</span> <span class="o">=</span> <span class="n">morb_d</span><span class="o">.</span><span class="n">n</span>
                             <span class="n">l_d</span> <span class="o">=</span> <span class="n">morb_d</span><span class="o">.</span><span class="n">l</span>
@@ -1178,6 +1175,8 @@
                             <span class="n">v</span> <span class="o">=</span> <span class="n">V</span> <span class="o">*</span> <span class="n">CG1</span> <span class="o">*</span> <span class="n">CG2</span> <span class="o">*</span> <span class="n">N_ab</span> <span class="o">*</span> <span class="n">N_cd</span>
                             <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                                 <span class="k">continue</span>
+                            <span class="c1"># if  Tz == 2 and (set([aa, bb]) == set([cc, dd])) and aa == 8:</span>
+                            <span class="c1">#     print(f&quot;2b in MS: {aa, bb, cc, dd, J, v} Nfac {N_ab*N_cd} CG {CG1} {CG2}&quot;)</span>
                             <span class="k">if</span> <span class="n">Tz</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
                                 <span class="n">num_pp</span> <span class="o">+=</span> <span class="mi">1</span>
                                 <span class="k">if</span> <span class="n">opform</span><span class="p">:</span>
@@ -1466,7 +1465,7 @@
 
 <span class="sd">        Note:</span>
 <span class="sd">            Q. Why do we need to devide the 3NF matrix elements by 36?</span>
-<span class="sd">            A. All the permutations of the 3NF matrix elements are counted below.</span>
+<span class="sd">            A. All the permutations of the 3NF matrix elements are explicitly counted below.</span>
 <span class="sd">            It would be more efficient to avoid redundancy in the first place. It is left for the future.</span>
 
 <span class="sd">            Q. Why do we need to multiply the 3NF matrix elements by 9 for pnn and npp?</span>
@@ -2269,7 +2268,7 @@
 <span class="sd">        In the nested loops, the number of reads is counted by considering possible (allowed) &lt;a, b, c [Jab]|V| d, e, f [Jde]&gt;</span>
 <span class="sd">        in isospin space, i.e. a~e are indices for Orbit_nlj.</span>
 <span class="sd">        The factors ((twoJCMax - twoJCMin) // 2 + 1) and 5 represents the number of allowed J_3 and T_3.</span>
-<span class="sd">        Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0) (1,1), while T_3 = 0 case has only 1 component.</span>
+<span class="sd">        Note that T_3 = 1 case has 4 components (Tab, Tde) = (0, 0), (0, 1), (1, 0), (1, 1), while T_3 = 0 case has only 1 component.</span>
 <span class="sd">        The Tindex will be 2 * Tab + Tde + ((T2 - 1) // 2), i.e. 0: (0, 0, 1), 1: (0, 1, 0), 2: (1, 0, 0), 3: (1, 1, 1), 4: (1, 1, 3).</span>
 
 <span class="sd">        :nreads: is a list of the head indices relevant to the first index in bra/ket for 3NF matrix elements.</span>

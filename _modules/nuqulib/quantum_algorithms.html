@@ -390,29 +390,6 @@
 
 
 
-<div class="viewcode-block" id="make_U_and_cU">
-<a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_U_and_cU">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_U_and_cU</span><span class="p">(</span>
-    <span class="n">i</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="p">,</span> <span class="n">hamiltonian_op</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">Uprep</span>
-<span class="p">):</span>
-    <span class="n">Ntar</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">)</span>
-    <span class="n">time</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="n">delta_t</span>
-    <span class="n">circuit_U</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Ntar</span><span class="p">)</span>
-    <span class="n">expiHt</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span>
-        <span class="n">hamiltonian_op</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">circuit_U</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expiHt</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
-    <span class="n">qc_U</span> <span class="o">=</span> <span class="n">circuit_U</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
-
-    <span class="n">qc_cU</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Ntar</span><span class="p">)</span>
-    <span class="n">qc_cU</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Uprep</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
-    <span class="n">qc_cU</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expiHt</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
-    <span class="n">qc_cU</span> <span class="o">=</span> <span class="n">qc_cU</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
-    <span class="n">qc_cU</span> <span class="o">=</span> <span class="n">qc_cU</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span><span class="o">.</span><span class="n">control</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">qc_U</span><span class="p">,</span> <span class="n">qc_cU</span></div>
-
-
-
 <div class="viewcode-block" id="make_overlap_qc">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_overlap_qc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_overlap_qc</span><span class="p">(</span>

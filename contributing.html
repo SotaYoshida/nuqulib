@@ -287,14 +287,29 @@ If you are not an allowed user, please run the test codes locally before making 
 <h2>How to test your changes locally<a class="headerlink" href="#how-to-test-your-changes-locally" title="Link to this heading">¶</a></h2>
 <p>To test your changes locally before making a pull request, please follow these steps:</p>
 <ol class="arabic">
-<li><p>Clone the repository to your local machine if you haven’t already:</p></li>
-<li><p>Create a new branch for your changes:</p></li>
-<li><p>Make your changes to the codebase.</p></li>
-<li><p>Install the required dependencies for testing. You can do this by running:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+<li><p>Clone the repository to your local machine if you haven’t already:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SotaYoshida/nuqulib
 </pre></div>
 </div>
-<p>Note that we assume you have a virtual environment set up for development.</p>
+</li>
+<li><p>Create a new branch for your changes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>your_branch
+</pre></div>
+</div>
+</li>
+<li><p>Make your changes to the codebase.</p></li>
+<li><p>Install the required dependencies for testing. You can do this by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>sync
+</pre></div>
+</div>
+<p>Note that we assume you have <code class="docutils literal notranslate"><span class="pre">uv</span></code> installed and set up for this project.
+You can also try a virtual environment liks <code class="docutils literal notranslate"><span class="pre">venv</span></code> and <code class="docutils literal notranslate"><span class="pre">pip</span></code> if you prefer.
+However, the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> command can be not perfect to resolve the dependencies.</p>
+</li>
+<li><p>After installing the dependencies, you can activate your virtual environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</pre></div>
+</div>
 </li>
 <li><p>Run the test suite using <cite>pytest`</cite> to ensure that your changes do not break any existing functionality:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-s<span class="w"> </span>tests/
@@ -314,7 +329,7 @@ Of course, you can also run specific test files or test cases as needed.</p>
 </section>
 <section id="license">
 <h2>LICENSE<a class="headerlink" href="#license" title="Link to this heading">¶</a></h2>
-<p>Any contribution from you will be under the MIT License.</p>
+<p>Any contribution from you will be licensed under the same license as this project, which is MIT License.</p>
 </section>
 </section>
 
