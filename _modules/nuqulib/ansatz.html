@@ -256,6 +256,23 @@
         <span class="n">Hamildict_opform</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
         <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
     <span class="p">):</span>    
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a product-state ansatz by filling the last proton/neutron orbitals.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        proton_qubits (Iterable[int]): Qubit indices assigned to proton modes.</span>
+<span class="sd">        neutron_qubits (Iterable[int]): Qubit indices assigned to neutron modes.</span>
+<span class="sd">        proton_number (int): Number of proton orbitals to occupy.</span>
+<span class="sd">        neutron_number (int): Number of neutron orbitals to occupy.</span>
+<span class="sd">        mapping_method (str, optional): Fermion-to-qubit mapping used to create</span>
+<span class="sd">            the occupation-flip Pauli strings. Defaults to ``&quot;JordanWigner&quot;``.</span>
+<span class="sd">        Hamildict_opform (dict, optional): Operator-form Hamiltonian dictionary</span>
+<span class="sd">            containing ``&quot;SPE&quot;`` entries for proton and neutron sectors.</span>
+<span class="sd">        filepath (str | os.PathLike, optional): Base path used by mappings that</span>
+<span class="sd">            need to load or save mapper data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        QuantumCircuit: Circuit preparing the naive filling configuration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">N_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
     <span class="n">P_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
     <span class="n">n_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">N_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>  
@@ -429,9 +446,12 @@
 <span class="sd">        proton_number (int): Number of protons to be placed in the lowest energy states.</span>
 <span class="sd">        neutron_number (int): Number of neutrons to be placed in the lowest energy states.</span>
 <span class="sd">        Mtot: int | None: Total magnetic quantum number (optional).</span>
+<span class="sd">        return_idxs (bool): If True, also return the selected proton and neutron orbital indices.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        QuantumCircuit: A quantum circuit representing the lowest-filling ansatz.</span>
+<span class="sd">        QuantumCircuit or tuple: A quantum circuit representing the</span>
+<span class="sd">        lowest-filling ansatz. If ``return_idxs`` is True, returns</span>
+<span class="sd">        ``(circuit, selected_p, selected_n)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_Mtot</span> <span class="o">=</span> <span class="p">(</span><span class="n">proton_number</span> <span class="o">+</span> <span class="n">neutron_number</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">Mtot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Mtot</span>
     <span class="n">proton_qubits</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">proton_qubits</span>
@@ -529,6 +549,7 @@
 <span class="sd">    and Givens rotation-based variational ansätze.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
+<span class="sd">        Hamildict_opform (dict): Operator-form Hamiltonian dictionary used by the filling-state preparation.</span>
 <span class="sd">        n_qubit (int): Total number of qubits.</span>
 <span class="sd">        proton_qubits (Iterable[int]): Indices of proton qubits.</span>
 <span class="sd">        neutron_qubits (Iterable[int]): Indices of neutron qubits.</span>
@@ -537,6 +558,10 @@
 <span class="sd">        params (Iterable[float]): Variational parameters.</span>
 <span class="sd">        method (str, optional): Ansatz method. Options: &quot;HF&quot;, &quot;HF+Givens&quot;. </span>
 <span class="sd">                               Defaults to &quot;HF&quot;.</span>
+<span class="sd">        mapping_method (str, optional): Fermion-to-qubit mapping used for the</span>
+<span class="sd">            initial filling state. Defaults to ``&quot;JordanWigner&quot;``.</span>
+<span class="sd">        filepath (str | os.PathLike, optional): Base path used by mappings that</span>
+<span class="sd">            need to load or save mapper data.</span>
 <span class="sd">        return_Gdict (bool, optional): Whether to return gate type dictionary. </span>
 <span class="sd">                                      Defaults to False.</span>
 <span class="sd">    </span>
@@ -862,9 +887,19 @@
 <span class="sd">    Generates quantum circuits to measure X_iX_j+Y_iY_j terms in the Hamiltonian.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        qc_ansatz (QuantumCircuit): Ansatz circuit to copy before adding basis</span>
+<span class="sd">            rotations and measurements.</span>
 <span class="sd">        adopted (str):</span>
 <span class="sd">            String that indicates the simulator/device type.</span>
 <span class="sd">            Acceptable values are &quot;simNISQ&quot;/&quot;simFTQC&quot; and &quot;Real&quot;.</span>
+<span class="sd">        Nq (int): Number of qubits in the ansatz circuit.</span>
+<span class="sd">        methods_XXYY (str, optional): Circuit construction method. Currently</span>
+<span class="sd">            only ``&quot;Google&quot;`` is supported.</span>
+<span class="sd">        backend (optional): Backend used for transpilation when targeting a</span>
+<span class="sd">            real device or noisy simulation.</span>
+<span class="sd">        opt_level (int, optional): Qiskit transpiler optimization level.</span>
+<span class="sd">        verbose (bool, optional): If True, also return intermediate circuits</span>
+<span class="sd">            before measurement for inspection.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -931,7 +966,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

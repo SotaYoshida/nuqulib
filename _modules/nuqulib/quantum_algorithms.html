@@ -225,9 +225,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.quantum_algorithms</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tabnanny</span><span class="w"> </span><span class="kn">import</span> <span class="n">verbose</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">transpile</span>
@@ -249,6 +247,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">circuit_HadamardTest</span><span class="p">(</span>
     <span class="n">Norb</span><span class="p">,</span> <span class="n">Uprep</span><span class="p">,</span> <span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="p">,</span> <span class="n">using_statevector</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a Hadamard-test circuit for a time-evolution operator.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Norb (int): Number of target orbitals/qubits.</span>
+<span class="sd">        Uprep (QuantumCircuit): State-preparation circuit on the target register.</span>
+<span class="sd">        Hamiltonian_op (SparsePauliOp): Hamiltonian used for Pauli evolution.</span>
+<span class="sd">        t (float): Evolution time.</span>
+<span class="sd">        trotter_steps (int): Number of Suzuki-Trotter repetitions.</span>
+<span class="sd">        using_statevector (bool, optional): If True, omit measurement and return</span>
+<span class="sd">            a statevector-ready circuit.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        QuantumCircuit: Decomposed Hadamard-test circuit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">op</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span>
         <span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> 
         <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">)</span>
@@ -287,6 +299,15 @@
 <div class="viewcode-block" id="T_formula_QFT">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.T_formula_QFT">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">T_formula_QFT</span><span class="p">(</span><span class="n">N_ancilla</span><span class="p">,</span> <span class="n">eps_rotation</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate T-count for the inverse QFT rotation gates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        N_ancilla (int): Number of QPE ancilla qubits.</span>
+<span class="sd">        eps_rotation (float, optional): Rotation synthesis tolerance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Estimated T-count.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Teps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">eps_rotation</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">N_ancilla</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_ancilla</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Teps</span></div>
 
@@ -304,6 +325,23 @@
     <span class="n">trotter_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">repeat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a basic quantum phase-estimation circuit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n_ancilla (int): Number of counting qubits.</span>
+<span class="sd">        Norb (int): Number of target qubits.</span>
+<span class="sd">        Hamiltonian_op (SparsePauliOp): Hamiltonian used for time evolution.</span>
+<span class="sd">        Uprep (QuantumCircuit): State-preparation circuit.</span>
+<span class="sd">        time (float): Base evolution time.</span>
+<span class="sd">        measure (bool, optional): If True, measure the ancilla register.</span>
+<span class="sd">        trotter_order (int, optional): Suzuki-Trotter order.</span>
+<span class="sd">        trotter_steps (int, optional): Number of Suzuki-Trotter repetitions.</span>
+<span class="sd">        repeat (bool, optional): If True, build powers by repeated composition</span>
+<span class="sd">            instead of scaling the evolution time.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        QuantumCircuit: QPE circuit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qc_QPE</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_ancilla</span> <span class="o">+</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">n_ancilla</span><span class="p">)</span>
     <span class="n">register_ancilla</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">Norb</span><span class="p">,</span> <span class="n">Norb</span> <span class="o">+</span> <span class="n">n_ancilla</span><span class="p">)</span>
     <span class="n">register_target</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">Norb</span><span class="p">)</span>
@@ -342,8 +380,11 @@
 <div class="viewcode-block" id="myTextBookQPE">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.myTextBookQPE">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">myTextBookQPE</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Small wrapper around textbook quantum phase estimation.&quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_ancilla</span><span class="p">,</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">Hamiltonian_op</span><span class="p">,</span>
                   <span class="n">Uprep</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">trotter_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">trotter_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store QPE construction and resource-estimation parameters.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Na</span> <span class="o">=</span> <span class="n">n_ancilla</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span> <span class="o">=</span> <span class="n">Norb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Hamiltonian_op</span> <span class="o">=</span> <span class="n">Hamiltonian_op</span>
@@ -356,6 +397,7 @@
 <div class="viewcode-block" id="myTextBookQPE.construct_circuit">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.myTextBookQPE.construct_circuit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">construct_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the measured textbook QPE circuit.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">circuit_my_QPE</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Na</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">,</span>
@@ -373,6 +415,15 @@
 <div class="viewcode-block" id="myTextBookQPE.estimate_resource">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.myTextBookQPE.estimate_resource">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate the T-count for the stored QPE circuit parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tol (float, optional): Rotation synthesis tolerance.</span>
+<span class="sd">            verbose (bool, optional): If True, print intermediate estimates.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None: The estimate is printed to stdout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">T_epsilon</span> <span class="o">=</span> <span class="n">t_count</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>
         <span class="n">T_U</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trotter_steps</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">trotter_order</span> <span class="o">*</span> <span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hamiltonian_op</span><span class="o">.</span><span class="n">paulis</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">)</span> <span class="o">*</span> <span class="n">T_epsilon</span>
         <span class="n">T_cU</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">T_U</span>
@@ -395,6 +446,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">make_overlap_qc</span><span class="p">(</span>
     <span class="n">Ntar</span><span class="p">,</span> <span class="n">gate_cUi</span><span class="p">,</span> <span class="n">gate_cUj</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">using_statevector</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build circuits for real and imaginary parts of an overlap test.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Ntar (int): Number of target qubits.</span>
+<span class="sd">        gate_cUi: Controlled unitary for the first state.</span>
+<span class="sd">        gate_cUj: Controlled unitary for the second state.</span>
+<span class="sd">        ancilla_qubits (list): Ancilla qubits used by the controlled gates.</span>
+<span class="sd">        target_qubits (list): Target qubits acted on by the controlled gates.</span>
+<span class="sd">        using_statevector (bool): If False, add measurements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[QuantumCircuit, QuantumCircuit]: Circuits for real and imaginary</span>
+<span class="sd">        overlap components.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qc_re</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">Ntar</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">qc_re</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">qc_re</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate_cUi</span><span class="p">,</span> <span class="n">ancilla_qubits</span> <span class="o">+</span> <span class="n">target_qubits</span><span class="p">)</span>
@@ -426,6 +491,23 @@
     <span class="n">using_statevector</span><span class="p">,</span>
     <span class="n">do_simulation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate an overlap from Hadamard-test circuits.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num_shot (int): Number of shots for sampled execution.</span>
+<span class="sd">        Ntar (int): Number of target qubits.</span>
+<span class="sd">        gate_cUi: Controlled unitary for the first state.</span>
+<span class="sd">        gate_cUj: Controlled unitary for the second state.</span>
+<span class="sd">        ancilla_qubits (list): Ancilla qubits used by the controlled gates.</span>
+<span class="sd">        target_qubits (list): Target qubits acted on by the controlled gates.</span>
+<span class="sd">        sampler: Sampler or backend-like object used for transpilation/execution.</span>
+<span class="sd">        using_statevector (bool): If True, use statevector simulation.</span>
+<span class="sd">        do_simulation (bool, optional): If False, print resource information</span>
+<span class="sd">            and skip execution.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        complex | None: Estimated overlap, or None for resource-only mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qc_re</span><span class="p">,</span> <span class="n">qc_im</span> <span class="o">=</span> <span class="n">make_overlap_qc</span><span class="p">(</span>
         <span class="n">Ntar</span><span class="p">,</span> <span class="n">gate_cUi</span><span class="p">,</span> <span class="n">gate_cUj</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">using_statevector</span>
     <span class="p">)</span>
@@ -481,6 +563,7 @@
 <div class="viewcode-block" id="make_cU">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.make_cU">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_cU</span><span class="p">(</span><span class="n">Uprep</span><span class="p">,</span> <span class="n">Ui</span><span class="p">,</span> <span class="n">Ntar</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a controlled gate for ``Uprep`` followed by ``Ui``.&quot;&quot;&quot;</span>
     <span class="n">circuit_cUi</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Ntar</span><span class="p">)</span>
     <span class="n">circuit_cUi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Uprep</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
     <span class="n">circuit_cUi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Ui</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ntar</span><span class="p">))</span>
@@ -493,6 +576,22 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">make_Circ_forNondiagH</span><span class="p">(</span><span class="n">term_types</span><span class="p">,</span>
                           <span class="n">Ntar</span><span class="p">,</span> <span class="n">ancilla_qubits</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> 
                           <span class="n">gate_cUi</span><span class="p">,</span> <span class="n">gate_cUj</span><span class="p">,</span> <span class="n">qcs_re</span><span class="p">,</span> <span class="n">qcs_im</span><span class="p">,</span> <span class="n">using_statevector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append measurement circuits for non-diagonal Hamiltonian term types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        term_types (list[str]): Measurement basis descriptors.</span>
+<span class="sd">        Ntar (int): Number of target qubits.</span>
+<span class="sd">        ancilla_qubits (list): Ancilla qubits used by the controlled gates.</span>
+<span class="sd">        target_qubits (list): Target qubit indices.</span>
+<span class="sd">        gate_cUi: Controlled unitary for the first state.</span>
+<span class="sd">        gate_cUj: Controlled unitary for the second state.</span>
+<span class="sd">        qcs_re (list): Output list receiving real-part circuits.</span>
+<span class="sd">        qcs_im (list): Output list receiving imaginary-part circuits.</span>
+<span class="sd">        using_statevector (bool): If False, add measurements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None: The output lists are modified in place.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">for</span> <span class="n">idx_term</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">term_types</span><span class="p">)):</span>
         <span class="n">term</span> <span class="o">=</span> <span class="n">term_types</span><span class="p">[</span><span class="n">idx_term</span><span class="p">]</span>
@@ -551,6 +650,15 @@
 <div class="viewcode-block" id="get_idx_circuit">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.get_idx_circuit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_idx_circuit</span><span class="p">(</span><span class="n">op_string</span><span class="p">,</span> <span class="n">term_types</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the prepared measurement circuit matching a Pauli string type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        op_string (str): Pauli label to classify.</span>
+<span class="sd">        term_types (list[str]): Available measurement basis descriptors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Index of the matching circuit type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">idx_circuit</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">op_string</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;I&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">}</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">op_string</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;I&#39;</span><span class="p">}:</span>                            
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">term_types</span><span class="p">)):</span>
@@ -640,6 +748,17 @@
 <div class="viewcode-block" id="trans_XYloc_str">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.trans_XYloc_str">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">trans_XYloc_str</span><span class="p">(</span><span class="n">Xloc</span><span class="p">,</span> <span class="n">Yloc</span><span class="p">,</span> <span class="n">Bosonic</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate X/Y support lists into a measurement-basis descriptor string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Xloc (list[int]): Qubit locations with X operators.</span>
+<span class="sd">        Yloc (list[int]): Qubit locations with Y operators.</span>
+<span class="sd">        Bosonic (bool): If True, collapse all-X/all-Y terms to ``&quot;XX&quot;`` or</span>
+<span class="sd">            ``&quot;YY&quot;`` descriptors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Descriptor consumed by QKrylov measurement-circuit builders.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">Xloc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">Yloc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;IZ&quot;</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">Xloc</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">Yloc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1053,6 +1172,12 @@
 <div class="viewcode-block" id="lambda_plot">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.lambda_plot">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">lambda_plot</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">Ens</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a complex-plane plot of selected ODMD eigenvalues.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lam (Iterable[complex]): Eigenvalues to plot.</span>
+<span class="sd">        Ens (Iterable[float]): Energies used in legend labels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lam</span><span class="p">):</span>
@@ -1070,6 +1195,8 @@
 <div class="viewcode-block" id="ODMD">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ODMD</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Online dynamic mode decomposition solver for quantum time snapshots.&quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Uprep</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
@@ -1089,6 +1216,28 @@
         <span class="n">plot_lambda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">tol_lambda</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-2</span>
     <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ODMD simulation and post-processing parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Uprep (QuantumCircuit): State-preparation circuit.</span>
+<span class="sd">            HamiltonianOps (SparsePauliOp): Hamiltonian used for time evolution.</span>
+<span class="sd">            delta_t (float): Snapshot time spacing.</span>
+<span class="sd">            max_iterations (int): Number of time snapshots.</span>
+<span class="sd">            trotter_rank (int): Suzuki-Trotter order/rank.</span>
+<span class="sd">            trotter_steps (int): Number of Trotter repetitions.</span>
+<span class="sd">            sampler: Sampler used for sampled overlap measurements.</span>
+<span class="sd">            ancilla_qubits: Ancilla qubits used in overlap measurements.</span>
+<span class="sd">            target_qubits: Target qubits evolved by the Hamiltonian.</span>
+<span class="sd">            num_shot (int, optional): Number of shots for sampled execution.</span>
+<span class="sd">            using_statevector (bool, optional): If True, use statevector</span>
+<span class="sd">                overlap simulation.</span>
+<span class="sd">            dim_Hankel (int, optional): Hankel matrix row dimension.</span>
+<span class="sd">            tol_SVD (float, optional): Singular-value cutoff.</span>
+<span class="sd">            verbose (bool, optional): If True, print intermediate arrays.</span>
+<span class="sd">            plot_lambda (bool, optional): If True, save a lambda plot.</span>
+<span class="sd">            tol_lambda (float, optional): Initial tolerance for selecting</span>
+<span class="sd">                eigenvalues close to the unit circle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Uprep</span> <span class="o">=</span> <span class="n">Uprep</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">HamiltonianOps</span> <span class="o">=</span> <span class="n">HamiltonianOps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delta_t</span> <span class="o">=</span> <span class="n">delta_t</span>
@@ -1126,6 +1275,12 @@
 <div class="viewcode-block" id="ODMD.run">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run ODMD snapshot generation, fitting, and energy extraction.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[list[float], np.ndarray]: Extracted energies and selected</span>
+<span class="sd">            unit-circle eigenvalues.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Ntar</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_qubits</span><span class="p">)</span>
 
         <span class="n">cU0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Uprep</span><span class="o">.</span><span class="n">to_gate</span><span class="p">()</span><span class="o">.</span><span class="n">control</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -1209,6 +1364,16 @@
 <div class="viewcode-block" id="ODMD.construct_X_and_Y">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD.construct_X_and_Y">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">construct_X_and_Y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshots</span><span class="p">,</span> <span class="n">dim_Hankel</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct shifted Hankel matrices from a snapshot sequence.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            snapshots (np.ndarray): Complex time-snapshot sequence.</span>
+<span class="sd">            dim_Hankel (int): Number of Hankel rows.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[np.ndarray, np.ndarray]: Shifted Hankel matrices ``X`` and</span>
+<span class="sd">            ``Y``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snapshots</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_Hankel</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">dim_Hankel</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
         <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim_Hankel</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">dim_Hankel</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
@@ -1224,6 +1389,16 @@
 <div class="viewcode-block" id="ODMD.construct_A_from_XY">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD.construct_A_from_XY">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">construct_A_from_XY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>            
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the reduced linear propagator from Hankel matrices.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (np.ndarray): Source Hankel matrix.</span>
+<span class="sd">            Y (np.ndarray): Shifted target Hankel matrix.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Least-squares propagator ``A = Y X^+`` after SVD</span>
+<span class="sd">            truncation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># SVD of X</span>
         <span class="n">U</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
@@ -1243,6 +1418,7 @@
 <div class="viewcode-block" id="ODMD.get_results">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD.get_results">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return cached ODMD results from the most recent :meth:`run` call.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;energies&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">,</span>
             <span class="s2">&quot;selected_lams&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_lams</span><span class="p">,</span>
@@ -1258,6 +1434,16 @@
 <div class="viewcode-block" id="ODMD.estimate_resource">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.quantum_algorithms.ODMD.estimate_resource">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_resource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ross-selinger&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate T-count for the ODMD overlap measurements.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tol (float, optional): Rotation synthesis tolerance.</span>
+<span class="sd">            model (str, optional): Rotation synthesis estimate model.</span>
+<span class="sd">            verbose (bool, optional): If True, print intermediate estimates.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            float: Estimated T-count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estimating resource for ODMD with Niter=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span><span class="si">}</span><span class="s2">, eps=</span><span class="si">{</span><span class="n">tol</span><span class="si">:</span><span class="s2">.1e</span><span class="si">}</span><span class="s2">: &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trotter_rank</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: The T-count estimation is based on the assumption of using Suzuki-Trotter decomposition with rank 1 or 2. But got trotter_rank = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">trotter_rank</span><span class="si">}</span><span class="s2">. The estimation may not be accurate in this case.&quot;</span><span class="p">)</span>
@@ -1268,7 +1454,6 @@
         <span class="n">Tcount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_shot</span> <span class="o">*</span> <span class="n">T_cU</span> <span class="o">*</span> <span class="n">T_epsilon</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iterations</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;T-count formula: Nshot * T_cU * T_epsilon * max_iterations * (max_iterations + 1) = </span><span class="si">{</span><span class="n">Tcount</span><span class="si">}</span><span class="s2"> log10: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tcount</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
-
 
 </pre></div>
         </article>
@@ -1282,7 +1467,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

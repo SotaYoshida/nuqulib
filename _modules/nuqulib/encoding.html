@@ -317,6 +317,26 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">task_pn_mapping</span><span class="p">(</span><span class="n">op_pn_key</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
                     <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">Hamildict_specified_n</span><span class="p">,</span>
                     <span class="n">filepath_p</span><span class="p">,</span> <span class="n">filepath_n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map one proton-neutron fermionic term to Pauli-label terms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        op_pn_key (tuple[str, str]): ``(proton_op, neutron_op)`` fermionic</span>
+<span class="sd">            operator strings.</span>
+<span class="sd">        op_pn (dict): Dictionary containing the coefficient for</span>
+<span class="sd">            ``op_pn_key``.</span>
+<span class="sd">        n_qubits_p (int): Number of proton qubits.</span>
+<span class="sd">        n_qubits_n (int): Number of neutron qubits.</span>
+<span class="sd">        method (str): Fermion-to-qubit mapping method.</span>
+<span class="sd">        Hamildict_specified_p (dict): Proton-sector Hamiltonian terms used by</span>
+<span class="sd">            mappings such as ``HATTMapper``.</span>
+<span class="sd">        Hamildict_specified_n (dict): Neutron-sector Hamiltonian terms used by</span>
+<span class="sd">            mappings such as ``HATTMapper``.</span>
+<span class="sd">        filepath_p (str | os.PathLike): Proton-sector mapper cache path.</span>
+<span class="sd">        filepath_n (str | os.PathLike): Neutron-sector mapper cache path.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list[list]: Pauli labels and coefficients generated for this term.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">worker_list</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
     <span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span> <span class="o">=</span> <span class="n">op_pn_key</span>
     <span class="n">coeff_overall</span> <span class="o">=</span> <span class="n">op_pn</span><span class="p">[</span><span class="n">op_pn_key</span><span class="p">]</span>
@@ -559,7 +579,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

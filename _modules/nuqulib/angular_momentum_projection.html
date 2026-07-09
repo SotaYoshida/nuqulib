@@ -1,0 +1,1190 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>nuqulib.angular_momentum_projection - NuQuLib 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">NuQuLib 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">NuQuLib 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NuQuLib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../nuqulib.html">API reference for NuQuLib</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for nuqulib.angular_momentum_projection</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">transpile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.quantum_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">Statevector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.nuclear_hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.circuits</span><span class="w"> </span><span class="kn">import</span> <span class="n">G_gate</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;AngularMomentumProjector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ProjectionRecord&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ProjectionResult&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;print_state_amplitudes&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_jx_matrix</span><span class="p">(</span><span class="n">j2val</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the one-particle Jx matrix for a fixed-j shell-model block.</span>
+
+<span class="sd">    The basis is ordered by the doubled magnetic quantum number ``2m`` from</span>
+<span class="sd">    ``-j2val`` to ``j2val`` in steps of two. The input follows NuQuLib&#39;s</span>
+<span class="sd">    convention of storing angular-momentum quantum numbers as integers</span>
+<span class="sd">    doubled from their physical values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    j2val : int</span>
+<span class="sd">        Doubled total single-particle angular momentum, ``2j``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Real symmetric matrix representing ``Jx`` in the ``Jz`` eigenbasis.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mvals</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">j2val</span><span class="p">,</span> <span class="n">j2val</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mvals</span><span class="p">)</span>
+    <span class="n">Jx_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mvals</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">m2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mvals</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">m2</span> <span class="o">==</span> <span class="n">m1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># &lt;J+&gt;</span>
+                <span class="n">Jx_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">j2val</span><span class="o">/</span><span class="mi">2</span> <span class="p">)</span><span class="o">*</span> <span class="p">(</span><span class="n">j2val</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">m1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">m2</span> <span class="o">==</span> <span class="n">m1</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># &lt;J-&gt;</span>
+                <span class="n">Jx_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">j2val</span><span class="o">/</span><span class="mi">2</span> <span class="p">)</span><span class="o">*</span> <span class="p">(</span><span class="n">j2val</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">m1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Jx_mat</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_diagonalize_jx</span><span class="p">(</span><span class="n">Jx</span><span class="p">,</span> <span class="n">target_eigs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Diagonalize a real symmetric Jx matrix and return the basis change.</span>
+
+<span class="sd">    The returned matrix follows the notation of Eq. (9):</span>
+
+<span class="sd">    ``Jx = KJx @ Jz @ KJx.T`` and</span>
+<span class="sd">    ``Jz = KJx_dagger @ Jx @ KJx``,</span>
+
+<span class="sd">    where ``KJx_dagger = KJx.T`` for the real matrices used here.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Jx : array_like</span>
+<span class="sd">        Real symmetric matrix to diagonalize.</span>
+<span class="sd">    target_eigs : array_like, optional</span>
+<span class="sd">        Desired eigenvalue ordering. Each requested value is matched to the</span>
+<span class="sd">        closest unused eigenvalue returned by ``numpy.linalg.eigh``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    KJx_dagger : numpy.ndarray</span>
+<span class="sd">        Orthogonal matrix that transforms ``Jx`` to its diagonal form.</span>
+<span class="sd">    evals : numpy.ndarray</span>
+<span class="sd">        Eigenvalues in the selected order; these form the diagonal ``Jz``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The sign of one eigenvector is adjusted when necessary so that</span>
+<span class="sd">    ``det(KJx_dagger) = +1``. This leaves the diagonalization unchanged and</span>
+<span class="sd">    makes the matrix representable as a product of proper Givens rotations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">evals</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Jx</span><span class="p">)</span>
+
+    <span class="c1"># Optional: reorder eigenvectors to match target_eigs, e.g. mvals</span>
+    <span class="k">if</span> <span class="n">target_eigs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">target_eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">target_eigs</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">used</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">target_eigs</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evals</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">used</span><span class="p">],</span>
+                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">evals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">used</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="n">evals</span> <span class="o">=</span> <span class="n">evals</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">V</span><span class="p">[:,</span> <span class="n">order</span><span class="p">]</span>
+
+    <span class="n">KJx_dagger</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># Make det(KJx_dagger)=+1 if desired.</span>
+    <span class="c1"># Flipping one eigenvector sign does not change diagonalization.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">KJx_dagger</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">KJx_dagger</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">KJx_dagger</span><span class="p">,</span> <span class="n">evals</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_givens_rotation_matrix</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a real nearest-neighbor Givens rotation.</span>
+
+<span class="sd">    The nontrivial two-dimensional block acting on components ``i`` and</span>
+<span class="sd">    ``i + 1`` is ``[[cos(theta), -sin(theta)],</span>
+<span class="sd">    [sin(theta), cos(theta)]]``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Dimension of the full matrix.</span>
+<span class="sd">    i : int</span>
+<span class="sd">        Index of the first component in the adjacent pair.</span>
+<span class="sd">    theta : float</span>
+<span class="sd">        Rotation angle in radians.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        An ``n x n`` orthogonal Givens rotation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+    <span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">s</span>
+    <span class="n">G</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+    <span class="n">G</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+
+    <span class="k">return</span> <span class="n">G</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decompose_nearest_neighbor_givens</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Eliminate an orthogonal matrix using nearest-neighbor Givens rotations.</span>
+
+<span class="sd">    The algorithm finds rotations G_r such that</span>
+
+<span class="sd">        G_L ... G_2 G_1 K ≈ diagonal sign matrix.</span>
+
+<span class="sd">    If the final sign matrix is ignored or absorbed into phases, then</span>
+
+<span class="sd">        K ≈ G_1^{-1} G_2^{-1} ... G_L^{-1}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    K : array_like</span>
+<span class="sd">        Real square matrix to decompose. For the angular-momentum basis</span>
+<span class="sd">        change this is ``KJx``.</span>
+<span class="sd">    atol : float, optional</span>
+<span class="sd">        Elements with magnitude below this tolerance are treated as zero.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rotations : list of tuple[int, float]</span>
+<span class="sd">        Pairs ``(i, theta)`` describing the elimination rotations in the</span>
+<span class="sd">        order in which they left-multiply ``K``.</span>
+<span class="sd">    A : numpy.ndarray</span>
+<span class="sd">        Matrix remaining after elimination. For a proper orthogonal input it</span>
+<span class="sd">        should be close to the identity matrix.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    To reconstruct ``K`` as a circuit, apply the stored rotations in reverse</span>
+<span class="sd">    order. The circuit builder performs this reversal explicitly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">rotations</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">row</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+
+            <span class="n">G</span> <span class="o">=</span> <span class="n">_givens_rotation_matrix</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">G</span> <span class="o">@</span> <span class="n">A</span>
+
+            <span class="n">rotations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">theta</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">A</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_kjx_circuit</span><span class="p">(</span><span class="n">num_targets</span><span class="p">,</span> <span class="n">blocks_list</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">angle_scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the second-quantized circuit implementing KJx.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_targets : int</span>
+<span class="sd">        Number of target qubits in the orbital register.</span>
+<span class="sd">    blocks_list : sequence of sequence of int</span>
+<span class="sd">        Target-qubit indices grouped into fixed-``(n, l, j)`` blocks.</span>
+<span class="sd">    params : sequence of float</span>
+<span class="sd">        Nearest-neighbor Givens angles in elimination order, concatenated</span>
+<span class="sd">        block by block.</span>
+<span class="sd">    angle_scale : float, optional</span>
+<span class="sd">        Conversion factor from the one-particle matrix rotation angle to the</span>
+<span class="sd">        parameter accepted by ``G_gate``. The current gate convention uses 2.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print each applied orbital rotation when ``True``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    qiskit.circuit.Gate</span>
+<span class="sd">        Number-conserving gate whose one-particle representation is ``KJx``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The angles are consumed in elimination order but applied in reverse order</span>
+<span class="sd">    within each block to reconstruct the original basis-change matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">num_targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;K_Jx&quot;</span><span class="p">)</span>
+    <span class="n">param_idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;blocks_list: </span><span class="si">{</span><span class="n">blocks_list</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Reverse the elimination rotations to reconstruct KJx.</span>
+    <span class="k">for</span> <span class="n">block_indices</span> <span class="ow">in</span> <span class="n">blocks_list</span><span class="p">:</span>
+        <span class="n">n_block</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_indices</span><span class="p">)</span>
+
+        <span class="n">block_rotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_block</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_block</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">local_i</span> <span class="o">=</span> <span class="n">row</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">block_rotations</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">local_i</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">param_idx</span><span class="p">]))</span>
+                <span class="n">param_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">for</span> <span class="n">local_i</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">block_rotations</span><span class="p">):</span>
+            <span class="c1"># G_gate rotates the one-particle subspace by half its parameter.</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">angle_scale</span> <span class="o">*</span> <span class="n">param</span>
+            <span class="n">g_gate</span> <span class="o">=</span> <span class="n">G_gate</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+            <span class="n">actual_q1</span> <span class="o">=</span> <span class="n">block_indices</span><span class="p">[</span><span class="n">local_i</span><span class="p">]</span>
+            <span class="n">actual_q2</span> <span class="o">=</span> <span class="n">block_indices</span><span class="p">[</span><span class="n">local_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Applying Givens rotation with theta=</span><span class="si">{</span><span class="n">theta</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(col=</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">, row=</span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">) between qubits </span><span class="si">{</span><span class="n">actual_q1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">actual_q2</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_gate</span><span class="p">,</span> <span class="p">[</span><span class="n">actual_q1</span><span class="p">,</span> <span class="n">actual_q2</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">qc</span><span class="o">.</span><span class="n">to_gate</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;K_Jx&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_simulate_statevector</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">sim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simulate a circuit and return its statevector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qc : qiskit.QuantumCircuit</span>
+<span class="sd">        Circuit to simulate. The input circuit is not modified.</span>
+<span class="sd">    sim : qiskit.providers.Backend</span>
+<span class="sd">        Statevector-capable backend, such as ``AerSimulator``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    qiskit.quantum_info.Statevector</span>
+<span class="sd">        Simulated statevector of the complete circuit.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qc_sv</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">qc_sv</span><span class="o">.</span><span class="n">save_statevector</span><span class="p">()</span>
+    <span class="n">tqc</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc_sv</span><span class="p">,</span> <span class="n">sim</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tqc</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_statevector</span><span class="p">(</span><span class="n">tqc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">psi</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">Statevector</span><span class="p">)</span> <span class="k">else</span> <span class="n">Statevector</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_postselect_ancilla</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">Na</span><span class="p">,</span> <span class="n">target_state</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Post-select an ancilla state and rebuild the normalized target circuit.</span>
+
+<span class="sd">    The ancilla qubits are assumed to occupy the least-significant ``Na``</span>
+<span class="sd">    Qiskit qubit positions. The selected target amplitudes are normalized and</span>
+<span class="sd">    loaded into a fresh circuit with the same ancilla/target layout.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    psi : array_like or qiskit.quantum_info.Statevector</span>
+<span class="sd">        Statevector of the ancilla-plus-target system.</span>
+<span class="sd">    Na : int</span>
+<span class="sd">        Number of least-significant ancilla qubits.</span>
+<span class="sd">    target_state : int, optional</span>
+<span class="sd">        Computational-basis ancilla outcome to retain.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    target_sv : qiskit.quantum_info.Statevector</span>
+<span class="sd">        Normalized post-selected state of the target register.</span>
+<span class="sd">    prob : float</span>
+<span class="sd">        Probability of the selected ancilla outcome.</span>
+<span class="sd">    qc_post : qiskit.QuantumCircuit</span>
+<span class="sd">        Fresh circuit preparing ``target_sv`` on the target qubits while the</span>
+<span class="sd">        ancillas remain in ``|0&gt;``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``target_state`` is invalid or its probability is numerically zero.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_ancilla_states</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">Na</span>
+    <span class="n">psi_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_ancilla_states</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">target_state</span> <span class="o">&lt;</span> <span class="n">n_ancilla_states</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_state must be in [0, </span><span class="si">{</span><span class="n">n_ancilla_states</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
+
+    <span class="n">target_sv</span> <span class="o">=</span> <span class="n">psi_array</span><span class="p">[:,</span> <span class="n">target_state</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">target_sv</span><span class="p">,</span> <span class="n">target_sv</span><span class="p">)</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">prob</span> <span class="o">&lt;=</span> <span class="mf">1e-14</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Post-selection probability is too small: </span><span class="si">{</span><span class="n">prob</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">target_sv</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+    <span class="n">Nq_local</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">target_sv</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+
+    <span class="n">qc_post</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Na</span> <span class="o">+</span> <span class="n">Nq_local</span><span class="p">)</span>
+    <span class="n">qc_post</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">target_sv</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">Na</span><span class="p">,</span> <span class="n">Na</span> <span class="o">+</span> <span class="n">Nq_local</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Statevector</span><span class="p">(</span><span class="n">target_sv</span><span class="p">),</span> <span class="n">prob</span><span class="p">,</span> <span class="n">qc_post</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_append_jz_filter_step</span><span class="p">(</span><span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
+                          <span class="n">hamil</span><span class="p">:</span> <span class="n">Hamiltonian</span><span class="p">,</span>
+                          <span class="n">idx_ancilla_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                          <span class="n">target_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                          <span class="n">t_val</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Append one ancilla-assisted Jz-filtering step.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qc : qiskit.QuantumCircuit</span>
+<span class="sd">        Circuit modified in place.</span>
+<span class="sd">    hamil : Hamiltonian</span>
+<span class="sd">        NuQuLib Hamiltonian whose single-particle states provide doubled</span>
+<span class="sd">        magnetic quantum numbers ``2m``.</span>
+<span class="sd">    idx_ancilla_qubit : int</span>
+<span class="sd">        Ancilla-qubit index.</span>
+<span class="sd">    target_qubits : sequence of int</span>
+<span class="sd">        Circuit qubits corresponding, in order, to ``hamil.msps``.</span>
+<span class="sd">    t_val : float</span>
+<span class="sd">        Filter evolution parameter.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    With the doubled-``m`` convention and Qiskit&#39;s ``Ry`` definition, the</span>
+<span class="sd">    applied angles implement the desired ``exp(-i t Jz tensor Ya)`` coupling.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">):</span>
+        <span class="n">m_p</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span> <span class="c1"># already doubled</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">t_val</span> <span class="o">*</span> <span class="n">m_p</span>
+        <span class="n">qc</span><span class="o">.</span><span class="n">cry</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">qubit</span><span class="p">,</span> <span class="n">idx_ancilla_qubit</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_jz_projection</span><span class="p">(</span><span class="n">qc_psi</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
+                        <span class="n">hamil</span><span class="p">:</span> <span class="n">Hamiltonian</span><span class="p">,</span>
+                        <span class="n">idx_ancilla_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">target_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                        <span class="n">theta_list</span><span class="p">,</span>
+                        <span class="n">sim</span><span class="p">,</span>
+                        <span class="n">Na</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">postselect_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Jz&quot;</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a sequence of post-selected Jz filters.</span>
+
+<span class="sd">    After each filter, the ancilla is post-selected and the normalized target</span>
+<span class="sd">    state is loaded into a fresh circuit before the next angle is applied.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qc_psi : qiskit.QuantumCircuit</span>
+<span class="sd">        Circuit preparing the current ancilla-plus-target state.</span>
+<span class="sd">    hamil : Hamiltonian</span>
+<span class="sd">        NuQuLib Hamiltonian defining the orbital magnetic quantum numbers.</span>
+<span class="sd">    idx_ancilla_qubit : int</span>
+<span class="sd">        Ancilla used for every filtering step.</span>
+<span class="sd">    target_qubits : sequence of int</span>
+<span class="sd">        Target-register qubits ordered consistently with ``hamil.msps``.</span>
+<span class="sd">    theta_list : sequence of float</span>
+<span class="sd">        Filter parameters applied successively.</span>
+<span class="sd">    sim : qiskit.providers.Backend</span>
+<span class="sd">        Statevector-capable simulator.</span>
+<span class="sd">    Na : int</span>
+<span class="sd">        Number of least-significant ancilla qubits.</span>
+<span class="sd">    postselect_state : int, optional</span>
+<span class="sd">        Ancilla computational-basis outcome retained after each step.</span>
+<span class="sd">    label : str, optional</span>
+<span class="sd">        Label used in verbose progress messages.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print the conditional probability at each step when ``True``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    target_state : qiskit.quantum_info.Statevector</span>
+<span class="sd">        Final normalized target state.</span>
+<span class="sd">    p_total : float</span>
+<span class="sd">        Product of all conditional post-selection probabilities.</span>
+<span class="sd">    qc_current : qiskit.QuantumCircuit</span>
+<span class="sd">        Fresh circuit preparing the final post-selected target state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">qc_current</span> <span class="o">=</span> <span class="n">qc_psi</span>
+    <span class="n">p_total</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">target_state</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">iter_idx</span><span class="p">,</span> <span class="n">theta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">theta_list</span><span class="p">):</span>
+        <span class="n">qc_work</span> <span class="o">=</span> <span class="n">qc_current</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">_append_jz_filter_step</span><span class="p">(</span><span class="n">qc_work</span><span class="p">,</span> <span class="n">hamil</span><span class="p">,</span> <span class="n">idx_ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+
+        <span class="n">psi_after</span> <span class="o">=</span> <span class="n">_simulate_statevector</span><span class="p">(</span><span class="n">qc_work</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+        <span class="n">target_state</span><span class="p">,</span> <span class="n">p_anc0</span><span class="p">,</span> <span class="n">qc_current</span> <span class="o">=</span> <span class="n">_postselect_ancilla</span><span class="p">(</span>
+            <span class="n">psi_after</span><span class="p">,</span>
+            <span class="n">Na</span><span class="p">,</span>
+            <span class="n">target_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">p_total</span> <span class="o">*=</span> <span class="n">p_anc0</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> projection </span><span class="si">{</span><span class="n">iter_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">theta_list</span><span class="p">)</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;theta=</span><span class="si">{</span><span class="n">theta</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, p(ancilla=</span><span class="si">{</span><span class="n">postselect_state</span><span class="si">}</span><span class="s2">)=</span><span class="si">{</span><span class="n">p_anc0</span><span class="si">:</span><span class="s2">.12e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">target_state</span><span class="p">,</span> <span class="n">p_total</span><span class="p">,</span> <span class="n">qc_current</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_kjx_gate_from_blocks</span><span class="p">(</span><span class="n">Nq</span><span class="p">,</span> <span class="n">nljblocks</span><span class="p">,</span> <span class="n">j2list</span><span class="p">,</span> <span class="n">angle_scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct KJx for a collection of fixed-(n, l, j) blocks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Nq : int</span>
+<span class="sd">        Number of target qubits.</span>
+<span class="sd">    nljblocks : sequence of sequence of int</span>
+<span class="sd">        Qubit indices grouped into fixed-``(n, l, j)`` blocks.</span>
+<span class="sd">    j2list : sequence of int</span>
+<span class="sd">        Doubled angular momenta ``2j``, one for each block.</span>
+<span class="sd">    angle_scale : float, optional</span>
+<span class="sd">        Conversion factor passed to the underlying Givens-gate builder.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    qiskit.circuit.Gate</span>
+<span class="sd">        Block-diagonal second-quantized implementation of ``KJx``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nljblocks</span><span class="p">)):</span>
+        <span class="n">j2</span> <span class="o">=</span> <span class="n">j2list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">Jx_mat</span> <span class="o">=</span> <span class="n">_build_jx_matrix</span><span class="p">(</span><span class="n">j2</span><span class="p">)</span>
+        <span class="n">KJx_dagger</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_diagonalize_jx</span><span class="p">(</span><span class="n">Jx_mat</span><span class="p">)</span>
+        <span class="n">KJx</span> <span class="o">=</span> <span class="n">KJx_dagger</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rotations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_decompose_nearest_neighbor_givens</span><span class="p">(</span><span class="n">KJx</span><span class="p">)</span>
+        <span class="n">angles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">theta</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">rotations</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_build_kjx_circuit</span><span class="p">(</span>
+        <span class="n">Nq</span><span class="p">,</span> <span class="n">nljblocks</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span> <span class="n">angle_scale</span><span class="o">=</span><span class="n">angle_scale</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_jx_projection</span><span class="p">(</span><span class="n">qc_psi</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
+                        <span class="n">hamil</span><span class="p">:</span> <span class="n">Hamiltonian</span><span class="p">,</span>
+                        <span class="n">idx_ancilla_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">target_qubits</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                        <span class="n">theta_list</span><span class="p">,</span>
+                        <span class="n">nljblocks</span><span class="p">,</span>
+                        <span class="n">j2list</span><span class="p">,</span>
+                        <span class="n">sim</span><span class="p">,</span>
+                        <span class="n">Na</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                        <span class="n">postselect_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="n">kjx_gate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Jx&quot;</span><span class="p">,</span>
+                        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply Jx filtering through a rotation to the Jz eigenbasis.</span>
+
+<span class="sd">    The routine applies ``KJx_dagger``, performs the same post-selected filter</span>
+<span class="sd">    sequence used for ``Jz``, and finally applies ``KJx`` to return to the</span>
+<span class="sd">    original basis. This realizes the similarity transformation in Eq. (9).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    qc_psi : qiskit.QuantumCircuit</span>
+<span class="sd">        Circuit preparing the current ancilla-plus-target state.</span>
+<span class="sd">    hamil : Hamiltonian</span>
+<span class="sd">        NuQuLib Hamiltonian defining the single-particle basis.</span>
+<span class="sd">    idx_ancilla_qubit : int</span>
+<span class="sd">        Ancilla used by the intermediate Jz filtering steps.</span>
+<span class="sd">    target_qubits : sequence of int</span>
+<span class="sd">        Target-register qubits.</span>
+<span class="sd">    theta_list : sequence of float</span>
+<span class="sd">        Filter parameters applied successively.</span>
+<span class="sd">    nljblocks : sequence of sequence of int</span>
+<span class="sd">        Qubit indices grouped into fixed-``(n, l, j)`` blocks.</span>
+<span class="sd">    j2list : sequence of int</span>
+<span class="sd">        Doubled angular momenta ``2j`` corresponding to ``nljblocks``.</span>
+<span class="sd">    sim : qiskit.providers.Backend</span>
+<span class="sd">        Statevector-capable simulator.</span>
+<span class="sd">    Na : int</span>
+<span class="sd">        Number of least-significant ancilla qubits.</span>
+<span class="sd">    postselect_state : int, optional</span>
+<span class="sd">        Ancilla outcome retained after each filter.</span>
+<span class="sd">    kjx_gate : qiskit.circuit.Gate, optional</span>
+<span class="sd">        Prebuilt ``KJx`` gate.</span>
+<span class="sd">    label : str, optional</span>
+<span class="sd">        Prefix used in progress labels.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        Print the conditional Jz-filter probabilities when ``True``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    target_state : qiskit.quantum_info.Statevector</span>
+<span class="sd">        Final normalized target state in the original basis.</span>
+<span class="sd">    p_total : float</span>
+<span class="sd">        Product of the intermediate Jz-filter post-selection probabilities.</span>
+<span class="sd">    qc_final : qiskit.QuantumCircuit</span>
+<span class="sd">        Fresh circuit preparing the final target state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">kjx_gate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nljblocks</span><span class="p">,</span> <span class="n">j2list</span> <span class="o">=</span> <span class="n">_get_j_blocks_and_j2</span><span class="p">(</span><span class="n">hamil</span><span class="p">)</span>
+        <span class="n">kjx_gate</span> <span class="o">=</span> <span class="n">_build_kjx_gate_from_blocks</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">),</span> <span class="n">nljblocks</span><span class="p">,</span> <span class="n">j2list</span>
+        <span class="p">)</span>
+
+    <span class="n">qc_rotated</span> <span class="o">=</span> <span class="n">qc_psi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">qc_rotated</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kjx_gate</span><span class="o">.</span><span class="n">inverse</span><span class="p">(),</span> <span class="n">target_qubits</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">p_total</span><span class="p">,</span> <span class="n">qc_rotated</span> <span class="o">=</span> <span class="n">_apply_jz_projection</span><span class="p">(</span>
+        <span class="n">qc_rotated</span><span class="p">,</span>
+        <span class="n">hamil</span><span class="p">,</span>
+        <span class="n">idx_ancilla_qubit</span><span class="p">,</span>
+        <span class="n">target_qubits</span><span class="p">,</span>
+        <span class="n">theta_list</span><span class="p">,</span>
+        <span class="n">sim</span><span class="p">,</span>
+        <span class="n">Na</span><span class="p">,</span>
+        <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">/Jz&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">qc_final</span> <span class="o">=</span> <span class="n">qc_rotated</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">qc_final</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kjx_gate</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">)</span>
+
+    <span class="n">psi_final</span> <span class="o">=</span> <span class="n">_simulate_statevector</span><span class="p">(</span><span class="n">qc_final</span><span class="p">,</span> <span class="n">sim</span><span class="p">)</span>
+    <span class="n">target_state</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">qc_final</span> <span class="o">=</span> <span class="n">_postselect_ancilla</span><span class="p">(</span>
+        <span class="n">psi_final</span><span class="p">,</span>
+        <span class="n">Na</span><span class="p">,</span>
+        <span class="n">target_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">target_state</span><span class="p">,</span> <span class="n">p_total</span><span class="p">,</span> <span class="n">qc_final</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_j_blocks_and_j2</span><span class="p">(</span><span class="n">hamil</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Group orbitals into fixed-(n, l, j, tz) blocks.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hamil : Hamiltonian</span>
+<span class="sd">        NuQuLib Hamiltonian containing the ordered single-particle states.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    blocks : list of list of int</span>
+<span class="sd">        Local target-qubit indices for each ``(n, l, j, tz)`` block.</span>
+<span class="sd">    j2_list : list of int</span>
+<span class="sd">        Doubled angular momentum ``2j`` associated with each block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">j2_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">block_index_by_key</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">msp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">hamil</span><span class="o">.</span><span class="n">msps</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">msp</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">tz</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">block_index_by_key</span><span class="p">:</span>
+            <span class="n">block_index_by_key</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+            <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="n">j2_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msp</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+        <span class="n">blocks</span><span class="p">[</span><span class="n">block_index_by_key</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">blocks</span><span class="p">,</span> <span class="n">j2_list</span>
+
+
+<div class="viewcode-block" id="ProjectionRecord">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.ProjectionRecord">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectionRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;State and success probability recorded after one projection stage.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    step : int</span>
+<span class="sd">        One-based iteration index of the alternating Jz/Jx projection.</span>
+<span class="sd">    axis : str</span>
+<span class="sd">        Projected angular-momentum component, either ``&quot;Jz&quot;`` or ``&quot;Jx&quot;``.</span>
+<span class="sd">    state : qiskit.quantum_info.Statevector</span>
+<span class="sd">        Normalized target state after this projection stage.</span>
+<span class="sd">    probability : float</span>
+<span class="sd">        Conditional post-selection probability for this stage.</span>
+<span class="sd">    cumulative_probability : float</span>
+<span class="sd">        Product of all conditional probabilities up to this stage.</span>
+<span class="sd">    circuit : qiskit.QuantumCircuit</span>
+<span class="sd">        Circuit preparing ``state`` on the target register.</span>
+<span class="sd">    angle_index : int or None</span>
+<span class="sd">        One-based index of the filter angle when angle-resolved history is</span>
+<span class="sd">        requested. ``None`` for stage-level history.</span>
+<span class="sd">    angle : float or None</span>
+<span class="sd">        Filter angle used for this record. ``None`` for stage-level history.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">axis</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Statevector</span>
+    <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">cumulative_probability</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span>
+    <span class="n">angle_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a compact label suitable for tables and plots.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="si">}</span><span class="s2">[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_index</span><span class="si">}</span><span class="s2">]&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ProjectionResult">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.ProjectionResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectionResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Result of a post-selected angular-momentum projection.&quot;&quot;&quot;</span>
+
+    <span class="n">state</span><span class="p">:</span> <span class="n">Statevector</span>
+    <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">circuit</span><span class="p">:</span> <span class="n">QuantumCircuit</span>
+    <span class="n">history</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ProjectionRecord</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="AngularMomentumProjector">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.AngularMomentumProjector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AngularMomentumProjector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply ancilla-assisted Jz, Jx, and iterative J=0 projections.</span>
+
+<span class="sd">    The projector caches the orbital blocks and the second-quantized KJx</span>
+<span class="sd">    gate associated with a NuQuLib Hamiltonian. The current statevector</span>
+<span class="sd">    implementation assumes that the ancillas are the least-significant</span>
+<span class="sd">    qubits and that the target register immediately follows them.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hamiltonian : Hamiltonian</span>
+<span class="sd">        NuQuLib Hamiltonian defining the ordered M-scheme orbitals.</span>
+<span class="sd">    simulator : qiskit.providers.Backend</span>
+<span class="sd">        Statevector-capable simulator.</span>
+<span class="sd">    num_ancillas : int, optional</span>
+<span class="sd">        Number of least-significant ancilla qubits.</span>
+<span class="sd">    angle_scale : float, optional</span>
+<span class="sd">        Conversion factor between one-particle Givens angles and the</span>
+<span class="sd">        parameter accepted by ``G_gate``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hamiltonian</span><span class="p">,</span> <span class="n">simulator</span><span class="p">,</span> <span class="n">num_ancillas</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">angle_scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num_ancillas</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;num_ancillas must be positive.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">hamiltonian</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulator</span> <span class="o">=</span> <span class="n">simulator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span> <span class="o">=</span> <span class="n">num_ancillas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_scale</span> <span class="o">=</span> <span class="n">angle_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hamiltonian</span><span class="o">.</span><span class="n">msps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_blocks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j2_values</span> <span class="o">=</span> <span class="n">_get_j_blocks_and_j2</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_orbital_ordering</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kjx_gate</span> <span class="o">=</span> <span class="n">_build_kjx_gate_from_blocks</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">j_blocks</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">j2_values</span><span class="p">,</span>
+            <span class="n">angle_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">angle_scale</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AngularMomentumProjector.project_jz">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.AngularMomentumProjector.project_jz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">project_jz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span>
+                   <span class="n">postselect_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a sequence of post-selected Jz filters.&quot;&quot;&quot;</span>
+        <span class="n">target_qubits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_register_layout</span><span class="p">(</span>
+            <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span>
+        <span class="p">)</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">projected_circuit</span> <span class="o">=</span> <span class="n">_apply_jz_projection</span><span class="p">(</span>
+            <span class="n">circuit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="p">,</span>
+            <span class="n">ancilla_qubit</span><span class="p">,</span>
+            <span class="n">target_qubits</span><span class="p">,</span>
+            <span class="n">angles</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simulator</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span><span class="p">,</span>
+            <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Jz&quot;</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProjectionResult</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">projected_circuit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AngularMomentumProjector.project_jx">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.AngularMomentumProjector.project_jx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">project_jx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span>
+                   <span class="n">postselect_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply Jx projection using KJx_dagger, Jz filters, and KJx.&quot;&quot;&quot;</span>
+        <span class="n">target_qubits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_register_layout</span><span class="p">(</span>
+            <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span>
+        <span class="p">)</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">projected_circuit</span> <span class="o">=</span> <span class="n">_apply_jx_projection</span><span class="p">(</span>
+            <span class="n">circuit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="p">,</span>
+            <span class="n">ancilla_qubit</span><span class="p">,</span>
+            <span class="n">target_qubits</span><span class="p">,</span>
+            <span class="n">angles</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">j_blocks</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">j2_values</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simulator</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span><span class="p">,</span>
+            <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+            <span class="n">kjx_gate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kjx_gate</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Jx&quot;</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Jx projection probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">:</span><span class="s2">.12e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ProjectionResult</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">projected_circuit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AngularMomentumProjector.project_j_zero">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.AngularMomentumProjector.project_j_zero">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">project_j_zero</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">,</span> <span class="n">angles</span><span class="p">,</span>
+                       <span class="n">num_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">postselect_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">history_granularity</span><span class="o">=</span><span class="s2">&quot;stage&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iteratively apply Jz and Jx projections to approach J=0.</span>
+
+<span class="sd">        The returned :class:`ProjectionResult` contains a ``history`` entry</span>
+<span class="sd">        after every Jz and Jx stage by default. Set ``history_granularity`` to</span>
+<span class="sd">        ``&quot;angle&quot;`` to apply and record each filter angle separately. The</span>
+<span class="sd">        angle-resolved mode implements the same ordered filter product while</span>
+<span class="sd">        exposing the evolution within each Jz and Jx stage.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">num_steps</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;num_steps must be positive.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">history_granularity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;angle&quot;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;history_granularity must be either &#39;stage&#39; or &#39;angle&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">angles</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">angles</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">angles</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;angles must contain at least one filter angle.&quot;</span><span class="p">)</span>
+
+        <span class="n">current_circuit</span> <span class="o">=</span> <span class="n">circuit</span>
+        <span class="n">total_probability</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Projection step </span><span class="si">{</span><span class="n">step</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_steps</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">history_granularity</span> <span class="o">==</span> <span class="s2">&quot;stage&quot;</span><span class="p">:</span>
+                <span class="n">result_jz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_jz</span><span class="p">(</span>
+                    <span class="n">current_circuit</span><span class="p">,</span>
+                    <span class="n">ancilla_qubit</span><span class="p">,</span>
+                    <span class="n">target_qubits</span><span class="p">,</span>
+                    <span class="n">angles</span><span class="p">,</span>
+                    <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">total_probability</span> <span class="o">*=</span> <span class="n">result_jz</span><span class="o">.</span><span class="n">probability</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ProjectionRecord</span><span class="p">(</span>
+                        <span class="n">step</span><span class="o">=</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Jz&quot;</span><span class="p">,</span>
+                        <span class="n">state</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                        <span class="n">probability</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span>
+                        <span class="n">cumulative_probability</span><span class="o">=</span><span class="n">total_probability</span><span class="p">,</span>
+                        <span class="n">circuit</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_jx</span><span class="p">(</span>
+                    <span class="n">result_jz</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                    <span class="n">ancilla_qubit</span><span class="p">,</span>
+                    <span class="n">target_qubits</span><span class="p">,</span>
+                    <span class="n">angles</span><span class="p">,</span>
+                    <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">total_probability</span> <span class="o">*=</span> <span class="n">result</span><span class="o">.</span><span class="n">probability</span>
+                <span class="n">current_circuit</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">circuit</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ProjectionRecord</span><span class="p">(</span>
+                        <span class="n">step</span><span class="o">=</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Jx&quot;</span><span class="p">,</span>
+                        <span class="n">state</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                        <span class="n">probability</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span>
+                        <span class="n">cumulative_probability</span><span class="o">=</span><span class="n">total_probability</span><span class="p">,</span>
+                        <span class="n">circuit</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">angle_index</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">result_jz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_jz</span><span class="p">(</span>
+                    <span class="n">current_circuit</span><span class="p">,</span>
+                    <span class="n">ancilla_qubit</span><span class="p">,</span>
+                    <span class="n">target_qubits</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">angle</span><span class="p">],</span>
+                    <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">total_probability</span> <span class="o">*=</span> <span class="n">result_jz</span><span class="o">.</span><span class="n">probability</span>
+                <span class="n">current_circuit</span> <span class="o">=</span> <span class="n">result_jz</span><span class="o">.</span><span class="n">circuit</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ProjectionRecord</span><span class="p">(</span>
+                        <span class="n">step</span><span class="o">=</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Jz&quot;</span><span class="p">,</span>
+                        <span class="n">state</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                        <span class="n">probability</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span>
+                        <span class="n">cumulative_probability</span><span class="o">=</span><span class="n">total_probability</span><span class="p">,</span>
+                        <span class="n">circuit</span><span class="o">=</span><span class="n">result_jz</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                        <span class="n">angle_index</span><span class="o">=</span><span class="n">angle_index</span><span class="p">,</span>
+                        <span class="n">angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">angle_index</span><span class="p">,</span> <span class="n">angle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_jx</span><span class="p">(</span>
+                    <span class="n">current_circuit</span><span class="p">,</span>
+                    <span class="n">ancilla_qubit</span><span class="p">,</span>
+                    <span class="n">target_qubits</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">angle</span><span class="p">],</span>
+                    <span class="n">postselect_state</span><span class="o">=</span><span class="n">postselect_state</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">total_probability</span> <span class="o">*=</span> <span class="n">result</span><span class="o">.</span><span class="n">probability</span>
+                <span class="n">current_circuit</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">circuit</span>
+                <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">ProjectionRecord</span><span class="p">(</span>
+                        <span class="n">step</span><span class="o">=</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                        <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;Jx&quot;</span><span class="p">,</span>
+                        <span class="n">state</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+                        <span class="n">probability</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">probability</span><span class="p">,</span>
+                        <span class="n">cumulative_probability</span><span class="o">=</span><span class="n">total_probability</span><span class="p">,</span>
+                        <span class="n">circuit</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span>
+                        <span class="n">angle_index</span><span class="o">=</span><span class="n">angle_index</span><span class="p">,</span>
+                        <span class="n">angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ProjectionResult</span><span class="p">(</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
+            <span class="n">total_probability</span><span class="p">,</span>
+            <span class="n">current_circuit</span><span class="p">,</span>
+            <span class="n">history</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">history</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_orbital_ordering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check that each block is ordered from m=-j to m=+j.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">block</span><span class="p">,</span> <span class="n">j2val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">j_blocks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j2_values</span><span class="p">):</span>
+            <span class="n">observed</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">block</span><span class="p">]</span>
+            <span class="n">expected</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">j2val</span><span class="p">,</span> <span class="n">j2val</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">observed</span> <span class="o">!=</span> <span class="n">expected</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Each (n, l, j, tz) block must be ordered by increasing &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;2m. Expected </span><span class="si">{</span><span class="n">expected</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">observed</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_register_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">ancilla_qubit</span><span class="p">,</span> <span class="n">target_qubits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the register layout required by post-selection.&quot;&quot;&quot;</span>
+        <span class="n">target_qubits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">)</span>
+        <span class="n">expected_targets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">target_qubits</span> <span class="o">!=</span> <span class="n">expected_targets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;target_qubits must immediately follow the least-significant &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ancillas. Expected </span><span class="si">{</span><span class="n">expected_targets</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">target_qubits</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">ancilla_qubit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ancilla_qubit must belong to the ancilla register.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">circuit</span><span class="o">.</span><span class="n">num_qubits</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_ancillas</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_targets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Circuit size is inconsistent with the projector.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target_qubits</span></div>
+
+
+
+<div class="viewcode-block" id="print_state_amplitudes">
+<a class="viewcode-back" href="../../nuqulib.html#nuqulib.angular_momentum_projection.print_state_amplitudes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_state_amplitudes</span><span class="p">(</span><span class="n">statevector</span><span class="p">,</span> <span class="n">Nq</span><span class="p">,</span> <span class="n">Na</span><span class="p">,</span> <span class="n">filter_0</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print significant amplitudes for one selected ancilla sector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    statevector : array_like</span>
+<span class="sd">        Statevector of the ancilla-plus-target system.</span>
+<span class="sd">    Nq : int</span>
+<span class="sd">        Number of target qubits.</span>
+<span class="sd">    Na : int</span>
+<span class="sd">        Number of least-significant ancilla qubits.</span>
+<span class="sd">    filter_0 : bool, optional</span>
+<span class="sd">        Select ancilla state ``0`` when ``True``. When ``False``, select the</span>
+<span class="sd">        all-ones ancilla state ``2**Na - 1``.</span>
+<span class="sd">    tolerance : float, optional</span>
+<span class="sd">        Suppress amplitudes with magnitude below this threshold.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sv_system</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">statevector</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">Na</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">filter_0</span><span class="p">:</span>
+        <span class="n">sv_system</span> <span class="o">=</span> <span class="n">sv_system</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Select the all-zero ancilla sector.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sv_system</span> <span class="o">=</span> <span class="n">sv_system</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Select the all-one ancilla sector.</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">Nq</span><span class="p">):</span>
+        <span class="n">amplitude</span> <span class="o">=</span> <span class="n">sv_system</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">amplitude</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tolerance</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">bitstring</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">Nq</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;|</span><span class="si">{</span><span class="n">bitstring</span><span class="si">}</span><span class="s2">&gt;: </span><span class="si">{</span><span class="n">amplitude</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

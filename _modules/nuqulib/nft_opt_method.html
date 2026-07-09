@@ -599,6 +599,30 @@
     <span class="n">proton_qubits</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">neutron_qubits</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimize ansatz parameters with sequential NFT updates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        it_max (int): Number of outer optimization sweeps.</span>
+<span class="sd">        hamiltonian_op: Hamiltonian operator used by the cost function.</span>
+<span class="sd">        params (Iterable[float]): Initial variational parameters.</span>
+<span class="sd">        Nq (int): Number of qubits.</span>
+<span class="sd">        Nocc (int): Number of occupied orbitals for pairing-style ansätze.</span>
+<span class="sd">        ngate (int): Number of variational gates/parameters to update.</span>
+<span class="sd">        where_is_G_or_cG1 (dict): Mapping from parameter index to gate type.</span>
+<span class="sd">        method_ansatz (str): Ansatz construction method passed to</span>
+<span class="sd">            ``cost_func``.</span>
+<span class="sd">        method_measure (str): Measurement method passed to ``cost_func``.</span>
+<span class="sd">        verbose (bool, optional): If True, print energy and parameter updates.</span>
+<span class="sd">        pairinghamiltonian (bool, optional): Whether to use pairing-Hamiltonian</span>
+<span class="sd">            cost-function conventions.</span>
+<span class="sd">        proton_number (int, optional): Proton number for nuclear ansätze.</span>
+<span class="sd">        neutron_number (int, optional): Neutron number for nuclear ansätze.</span>
+<span class="sd">        proton_qubits (list, optional): Proton qubit indices.</span>
+<span class="sd">        neutron_qubits (list, optional): Neutron qubit indices.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Iterable[float]: Optimized parameter vector.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">proton_number</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">proton_qubits</span> <span class="o">==</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">neutron_number</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">neutron_qubits</span> <span class="o">==</span> <span class="p">[]</span>
     <span class="p">):</span>
@@ -693,7 +717,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

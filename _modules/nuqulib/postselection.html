@@ -568,6 +568,23 @@
     <span class="n">hamiltonian_op_XXYY</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">,</span>
     <span class="n">postselection_XXYY</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate XX+YY energy from Google-style basis-rotation counts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        Nq (int): Number of qubits.</span>
+<span class="sd">        Nocc (int): Target occupation number used for postselection.</span>
+<span class="sd">        qc_list_XXYY (list): Circuits corresponding to the XX+YY measurement</span>
+<span class="sd">            schedule.</span>
+<span class="sd">        list_counts_G (list): Counts or probability dictionaries for each</span>
+<span class="sd">            circuit in ``qc_list_XXYY``.</span>
+<span class="sd">        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms containing</span>
+<span class="sd">            XX/YY pair operators.</span>
+<span class="sd">        postselection_XXYY (bool): If True, enforce number conservation when</span>
+<span class="sd">            reweighting counts.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Estimated XX+YY energy contribution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">E_XXYY</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">labeling</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">))</span>
     <span class="n">idx_pool</span> <span class="o">=</span> <span class="p">[]</span>
@@ -626,6 +643,25 @@
     <span class="n">backend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">return_counts_as_well</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate XX+YY terms by inserting Hadamard gates before measurement.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        adopted (str): Execution target label, such as ``&quot;Real&quot;``.</span>
+<span class="sd">        Nq (int): Number of qubits.</span>
+<span class="sd">        Nocc (int): Target occupation number used by count reweighting.</span>
+<span class="sd">        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms to evaluate.</span>
+<span class="sd">        qc_ansatz (QuantumCircuit): Ansatz circuit to measure.</span>
+<span class="sd">        sampler: Qiskit sampler-like object.</span>
+<span class="sd">        nshot (int): Number of measurement shots.</span>
+<span class="sd">        using_noisy_simulation (bool, optional): If True, read counts from the</span>
+<span class="sd">            noisy-simulator result layout.</span>
+<span class="sd">        backend (optional): Backend for transpilation.</span>
+<span class="sd">        return_counts_as_well (bool, optional): If True, return the reweighted</span>
+<span class="sd">            counts together with the energy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float or tuple: Estimated XX+YY contribution, optionally with counts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">qc</span> <span class="o">=</span> <span class="n">qc_ansatz</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">))</span>
     <span class="n">qc</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
@@ -653,6 +689,18 @@
 <div class="viewcode-block" id="eval_XXYY_from_Hcounts">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.postselection.eval_XXYY_from_Hcounts">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">eval_XXYY_from_Hcounts</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">Nq</span><span class="p">,</span> <span class="n">hamiltonian_op_XXYY</span><span class="p">,</span> <span class="n">return_counts_as_well</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate XX+YY contribution from counts measured in the H basis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        counts (dict): Bitstring counts or probabilities.</span>
+<span class="sd">        Nq (int): Number of qubits.</span>
+<span class="sd">        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms containing</span>
+<span class="sd">            XX/YY pair operators.</span>
+<span class="sd">        return_counts_as_well (bool): If True, return ``(energy, counts)``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float or tuple: Estimated energy contribution, optionally with counts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">exp_XXYY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Nq</span> <span class="o">*</span> <span class="p">(</span><span class="n">Nq</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">hit</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">op</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">hamiltonian_op_XXYY</span><span class="o">.</span><span class="n">paulis</span><span class="p">,</span> <span class="n">hamiltonian_op_XXYY</span><span class="o">.</span><span class="n">coeffs</span><span class="p">):</span>
@@ -683,7 +731,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

@@ -378,6 +378,9 @@
 <span class="sd">        e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.</span>
 <span class="sd">        ncsm (bool, optional): Whether using no-core shell model. Defaults to False.</span>
 <span class="sd">        mapping_method (str, optional): The mapping method for converting fermionic operators to Pauli operators. Defaults to &quot;Jordan-Wigner&quot;.</span>
+<span class="sd">        single_spiecies (int, optional): Select a single-species calculation mode.</span>
+<span class="sd">            ``0`` keeps both proton and neutron states, ``1`` keeps protons only,</span>
+<span class="sd">            and ``2`` keeps neutrons only.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: A tuple containing:</span>
@@ -653,6 +656,17 @@
 <div class="viewcode-block" id="Hamiltonian.neutron_number_constraint">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.neutron_number_constraint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">neutron_number_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N0</span><span class="p">,</span> <span class="n">mapping_method</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;./tmp&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a quadratic neutron-number penalty operator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            N0 (int | float): Target neutron number.</span>
+<span class="sd">            mapping_method (str): Fermion-to-qubit mapping method.</span>
+<span class="sd">            filepath (str | os.PathLike, optional): Base path used by mappings</span>
+<span class="sd">                that load or save mapper data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SparsePauliOp: Qubit operator for ``(N_n - N0)^2``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hamildict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mscheme_H</span><span class="p">(</span><span class="n">opform</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">V3p</span><span class="p">,</span> <span class="n">V3n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_V3_p_n</span><span class="p">()</span>
@@ -670,6 +684,17 @@
 <div class="viewcode-block" id="Hamiltonian.proton_number_constraint">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.proton_number_constraint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">proton_number_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N0</span><span class="p">,</span> <span class="n">mapping_method</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="s1">&#39;./tmp&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a quadratic proton-number penalty operator.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            N0 (int | float): Target proton number.</span>
+<span class="sd">            mapping_method (str): Fermion-to-qubit mapping method.</span>
+<span class="sd">            filepath (str | os.PathLike, optional): Base path used by mappings</span>
+<span class="sd">                that load or save mapper data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            SparsePauliOp: Qubit operator for ``(N_p - N0)^2``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># H_p = mapping_to_Pauli_string(</span>
         <span class="c1">#     FermionicOp(Hamildict_opform[&quot;P&quot;],num_spin_orbitals=self.n_qubits),</span>
         <span class="c1">#     self.n_qubits, method=mapping_method, </span>
@@ -971,12 +996,15 @@
 <span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            op_dict (dict): Dictionary to store operator strings and coefficients.</span>
-<span class="sd">            aa, bb (int): Bra state indices.</span>
-<span class="sd">            cc, dd (int): Ket state indices.</span>
+<span class="sd">            aa (int): First bra-state index.</span>
+<span class="sd">            bb (int): Second bra-state index.</span>
+<span class="sd">            cc (int): First ket-state index.</span>
+<span class="sd">            dd (int): Second ket-state index.</span>
 <span class="sd">            J (int): Total angular momentum quantum number.</span>
 <span class="sd">            v (float): Matrix element value.</span>
 <span class="sd">            </span>
 <span class="sd">        Note:</span>
+<span class="sd">            We use the convention of the order of creation and annihilation operators like &quot;+_aa +_bb -_dd -_cc&quot; for the operator string.</span>
 <span class="sd">            For identical bra and ket configurations, only one term is added.</span>
 <span class="sd">            For different configurations, both direct and exchanged terms are included</span>
 <span class="sd">            to ensure proper antisymmetrization of fermionic operators.</span>
@@ -1016,6 +1044,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            opform (bool, optional): If True, returns operators in fermionic</span>
 <span class="sd">            string form. If False, returns matrix element lists. Defaults to False.</span>
+<span class="sd">            verbose (int | bool, optional): If truthy, print additional progress</span>
+<span class="sd">                and basis information while constructing the M-scheme Hamiltonian.</span>
 <span class="sd">                </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: Dictionary containing Hamiltonian components:</span>
@@ -1444,7 +1474,18 @@
 
 <div class="viewcode-block" id="Hamiltonian.perms">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.perms">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">perms</span><span class="p">(</span><span class="n">selt</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">i3</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">perms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">i3</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return signed permutations of three single-particle indices.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            i1 (int): First index.</span>
+<span class="sd">            i2 (int): Second index.</span>
+<span class="sd">            i3 (int): Third index.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict[tuple[int, int, int], int]: Permutations mapped to their</span>
+<span class="sd">            antisymmetry signs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
                 <span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">i3</span><span class="p">):</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="p">(</span><span class="n">i2</span><span class="p">,</span> <span class="n">i3</span><span class="p">,</span> <span class="n">i1</span><span class="p">):</span> <span class="mi">1</span><span class="p">,</span>
@@ -1668,6 +1709,16 @@
 <div class="viewcode-block" id="Hamiltonian.get_3NF_Mscheme">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_3NF_Mscheme">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_3NF_Mscheme</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert stored M-scheme 3NF matrix elements to operator strings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            verbose (bool, optional): If True, print each generated proton and</span>
+<span class="sd">                neutron operator string.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Mapping ``(proton_op, neutron_op)`` pairs to matrix elements.</span>
+<span class="sd">            Returns an empty dictionary when no M-scheme 3NF data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">op_dict_3b</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">op_dict_3b</span>
@@ -1695,6 +1746,12 @@
 <div class="viewcode-block" id="Hamiltonian.get_V3_p_n">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.get_V3_p_n">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_V3_p_n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split pure-proton and pure-neutron three-body terms.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple[dict, dict]: Proton-only and neutron-only 3NF operator</span>
+<span class="sd">            dictionaries extracted from ``self.Hamildict[&quot;V3&quot;]``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result_n</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">result_p</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hamildict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1841,7 +1898,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Export the encoded Hamiltonian to a text file.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        label (str): Prefix for the output filename.</span>
+<span class="sd">        Hamil (SparsePauliOp): Encoded Hamiltonian to write.</span>
+<span class="sd">        fn (str | os.PathLike): Output text filename.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">oup</span>  <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -1947,6 +2005,19 @@
 <div class="viewcode-block" id="sort_3_orbits">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.sort_3_orbits">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sort_3_orbits</span><span class="p">(</span><span class="n">a_in</span><span class="p">,</span> <span class="n">b_in</span><span class="p">,</span> <span class="n">c_in</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sort three orbital labels into descending canonical order.</span>
+
+<span class="sd">    Even labels are shifted down by one before sorting, matching the indexing</span>
+<span class="sd">    convention used by the three-body matrix-element reader.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a_in (int): First orbital label.</span>
+<span class="sd">        b_in (int): Second orbital label.</span>
+<span class="sd">        c_in (int): Third orbital label.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[int, int, int, int]: Sorted labels and the permutation index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Adjust inputs if they&#39;re even</span>
     <span class="n">a_in</span> <span class="o">=</span> <span class="n">a_in</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">a_in</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">a_in</span>
     <span class="n">b_in</span> <span class="o">=</span> <span class="n">b_in</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">b_in</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">b_in</span>
@@ -2011,6 +2082,20 @@
 <div class="viewcode-block" id="get_nkey6_shift">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_nkey6_shift">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_nkey6_shift</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">int_shift</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pack six possibly negative integer labels into one shifted integer key.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        a (int): First label.</span>
+<span class="sd">        b (int): Second label.</span>
+<span class="sd">        c (int): Third label.</span>
+<span class="sd">        d (int): Fourth label.</span>
+<span class="sd">        e (int): Fifth label.</span>
+<span class="sd">        f (int): Sixth label.</span>
+<span class="sd">        int_shift (int, optional): Shift added before packing.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: Packed key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="p">((</span><span class="n">a</span> <span class="o">+</span> <span class="n">int_shift</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">50</span><span class="p">)</span>
         <span class="o">+</span> <span class="p">((</span><span class="n">b</span> <span class="o">+</span> <span class="n">int_shift</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">40</span><span class="p">)</span>
@@ -2025,6 +2110,7 @@
 <div class="viewcode-block" id="get_nkey6">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_nkey6">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pack six non-negative integer labels into one integer key.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="mi">50</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="mi">40</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="mi">30</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">d</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">e</span> <span class="o">&lt;&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span></div>
 
 
@@ -2032,6 +2118,7 @@
 <div class="viewcode-block" id="unhash_key6j">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.unhash_key6j">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unhash_key6j</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unpack a key produced by :func:`get_nkey6` into six labels.&quot;&quot;&quot;</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">50</span>
     <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">40</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span>
     <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span>
@@ -2125,8 +2212,12 @@
 <span class="sd">    is within the specified model space truncation parameters.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        ea, eb, ec (int): Excitation energies of bra orbitals.</span>
-<span class="sd">        ed, ee, ef (int): Excitation energies of ket orbitals.</span>
+<span class="sd">        ea (int): Excitation energy of the first bra orbital.</span>
+<span class="sd">        eb (int): Excitation energy of the second bra orbital.</span>
+<span class="sd">        ec (int): Excitation energy of the third bra orbital.</span>
+<span class="sd">        ed (int): Excitation energy of the first ket orbital.</span>
+<span class="sd">        ee (int): Excitation energy of the second ket orbital.</span>
+<span class="sd">        ef (int): Excitation energy of the third ket orbital.</span>
 <span class="sd">        e1max (int): Maximum single-particle excitation energy.</span>
 <span class="sd">        e2max (int): Maximum two-body excitation energy.</span>
 <span class="sd">        e3max (int): Maximum three-body excitation energy.</span>
@@ -2219,6 +2310,18 @@
 <div class="viewcode-block" id="ReadThBME_me3jgz.get_modelspace">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.ReadThBME_me3jgz.get_modelspace">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_modelspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e1max</span><span class="p">,</span> <span class="n">e1max_file</span><span class="p">,</span> <span class="n">e2max</span><span class="p">,</span> <span class="n">e3max</span><span class="p">,</span> <span class="n">e3max_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct model-space labels for file and truncated 3NF spaces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            e1max (int): One-body truncation used in the active model space.</span>
+<span class="sd">            e1max_file (int): One-body truncation represented in the input file.</span>
+<span class="sd">            e2max (int): Two-body truncation used in the active model space.</span>
+<span class="sd">            e3max (int): Three-body truncation used in the active model space.</span>
+<span class="sd">            e3max_file (int): Three-body truncation represented in the input file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            sps_3Blab: Model-space descriptor used by the me3j reader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sps</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">sps_file</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">norbits_file</span> <span class="o">=</span> <span class="n">norbits_ms</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2738,6 +2841,21 @@
 <div class="viewcode-block" id="RecouplingCG">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.RecouplingCG">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">RecouplingCG</span><span class="p">(</span><span class="n">idx_abc</span><span class="p">,</span> <span class="n">ja2</span><span class="p">,</span> <span class="n">jb2</span><span class="p">,</span> <span class="n">jc2</span><span class="p">,</span> <span class="n">Jab_in</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">dWS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the angular-momentum recoupling coefficient for a 3NF permutation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        idx_abc (int): Permutation index for the three incoming orbitals.</span>
+<span class="sd">        ja2 (int): Twice the angular momentum of orbital a.</span>
+<span class="sd">        jb2 (int): Twice the angular momentum of orbital b.</span>
+<span class="sd">        jc2 (int): Twice the angular momentum of orbital c.</span>
+<span class="sd">        Jab_in (int): Input coupled angular momentum of a and b.</span>
+<span class="sd">        Jab (int): Output coupled angular momentum of the permuted pair.</span>
+<span class="sd">        J2 (int): Twice the total three-body angular momentum.</span>
+<span class="sd">        dWS (prep_dicts_for_WignerSymbols): Precomputed Wigner-symbol tables.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: Recoupling coefficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Check angular momentum triangle conditions</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ja2</span> <span class="o">-</span> <span class="n">jb2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&gt;</span> <span class="n">Jab</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ja2</span> <span class="o">+</span> <span class="n">jb2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">&lt;</span> <span class="n">Jab</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
@@ -2781,6 +2899,8 @@
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">prep_dicts_for_WignerSymbols</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Precompute Clebsch-Gordan and Wigner 6j lookup tables.&quot;&quot;&quot;</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">emax</span> <span class="o">=</span> <span class="n">emax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">jmax</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">emax</span> <span class="o">+</span> <span class="mi">1</span>
@@ -2791,6 +2911,7 @@
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_dcg_spin">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_dcg_spin">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_dcg_spin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Precompute spin Clebsch-Gordan coefficients used in 3NF recoupling.&quot;&quot;&quot;</span>
         <span class="n">dcg_spin</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">s_a</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">s_b</span> <span class="o">=</span> <span class="mi">1</span>
@@ -2827,6 +2948,7 @@
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_d6j_lj">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_lj">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_d6j_lj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jmax2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Precompute 6j symbols for l-j recoupling up to ``jmax2``.&quot;&quot;&quot;</span>
         <span class="n">d6j_lj</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">j1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jmax2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">jmax2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
@@ -2857,6 +2979,7 @@
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols.prep_d6j_int">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.prep_dicts_for_WignerSymbols.prep_d6j_int">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">prep_d6j_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">emax</span><span class="p">,</span> <span class="n">jmax_in</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Precompute integer-grid 6j symbols for 3NF transformations.&quot;&quot;&quot;</span>
         <span class="c1"># &#39;to&#39; parameter is not used in this function.</span>
         <span class="n">jmax</span> <span class="o">=</span> <span class="n">jmax_in</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="n">d6j_int</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2888,6 +3011,7 @@
 <div class="viewcode-block" id="tri_check">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.tri_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">tri_check</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if three angular momenta satisfy triangle inequalities.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">c</span> <span class="ow">or</span> <span class="n">a</span> <span class="o">+</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="ow">or</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">c</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">a</span><span class="p">:</span>
@@ -2899,6 +3023,7 @@
 <div class="viewcode-block" id="get_key6j_sym">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_key6j_sym">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_key6j_sym</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j5</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j4</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j6</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a symmetry-canonical packed key for a Wigner 6j symbol.&quot;&quot;&quot;</span>
     <span class="c1"># Initialize temporary copies.</span>
     <span class="n">tj1</span><span class="p">,</span> <span class="n">tj3</span><span class="p">,</span> <span class="n">tj5</span> <span class="o">=</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j3</span><span class="p">,</span> <span class="n">j5</span>
     <span class="n">tj2</span><span class="p">,</span> <span class="n">tj4</span><span class="p">,</span> <span class="n">tj6</span> <span class="o">=</span> <span class="n">j2</span><span class="p">,</span> <span class="n">j4</span><span class="p">,</span> <span class="n">j6</span>
@@ -2943,6 +3068,7 @@
 <div class="viewcode-block" id="j_col_score">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.j_col_score">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">j_col_score</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Score one 6j-symbol column for canonical ordering.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">j1</span> <span class="o">+</span> <span class="n">j2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">min</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">)</span></div>
 
 
@@ -2950,6 +3076,7 @@
 <div class="viewcode-block" id="get_canonical_order_6j">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.get_canonical_order_6j">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_canonical_order_6j</span><span class="p">(</span><span class="n">j1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j2</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j3</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j4</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j5</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">j6</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the canonical column order code for a 6j-symbol key.&quot;&quot;&quot;</span>
     <span class="n">cscore_12</span> <span class="o">=</span> <span class="n">j_col_score</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">)</span>
     <span class="n">cscore_34</span> <span class="o">=</span> <span class="n">j_col_score</span><span class="p">(</span><span class="n">j3</span><span class="p">,</span> <span class="n">j4</span><span class="p">)</span>
     <span class="n">cscore_56</span> <span class="o">=</span> <span class="n">j_col_score</span><span class="p">(</span><span class="n">j5</span><span class="p">,</span> <span class="n">j6</span><span class="p">)</span>
@@ -3124,6 +3251,8 @@
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        ops (SparsePauliOp): Input Pauli operator.</span>
+<span class="sd">        verbose (bool, optional): If True, print the retained Pauli strings and</span>
+<span class="sd">            coefficients after consolidation.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        SparsePauliOp: Cleaned Pauli operator with redundant terms combined.</span>
@@ -3197,7 +3326,6 @@
                 <span class="n">new_Hamil</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">V</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">new_Hamil</span></div>
 
-
 </pre></div>
         </article>
       </div>
@@ -3210,7 +3338,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
+                Copyright &#169; 2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
