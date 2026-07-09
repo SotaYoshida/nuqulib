@@ -1,5 +1,3 @@
-from tabnanny import verbose
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
@@ -20,6 +18,20 @@ from tqdm import tqdm
 def circuit_HadamardTest(
     Norb, Uprep, Hamiltonian_op, t, trotter_steps, using_statevector=True
 ):
+    """Build a Hadamard-test circuit for a time-evolution operator.
+
+    Args:
+        Norb (int): Number of target orbitals/qubits.
+        Uprep (QuantumCircuit): State-preparation circuit on the target register.
+        Hamiltonian_op (SparsePauliOp): Hamiltonian used for Pauli evolution.
+        t (float): Evolution time.
+        trotter_steps (int): Number of Suzuki-Trotter repetitions.
+        using_statevector (bool, optional): If True, omit measurement and return
+            a statevector-ready circuit.
+
+    Returns:
+        QuantumCircuit: Decomposed Hadamard-test circuit.
+    """
     op = PauliEvolutionGate(
         Hamiltonian_op, t, 
         synthesis=SuzukiTrotter(order=1, reps=trotter_steps)
@@ -55,6 +67,15 @@ def circuit_HadamardTest(
 
 
 def T_formula_QFT(N_ancilla, eps_rotation: float=1.e-10):
+    """Estimate T-count for the inverse QFT rotation gates.
+
+    Args:
+        N_ancilla (int): Number of QPE ancilla qubits.
+        eps_rotation (float, optional): Rotation synthesis tolerance.
+
+    Returns:
+        float: Estimated T-count.
+    """
     Teps = np.ceil( 3 * np.log2(1/eps_rotation))
     return N_ancilla * (N_ancilla - 1) // 2 * 2 * Teps
 
@@ -69,6 +90,23 @@ def circuit_my_QPE(n_ancilla: int,
     trotter_steps: int = 1,
     repeat: bool = False
 ):
+    """Construct a basic quantum phase-estimation circuit.
+
+    Args:
+        n_ancilla (int): Number of counting qubits.
+        Norb (int): Number of target qubits.
+        Hamiltonian_op (SparsePauliOp): Hamiltonian used for time evolution.
+        Uprep (QuantumCircuit): State-preparation circuit.
+        time (float): Base evolution time.
+        measure (bool, optional): If True, measure the ancilla register.
+        trotter_order (int, optional): Suzuki-Trotter order.
+        trotter_steps (int, optional): Number of Suzuki-Trotter repetitions.
+        repeat (bool, optional): If True, build powers by repeated composition
+            instead of scaling the evolution time.
+
+    Returns:
+        QuantumCircuit: QPE circuit.
+    """
     qc_QPE = QuantumCircuit(n_ancilla + Norb, n_ancilla)
     register_ancilla = range(Norb, Norb + n_ancilla)
     register_target = range(Norb)
@@ -104,8 +142,11 @@ def circuit_my_QPE(n_ancilla: int,
 
 
 class myTextBookQPE:
+    """Small wrapper around textbook quantum phase estimation."""
+
     def __init__(self, n_ancilla, Norb, Hamiltonian_op,
                   Uprep, time, trotter_order=2, trotter_steps=1):
+        """Store QPE construction and resource-estimation parameters."""
         self.Na = n_ancilla
         self.Norb = Norb
         self.Hamiltonian_op = Hamiltonian_op
@@ -116,6 +157,7 @@ class myTextBookQPE:
 
 
     def construct_circuit(self):
+        """Construct the measured textbook QPE circuit."""
         return circuit_my_QPE(
             self.Na,
             self.Norb,
@@ -130,6 +172,15 @@ class myTextBookQPE:
 
 
     def estimate_resource(self, tol=1.e-10, verbose=False):
+        """Estimate the T-count for the stored QPE circuit parameters.
+
+        Args:
+            tol (float, optional): Rotation synthesis tolerance.
+            verbose (bool, optional): If True, print intermediate estimates.
+
+        Returns:
+            None: The estimate is printed to stdout.
+        """
         T_epsilon = t_count(tol)
         T_U = self.trotter_steps * self.trotter_order * ( len(self.Hamiltonian_op.paulis) - 1 ) * T_epsilon
         T_cU = 2 * T_U
@@ -148,6 +199,20 @@ class myTextBookQPE:
 def make_overlap_qc(
     Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, using_statevector
 ):
+    """Build circuits for real and imaginary parts of an overlap test.
+
+    Args:
+        Ntar (int): Number of target qubits.
+        gate_cUi: Controlled unitary for the first state.
+        gate_cUj: Controlled unitary for the second state.
+        ancilla_qubits (list): Ancilla qubits used by the controlled gates.
+        target_qubits (list): Target qubits acted on by the controlled gates.
+        using_statevector (bool): If False, add measurements.
+
+    Returns:
+        tuple[QuantumCircuit, QuantumCircuit]: Circuits for real and imaginary
+        overlap components.
+    """
     qc_re = QuantumCircuit(1 + Ntar, 1)
     qc_re.h(0)
     qc_re.append(gate_cUi, ancilla_qubits + target_qubits)
@@ -176,6 +241,23 @@ def measure_overlap(
     using_statevector,
     do_simulation=True,
 ):
+    """Estimate an overlap from Hadamard-test circuits.
+
+    Args:
+        num_shot (int): Number of shots for sampled execution.
+        Ntar (int): Number of target qubits.
+        gate_cUi: Controlled unitary for the first state.
+        gate_cUj: Controlled unitary for the second state.
+        ancilla_qubits (list): Ancilla qubits used by the controlled gates.
+        target_qubits (list): Target qubits acted on by the controlled gates.
+        sampler: Sampler or backend-like object used for transpilation/execution.
+        using_statevector (bool): If True, use statevector simulation.
+        do_simulation (bool, optional): If False, print resource information
+            and skip execution.
+
+    Returns:
+        complex | None: Estimated overlap, or None for resource-only mode.
+    """
     qc_re, qc_im = make_overlap_qc(
         Ntar, gate_cUi, gate_cUj, ancilla_qubits, target_qubits, using_statevector
     )
@@ -228,6 +310,7 @@ def measure_overlap(
 
 
 def make_cU(Uprep, Ui, Ntar):
+    """Create a controlled gate for ``Uprep`` followed by ``Ui``."""
     circuit_cUi = QuantumCircuit(Ntar)
     circuit_cUi.append(Uprep, range(Ntar))
     circuit_cUi.append(Ui, range(Ntar))
@@ -237,6 +320,22 @@ def make_cU(Uprep, Ui, Ntar):
 def make_Circ_forNondiagH(term_types,
                           Ntar, ancilla_qubits, target_qubits, 
                           gate_cUi, gate_cUj, qcs_re, qcs_im, using_statevector):
+    """Append measurement circuits for non-diagonal Hamiltonian term types.
+
+    Args:
+        term_types (list[str]): Measurement basis descriptors.
+        Ntar (int): Number of target qubits.
+        ancilla_qubits (list): Ancilla qubits used by the controlled gates.
+        target_qubits (list): Target qubit indices.
+        gate_cUi: Controlled unitary for the first state.
+        gate_cUj: Controlled unitary for the second state.
+        qcs_re (list): Output list receiving real-part circuits.
+        qcs_im (list): Output list receiving imaginary-part circuits.
+        using_statevector (bool): If False, add measurements.
+
+    Returns:
+        None: The output lists are modified in place.
+    """
     
     for idx_term in range(len(term_types)):
         term = term_types[idx_term]
@@ -292,6 +391,15 @@ def make_Circ_forNondiagH(term_types,
     return None
 
 def get_idx_circuit(op_string, term_types):
+    """Find the prepared measurement circuit matching a Pauli string type.
+
+    Args:
+        op_string (str): Pauli label to classify.
+        term_types (list[str]): Available measurement basis descriptors.
+
+    Returns:
+        int: Index of the matching circuit type.
+    """
     idx_circuit = None
     if set(op_string) == {'I', 'Z'} or set(op_string) == {'I'}:                            
         for i in range(len(term_types)):
@@ -375,6 +483,17 @@ def prepare_qc_for_QKrylov(Hamiltonian_op, Uprep, Ui, Ntar, Bosonic, using_state
 
 
 def trans_XYloc_str(Xloc, Yloc, Bosonic):
+    """Translate X/Y support lists into a measurement-basis descriptor string.
+
+    Args:
+        Xloc (list[int]): Qubit locations with X operators.
+        Yloc (list[int]): Qubit locations with Y operators.
+        Bosonic (bool): If True, collapse all-X/all-Y terms to ``"XX"`` or
+            ``"YY"`` descriptors.
+
+    Returns:
+        str: Descriptor consumed by QKrylov measurement-circuit builders.
+    """
     if len(Xloc) == 0 and len(Yloc) == 0:
         return "IZ"
     elif len(Xloc) > 0 and len(Yloc) == 0:
@@ -758,6 +877,12 @@ def QuantumKrylov(
 
 
 def lambda_plot(lam, Ens):
+    """Save a complex-plane plot of selected ODMD eigenvalues.
+
+    Args:
+        lam (Iterable[complex]): Eigenvalues to plot.
+        Ens (Iterable[float]): Energies used in legend labels.
+    """
     fig = plt.figure(figsize=(5, 5))
     ax = fig.add_subplot(111)
     for idx, point in enumerate(lam):
@@ -772,6 +897,8 @@ def lambda_plot(lam, Ens):
 
 
 class ODMD:
+    """Online dynamic mode decomposition solver for quantum time snapshots."""
+
     def __init__(
         self,
         Uprep: QuantumCircuit,
@@ -791,6 +918,28 @@ class ODMD:
         plot_lambda: bool = False,
         tol_lambda: float = 1.0e-2
     ):
+        """Initialize ODMD simulation and post-processing parameters.
+
+        Args:
+            Uprep (QuantumCircuit): State-preparation circuit.
+            HamiltonianOps (SparsePauliOp): Hamiltonian used for time evolution.
+            delta_t (float): Snapshot time spacing.
+            max_iterations (int): Number of time snapshots.
+            trotter_rank (int): Suzuki-Trotter order/rank.
+            trotter_steps (int): Number of Trotter repetitions.
+            sampler: Sampler used for sampled overlap measurements.
+            ancilla_qubits: Ancilla qubits used in overlap measurements.
+            target_qubits: Target qubits evolved by the Hamiltonian.
+            num_shot (int, optional): Number of shots for sampled execution.
+            using_statevector (bool, optional): If True, use statevector
+                overlap simulation.
+            dim_Hankel (int, optional): Hankel matrix row dimension.
+            tol_SVD (float, optional): Singular-value cutoff.
+            verbose (bool, optional): If True, print intermediate arrays.
+            plot_lambda (bool, optional): If True, save a lambda plot.
+            tol_lambda (float, optional): Initial tolerance for selecting
+                eigenvalues close to the unit circle.
+        """
         self.Uprep = Uprep
         self.HamiltonianOps = HamiltonianOps
         self.delta_t = delta_t
@@ -826,6 +975,12 @@ class ODMD:
         self.tol_lambda_used = None
 
     def run(self):
+        """Run ODMD snapshot generation, fitting, and energy extraction.
+
+        Returns:
+            tuple[list[float], np.ndarray]: Extracted energies and selected
+            unit-circle eigenvalues.
+        """
         Ntar = len(self.target_qubits)
 
         cU0 = self.Uprep.to_gate().control(1)
@@ -906,6 +1061,16 @@ class ODMD:
         return energies, selected_lams
     
     def construct_X_and_Y(self, snapshots, dim_Hankel):
+        """Construct shifted Hankel matrices from a snapshot sequence.
+
+        Args:
+            snapshots (np.ndarray): Complex time-snapshot sequence.
+            dim_Hankel (int): Number of Hankel rows.
+
+        Returns:
+            tuple[np.ndarray, np.ndarray]: Shifted Hankel matrices ``X`` and
+            ``Y``.
+        """
         N = len(snapshots)
         X = np.zeros((dim_Hankel, N - dim_Hankel), dtype=np.complex128)
         Y = np.zeros((dim_Hankel, N - dim_Hankel), dtype=np.complex128)
@@ -918,6 +1083,16 @@ class ODMD:
 
     
     def construct_A_from_XY(self, X, Y):            
+        """Fit the reduced linear propagator from Hankel matrices.
+
+        Args:
+            X (np.ndarray): Source Hankel matrix.
+            Y (np.ndarray): Shifted target Hankel matrix.
+
+        Returns:
+            np.ndarray: Least-squares propagator ``A = Y X^+`` after SVD
+            truncation.
+        """
         # SVD of X
         U, Sigma, Vh = np.linalg.svd(X, full_matrices=False)
         if self.verbose:
@@ -934,6 +1109,7 @@ class ODMD:
 
     
     def get_results(self):
+        """Return cached ODMD results from the most recent :meth:`run` call."""
         return {
             "energies": self.energies,
             "selected_lams": self.selected_lams,
@@ -946,6 +1122,16 @@ class ODMD:
         }
     
     def estimate_resource(self, tol=1.e-10, model="ross-selinger", verbose=False):
+        """Estimate T-count for the ODMD overlap measurements.
+
+        Args:
+            tol (float, optional): Rotation synthesis tolerance.
+            model (str, optional): Rotation synthesis estimate model.
+            verbose (bool, optional): If True, print intermediate estimates.
+
+        Returns:
+            float: Estimated T-count.
+        """
         print(f"Estimating resource for ODMD with Niter={self.max_iterations}, eps={tol:.1e}: ")
         if self.trotter_rank > 2:
             print(f"Warning: The T-count estimation is based on the assumption of using Suzuki-Trotter decomposition with rank 1 or 2. But got trotter_rank = {self.trotter_rank}. The estimation may not be accurate in this case.")
@@ -955,4 +1141,3 @@ class ODMD:
             print(f"T_cU: {T_cU}, T_epsilon: {T_epsilon}")
         Tcount = self.num_shot * T_cU * T_epsilon * self.max_iterations * (self.max_iterations + 1) 
         print(f"T-count formula: Nshot * T_cU * T_epsilon * max_iterations * (max_iterations + 1) = {Tcount} log10: {np.log10(Tcount):.1f}")
-

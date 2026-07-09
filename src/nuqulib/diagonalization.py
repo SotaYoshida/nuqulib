@@ -30,6 +30,29 @@ def Diagonalize_Hamiltonian(
         verbose: bool = False,
         use_basis: str = "NPM",
     ) -> dict:
+    """Diagonalize a mapped Hamiltonian in a particle-number projected basis.
+
+    Args:
+        Hamil_mapped (SparsePauliOp): Qubit Hamiltonian to diagonalize.
+        hamil (Hamiltonian): Nuclear Hamiltonian object defining the model
+            space and proton/neutron split.
+        Z (int): Proton number of the target nucleus.
+        N (int): Neutron number of the target nucleus.
+        target_parity (int): Target parity, either ``+1`` or ``-1``.
+        Zc (int, optional): Number of inert core protons.
+        Nc (int, optional): Number of inert core neutrons.
+        calc_J2 (bool, optional): If True, also compute ``J^2`` expectation
+            values in the eigenvectors.
+        verbose (bool, optional): If True, print basis and diagonalization
+            details.
+        use_basis (str, optional): Basis projection mode. ``"NPM"`` fixes
+            particle number, parity, and M; ``"NP"`` fixes particle number and
+            parity; any other value uses the full computational basis.
+
+    Returns:
+        dict: Diagonalization results, including basis, projected Hamiltonian,
+        eigenvalues, eigenvectors, and optionally ``J^2`` data.
+    """
     assert abs(target_parity) == 1, "parity should be ±1"
     n_qubit_p = hamil.n_qubits_p
     n_qubit_n = hamil.n_qubits_n
@@ -89,6 +112,18 @@ def Diagonalize_Hamiltonian(
 
 
 def fixed_N_P_M_basis_neutron(n_qubits, n_particles, msps, parity, M_tot): # M is doubled
+    """Generate neutron-only basis states with fixed N, parity, and doubled M.
+
+    Args:
+        n_qubits (int): Number of neutron qubits.
+        n_particles (int): Required number of occupied neutron orbitals.
+        msps (list): M-scheme single-particle states.
+        parity (int): Target parity, either ``+1`` or ``-1``.
+        M_tot (int): Target total M in doubled convention.
+
+    Returns:
+        tuple[list[int], dict[int, int]]: Basis states and state-to-row index.
+    """
     basis = []
     for s in range(1 << n_qubits):
         if s.bit_count() == n_particles:
@@ -110,6 +145,17 @@ def fixed_N_P_M_basis_neutron(n_qubits, n_particles, msps, parity, M_tot): # M i
 
 
 def Mprojected_hamiltonian_single(hamiltonian, n_qubits, basis, index):
+    """Project a single-species Pauli Hamiltonian onto a fixed basis.
+
+    Args:
+        hamiltonian (SparsePauliOp): Pauli Hamiltonian acting on one species.
+        n_qubits (int): Number of qubits in the single-species register.
+        basis (list[int]): Basis states retained in the projected subspace.
+        index (dict[int, int]): Mapping from basis state to matrix index.
+
+    Returns:
+        np.ndarray: Dense Hermitian Hamiltonian matrix in the projected basis.
+    """
     dim = len(basis)
     H = np.zeros((dim, dim), dtype=complex)
     coeffs = hamiltonian.coeffs
@@ -289,6 +335,16 @@ def angular_momentum_from_J2(J2_values: np.ndarray, tol: float = 1e-10) -> np.nd
 
 
 def apply_pauli_string_single(pauli: str, state: int, n_qubits: int) -> tuple[int, complex]:
+    """Apply one Pauli string to an integer-encoded basis state.
+
+    Args:
+        pauli (str): Pauli label ordered as a Qiskit label.
+        state (int): Integer-encoded computational basis state.
+        n_qubits (int): Number of qubits represented by ``state``.
+
+    Returns:
+        tuple[int, complex]: New basis state and accumulated phase.
+    """
     phase = 1.0 + 0.0j
     new_state = state
 
@@ -308,6 +364,18 @@ def apply_pauli_string_single(pauli: str, state: int, n_qubits: int) -> tuple[in
     return new_state, phase
 
 def apply_pauli_string_pn(pauli: str, state: int, n_qubits_p: int, n_qubits_n: int, debug=False):
+    """Apply a proton-neutron Pauli string to an integer-encoded basis state.
+
+    Args:
+        pauli (str): Pauli label with neutron part followed by proton part.
+        state (int): Integer-encoded combined proton-neutron state.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        debug (bool, optional): If True, print the state transition and phase.
+
+    Returns:
+        tuple[int, complex]: New combined state and accumulated phase.
+    """
     n_state = format(state >> n_qubits_p, f'0{n_qubits_n}b')
     p_state = format(state & ((1 << n_qubits_p) - 1), f'0{n_qubits_p}b')
 
@@ -347,7 +415,7 @@ def selected_ci_sequential(basis_configs, Hmat, sampled_counts,
     add_per_iter : int | None
         How many configs to add per iteration. None -> add all candidates.
     threshold : float | None
-        Threshold on max |H_ij|. If set, add configs with coupling >= threshold.
+        Threshold on max ``|H_ij|``. If set, add configs with coupling >= threshold.
     initial_size : int | None
         If sampled_counts is dict, use only top-N by count as initial pool.
 

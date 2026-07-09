@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path('..', 'src').resolve()))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'NuQuLib'
-copyright = '2025, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi'
+copyright = '2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi'
 author = 'Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi'
 release = '0.1.0'
 

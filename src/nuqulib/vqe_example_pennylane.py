@@ -38,8 +38,10 @@ def vqe_example_pennylane(
         using_chs (list): List of interaction channels to include 
                          (e.g., ["1b", "pp", "nn", "pn"]).
         mapping_method (str, optional): Fermion-to-qubit mapping method. 
-                                      Options: "JordanWigner" or "BravyiKitaev". 
-                                      Defaults to "JordanWigner".
+                                      Choices are "JordanWigner" or
+                                      "BravyiKitaev". Defaults to
+                                      "JordanWigner".
+        save_plot (bool, optional): If True, save the optimization history plot.
     
     Returns:
         tuple: Tuple containing:

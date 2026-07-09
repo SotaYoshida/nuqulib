@@ -1,17 +1,26 @@
 API reference for NuQuLib
-===============
+=========================
 
 Module contents
 ---------------
 
 .. automodule:: nuqulib
-   :members:
-   :show-inheritance:
-   :undoc-members:
 
 
 Submodules
 ----------
+
+angular\_momentum\_projection submodule
+---------------------------------------
+
+.. automodule:: nuqulib.angular_momentum_projection
+   :members:
+   :exclude-members: ProjectionRecord
+   :show-inheritance:
+   :undoc-members:
+
+.. autoclass:: nuqulib.angular_momentum_projection.ProjectionRecord
+   :show-inheritance:
 
 ansatz submodule
 ---------------------
@@ -29,10 +38,42 @@ circuits submodule
    :show-inheritance:
    :undoc-members:
 
+diagonalization submodule
+-------------------------
+
+.. automodule:: nuqulib.diagonalization
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 encoding submodule
 -----------------------
 
 .. automodule:: nuqulib.encoding
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+hatt\_mapper submodule
+----------------------
+
+.. automodule:: nuqulib.hatt_mapper
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+majoranaop submodule
+--------------------
+
+.. automodule:: nuqulib.majoranaop
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+mode\_based\_mapper submodule
+-----------------------------
+
+.. automodule:: nuqulib.mode_based_mapper
    :members:
    :show-inheritance:
    :undoc-members:
@@ -57,6 +98,14 @@ pairing\_hamiltonian submodule
 -----------------------------------
 
 .. automodule:: nuqulib.pairing_hamiltonian
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+operators submodule
+-------------------
+
+.. automodule:: nuqulib.operators
    :members:
    :show-inheritance:
    :undoc-members:
@@ -101,4 +150,3 @@ vqe\_example\_pennylane submodule
    :members:
    :show-inheritance:
    :undoc-members:
-

@@ -231,6 +231,7 @@ class MajoranaOp(SparseLabelOp):
 
     @property
     def register_length(self) -> int:
+        """Return the number of Majorana modes required by this operator."""
         if self.num_modes is None:
             max_index = max(int(term[1:]) for key in self._data for term in key.split())
             return max_index + 1
@@ -292,6 +293,15 @@ class MajoranaOp(SparseLabelOp):
 
     @classmethod
     def from_polynomial_tensor(cls, tensor: PolynomialTensor) -> MajoranaOp:
+        """Construct a Majorana operator from a polynomial tensor.
+
+        Args:
+            tensor (PolynomialTensor): Tensor whose keys contain only
+                underscores and can be expanded into Majorana labels.
+
+        Returns:
+            MajoranaOp: Operator containing the tensor entries as sparse labels.
+        """
         cls._validate_polynomial_tensor_key(tensor.keys())
 
         data: dict[str, _TCoeff] = {}
@@ -345,6 +355,15 @@ class MajoranaOp(SparseLabelOp):
 
     @classmethod
     def from_terms(cls, terms: Sequence[tuple[list[tuple[str, int]], _TCoeff]]) -> MajoranaOp:
+        """Construct an operator from split label terms.
+
+        Args:
+            terms (Sequence): Sequence of ``(label_terms, coefficient)`` pairs,
+                where each label term contains a mode index.
+
+        Returns:
+            MajoranaOp: Operator assembled from the provided terms.
+        """
         data = {" ".join(f"_{index}" for _, index in label): value for label, value in terms}
         return cls(data)
 
@@ -390,6 +409,17 @@ class MajoranaOp(SparseLabelOp):
         return [(action, permutation[index]) for action, index in term]
 
     def compose(self, other: MajoranaOp, qargs=None, front: bool = False) -> MajoranaOp:
+        """Compose this operator with another Majorana operator.
+
+        Args:
+            other (MajoranaOp): Operator to compose with this one.
+            qargs: Included for compatibility with the Qiskit operator API.
+            front (bool, optional): If True, place ``other`` in front of this
+                operator in the composition.
+
+        Returns:
+            MajoranaOp: Composed operator.
+        """
         if not isinstance(other, MajoranaOp):
             raise TypeError(
                 f"Unsupported operand type(s) for *: 'MajoranaOp' and '{type(other).__name__}'"
@@ -401,9 +431,11 @@ class MajoranaOp(SparseLabelOp):
             return self._tensor(other, self, offset=False)
 
     def tensor(self, other: MajoranaOp) -> MajoranaOp:
+        """Return the tensor product of this operator with ``other``."""
         return self._tensor(self, other)
 
     def expand(self, other: MajoranaOp) -> MajoranaOp:
+        """Return the reverse-order tensor product with ``other``."""
         return self._tensor(other, self)
 
     @classmethod
@@ -425,6 +457,7 @@ class MajoranaOp(SparseLabelOp):
         return new_op
 
     def transpose(self) -> MajoranaOp:
+        """Return a copy with every Majorana label string reversed."""
         data = {}
 
         for label, coeff in self.items():
@@ -484,6 +517,15 @@ class MajoranaOp(SparseLabelOp):
         return all(np.isclose(coeff, 0.0, atol=atol) for coeff in diff.values())
 
     def simplify(self, atol: float | None = None) -> MajoranaOp:
+        """Collapse duplicate Majorana labels and remove near-zero coefficients.
+
+        Args:
+            atol (float | None, optional): Absolute tolerance for removing
+                numerically zero coefficients. Defaults to ``self.atol``.
+
+        Returns:
+            MajoranaOp: Simplified operator.
+        """
         atol = self.atol if atol is None else atol
 
         data = defaultdict(complex)  # type: dict[str, _TCoeff]
