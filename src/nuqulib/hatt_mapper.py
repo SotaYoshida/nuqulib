@@ -166,9 +166,24 @@ def _compile_fermionic_op(fermionic_op: FermionicOp, nqubits: int | None = None)
 
 
 class HATTMapper(ModeBasedMapper, FermionicMapper):
+    """Heuristic anticommutation tree mapper for fermionic operators.
+
+    The mapper can be built directly from a ``FermionicOp`` or from a saved
+    list of Pauli-table strings. The resulting table is then reused when
+    mapping additional operators with the same register size.
+    """
+
     def __init__(
         self, loader: FermionicOp | list[str], nqubits: int | None = None
     ) -> None:
+        """Initialize a HATT mapper from an operator or an existing Pauli table.
+
+        Args:
+            loader (FermionicOp | list[str]): Fermionic operator used to compile
+                the table, or a list of raw Pauli-table strings loaded from disk.
+            nqubits (int | None, optional): Register length. If omitted, it is
+                inferred from the compiled or loaded table.
+        """
         if isinstance(loader, FermionicOp):
             raw_pauli_table = _compile_fermionic_op(loader, nqubits)
         else:
@@ -179,9 +194,27 @@ class HATTMapper(ModeBasedMapper, FermionicMapper):
         self.nqubits = nqubits if nqubits is not None else len(raw_pauli_table[0])
 
     def map(self, second_q_ops: FermionicOp, *, _: int | None = None) -> SparsePauliOp:  # type: ignore
+        """Map a fermionic operator using the precomputed HATT Pauli table.
+
+        Args:
+            second_q_ops (FermionicOp): Fermionic operator to map.
+            _ (int | None, optional): Ignored compatibility argument.
+
+        Returns:
+            SparsePauliOp: Qubit operator in Qiskit's Pauli representation.
+        """
         return super().map(second_q_ops, register_length=self.nqubits)  # type: ignore
 
     def pauli_table(self, register_length: int):
+        """Return the Pauli table expected by Qiskit Nature mappers.
+
+        Args:
+            register_length (int): Register length requested by the mapper API.
+                The stored HATT table determines the actual Pauli strings.
+
+        Returns:
+            list[tuple[Pauli, Pauli]]: Majorana-pair Pauli table.
+        """
         table = []
 
         for i in range(0, len(self.raw_pauli_table), 2):
@@ -192,11 +225,24 @@ class HATTMapper(ModeBasedMapper, FermionicMapper):
         return table
 
     def save(self, path: str):
+        """Write the raw Pauli table to a text file.
+
+        Args:
+            path (str): Output filename.
+        """
         with open(path, "w") as pauli_table_file:
             pauli_table_file.write("\n".join(self.raw_pauli_table))
 
     @staticmethod
     def load(path: str):
+        """Load a HATT mapper from a saved raw Pauli-table file.
+
+        Args:
+            path (str): Input filename created by :meth:`save`.
+
+        Returns:
+            HATTMapper: Mapper initialized with the stored table.
+        """
         with open(path, "r") as pauli_table_file:
             lines = list(map(str.strip, pauli_table_file.readlines()))
             return HATTMapper(lines)

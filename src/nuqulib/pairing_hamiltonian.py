@@ -184,11 +184,12 @@ def tuple_to_bitstring(tup, Norb, rev=True):
         rev (bool, optional): Whether to reverse the bitstring. Defaults to True.
         
     Returns:
-        str: Bitstring representation in ket notation (e.g., "|0110>").
+        str: Bitstring representation in ket notation (e.g.,
+            ``"|0110>"``).
         
     Example:
         >>> tuple_to_bitstring((0, 2), 4, rev=True)
-        "|0101>"
+        '|0101>'
     """
     bitint = 0
     for i in tup:

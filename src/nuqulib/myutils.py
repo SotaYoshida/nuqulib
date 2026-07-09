@@ -214,6 +214,22 @@ class Orbit_nlj:
 
 
 def get_spsidx_from_nljtz(single_particle_states: list, n, l, j, tz):
+    """Find a single-particle-state index from quantum numbers.
+
+    Args:
+        single_particle_states (list): Sequence of states with ``n``, ``l``,
+            ``j``, and ``tz`` attributes.
+        n (int): Radial quantum number.
+        l (int): Orbital angular momentum.
+        j (int): Twice the total angular momentum.
+        tz (int): Isospin projection.
+
+    Returns:
+        int: Index of the matching single-particle state.
+
+    Raises:
+        ValueError: If no matching state exists.
+    """
     for idx, sps in enumerate(single_particle_states):
         n_ = sps.n
         l_ = sps.l
@@ -247,6 +263,20 @@ def count_msps(emax: int, vemin: int=0, vemax:int = 100):
 
 
 def t_count(eps_tol=1.e-9, model="ross-selinger", precision=None):
+    """Estimate T-count needed for single-qubit rotation synthesis.
+
+    Args:
+        eps_tol (float, optional): Target synthesis error tolerance.
+        model (str, optional): Estimate model. Supported values are
+            ``"ross-selinger"`` and ``"bocharov"``.
+        precision: Deprecated compatibility argument; currently unused.
+
+    Returns:
+        int: Estimated T-count.
+
+    Raises:
+        ValueError: If ``eps_tol`` is non-positive or the model is unknown.
+    """
     if eps_tol <= 0:
         raise ValueError(f"precision must be positive, got {eps_tol}")
     if model == "bocharov":

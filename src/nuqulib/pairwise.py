@@ -307,6 +307,7 @@ def get_possible_time_reversal_pairs(sps: dict, verbose=False):
     Args:
         sps (dict): Dictionary of single-particle states, where keys are state identifiers
                     and values are tuples containing (n, l, j, mz, SPE).
+        verbose (bool, optional): If True, print each detected pair.
     
     Note:
         sps should be a dictionary for a single species (either protons or neutrons).

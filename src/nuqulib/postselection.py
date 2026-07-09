@@ -321,6 +321,23 @@ def single_eval_XXYY_Google(
     hamiltonian_op_XXYY: SparsePauliOp,
     postselection_XXYY: bool,
 ):
+    """Evaluate XX+YY energy from Google-style basis-rotation counts.
+
+    Args:
+        Nq (int): Number of qubits.
+        Nocc (int): Target occupation number used for postselection.
+        qc_list_XXYY (list): Circuits corresponding to the XX+YY measurement
+            schedule.
+        list_counts_G (list): Counts or probability dictionaries for each
+            circuit in ``qc_list_XXYY``.
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms containing
+            XX/YY pair operators.
+        postselection_XXYY (bool): If True, enforce number conservation when
+            reweighting counts.
+
+    Returns:
+        float: Estimated XX+YY energy contribution.
+    """
     E_XXYY = 0.0
     labeling = list(range(Nq))
     idx_pool = []
@@ -376,6 +393,25 @@ def eval_XXYY_w_Hgates(
     backend=None,
     return_counts_as_well=False,
 ):
+    """Evaluate XX+YY terms by inserting Hadamard gates before measurement.
+
+    Args:
+        adopted (str): Execution target label, such as ``"Real"``.
+        Nq (int): Number of qubits.
+        Nocc (int): Target occupation number used by count reweighting.
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms to evaluate.
+        qc_ansatz (QuantumCircuit): Ansatz circuit to measure.
+        sampler: Qiskit sampler-like object.
+        nshot (int): Number of measurement shots.
+        using_noisy_simulation (bool, optional): If True, read counts from the
+            noisy-simulator result layout.
+        backend (optional): Backend for transpilation.
+        return_counts_as_well (bool, optional): If True, return the reweighted
+            counts together with the energy.
+
+    Returns:
+        float or tuple: Estimated XX+YY contribution, optionally with counts.
+    """
     qc = qc_ansatz.copy()
     qc.h(range(Nq))
     qc.measure_all()
@@ -400,6 +436,18 @@ def eval_XXYY_w_Hgates(
 
 
 def eval_XXYY_from_Hcounts(counts, Nq, hamiltonian_op_XXYY, return_counts_as_well):
+    """Evaluate XX+YY contribution from counts measured in the H basis.
+
+    Args:
+        counts (dict): Bitstring counts or probabilities.
+        Nq (int): Number of qubits.
+        hamiltonian_op_XXYY (SparsePauliOp): Hamiltonian terms containing
+            XX/YY pair operators.
+        return_counts_as_well (bool): If True, return ``(energy, counts)``.
+
+    Returns:
+        float or tuple: Estimated energy contribution, optionally with counts.
+    """
     exp_XXYY = np.zeros(Nq * (Nq - 1) // 2, dtype=np.float64)
     hit = 0
     for op, coeff in zip(hamiltonian_op_XXYY.paulis, hamiltonian_op_XXYY.coeffs):

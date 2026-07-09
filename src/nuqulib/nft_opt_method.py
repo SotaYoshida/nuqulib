@@ -352,6 +352,30 @@ def optimize_params_with_NFT(
     proton_qubits=[],
     neutron_qubits=[],
 ):
+    """Optimize ansatz parameters with sequential NFT updates.
+
+    Args:
+        it_max (int): Number of outer optimization sweeps.
+        hamiltonian_op: Hamiltonian operator used by the cost function.
+        params (Iterable[float]): Initial variational parameters.
+        Nq (int): Number of qubits.
+        Nocc (int): Number of occupied orbitals for pairing-style ansätze.
+        ngate (int): Number of variational gates/parameters to update.
+        where_is_G_or_cG1 (dict): Mapping from parameter index to gate type.
+        method_ansatz (str): Ansatz construction method passed to
+            ``cost_func``.
+        method_measure (str): Measurement method passed to ``cost_func``.
+        verbose (bool, optional): If True, print energy and parameter updates.
+        pairinghamiltonian (bool, optional): Whether to use pairing-Hamiltonian
+            cost-function conventions.
+        proton_number (int, optional): Proton number for nuclear ansätze.
+        neutron_number (int, optional): Neutron number for nuclear ansätze.
+        proton_qubits (list, optional): Proton qubit indices.
+        neutron_qubits (list, optional): Neutron qubit indices.
+
+    Returns:
+        Iterable[float]: Optimized parameter vector.
+    """
     if (proton_number > 0 and proton_qubits == []) or (
         neutron_number > 0 and neutron_qubits == []
     ):

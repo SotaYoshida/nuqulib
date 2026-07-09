@@ -140,6 +140,9 @@ def get_Hamiltonian(fn_NN, Z: int, N: int,
         e3max (int, optional): Maximum excitation energy for three-body forces. Defaults to 0.
         ncsm (bool, optional): Whether using no-core shell model. Defaults to False.
         mapping_method (str, optional): The mapping method for converting fermionic operators to Pauli operators. Defaults to "Jordan-Wigner".
+        single_spiecies (int, optional): Select a single-species calculation mode.
+            ``0`` keeps both proton and neutron states, ``1`` keeps protons only,
+            and ``2`` keeps neutrons only.
 
     Returns:
         tuple: A tuple containing:
@@ -407,6 +410,17 @@ class Hamiltonian:
         return e1max_file, e2max_file, e3max_file
 
     def neutron_number_constraint(self, N0, mapping_method, filepath='./tmp'):
+        """Build a quadratic neutron-number penalty operator.
+
+        Args:
+            N0 (int | float): Target neutron number.
+            mapping_method (str): Fermion-to-qubit mapping method.
+            filepath (str | os.PathLike, optional): Base path used by mappings
+                that load or save mapper data.
+
+        Returns:
+            SparsePauliOp: Qubit operator for ``(N_n - N0)^2``.
+        """
         if self.Hamildict is None:
             _=self.get_mscheme_H(opform=True)
         V3p, V3n = self.get_V3_p_n()
@@ -421,6 +435,17 @@ class Hamiltonian:
         return op.simplify()
 
     def proton_number_constraint(self, N0, mapping_method, filepath='./tmp'):
+        """Build a quadratic proton-number penalty operator.
+
+        Args:
+            N0 (int | float): Target proton number.
+            mapping_method (str): Fermion-to-qubit mapping method.
+            filepath (str | os.PathLike, optional): Base path used by mappings
+                that load or save mapper data.
+
+        Returns:
+            SparsePauliOp: Qubit operator for ``(N_p - N0)^2``.
+        """
         # H_p = mapping_to_Pauli_string(
         #     FermionicOp(Hamildict_opform["P"],num_spin_orbitals=self.n_qubits),
         #     self.n_qubits, method=mapping_method, 
@@ -707,12 +732,15 @@ class Hamiltonian:
         
         Args:
             op_dict (dict): Dictionary to store operator strings and coefficients.
-            aa, bb (int): Bra state indices.
-            cc, dd (int): Ket state indices.
+            aa (int): First bra-state index.
+            bb (int): Second bra-state index.
+            cc (int): First ket-state index.
+            dd (int): Second ket-state index.
             J (int): Total angular momentum quantum number.
             v (float): Matrix element value.
             
         Note:
+            We use the convention of the order of creation and annihilation operators like "+_aa +_bb -_dd -_cc" for the operator string.
             For identical bra and ket configurations, only one term is added.
             For different configurations, both direct and exchanged terms are included
             to ensure proper antisymmetrization of fermionic operators.
@@ -749,6 +777,8 @@ class Hamiltonian:
         Args:
             opform (bool, optional): If True, returns operators in fermionic
             string form. If False, returns matrix element lists. Defaults to False.
+            verbose (int | bool, optional): If truthy, print additional progress
+                and basis information while constructing the M-scheme Hamiltonian.
                 
         Returns:
             dict: Dictionary containing Hamiltonian components:
@@ -1162,7 +1192,18 @@ class Hamiltonian:
             )
         return pnME_3NF
 
-    def perms(selt, i1, i2, i3):
+    def perms(self, i1, i2, i3):
+        """Return signed permutations of three single-particle indices.
+
+        Args:
+            i1 (int): First index.
+            i2 (int): Second index.
+            i3 (int): Third index.
+
+        Returns:
+            dict[tuple[int, int, int], int]: Permutations mapped to their
+            antisymmetry signs.
+        """
         return {
                 (i1, i2, i3): 1,
                 (i2, i3, i1): 1,
@@ -1374,6 +1415,16 @@ class Hamiltonian:
         return p_op_str.rstrip(), n_op_str.rstrip()
 
     def get_3NF_Mscheme(self, verbose=False):
+        """Convert stored M-scheme 3NF matrix elements to operator strings.
+
+        Args:
+            verbose (bool, optional): If True, print each generated proton and
+                neutron operator string.
+
+        Returns:
+            dict: Mapping ``(proton_op, neutron_op)`` pairs to matrix elements.
+            Returns an empty dictionary when no M-scheme 3NF data is available.
+        """
         op_dict_3b = { }
         if self.v3b_Mscheme is None:
             return op_dict_3b
@@ -1398,6 +1449,12 @@ class Hamiltonian:
         return op_dict_3b
 
     def get_V3_p_n(self):
+        """Split pure-proton and pure-neutron three-body terms.
+
+        Returns:
+            tuple[dict, dict]: Proton-only and neutron-only 3NF operator
+            dictionaries extracted from ``self.Hamildict["V3"]``.
+        """
         result_n = {}
         result_p = {}
         if self.Hamildict is None:
@@ -1534,7 +1591,8 @@ def export_encoded_Hamil(Hamil: SparsePauliOp,
     """Export the encoded Hamiltonian to a text file.
 
     Args:
-        label (str): Prefix for the output filename.
+        Hamil (SparsePauliOp): Encoded Hamiltonian to write.
+        fn (str | os.PathLike): Output text filename.
 
     """
     oup  = open(fn, "w")
@@ -1628,6 +1686,19 @@ def permutation_parity(lst):
 
 
 def sort_3_orbits(a_in, b_in, c_in):
+    """Sort three orbital labels into descending canonical order.
+
+    Even labels are shifted down by one before sorting, matching the indexing
+    convention used by the three-body matrix-element reader.
+
+    Args:
+        a_in (int): First orbital label.
+        b_in (int): Second orbital label.
+        c_in (int): Third orbital label.
+
+    Returns:
+        tuple[int, int, int, int]: Sorted labels and the permutation index.
+    """
     # Adjust inputs if they're even
     a_in = a_in - 1 if a_in % 2 == 0 else a_in
     b_in = b_in - 1 if b_in % 2 == 0 else b_in
@@ -1686,6 +1757,20 @@ def get_CGs_from_dict(j1, m1, j2, m2, J, M, CG_dict: dict):
 
 
 def get_nkey6_shift(a, b, c, d, e, f, int_shift=3):
+    """Pack six possibly negative integer labels into one shifted integer key.
+
+    Args:
+        a (int): First label.
+        b (int): Second label.
+        c (int): Third label.
+        d (int): Fourth label.
+        e (int): Fifth label.
+        f (int): Sixth label.
+        int_shift (int, optional): Shift added before packing.
+
+    Returns:
+        int: Packed key.
+    """
     return (
         ((a + int_shift) << 50)
         + ((b + int_shift) << 40)
@@ -1697,10 +1782,12 @@ def get_nkey6_shift(a, b, c, d, e, f, int_shift=3):
 
 
 def get_nkey6(a, b, c, d, e, f):
+    """Pack six non-negative integer labels into one integer key."""
     return (a << 50) + (b << 40) + (c << 30) + (d << 20) + (e << 10) + f
 
 
 def unhash_key6j(i):
+    """Unpack a key produced by :func:`get_nkey6` into six labels."""
     a = i >> 50
     b = (i >> 40) & 0x3FF
     c = (i >> 30) & 0x3FF
@@ -1788,8 +1875,12 @@ def valid_check(ea, eb, ec, ed, ee, ef, e1max, e2max, e3max):
     is within the specified model space truncation parameters.
     
     Args:
-        ea, eb, ec (int): Excitation energies of bra orbitals.
-        ed, ee, ef (int): Excitation energies of ket orbitals.
+        ea (int): Excitation energy of the first bra orbital.
+        eb (int): Excitation energy of the second bra orbital.
+        ec (int): Excitation energy of the third bra orbital.
+        ed (int): Excitation energy of the first ket orbital.
+        ee (int): Excitation energy of the second ket orbital.
+        ef (int): Excitation energy of the third ket orbital.
         e1max (int): Maximum single-particle excitation energy.
         e2max (int): Maximum two-body excitation energy.
         e3max (int): Maximum three-body excitation energy.
@@ -1877,6 +1968,18 @@ class ReadThBME_me3jgz:
 
 
     def get_modelspace(self, e1max, e1max_file, e2max, e3max, e3max_file):
+        """Construct model-space labels for file and truncated 3NF spaces.
+
+        Args:
+            e1max (int): One-body truncation used in the active model space.
+            e1max_file (int): One-body truncation represented in the input file.
+            e2max (int): Two-body truncation used in the active model space.
+            e3max (int): Three-body truncation used in the active model space.
+            e3max_file (int): Three-body truncation represented in the input file.
+
+        Returns:
+            sps_3Blab: Model-space descriptor used by the me3j reader.
+        """
         sps = {}
         sps_file = {}
         norbits_file = norbits_ms = 0
@@ -2377,6 +2480,21 @@ def truncate_v3bme(dim_v3bme_file: int, dim_v3bme_ms: int,
 
 
 def RecouplingCG(idx_abc, ja2, jb2, jc2, Jab_in, Jab, J2, dWS) -> float:
+    """Return the angular-momentum recoupling coefficient for a 3NF permutation.
+
+    Args:
+        idx_abc (int): Permutation index for the three incoming orbitals.
+        ja2 (int): Twice the angular momentum of orbital a.
+        jb2 (int): Twice the angular momentum of orbital b.
+        jc2 (int): Twice the angular momentum of orbital c.
+        Jab_in (int): Input coupled angular momentum of a and b.
+        Jab (int): Output coupled angular momentum of the permuted pair.
+        J2 (int): Twice the total three-body angular momentum.
+        dWS (prep_dicts_for_WignerSymbols): Precomputed Wigner-symbol tables.
+
+    Returns:
+        float: Recoupling coefficient.
+    """
     # Check angular momentum triangle conditions
     if abs(ja2 - jb2) // 2 > Jab or (ja2 + jb2) // 2 < Jab:
         return 0.0
@@ -2417,6 +2535,8 @@ def RecouplingCG(idx_abc, ja2, jb2, jc2, Jab_in, Jab, J2, dWS) -> float:
 
 
 class prep_dicts_for_WignerSymbols:
+    """Precompute Clebsch-Gordan and Wigner 6j lookup tables."""
+
     def __init__(self, emax):
         self.emax = emax
         self.jmax = 2 * emax + 1
@@ -2425,6 +2545,7 @@ class prep_dicts_for_WignerSymbols:
         self.d6j_lj = self.prep_d6j_lj(self.jmax)
 
     def prep_dcg_spin(self):
+        """Precompute spin Clebsch-Gordan coefficients used in 3NF recoupling."""
         dcg_spin = {}
         s_a = 1
         s_b = 1
@@ -2458,6 +2579,7 @@ class prep_dicts_for_WignerSymbols:
         return dcg_spin
 
     def prep_d6j_lj(self, jmax2):
+        """Precompute 6j symbols for l-j recoupling up to ``jmax2``."""
         d6j_lj = {}
         for j1 in range(1, jmax2 + 1, 2):
             for j2 in range(1, jmax2 + 1, 2):
@@ -2485,6 +2607,7 @@ class prep_dicts_for_WignerSymbols:
         return d6j_lj
 
     def prep_d6j_int(self, emax, jmax_in):
+        """Precompute integer-grid 6j symbols for 3NF transformations."""
         # 'to' parameter is not used in this function.
         jmax = jmax_in * 2
         d6j_int = {}
@@ -2512,6 +2635,7 @@ class prep_dicts_for_WignerSymbols:
 
 
 def tri_check(a, b, c):
+    """Return True if three angular momenta satisfy triangle inequalities."""
     if a + b < c or a + c < b or b + c < a:
         return False
     if abs(a - b) > c or abs(a - c) > b or abs(b - c) > a:
@@ -2520,6 +2644,7 @@ def tri_check(a, b, c):
 
 
 def get_key6j_sym(j1: int, j3: int, j5: int, j2: int, j4: int, j6: int) -> int:
+    """Return a symmetry-canonical packed key for a Wigner 6j symbol."""
     # Initialize temporary copies.
     tj1, tj3, tj5 = j1, j3, j5
     tj2, tj4, tj6 = j2, j4, j6
@@ -2561,10 +2686,12 @@ def get_key6j_sym(j1: int, j3: int, j5: int, j2: int, j4: int, j6: int) -> int:
 
 
 def j_col_score(j1: int, j2: int) -> int:
+    """Score one 6j-symbol column for canonical ordering."""
     return 100 * (j1 + j2) + min(j1, j2)
 
 
 def get_canonical_order_6j(j1: int, j2: int, j3: int, j4: int, j5: int, j6: int) -> int:
+    """Return the canonical column order code for a 6j-symbol key."""
     cscore_12 = j_col_score(j1, j2)
     cscore_34 = j_col_score(j3, j4)
     cscore_56 = j_col_score(j5, j6)
@@ -2730,6 +2857,8 @@ def removing_redundant_terms(ops: SparsePauliOp, verbose=False):
     
     Args:
         ops (SparsePauliOp): Input Pauli operator.
+        verbose (bool, optional): If True, print the retained Pauli strings and
+            coefficients after consolidation.
         
     Returns:
         SparsePauliOp: Cleaned Pauli operator with redundant terms combined.
@@ -2799,4 +2928,3 @@ def sum_over_J(Hamil):
                 V = tdict[tkey]
                 new_Hamil[key].append([a, b, c, d, V])
     return new_Hamil
-

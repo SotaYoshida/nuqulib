@@ -85,6 +85,26 @@ def mapping_to_Pauli_string(
 def task_pn_mapping(op_pn_key, op_pn, n_qubits_p, n_qubits_n, method,
                     Hamildict_specified_p, Hamildict_specified_n,
                     filepath_p, filepath_n):
+    """Map one proton-neutron fermionic term to Pauli-label terms.
+
+    Args:
+        op_pn_key (tuple[str, str]): ``(proton_op, neutron_op)`` fermionic
+            operator strings.
+        op_pn (dict): Dictionary containing the coefficient for
+            ``op_pn_key``.
+        n_qubits_p (int): Number of proton qubits.
+        n_qubits_n (int): Number of neutron qubits.
+        method (str): Fermion-to-qubit mapping method.
+        Hamildict_specified_p (dict): Proton-sector Hamiltonian terms used by
+            mappings such as ``HATTMapper``.
+        Hamildict_specified_n (dict): Neutron-sector Hamiltonian terms used by
+            mappings such as ``HATTMapper``.
+        filepath_p (str | os.PathLike): Proton-sector mapper cache path.
+        filepath_n (str | os.PathLike): Neutron-sector mapper cache path.
+
+    Returns:
+        list[list]: Pauli labels and coefficients generated for this term.
+    """
     worker_list = [ ]
     p_str, n_str = op_pn_key
     coeff_overall = op_pn[op_pn_key]

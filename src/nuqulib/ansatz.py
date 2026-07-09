@@ -27,6 +27,23 @@ def naive_filling_ansatz(
         Hamildict_opform: dict = {},
         filepath: str|os.PathLike = "./"
     ):    
+    """Construct a product-state ansatz by filling the last proton/neutron orbitals.
+
+    Args:
+        proton_qubits (Iterable[int]): Qubit indices assigned to proton modes.
+        neutron_qubits (Iterable[int]): Qubit indices assigned to neutron modes.
+        proton_number (int): Number of proton orbitals to occupy.
+        neutron_number (int): Number of neutron orbitals to occupy.
+        mapping_method (str, optional): Fermion-to-qubit mapping used to create
+            the occupation-flip Pauli strings. Defaults to ``"JordanWigner"``.
+        Hamildict_opform (dict, optional): Operator-form Hamiltonian dictionary
+            containing ``"SPE"`` entries for proton and neutron sectors.
+        filepath (str | os.PathLike, optional): Base path used by mappings that
+            need to load or save mapper data.
+
+    Returns:
+        QuantumCircuit: Circuit preparing the naive filling configuration.
+    """
     N_dict = Hamildict_opform['SPE']['n']
     P_dict = Hamildict_opform['SPE']['p']
     n_keys = [key.split(" -_")[0] for key in N_dict.keys()]  
@@ -197,9 +214,12 @@ def lowest_filling_ansatz(
         proton_number (int): Number of protons to be placed in the lowest energy states.
         neutron_number (int): Number of neutrons to be placed in the lowest energy states.
         Mtot: int | None: Total magnetic quantum number (optional).
+        return_idxs (bool): If True, also return the selected proton and neutron orbital indices.
 
     Returns:
-        QuantumCircuit: A quantum circuit representing the lowest-filling ansatz.
+        QuantumCircuit or tuple: A quantum circuit representing the
+        lowest-filling ansatz. If ``return_idxs`` is True, returns
+        ``(circuit, selected_p, selected_n)``.
     """
     _Mtot = (proton_number + neutron_number) % 2 if Mtot is None else Mtot
     proton_qubits = Hamiltonian_obj.proton_qubits
@@ -294,6 +314,7 @@ def nucl_ansatz(
     and Givens rotation-based variational ansätze.
     
     Args:
+        Hamildict_opform (dict): Operator-form Hamiltonian dictionary used by the filling-state preparation.
         n_qubit (int): Total number of qubits.
         proton_qubits (Iterable[int]): Indices of proton qubits.
         neutron_qubits (Iterable[int]): Indices of neutron qubits.
@@ -302,6 +323,10 @@ def nucl_ansatz(
         params (Iterable[float]): Variational parameters.
         method (str, optional): Ansatz method. Options: "HF", "HF+Givens". 
                                Defaults to "HF".
+        mapping_method (str, optional): Fermion-to-qubit mapping used for the
+            initial filling state. Defaults to ``"JordanWigner"``.
+        filepath (str | os.PathLike, optional): Base path used by mappings that
+            need to load or save mapper data.
         return_Gdict (bool, optional): Whether to return gate type dictionary. 
                                       Defaults to False.
     
@@ -618,9 +643,19 @@ def circuit_XXYY(
     Generates quantum circuits to measure X_iX_j+Y_iY_j terms in the Hamiltonian.
 
     Args:
+        qc_ansatz (QuantumCircuit): Ansatz circuit to copy before adding basis
+            rotations and measurements.
         adopted (str):
             String that indicates the simulator/device type.
             Acceptable values are "simNISQ"/"simFTQC" and "Real".
+        Nq (int): Number of qubits in the ansatz circuit.
+        methods_XXYY (str, optional): Circuit construction method. Currently
+            only ``"Google"`` is supported.
+        backend (optional): Backend used for transpilation when targeting a
+            real device or noisy simulation.
+        opt_level (int, optional): Qiskit transpiler optimization level.
+        verbose (bool, optional): If True, also return intermediate circuits
+            before measurement for inspection.
 
     Returns
     -------
