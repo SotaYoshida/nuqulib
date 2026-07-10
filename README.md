@@ -4,11 +4,26 @@
 
 Nuclear Quantum Computing Library
 
-# Documentation
+## Documentation
 
 Detailed information on how to use NuQuLib, please refer to the official documentation:
 https://sotayoshida.github.io/nuqulib/
 
-# Authors
+## Authors
 
 Primary developers: Sota Yoshida, Alessandro Baroni, Takayuki Miyagi, Ermal Rrapaj
+
+## How to cite
+
+If you use NuQuLib in your research, please cite the following reference:
+
+```
+@misc{2607.08047,
+  author = {Sota Yoshida and Alessandro Baroni and Takayuki Miyagi and Ermal Rrapaj},
+  title = {Nuclear Many-Body Systems as Benchmarks for Quantum Computing},
+  year = {2026},
+  eprint = {arXiv:2607.08047},
+  archivePrefix = {arXiv},
+  primaryClass = {quant-ph}
+}
+```
