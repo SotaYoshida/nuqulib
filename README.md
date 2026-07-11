@@ -15,15 +15,16 @@ Primary developers: Sota Yoshida, Alessandro Baroni, Takayuki Miyagi, Ermal Rrap
 
 ## How to cite
 
-If you use NuQuLib in your research, please cite the following reference:
+If you use NuQuLib in your research, please cite the following reference: [arXiv:2607.08047](https://arxiv.org/abs/2607.08047)
 
 ```
-@misc{2607.08047,
-  author = {Sota Yoshida and Alessandro Baroni and Takayuki Miyagi and Ermal Rrapaj},
-  title = {Nuclear Many-Body Systems as Benchmarks for Quantum Computing},
-  year = {2026},
-  eprint = {arXiv:2607.08047},
-  archivePrefix = {arXiv},
-  primaryClass = {quant-ph}
+@misc{arXiv:2607.08047,
+      title={Nuclear Many-Body Systems as Benchmarks for Quantum Computing}, 
+      author={Sota Yoshida and Alessandro Baroni and Takayuki Miyagi and Ermal Rrapaj},
+      year={2026},
+      eprint={2607.08047},
+      archivePrefix={arXiv},
+      primaryClass={quant-ph},
+      url={https://arxiv.org/abs/2607.08047}, 
 }
 ```
