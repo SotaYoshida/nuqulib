@@ -605,7 +605,15 @@
                     <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">v3b_pn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">pnME_3NF</span>
-                <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># Keep the JT reader data as well as the legacy pn dictionary.</span>
+                <span class="c1"># The latter is convenient for the old conversion path, while</span>
+                <span class="c1"># the former is required when evaluating arbitrary m-scheme</span>
+                <span class="c1"># orderings through the 3NF recoupling formula.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_3nf_reader</span> <span class="o">=</span> <span class="n">obj</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">v3bme</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">sps_3b</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dWs_3nf</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">dWs</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">dict_3b_idx</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fn_3NF is now: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn_3NF</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1496,6 +1504,139 @@
         <span class="p">}</span></div>
 
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_mscheme_3NF_direct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build canonical m-scheme 3NF edges from the packed JT array.</span>
+
+<span class="sd">        The readable-text conversion first creates ordered proton/neutron</span>
+<span class="sd">        matrix elements and then expands all six-by-six permutations.  That</span>
+<span class="sd">        is not a valid substitute for recoupling when the particle species</span>
+<span class="sd">        are mixed.  This path evaluates the JT matrix element for each</span>
+<span class="sd">        canonical m-scheme triple directly, including the spatial and</span>
+<span class="sd">        isospin recoupling needed by ppn/pnn terms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sps_3b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sps_3b</span>
+        <span class="n">dWS</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dWs_3nf</span>
+        <span class="n">v3bme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v3bme</span>
+        <span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_3b_idx</span>
+        <span class="n">orbit_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">(</span><span class="n">orb</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">orb</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">orb</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">orb</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">orb</span><span class="o">.</span><span class="n">tz</span><span class="p">):</span> <span class="n">idx</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">orb</span> <span class="ow">in</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">mode_to_orbit</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">orbit_map</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">mode</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">tz</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">msps</span>
+        <span class="p">]</span>
+
+        <span class="n">triples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">triple</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">)),</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">triple</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">tz</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">))</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">e</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">triple</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">triples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triple</span><span class="p">)</span>
+
+        <span class="n">vjj_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">direct_mscheme_value</span><span class="p">(</span><span class="n">bra</span><span class="p">,</span> <span class="n">ket</span><span class="p">):</span>
+            <span class="n">bra_states</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">bra</span><span class="p">]</span>
+            <span class="n">ket_states</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">ket</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">tz</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">bra_states</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">tz</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ket_states</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">jz</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">bra_states</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">jz</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ket_states</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">l</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">bra_states</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">l</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ket_states</span><span class="p">))</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">e</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ket_states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.0</span>
+
+            <span class="n">j1</span><span class="p">,</span> <span class="n">m1</span> <span class="o">=</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">j3</span><span class="p">,</span> <span class="n">m3</span> <span class="o">=</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">bra_states</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">j4</span><span class="p">,</span> <span class="n">m4</span> <span class="o">=</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">j5</span><span class="p">,</span> <span class="n">m5</span> <span class="o">=</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">j6</span><span class="p">,</span> <span class="n">m6</span> <span class="o">=</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">ket_states</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">jz</span>
+            <span class="n">m12_bra</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span>
+            <span class="n">m12_ket</span> <span class="o">=</span> <span class="n">m4</span> <span class="o">+</span> <span class="n">m5</span>
+            <span class="n">m_total</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span> <span class="o">+</span> <span class="n">m3</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">for</span> <span class="n">Jab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">j1</span> <span class="o">-</span> <span class="n">j2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">j1</span> <span class="o">+</span> <span class="n">j2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">m12_bra</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">cg12</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+                    <span class="n">j1</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">j2</span><span class="p">,</span> <span class="n">m2</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">m12_bra</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">cg12</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">Jde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">j4</span> <span class="o">-</span> <span class="n">j5</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">j4</span> <span class="o">+</span> <span class="n">j5</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">m12_ket</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">cg45</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+                        <span class="n">j4</span><span class="p">,</span> <span class="n">m4</span><span class="p">,</span> <span class="n">j5</span><span class="p">,</span> <span class="n">m5</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">m12_ket</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="n">cg45</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">J2_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">-</span> <span class="n">j3</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">-</span> <span class="n">j6</span><span class="p">))</span>
+                    <span class="n">J2_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">+</span> <span class="n">j3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">+</span> <span class="n">j6</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">J2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">J2_min</span><span class="p">,</span> <span class="n">J2_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">m_total</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">J2</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">cg123</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+                            <span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">m12_bra</span><span class="p">,</span> <span class="n">j3</span><span class="p">,</span> <span class="n">m3</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">m_total</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">cg456</span> <span class="o">=</span> <span class="n">get_CGs_from_dict</span><span class="p">(</span>
+                            <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">m12_ket</span><span class="p">,</span> <span class="n">j6</span><span class="p">,</span> <span class="n">m6</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">m_total</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">CG_dict</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cg123</span> <span class="o">*</span> <span class="n">cg456</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-12</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">vjj_key</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">Jab</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span>
+                            <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                            <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                            <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">vjj_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vjj_cache</span><span class="p">:</span>
+                            <span class="n">vjj_cache</span><span class="p">[</span><span class="n">vjj_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_v3_pn</span><span class="p">(</span>
+                                <span class="n">sps_3b</span><span class="o">.</span><span class="n">e3max</span><span class="p">,</span>
+                                <span class="n">v3bme</span><span class="p">,</span>
+                                <span class="n">dict_3b_idx</span><span class="p">,</span>
+                                <span class="n">sps_3b</span><span class="p">,</span>
+                                <span class="n">dWS</span><span class="p">,</span>
+                                <span class="n">Jab</span><span class="p">,</span>
+                                <span class="n">Jde</span><span class="p">,</span>
+                                <span class="n">J2</span><span class="p">,</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">bra</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                                <span class="n">mode_to_orbit</span><span class="p">[</span><span class="n">ket</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span>
+                            <span class="p">)</span>
+                        <span class="n">value</span> <span class="o">+=</span> <span class="n">cg12</span> <span class="o">*</span> <span class="n">cg123</span> <span class="o">*</span> <span class="n">cg45</span> <span class="o">*</span> <span class="n">cg456</span> <span class="o">*</span> <span class="n">vjj_cache</span><span class="p">[</span><span class="n">vjj_key</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">bra_index</span><span class="p">,</span> <span class="n">bra</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">triples</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ket</span> <span class="ow">in</span> <span class="n">triples</span><span class="p">[</span><span class="n">bra_index</span><span class="p">:]:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">direct_mscheme_value</span><span class="p">(</span><span class="n">bra</span><span class="p">,</span> <span class="n">ket</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-12</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">result</span><span class="p">[(</span><span class="o">*</span><span class="n">bra</span><span class="p">,</span> <span class="o">*</span><span class="n">ket</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="n">bra</span> <span class="o">!=</span> <span class="n">ket</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[(</span><span class="o">*</span><span class="n">ket</span><span class="p">,</span> <span class="o">*</span><span class="n">bra</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;After direct m-scheme recoupling.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of 3NF matrix elements in M-scheme&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span>
+
 <div class="viewcode-block" id="Hamiltonian.set_mscheme_3NF">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nuclear_hamiltonian.Hamiltonian.set_mscheme_3NF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_mscheme_3NF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1516,6 +1657,9 @@
 <span class="sd">            we generate something like &lt;pnn|V|npn&gt;, &lt;pnn|V|nnp&gt;, etc.</span>
 <span class="sd">            The factor of 9 is to take account of this.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_3nf_reader&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_mscheme_3NF_direct</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
         <span class="n">v3b_Mscheme</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Converting pn J-coupled 3NF to mscheme...&quot;</span><span class="p">)</span>
@@ -1632,7 +1776,6 @@
                     <span class="n">v3b_Mscheme</span><span class="p">[(</span><span class="o">*</span><span class="n">i456</span><span class="p">,</span> <span class="o">*</span><span class="n">i123</span><span class="p">)]</span> <span class="o">=</span> <span class="n">me</span> <span class="o">*</span> <span class="n">sign_123</span> <span class="o">*</span> <span class="n">sign_456</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;After perm.&quot;</span><span class="p">)</span>
-            <span class="c1"># for key, me in v3b_Mscheme.items():</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">me</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">im_a</span><span class="p">,</span> <span class="n">im_b</span><span class="p">,</span> <span class="n">im_c</span><span class="p">,</span> <span class="n">im_d</span><span class="p">,</span> <span class="n">im_e</span><span class="p">,</span> <span class="n">im_f</span> <span class="o">=</span> <span class="n">key</span>
                 <span class="k">if</span> <span class="nb">set</span><span class="p">([</span><span class="n">im_a</span><span class="p">,</span> <span class="n">im_b</span><span class="p">,</span> <span class="n">im_c</span><span class="p">])</span> <span class="o">==</span> <span class="nb">set</span><span class="p">([</span><span class="n">im_d</span><span class="p">,</span> <span class="n">im_e</span><span class="p">,</span> <span class="n">im_f</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span>
@@ -2579,10 +2722,11 @@
 
                                 <span class="n">abc_eq_def</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="p">)</span>
 
-                                <span class="c1"># # Record the current dimension offset using a hash key.</span>
-                                <span class="c1"># if what_you_need == &quot;allocate_v3bme&quot;:</span>
-                                <span class="c1">#     orbit_hash = get_nkey6(a, b, c, d, e, f)</span>
-                                <span class="c1">#     dict_3b_idx[orbit_hash] = total_dim</span>
+                                <span class="c1"># Record the zero-based offset of this canonical</span>
+                                <span class="c1"># JT orbit block for direct m-scheme recoupling.</span>
+                                <span class="k">if</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;allocate_v3bme&quot;</span><span class="p">:</span>
+                                    <span class="n">orbit_hash</span> <span class="o">=</span> <span class="n">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                                    <span class="n">dict_3b_idx</span><span class="p">[</span><span class="n">orbit_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_dim</span>
 
                                 <span class="k">if</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
 
@@ -2647,7 +2791,8 @@
                 <span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# of 3BME: </span><span class="si">{</span><span class="n">total_dim</span><span class="si">:</span><span class="s2">12d</span><span class="si">}</span><span class="s2"> Mem. </span><span class="si">{</span><span class="n">size_3bme</span><span class="si">:</span><span class="s2">12.5e</span><span class="si">}</span><span class="s2"> GB&quot;</span><span class="p">)</span>
             <span class="n">v3bme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">total_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">v3bme</span><span class="c1">#, dict_3b_idx</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dict_3b_idx</span> <span class="o">=</span> <span class="n">dict_3b_idx</span>
+            <span class="k">return</span> <span class="n">v3bme</span>
         <span class="k">elif</span> <span class="n">what_you_need</span> <span class="o">==</span> <span class="s2">&quot;me3j-&gt;readable.txt&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;checking dim for readable.txt...&quot;</span><span class="p">,</span> <span class="n">non_zero_term</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">)</span>
@@ -2894,6 +3039,186 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;This should not happen&quot;</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_3bme_iso</span><span class="p">(</span>
+    <span class="n">e3max</span><span class="p">,</span>
+    <span class="n">v3bme</span><span class="p">,</span>
+    <span class="n">dict_3b_idx</span><span class="p">,</span>
+    <span class="n">sps_3b</span><span class="p">,</span>
+    <span class="n">Jab_in</span><span class="p">,</span>
+    <span class="n">Jde_in</span><span class="p">,</span>
+    <span class="n">J2</span><span class="p">,</span>
+    <span class="n">tab_in</span><span class="p">,</span>
+    <span class="n">tde_in</span><span class="p">,</span>
+    <span class="n">T2</span><span class="p">,</span>
+    <span class="n">a_in</span><span class="p">,</span>
+    <span class="n">b_in</span><span class="p">,</span>
+    <span class="n">c_in</span><span class="p">,</span>
+    <span class="n">d_in</span><span class="p">,</span>
+    <span class="n">e_in</span><span class="p">,</span>
+    <span class="n">f_in</span><span class="p">,</span>
+    <span class="n">dWS</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read one recoupled JT matrix element from the packed 3BME array.</span>
+
+<span class="sd">    The input orbitals may be in any order.  The file stores only the lower</span>
+<span class="sd">    triangular, descending orbital blocks, so the required permutation phases</span>
+<span class="sd">    and the corresponding jj/isospin recouplings are applied here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">idx_abc</span> <span class="o">=</span> <span class="n">sort_3_orbits</span><span class="p">(</span><span class="n">a_in</span><span class="p">,</span> <span class="n">b_in</span><span class="p">,</span> <span class="n">c_in</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">idx_def</span> <span class="o">=</span> <span class="n">sort_3_orbits</span><span class="p">(</span><span class="n">d_in</span><span class="p">,</span> <span class="n">e_in</span><span class="p">,</span> <span class="n">f_in</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">a</span> <span class="ow">or</span> <span class="p">(</span><span class="n">d</span> <span class="o">==</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">e</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">d</span> <span class="o">==</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">e</span> <span class="o">==</span> <span class="n">b</span> <span class="ow">and</span> <span class="n">f</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+        <span class="n">Jab_in</span><span class="p">,</span> <span class="n">Jde_in</span> <span class="o">=</span> <span class="n">Jde_in</span><span class="p">,</span> <span class="n">Jab_in</span>
+        <span class="n">tab_in</span><span class="p">,</span> <span class="n">tde_in</span> <span class="o">=</span> <span class="n">tde_in</span><span class="p">,</span> <span class="n">tab_in</span>
+        <span class="n">idx_abc</span><span class="p">,</span> <span class="n">idx_def</span> <span class="o">=</span> <span class="n">idx_def</span><span class="p">,</span> <span class="n">idx_abc</span>
+
+    <span class="n">orbit_offset</span> <span class="o">=</span> <span class="n">dict_3b_idx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">get_nkey6</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">orbit_offset</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">oa</span><span class="p">,</span> <span class="n">ob</span><span class="p">,</span> <span class="n">oc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">od</span><span class="p">,</span> <span class="n">oe</span><span class="p">,</span> <span class="n">of</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="n">sps</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">sps</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">oa</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">e3max</span> <span class="ow">or</span> <span class="n">od</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">of</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">e3max</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">Jab_min</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">Jab_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">oa</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">Jde_min</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">-</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">Jde_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">od</span><span class="o">.</span><span class="n">j</span> <span class="o">+</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+    <span class="n">tab_min</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">T2</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">tde_min</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">T2</span> <span class="o">==</span> <span class="mi">3</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">j_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">Jab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jab_min</span><span class="p">,</span> <span class="n">Jab_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">c_j_abc</span> <span class="o">=</span> <span class="n">RecouplingCG</span><span class="p">(</span>
+            <span class="n">idx_abc</span><span class="p">,</span> <span class="n">oa</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">ob</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">Jab_in</span><span class="p">,</span> <span class="n">Jab</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">dWS</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx_abc</span> <span class="o">//</span> <span class="mi">3</span> <span class="o">!=</span> <span class="n">idx_def</span> <span class="o">//</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">c_j_abc</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.0</span>
+        <span class="k">for</span> <span class="n">Jde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Jde_min</span><span class="p">,</span> <span class="n">Jde_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">c_j_def</span> <span class="o">=</span> <span class="n">RecouplingCG</span><span class="p">(</span>
+                <span class="n">idx_def</span><span class="p">,</span> <span class="n">od</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">oe</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">of</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">Jde_in</span><span class="p">,</span> <span class="n">Jde</span><span class="p">,</span> <span class="n">J2</span><span class="p">,</span> <span class="n">dWS</span>
+            <span class="p">)</span>
+            <span class="n">j2_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">-</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">-</span> <span class="n">of</span><span class="o">.</span><span class="n">j</span><span class="p">))</span>
+            <span class="n">j2_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Jab</span> <span class="o">+</span> <span class="n">oc</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">Jde</span> <span class="o">+</span> <span class="n">of</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">j2_min</span> <span class="o">&gt;</span> <span class="n">j2_max</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">j_index</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">((</span><span class="n">J2</span> <span class="o">-</span> <span class="n">j2_min</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span>
+            <span class="k">if</span> <span class="n">j2_min</span> <span class="o">&lt;=</span> <span class="n">J2</span> <span class="o">&lt;=</span> <span class="n">j2_max</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c_j_abc</span> <span class="o">*</span> <span class="n">c_j_def</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0e-10</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tab_min</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="n">c_t_abc</span> <span class="o">=</span> <span class="n">RecouplingCG</span><span class="p">(</span>
+                        <span class="n">idx_abc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tab_in</span><span class="p">,</span> <span class="n">tab</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">dWS</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">tde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tde_min</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                        <span class="n">c_t_def</span> <span class="o">=</span> <span class="n">RecouplingCG</span><span class="p">(</span>
+                            <span class="n">idx_def</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tde_in</span><span class="p">,</span> <span class="n">tde</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">dWS</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">c_t_abc</span> <span class="o">*</span> <span class="n">c_t_def</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1.0e-10</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">t_index</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tab</span> <span class="o">+</span> <span class="n">tde</span> <span class="o">+</span> <span class="p">(</span><span class="n">T2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+                        <span class="n">idx</span> <span class="o">=</span> <span class="n">orbit_offset</span> <span class="o">+</span> <span class="n">j_index</span> <span class="o">+</span> <span class="n">t_index</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">v3bme</span><span class="p">)):</span>
+                            <span class="k">continue</span>
+                        <span class="n">matrix_value</span> <span class="o">=</span> <span class="n">v3bme</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">matrix_value</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">+=</span> <span class="p">(</span>
+                                <span class="n">c_j_abc</span>
+                                <span class="o">*</span> <span class="n">c_j_def</span>
+                                <span class="o">*</span> <span class="n">c_t_abc</span>
+                                <span class="o">*</span> <span class="n">c_t_def</span>
+                                <span class="o">*</span> <span class="n">matrix_value</span>
+                            <span class="p">)</span>
+            <span class="n">j_index</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">((</span><span class="n">j2_max</span> <span class="o">-</span> <span class="n">J2</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span>
+
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_v3_pn</span><span class="p">(</span>
+    <span class="n">e3max</span><span class="p">,</span>
+    <span class="n">v3bme</span><span class="p">,</span>
+    <span class="n">dict_3b_idx</span><span class="p">,</span>
+    <span class="n">sps_3b</span><span class="p">,</span>
+    <span class="n">dWS</span><span class="p">,</span>
+    <span class="n">Jab</span><span class="p">,</span>
+    <span class="n">Jde</span><span class="p">,</span>
+    <span class="n">J2</span><span class="p">,</span>
+    <span class="n">a</span><span class="p">,</span>
+    <span class="n">b</span><span class="p">,</span>
+    <span class="n">c</span><span class="p">,</span>
+    <span class="n">d</span><span class="p">,</span>
+    <span class="n">e</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a 3NF matrix element for arbitrary proton/neutron ordering.&quot;&quot;&quot;</span>
+    <span class="n">sps</span> <span class="o">=</span> <span class="n">sps_3b</span><span class="o">.</span><span class="n">sps</span>
+    <span class="n">tza</span><span class="p">,</span> <span class="n">tzb</span><span class="p">,</span> <span class="n">tzc</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span> <span class="n">sps</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span> <span class="n">sps</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
+    <span class="n">tzd</span><span class="p">,</span> <span class="n">tze</span><span class="p">,</span> <span class="n">tzf</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span> <span class="n">sps</span><span class="p">[</span><span class="n">e</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span><span class="p">,</span> <span class="n">sps</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">tz</span>
+    <span class="n">dcg_spin</span> <span class="o">=</span> <span class="n">dWS</span><span class="o">.</span><span class="n">dcg_spin</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">t_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span> <span class="o">+</span> <span class="n">tzc</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span> <span class="o">+</span> <span class="n">tzf</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">tab</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">cg1</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">get_nkey6_shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tza</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzb</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tab</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">),</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">cg1</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">tde</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">cg2</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">get_nkey6_shift</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tzd</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tze</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tde</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">),</span> <span class="mf">0.0</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">cg1</span> <span class="o">*</span> <span class="n">cg2</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">t_max</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tab</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tde</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">total_t2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_min</span><span class="p">,</span> <span class="n">t_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="n">cg3</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">get_nkey6_shift</span><span class="p">(</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="n">tab</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzc</span><span class="p">,</span>
+                        <span class="n">total_t2</span><span class="p">,</span> <span class="n">tza</span> <span class="o">+</span> <span class="n">tzb</span> <span class="o">+</span> <span class="n">tzc</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="mf">0.0</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">cg4</span> <span class="o">=</span> <span class="n">dcg_spin</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="n">get_nkey6_shift</span><span class="p">(</span>
+                        <span class="mi">2</span> <span class="o">*</span> <span class="n">tde</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzf</span><span class="p">,</span>
+                        <span class="n">total_t2</span><span class="p">,</span> <span class="n">tzd</span> <span class="o">+</span> <span class="n">tze</span> <span class="o">+</span> <span class="n">tzf</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="mf">0.0</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">cg3</span> <span class="o">*</span> <span class="n">cg4</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">value</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="n">cg1</span>
+                    <span class="o">*</span> <span class="n">cg2</span>
+                    <span class="o">*</span> <span class="n">cg3</span>
+                    <span class="o">*</span> <span class="n">cg4</span>
+                    <span class="o">*</span> <span class="n">_get_3bme_iso</span><span class="p">(</span>
+                        <span class="n">e3max</span><span class="p">,</span>
+                        <span class="n">v3bme</span><span class="p">,</span>
+                        <span class="n">dict_3b_idx</span><span class="p">,</span>
+                        <span class="n">sps_3b</span><span class="p">,</span>
+                        <span class="n">Jab</span><span class="p">,</span>
+                        <span class="n">Jde</span><span class="p">,</span>
+                        <span class="n">J2</span><span class="p">,</span>
+                        <span class="n">tab</span><span class="p">,</span>
+                        <span class="n">tde</span><span class="p">,</span>
+                        <span class="n">total_t2</span><span class="p">,</span>
+                        <span class="n">a</span><span class="p">,</span>
+                        <span class="n">b</span><span class="p">,</span>
+                        <span class="n">c</span><span class="p">,</span>
+                        <span class="n">d</span><span class="p">,</span>
+                        <span class="n">e</span><span class="p">,</span>
+                        <span class="n">f</span><span class="p">,</span>
+                        <span class="n">dWS</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
 
 
 <div class="viewcode-block" id="prep_dicts_for_WignerSymbols">
