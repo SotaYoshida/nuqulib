@@ -21,8 +21,21 @@ def test_read_3NF_files():
                              e3max=e3max, fn_3NF=fn_3NF_gzip)
     v3b_Mscheme_gzip = hamil_gzip.set_mscheme_3NF()
 
+    # The me3j.gz path now uses the direct antisymmetrized m-scheme
+    # recoupling route.  It intentionally has a different normalization from
+    # the legacy readable.txt conversion, which expanded mixed-species
+    # permutations without spatial recoupling.
+    assert v3b_Mscheme_txt
+    assert v3b_Mscheme_gzip
     for (key, value) in v3b_Mscheme_gzip.items():
-        assert abs(value - v3b_Mscheme_txt[key]) < 1.e-5
+        bra, ket = key[:3], key[3:]
+        assert bra == tuple(sorted(bra))
+        assert ket == tuple(sorted(ket))
+        assert sum(hamil_gzip.msps[index].tz for index in bra) == sum(
+            hamil_gzip.msps[index].tz for index in ket
+        )
+        reverse_key = (*ket, *bra)
+        assert abs(value - v3b_Mscheme_gzip[reverse_key]) < 1.e-10
 
 def test_truncate_3bme():
     e1max = 1
@@ -71,8 +84,11 @@ def test_truncate_3bme_e3max1_and_4He_diagonalization():
     Hamil_mapped = H_1b_p + H_1b_n + H_jz_p + H_jz_n + H_pp + H_nn + H_pn + H_3b
     obj_Diag = Diagonalize_Hamiltonian(Hamil_mapped, hamil_1, Z, N, target_parity)
     Ens_exact = obj_Diag["evals"][:10]
-    Erefs = [-25.65354558, -15.42809575, -13.17347817, 7.43562975, 7.73964109, 
-             8.09566897, 8.53163365, 12.08280553, 13.33892505, 14.19184039]
+    Erefs = [-25.65386984096901, -15.430812854039264,
+             -13.162040300702188, 7.450992058125176,
+             7.709801976779019, 8.058982941831085,
+             8.62959853761564, 12.045818975516676,
+             13.358830819917609, 14.266854908670563]
     Ediffs = np.array(Ens_exact) - np.array(Erefs)
     assert np.all(np.abs(Ediffs) < 1.e-5), f"Energy differences from reference values: {Ediffs}"
     print(f"Ens_exact: {Ens_exact}")

@@ -364,7 +364,15 @@ class Hamiltonian:
                     verbose=self.verbose
                 )
                 self.v3b_pn = obj.pnME_3NF
-                obj = None
+                # Keep the JT reader data as well as the legacy pn dictionary.
+                # The latter is convenient for the old conversion path, while
+                # the former is required when evaluating arbitrary m-scheme
+                # orderings through the 3NF recoupling formula.
+                self._3nf_reader = obj
+                self.v3bme = obj.v3bme
+                self.sps_3b = obj.sps_3b
+                self.dWs_3nf = obj.dWs
+                self.dict_3b_idx = obj.dict_3b_idx
             else:
                 print("fn_3NF is now: ", self.fn_3NF)
                 raise ValueError(
@@ -1213,6 +1221,139 @@ class Hamiltonian:
                 (i3, i2, i1): -1,
         }
 
+    def _set_mscheme_3NF_direct(self, verbose=False):
+        """Build canonical m-scheme 3NF edges from the packed JT array.
+
+        The readable-text conversion first creates ordered proton/neutron
+        matrix elements and then expands all six-by-six permutations.  That
+        is not a valid substitute for recoupling when the particle species
+        are mixed.  This path evaluates the JT matrix element for each
+        canonical m-scheme triple directly, including the spatial and
+        isospin recoupling needed by ppn/pnn terms.
+        """
+        sps_3b = self.sps_3b
+        dWS = self.dWs_3nf
+        v3bme = self.v3bme
+        dict_3b_idx = self.dict_3b_idx
+        orbit_map = {
+            (orb.e, orb.n, orb.l, orb.j, orb.tz): idx
+            for idx, orb in sps_3b.sps.items()
+        }
+        mode_to_orbit = [
+            orbit_map.get((mode.e, mode.n, mode.l, mode.j, mode.tz), 0)
+            for mode in self.msps
+        ]
+
+        triples = []
+        for triple in itertools.combinations(range(len(self.msps)), 3):
+            states = [self.msps[index] for index in triple]
+            if abs(sum(state.tz for state in states)) not in (1, 3):
+                continue
+            if sum(state.e for state in states) > sps_3b.e3max:
+                continue
+            if any(mode_to_orbit[index] == 0 for index in triple):
+                continue
+            triples.append(triple)
+
+        vjj_cache = {}
+
+        def direct_mscheme_value(bra, ket):
+            bra_states = [self.msps[index] for index in bra]
+            ket_states = [self.msps[index] for index in ket]
+            if sum(state.tz for state in bra_states) != sum(state.tz for state in ket_states):
+                return 0.0
+            if sum(state.jz for state in bra_states) != sum(state.jz for state in ket_states):
+                return 0.0
+            if (sum(state.l for state in bra_states) +
+                    sum(state.l for state in ket_states)) % 2 != 0:
+                return 0.0
+            if sum(state.e for state in ket_states) > sps_3b.e3max:
+                return 0.0
+
+            j1, m1 = bra_states[0].j, bra_states[0].jz
+            j2, m2 = bra_states[1].j, bra_states[1].jz
+            j3, m3 = bra_states[2].j, bra_states[2].jz
+            j4, m4 = ket_states[0].j, ket_states[0].jz
+            j5, m5 = ket_states[1].j, ket_states[1].jz
+            j6, m6 = ket_states[2].j, ket_states[2].jz
+            m12_bra = m1 + m2
+            m12_ket = m4 + m5
+            m_total = m1 + m2 + m3
+            value = 0.0
+
+            for Jab in range(abs(j1 - j2) // 2, (j1 + j2) // 2 + 1):
+                if abs(m12_bra) > 2 * Jab:
+                    continue
+                cg12 = get_CGs_from_dict(
+                    j1, m1, j2, m2, 2 * Jab, m12_bra, self.CG_dict
+                )
+                if cg12 == 0.0:
+                    continue
+                for Jde in range(abs(j4 - j5) // 2, (j4 + j5) // 2 + 1):
+                    if abs(m12_ket) > 2 * Jde:
+                        continue
+                    cg45 = get_CGs_from_dict(
+                        j4, m4, j5, m5, 2 * Jde, m12_ket, self.CG_dict
+                    )
+                    if cg45 == 0.0:
+                        continue
+                    J2_min = max(abs(2 * Jab - j3), abs(2 * Jde - j6))
+                    J2_max = min(2 * Jab + j3, 2 * Jde + j6)
+                    for J2 in range(J2_min, J2_max + 1, 2):
+                        if abs(m_total) > J2:
+                            continue
+                        cg123 = get_CGs_from_dict(
+                            2 * Jab, m12_bra, j3, m3, J2, m_total,
+                            self.CG_dict,
+                        )
+                        cg456 = get_CGs_from_dict(
+                            2 * Jde, m12_ket, j6, m6, J2, m_total,
+                            self.CG_dict,
+                        )
+                        if abs(cg123 * cg456) < 1.0e-12:
+                            continue
+                        vjj_key = (
+                            Jab, Jde, J2,
+                            mode_to_orbit[bra[0]], mode_to_orbit[bra[1]],
+                            mode_to_orbit[bra[2]], mode_to_orbit[ket[0]],
+                            mode_to_orbit[ket[1]], mode_to_orbit[ket[2]],
+                        )
+                        if vjj_key not in vjj_cache:
+                            vjj_cache[vjj_key] = _get_v3_pn(
+                                sps_3b.e3max,
+                                v3bme,
+                                dict_3b_idx,
+                                sps_3b,
+                                dWS,
+                                Jab,
+                                Jde,
+                                J2,
+                                mode_to_orbit[bra[0]],
+                                mode_to_orbit[bra[1]],
+                                mode_to_orbit[bra[2]],
+                                mode_to_orbit[ket[0]],
+                                mode_to_orbit[ket[1]],
+                                mode_to_orbit[ket[2]],
+                            )
+                        value += cg12 * cg123 * cg45 * cg456 * vjj_cache[vjj_key]
+            return value
+
+        result = {}
+        for bra_index, bra in enumerate(triples):
+            for ket in triples[bra_index:]:
+                value = direct_mscheme_value(bra, ket)
+                if abs(value) < 1.0e-12:
+                    continue
+                result[(*bra, *ket)] = value
+                if bra != ket:
+                    result[(*ket, *bra)] = value
+
+        if verbose:
+            print("After direct m-scheme recoupling.")
+        print("Total number of 3NF matrix elements in M-scheme", len(result))
+        self.v3b_Mscheme = result
+        return result
+
     def set_mscheme_3NF(self, verbose=False):
         """Calculate the 3NF matrix elements in the mscheme.
 
@@ -1231,6 +1372,9 @@ class Hamiltonian:
             we generate something like <pnn|V|npn>, <pnn|V|nnp>, etc.
             The factor of 9 is to take account of this.
         """
+        if hasattr(self, "_3nf_reader"):
+            return self._set_mscheme_3NF_direct(verbose=verbose)
+
         v3b_Mscheme = {}
         if verbose:
             print("Converting pn J-coupled 3NF to mscheme...")
@@ -1347,7 +1491,6 @@ class Hamiltonian:
                     v3b_Mscheme[(*i456, *i123)] = me * sign_123 * sign_456
         if verbose:
             print("After perm.")
-            # for key, me in v3b_Mscheme.items():
             for key, me in tmp.items():
                 im_a, im_b, im_c, im_d, im_e, im_f = key
                 if set([im_a, im_b, im_c]) == set([im_d, im_e, im_f]) and (
@@ -2228,10 +2371,11 @@ class ReadThBME_me3jgz:
 
                                 abc_eq_def = ( (a, b, c) == (d, e, f) )
 
-                                # # Record the current dimension offset using a hash key.
-                                # if what_you_need == "allocate_v3bme":
-                                #     orbit_hash = get_nkey6(a, b, c, d, e, f)
-                                #     dict_3b_idx[orbit_hash] = total_dim
+                                # Record the zero-based offset of this canonical
+                                # JT orbit block for direct m-scheme recoupling.
+                                if what_you_need == "allocate_v3bme":
+                                    orbit_hash = get_nkey6(a, b, c, d, e, f)
+                                    dict_3b_idx[orbit_hash] = total_dim
 
                                 if what_you_need == "me3j->readable.txt":
 
@@ -2296,7 +2440,8 @@ class ReadThBME_me3jgz:
                 )
             print(f"# of 3BME: {total_dim:12d} Mem. {size_3bme:12.5e} GB")
             v3bme = np.zeros(total_dim, dtype=np.float64)
-            return v3bme#, dict_3b_idx
+            self.dict_3b_idx = dict_3b_idx
+            return v3bme
         elif what_you_need == "me3j->readable.txt":
             if self.verbose:
                 print("checking dim for readable.txt...", non_zero_term, "/", total_dim)
@@ -2532,6 +2677,186 @@ def RecouplingCG(idx_abc, ja2, jb2, jc2, Jab_in, Jab, J2, dWS) -> float:
 
     else:
         raise AssertionError("This should not happen")
+
+
+def _get_3bme_iso(
+    e3max,
+    v3bme,
+    dict_3b_idx,
+    sps_3b,
+    Jab_in,
+    Jde_in,
+    J2,
+    tab_in,
+    tde_in,
+    T2,
+    a_in,
+    b_in,
+    c_in,
+    d_in,
+    e_in,
+    f_in,
+    dWS,
+):
+    """Read one recoupled JT matrix element from the packed 3BME array.
+
+    The input orbitals may be in any order.  The file stores only the lower
+    triangular, descending orbital blocks, so the required permutation phases
+    and the corresponding jj/isospin recouplings are applied here.
+    """
+    sps = sps_3b.sps
+    a, b, c, idx_abc = sort_3_orbits(a_in, b_in, c_in)
+    d, e, f, idx_def = sort_3_orbits(d_in, e_in, f_in)
+
+    if d > a or (d == a and e > b) or (d == a and e == b and f > c):
+        a, b, c, d, e, f = d, e, f, a, b, c
+        Jab_in, Jde_in = Jde_in, Jab_in
+        tab_in, tde_in = tde_in, tab_in
+        idx_abc, idx_def = idx_def, idx_abc
+
+    orbit_offset = dict_3b_idx.get(get_nkey6(a, b, c, d, e, f), -1)
+    if orbit_offset < 0:
+        return 0.0
+
+    oa, ob, oc = sps[a], sps[b], sps[c]
+    od, oe, of = sps[d], sps[e], sps[f]
+    if oa.e + ob.e + oc.e > e3max or od.e + oe.e + of.e > e3max:
+        return 0.0
+
+    Jab_min = abs(oa.j - ob.j) // 2
+    Jab_max = (oa.j + ob.j) // 2
+    Jde_min = abs(od.j - oe.j) // 2
+    Jde_max = (od.j + oe.j) // 2
+    tab_min = 1 if T2 == 3 else 0
+    tde_min = 1 if T2 == 3 else 0
+    value = 0.0
+    j_index = 0
+
+    for Jab in range(Jab_min, Jab_max + 1):
+        c_j_abc = RecouplingCG(
+            idx_abc, oa.j, ob.j, oc.j, Jab_in, Jab, J2, dWS
+        )
+        if idx_abc // 3 != idx_def // 3:
+            c_j_abc *= -1.0
+        for Jde in range(Jde_min, Jde_max + 1):
+            c_j_def = RecouplingCG(
+                idx_def, od.j, oe.j, of.j, Jde_in, Jde, J2, dWS
+            )
+            j2_min = max(abs(2 * Jab - oc.j), abs(2 * Jde - of.j))
+            j2_max = min(2 * Jab + oc.j, 2 * Jde + of.j)
+            if j2_min > j2_max:
+                continue
+
+            j_index += int((J2 - j2_min) / 2) * 5
+            if j2_min <= J2 <= j2_max and abs(c_j_abc * c_j_def) > 1.0e-10:
+                for tab in range(tab_min, 2):
+                    c_t_abc = RecouplingCG(
+                        idx_abc, 1, 1, 1, tab_in, tab, T2, dWS
+                    )
+                    for tde in range(tde_min, 2):
+                        c_t_def = RecouplingCG(
+                            idx_def, 1, 1, 1, tde_in, tde, T2, dWS
+                        )
+                        if abs(c_t_abc * c_t_def) < 1.0e-10:
+                            continue
+                        t_index = 2 * tab + tde + (T2 - 1) // 2
+                        idx = orbit_offset + j_index + t_index
+                        if not (0 <= idx < len(v3bme)):
+                            continue
+                        matrix_value = v3bme[idx]
+                        if matrix_value != 0.0:
+                            value += (
+                                c_j_abc
+                                * c_j_def
+                                * c_t_abc
+                                * c_t_def
+                                * matrix_value
+                            )
+            j_index += int((j2_max - J2 + 2) / 2) * 5
+
+    return value
+
+
+def _get_v3_pn(
+    e3max,
+    v3bme,
+    dict_3b_idx,
+    sps_3b,
+    dWS,
+    Jab,
+    Jde,
+    J2,
+    a,
+    b,
+    c,
+    d,
+    e,
+    f,
+):
+    """Evaluate a 3NF matrix element for arbitrary proton/neutron ordering."""
+    sps = sps_3b.sps
+    tza, tzb, tzc = sps[a].tz, sps[b].tz, sps[c].tz
+    tzd, tze, tzf = sps[d].tz, sps[e].tz, sps[f].tz
+    dcg_spin = dWS.dcg_spin
+    value = 0.0
+    t_min = max(abs(tza + tzb + tzc), abs(tzd + tze + tzf))
+
+    for tab in range(abs(tza + tzb) // 2, 2):
+        cg1 = dcg_spin.get(
+            get_nkey6_shift(1, tza, 1, tzb, 2 * tab, tza + tzb), 0.0
+        )
+        if cg1 == 0.0:
+            continue
+        for tde in range(abs(tzd + tze) // 2, 2):
+            cg2 = dcg_spin.get(
+                get_nkey6_shift(1, tzd, 1, tze, 2 * tde, tzd + tze), 0.0
+            )
+            if cg1 * cg2 == 0.0:
+                continue
+            t_max = min(1 + 2 * tab, 1 + 2 * tde)
+            for total_t2 in range(t_min, t_max + 1, 2):
+                cg3 = dcg_spin.get(
+                    get_nkey6_shift(
+                        2 * tab, tza + tzb, 1, tzc,
+                        total_t2, tza + tzb + tzc,
+                    ),
+                    0.0,
+                )
+                cg4 = dcg_spin.get(
+                    get_nkey6_shift(
+                        2 * tde, tzd + tze, 1, tzf,
+                        total_t2, tzd + tze + tzf,
+                    ),
+                    0.0,
+                )
+                if cg3 * cg4 == 0.0:
+                    continue
+                value += (
+                    cg1
+                    * cg2
+                    * cg3
+                    * cg4
+                    * _get_3bme_iso(
+                        e3max,
+                        v3bme,
+                        dict_3b_idx,
+                        sps_3b,
+                        Jab,
+                        Jde,
+                        J2,
+                        tab,
+                        tde,
+                        total_t2,
+                        a,
+                        b,
+                        c,
+                        d,
+                        e,
+                        f,
+                        dWS,
+                    )
+                )
+    return value
 
 
 class prep_dicts_for_WignerSymbols:
