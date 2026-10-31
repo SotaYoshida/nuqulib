@@ -643,10 +643,10 @@ class Hamiltonian:
                     v = vint = float(tl[5]) * Vfactor
                     phase = 1
                     if idx_a > idx_b:
-                        phase = (-1)**(J + (single_particle_states[idx_a].j + single_particle_states[idx_b].j)//2 - 1)
+                        phase *= (-1)**(J + (single_particle_states[idx_a].j + single_particle_states[idx_b].j)//2 - 1)
                         idx_b, idx_a = idx_a, idx_b
                     if idx_c > idx_d:
-                        phase = (-1)**(J + (single_particle_states[idx_c].j + single_particle_states[idx_d].j)//2 - 1)
+                        phase *= (-1)**(J + (single_particle_states[idx_c].j + single_particle_states[idx_d].j)//2 - 1)
                         idx_d, idx_c = idx_c, idx_d
                     v *= phase   
                     v2b.append((idx_a, idx_b, idx_c, idx_d, J, v))
@@ -872,15 +872,14 @@ class Hamiltonian:
         # for 2-body term
         num_pp = num_nn = num_pn = 0
         for a, b, c, d, J, V in self.v2b:
-            # make them canonical order
-            flip_ab = (-1) ** ((self.msps[a].j + self.msps[b].j) // 2 - J)
-            flip_cd = (-1) ** ((self.msps[c].j + self.msps[d].j) // 2 - J)
+            # Orbital labels index single_particle_states; its j values are 2*j.
+            # Exchanging a coupled fermion pair contributes -(-1)^(j_a+j_b-J).
             if a > b:
+                V *= -(-1) ** ((self.single_particle_states[a].j + self.single_particle_states[b].j) // 2 - J)
                 a, b = b, a
-                V *= flip_ab
             if c > d:
+                V *= -(-1) ** ((self.single_particle_states[c].j + self.single_particle_states[d].j) // 2 - J)
                 c, d = d, c
-                V *= flip_cd
 
             # Some interaction terms are not "canonical-ordered"
             if a > c or (a == c and b > d):
@@ -902,7 +901,6 @@ class Hamiltonian:
                     j_b = morb_b.j
                     jz_b = morb_b.jz
                     tz_b = morb_b.tz
-                    phase_bra = (-1) ** ((j_a + j_b) // 2 - J)
                     Mbra = (jz_a + jz_b) // 2
                     N_ab = 1.0
                     delta_ab = self.delta_jj(morb_a, morb_b)
@@ -930,7 +928,6 @@ class Hamiltonian:
                             j_d = morb_d.j
                             jz_d = morb_d.jz
                             tz_d = morb_d.tz
-                            phase_ket = (-1) ** ((j_c + j_d) // 2 - J)
                             Mket = (jz_c + jz_d) // 2
                             if Mbra != Mket:
                                 continue
