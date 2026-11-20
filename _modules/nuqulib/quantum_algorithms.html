@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.quantum_algorithms - NuQuLib 0.1.0 documentation</title>
+        <title>nuqulib.quantum_algorithms - NuQuLib 0.1.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -323,7 +323,8 @@
     <span class="n">measure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">trotter_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
     <span class="n">trotter_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="n">repeat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">repeat</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">evolution_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;trotter&quot;</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a basic quantum phase-estimation circuit.</span>
 
@@ -338,10 +339,16 @@
 <span class="sd">        trotter_steps (int, optional): Number of Suzuki-Trotter repetitions.</span>
 <span class="sd">        repeat (bool, optional): If True, build powers by repeated composition</span>
 <span class="sd">            instead of scaling the evolution time.</span>
+<span class="sd">        evolution_method (str, optional): &quot;trotter&quot; (default) or &quot;expm&quot;.</span>
+<span class="sd">            The latter uses dense matrix exponentiation and dense controlled</span>
+<span class="sd">            unitaries for small classical simulations. It introduces no</span>
+<span class="sd">            product-formula error and is not a gate-resource estimate.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        QuantumCircuit: QPE circuit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">evolution_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;trotter&quot;</span><span class="p">,</span> <span class="s2">&quot;expm&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;evolution_method must be &#39;trotter&#39; or &#39;expm&#39;&quot;</span><span class="p">)</span>
     <span class="n">qc_QPE</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">n_ancilla</span> <span class="o">+</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">n_ancilla</span><span class="p">)</span>
     <span class="n">register_ancilla</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">Norb</span><span class="p">,</span> <span class="n">Norb</span> <span class="o">+</span> <span class="n">n_ancilla</span><span class="p">)</span>
     <span class="n">register_target</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">Norb</span><span class="p">)</span>
@@ -352,20 +359,32 @@
     <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">register_ancilla</span><span class="p">:</span>
         <span class="n">qc_QPE</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
 
-    <span class="c1"># Controlled-U operations</span>
-    <span class="n">unitU</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span>
-                               <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">trotter_order</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">))</span>
-    <span class="k">for</span> <span class="nb">iter</span><span class="p">,</span> <span class="n">counting_qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">register_ancilla</span><span class="p">):</span>
-        <span class="n">Upow</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Norb</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">repeat</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">iter</span><span class="p">):</span>
-                <span class="n">Upow</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">unitU</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">Upow</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">time</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">iter</span><span class="p">),</span>
-                                      <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">trotter_order</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">))</span>
-        <span class="n">cU</span> <span class="o">=</span> <span class="n">Upow</span><span class="o">.</span><span class="n">control</span><span class="p">()</span>
-        <span class="n">cU</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;$U^{2^{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">iter</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}}$&quot;</span>
-        <span class="n">qc_QPE</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">cU</span><span class="p">,</span> <span class="n">qubits</span><span class="o">=</span><span class="p">[</span><span class="n">counting_qubit</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">register_target</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Dense controlled matrices avoid decomposing a generic unitary into gates.</span>
+    <span class="k">if</span> <span class="n">evolution_method</span> <span class="o">==</span> <span class="s2">&quot;expm&quot;</span><span class="p">:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">Hamiltonian_op</span><span class="o">.</span><span class="n">to_matrix</span><span class="p">()</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">Norb</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">time</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span> <span class="k">if</span> <span class="n">repeat</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">power</span><span class="p">,</span> <span class="n">counting_qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">register_ancilla</span><span class="p">):</span>
+            <span class="n">Upow</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">power</span><span class="p">)</span> <span class="k">if</span> <span class="n">repeat</span> <span class="k">else</span>
+                    <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">expm</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">time</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">power</span><span class="p">)</span> <span class="o">*</span> <span class="n">H</span><span class="p">))</span>
+            <span class="n">controlled</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">block_diag</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="n">Upow</span><span class="p">)</span>
+            <span class="c1"># The final qarg is the most significant local bit (the control).</span>
+            <span class="n">qc_QPE</span><span class="o">.</span><span class="n">unitary</span><span class="p">(</span><span class="n">controlled</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">register_target</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">counting_qubit</span><span class="p">],</span>
+                           <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;exp(-iHdt*</span><span class="si">{</span><span class="mi">2</span><span class="o">**</span><span class="n">power</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unitU</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span>
+                                   <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">trotter_order</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">))</span>
+        <span class="k">for</span> <span class="nb">iter</span><span class="p">,</span> <span class="n">counting_qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">register_ancilla</span><span class="p">):</span>
+            <span class="n">Upow</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Norb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">repeat</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">iter</span><span class="p">):</span>
+                    <span class="n">Upow</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">unitU</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Upow</span> <span class="o">=</span> <span class="n">PauliEvolutionGate</span><span class="p">(</span><span class="n">Hamiltonian_op</span><span class="p">,</span> <span class="n">time</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="nb">iter</span><span class="p">),</span>
+                                          <span class="n">synthesis</span><span class="o">=</span><span class="n">SuzukiTrotter</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">trotter_order</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="n">trotter_steps</span><span class="p">))</span>
+            <span class="n">cU</span> <span class="o">=</span> <span class="n">Upow</span><span class="o">.</span><span class="n">control</span><span class="p">()</span>
+            <span class="n">cU</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;$U^{2^{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">iter</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}}$&quot;</span>
+            <span class="n">qc_QPE</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">cU</span><span class="p">,</span> <span class="n">qubits</span><span class="o">=</span><span class="p">[</span><span class="n">counting_qubit</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">register_target</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Inverse QFT</span>
     <span class="n">qft_dagger</span> <span class="o">=</span> <span class="n">QFT</span><span class="p">(</span><span class="n">n_ancilla</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -625,10 +644,13 @@
                 <span class="k">if</span> <span class="n">loc</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;X_&quot;</span><span class="p">):</span>
                     <span class="n">qubit_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span> 
                     <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
+                    <span class="n">qc_im</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
                 <span class="k">elif</span> <span class="n">loc</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Y_&quot;</span><span class="p">):</span>
                     <span class="n">qubit_idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">sdg</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
+                    <span class="n">qc_im</span><span class="o">.</span><span class="n">sdg</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
+                    <span class="n">qc_im</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">target_qubits</span><span class="p">[</span><span class="n">qubit_idx</span><span class="p">])</span>
                 <span class="k">elif</span> <span class="n">loc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -1487,7 +1509,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
