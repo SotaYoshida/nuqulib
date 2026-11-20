@@ -9,7 +9,7 @@ int_dir = os.path.join(chdir, "interaction_file/")
 
 def test_valence_2n(filename_snt=int_dir+"ckpot.snt",
                     Eref=2.3458):
-    print("\nTesting naive filling config. of 2n in the 0s shell")
+    print("\nTesting naive filling config. of 2n in the 0p-shell")
     if not os.path.exists(filename_snt):
         raise FileNotFoundError(f"File {filename_snt} does not exist.")
 
@@ -63,7 +63,7 @@ def test_valence_pn(filename_snt=int_dir+"ckpot.snt",
     
 def test_valence_16O(filename_snt=int_dir+"ckpot.snt",
                      Eref=-113.81425):
-    print("\nTesting 16O in the 0s and 0p shells (fully filled)")
+    print("\nTesting 16O in the 0p-shell (fully filled)")
     if not os.path.exists(filename_snt):
         raise FileNotFoundError(f"File {filename_snt} does not exist.")
 

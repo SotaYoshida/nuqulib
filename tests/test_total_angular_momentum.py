@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 from nuqulib import *
 
@@ -47,7 +49,7 @@ def test_J2_proton_neutron_j_half_couples_to_J_zero_and_one():
 
 def test_for_6He():
 
-    fn_snt = "tests/interaction_file/ckpot.snt"
+    fn_snt = Path(__file__).parent / "interaction_file" / "ckpot.snt"
     Z = 2; N = 4; target_parity = 1; Zc = 2; Nc = 2
 
     hamil = Hamiltonian(fn_snt, Z, N) 
@@ -76,4 +78,3 @@ def test_for_6He():
     print("<J>:", J_expect)
     Jvals_ref = [0, 2, 2, 1, 0]
     assert np.allclose(np.sort(J_expect), np.sort(Jvals_ref))
-    
