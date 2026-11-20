@@ -88,7 +88,8 @@ def circuit_my_QPE(n_ancilla: int,
     measure=False,
     trotter_order: int = 2,
     trotter_steps: int = 1,
-    repeat: bool = False
+    repeat: bool = False,
+    evolution_method: str = "trotter"
 ):
     """Construct a basic quantum phase-estimation circuit.
 
@@ -103,10 +104,16 @@ def circuit_my_QPE(n_ancilla: int,
         trotter_steps (int, optional): Number of Suzuki-Trotter repetitions.
         repeat (bool, optional): If True, build powers by repeated composition
             instead of scaling the evolution time.
+        evolution_method (str, optional): "trotter" (default) or "expm".
+            The latter uses dense matrix exponentiation and dense controlled
+            unitaries for small classical simulations. It introduces no
+            product-formula error and is not a gate-resource estimate.
 
     Returns:
         QuantumCircuit: QPE circuit.
     """
+    if evolution_method not in ("trotter", "expm"):
+        raise ValueError("evolution_method must be 'trotter' or 'expm'")
     qc_QPE = QuantumCircuit(n_ancilla + Norb, n_ancilla)
     register_ancilla = range(Norb, Norb + n_ancilla)
     register_target = range(Norb)
@@ -117,20 +124,32 @@ def circuit_my_QPE(n_ancilla: int,
     for qubit in register_ancilla:
         qc_QPE.h(qubit)
 
-    # Controlled-U operations
-    unitU = PauliEvolutionGate(Hamiltonian_op, time,
-                               synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
-    for iter, counting_qubit in enumerate(register_ancilla):
-        Upow = QuantumCircuit(Norb)
-        if repeat:
-            for _ in range(2**iter):
-                Upow.compose(unitU, inplace=True)
-        else:
-            Upow = PauliEvolutionGate(Hamiltonian_op, time * (2**iter),
-                                      synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
-        cU = Upow.control()
-        cU.name = "$U^{2^{" + str(iter) + "}}$"
-        qc_QPE.compose(cU, qubits=[counting_qubit] + list(register_target), inplace=True)
+    # Dense controlled matrices avoid decomposing a generic unitary into gates.
+    if evolution_method == "expm":
+        H = Hamiltonian_op.to_matrix()
+        identity = np.eye(2**Norb, dtype=complex)
+        U = scipy.linalg.expm(-1j * time * H) if repeat else None
+        for power, counting_qubit in enumerate(register_ancilla):
+            Upow = (np.linalg.matrix_power(U, 2**power) if repeat else
+                    scipy.linalg.expm(-1j * time * (2**power) * H))
+            controlled = scipy.linalg.block_diag(identity, Upow)
+            # The final qarg is the most significant local bit (the control).
+            qc_QPE.unitary(controlled, list(register_target) + [counting_qubit],
+                           label=f"exp(-iHdt*{2**power})")
+    else:
+        unitU = PauliEvolutionGate(Hamiltonian_op, time,
+                                   synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
+        for iter, counting_qubit in enumerate(register_ancilla):
+            Upow = QuantumCircuit(Norb)
+            if repeat:
+                for _ in range(2**iter):
+                    Upow.compose(unitU, inplace=True)
+            else:
+                Upow = PauliEvolutionGate(Hamiltonian_op, time * (2**iter),
+                                          synthesis=SuzukiTrotter(order=trotter_order, reps=trotter_steps))
+            cU = Upow.control()
+            cU.name = "$U^{2^{" + str(iter) + "}}$"
+            qc_QPE.compose(cU, qubits=[counting_qubit] + list(register_target), inplace=True)
 
     # Inverse QFT
     qft_dagger = QFT(n_ancilla, inverse=True)
@@ -369,10 +388,13 @@ def make_Circ_forNondiagH(term_types,
                 if loc.startswith("X_"):
                     qubit_idx = int(loc[2:]) 
                     qc.h(target_qubits[qubit_idx])
+                    qc_im.h(target_qubits[qubit_idx])
                 elif loc.startswith("Y_"):
                     qubit_idx = int(loc[2:])
                     qc.sdg(target_qubits[qubit_idx])
                     qc.h(target_qubits[qubit_idx])
+                    qc_im.sdg(target_qubits[qubit_idx])
+                    qc_im.h(target_qubits[qubit_idx])
                 elif loc.strip() == "":
                     continue
                 else:
