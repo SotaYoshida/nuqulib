@@ -3,10 +3,50 @@ using Distributed
 using Printf
 using Random
 using Dates
+using SHA
 import Base.Iterators: product
 using TimerOutputs
 using StaticArrays
-using StatProfilerHTML
+
+# Edit these settings, then run: julia --threads=2 misc/counting_Hamiltonian_terms.jl
+# The batch counts operator patterns, not nonzero coefficients of a specific interaction.
+const VALENCE_SPACES = ["p", "sd", "pf", "psd", "sdpf", "pfsdg"]
+const NN_EMAX_VALUES = 0:10
+const NN3N_EMAX_VALUES = 1:4
+e3max_for(emax) = 3 * emax
+const OUTPUT_TSV = joinpath(@__DIR__, "..", "newTgateCounts.tsv")
+const LEGACY_TGATES_PER_RZ = 100
+
+Base.@kwdef struct CountConfig
+    emax::Int = 10
+    valence_space::String = ""
+    is_3NF::Bool = false
+    e3max::Union{Nothing,Int} = nothing
+end
+
+function configured_spaces()
+    vcat([CountConfig(valence_space=s) for s in VALENCE_SPACES],
+         [CountConfig(emax=e) for e in NN_EMAX_VALUES],
+         [CountConfig(emax=e, is_3NF=true, e3max=e3max_for(e)) for e in NN3N_EMAX_VALUES])
+end
+
+function model_space_parameters(config::CountConfig)
+    config.emax >= 0 || throw(ArgumentError("emax must be nonnegative"))
+    no_core = isempty(config.valence_space)
+    if !no_core && (config.is_3NF || !isnothing(config.e3max))
+        throw(ArgumentError("Valence spaces currently support NN only"))
+    end
+    if !config.is_3NF && !isnothing(config.e3max)
+        throw(ArgumentError("Specify e3max only for NN+3N counts"))
+    end
+    emax, emin, emax_active, e3min, e3max, is_3NF = no_core ?
+        ncsm_model_spaces(config.emax, config.is_3NF) : valence_model_spaces(config.valence_space)
+    if !isnothing(config.e3max)
+        0 <= config.e3max <= 3emax || throw(ArgumentError("Require 0 <= e3max <= 3emax"))
+        e3max = config.e3max
+    end
+    return (; no_core, emax, emin, emax_active, e3min, e3max, is_3NF)
+end
 
 
 mutable struct Orbit_nljjztz
@@ -156,115 +196,435 @@ function write_pauli_terms(io, pauli_terms; label="")
     return nothing
 end
 
+# Exact zero tests: the omitted square-root prefactor of each CG coefficient
+# is nonzero inside its triangle. No floating-point cutoff is used here.
+const cg_sums_per_thread = OncePerThread{Dict{NTuple{5,Int},Rational{BigInt}}}() do
+    Dict{NTuple{5,Int},Rational{BigInt}}()
+end
+const pair_Js_per_thread = OncePerThread{Dict{NTuple{5,Int},Vector{Int}}}() do
+    Dict{NTuple{5,Int},Vector{Int}}()
+end
+const triple_Js_per_thread = OncePerThread{Dict{NTuple{7,Int},Vector{Int}}}() do
+    Dict{NTuple{7,Int},Vector{Int}}()
+end
+
+# All angular momenta and projections are doubled integers.
+function cg_racah_sum(j1::Int, m1::Int, j2::Int, m2::Int, J::Int)
+    get!(cg_sums_per_thread(), (j1, m1, j2, m2, J)) do
+        if min(j1, j2, J) < 0 || abs(m1) > j1 || abs(m2) > j2 ||
+           isodd(j1-m1) || isodd(j2-m2) || isodd(j1+j2-J) ||
+           !(abs(j1-j2) <= J <= j1+j2) || abs(m1+m2) > J
+            return big(0)//big(1)
+        end
+        a, b, c = (j1+j2-J)÷2, (j1-m1)÷2, (j2+m2)÷2
+        d, e = (J-j2+m1)÷2, (J-j1-m2)÷2
+        total = big(0)//big(1)
+        for z in max(0, -d, -e):min(a, b, c)
+            denom = prod(factorial(big(k)) for k in (z, a-z, b-z, c-z, d+z, e+z))
+            total += (isodd(z) ? -1 : 1)//denom
+        end
+        total
+    end
+end
+
+@inline same_orbit(a::Orbit_nljjztz, b::Orbit_nljjztz) =
+    a.n == b.n && a.l == b.l && a.j == b.j && a.tz == b.tz
+
+function allowed_pair_Js(a::Orbit_nljjztz, b::Orbit_nljjztz; antisymmetrize::Bool=true)
+    identical = antisymmetrize && same_orbit(a, b)
+    get!(pair_Js_per_thread(), (a.j, a.jz, b.j, b.jz, Int(identical))) do
+        Js = Int[]
+        for J in abs(a.j-b.j):2:(a.j+b.j)
+            # Two identical nucleons in one half-integer-j orbit have even J.
+            identical && isodd(J÷2) && continue
+            iszero(cg_racah_sum(a.j, a.jz, b.j, b.jz, J)) && continue
+            push!(Js, J)
+        end
+        Js
+    end
+end
+
+@inline function common_J(Jbra, Jket)
+    i = j = 1
+    while i <= length(Jbra) && j <= length(Jket)
+        Jbra[i] == Jket[j] && return true
+        if Jbra[i] < Jket[j]
+            i += 1
+        else
+            j += 1
+        end
+    end
+    false
+end
+
 function Jbracket_check(bra1::Orbit_nljjztz, bra2::Orbit_nljjztz,
                         ket1::Orbit_nljjztz, ket2::Orbit_nljjztz;
                         same_species::Bool=true, verbose::Bool=false)
-    Jmin_b = abs(bra1.j - bra2.j)
-    Jmax_b = bra1.j + bra2.j
-    Jmin_k = abs(ket1.j - ket2.j)
-    Jmax_k = ket1.j + ket2.j
-
-    # iterate over bra J-values (step 2) and check membership & conditions on-the-fly
-    @inbounds for tJ in Jmin_b:2:Jmax_b
-        if tJ < Jmin_k || tJ > Jmax_k
-            continue
-        end
-        if same_species
-            if (bra1.n == bra2.n && bra1.l == bra2.l && bra1.j == bra2.j && bra1.tz == bra2.tz) &&
-               ((tJ ÷ 2) % 2 != 0)
-                continue
-            end
-            if (ket1.n == ket2.n && ket1.l == ket2.l && ket1.j == ket2.j && ket1.tz == ket2.tz) &&
-               ((tJ ÷ 2) % 2 != 0)
-                continue
-            end
-        end
-        if abs(bra1.jz + bra2.jz) <= tJ && abs(ket1.jz + ket2.jz) <= tJ
-            return true
-        end
-    end
-    return false
+    bra1.jz + bra2.jz == ket1.jz + ket2.jz || return false
+    iseven(bra1.l + bra2.l + ket1.l + ket2.l) || return false
+    common_J(allowed_pair_Js(bra1, bra2; antisymmetrize=same_species),
+             allowed_pair_Js(ket1, ket2; antisymmetrize=same_species))
 end
 
-function Jbracket_check_3body_T3(
-    bra1::Orbit_nljjztz, bra2::Orbit_nljjztz, bra3::Orbit_nljjztz,
-    ket1::Orbit_nljjztz, ket2::Orbit_nljjztz, ket3::Orbit_nljjztz;
-    verbose::Bool=false
-)
-
-    if !(bra1.tz == bra2.tz == bra3.tz == ket1.tz == ket2.tz == ket3.tz)
-        return false
+# For three identical orbits the antisymmetrized product of two CGs has
+# a common nonzero square-root prefactor. The remaining sum is rational.
+function antisymmetric_three_cg_nonzero(a, b, c, J12, J)
+    total = big(0)//big(1)
+    for (i, j, k, sign) in ((a,b,c,1), (b,c,a,1), (c,a,b,1),
+                             (b,a,c,-1), (a,c,b,-1), (c,b,a,-1))
+        M12 = i.jz + j.jz
+        r1 = cg_racah_sum(i.j, i.jz, j.j, j.jz, J12)
+        iszero(r1) && continue
+        r2 = cg_racah_sum(J12, M12, k.j, k.jz, J)
+        iszero(r2) && continue
+        weight = factorial(big((J12+M12)÷2)) * factorial(big((J12-M12)÷2))
+        total += sign * weight * r1 * r2
     end
-
-    J12min_b = abs(bra1.j - bra2.j)
-    J12max_b = bra1.j + bra2.j
-    J12min_k = abs(ket1.j - ket2.j)
-    J12max_k = ket1.j + ket2.j
-
-    @inbounds for tJ12 in J12min_b:2:J12max_b
-        if bra1.n == bra2.n && bra1.l == bra2.l &&
-           bra1.j == bra2.j && bra1.tz == bra2.tz
-            if ((tJ12 ÷ 2) % 2) != 1
-                continue
-            end
-        end
-        # This removes <1, 2, 3|V|1, 2, 6> type terms
-        # It may be insufficient in some cases, but enough for counting purposes.
-        if bra1.n == bra2.n == ket1.n == ket2.n &&
-           bra1.l == bra2.l == ket1.l == ket2.l &&
-           bra1.j == bra2.j == ket1.j == ket2.j
-            if ((tJ12 ÷ 2) % 2) == 1
-                continue
-            end
-        end
-        if tJ12 < J12min_k || tJ12 > J12max_k
-            continue
-        end
-
-        if ket1.n == ket2.n && ket1.l == ket2.l &&
-           ket1.j == ket2.j && ket1.tz == ket2.tz
-            if ((tJ12 ÷ 2) % 2) != 1
-                continue
-            end
-        end
-
-        Jmin_b = abs(tJ12 - bra3.j)
-        Jmax_b = tJ12 + bra3.j
-        Jmin_k = abs(tJ12 - ket3.j)
-        Jmax_k = tJ12 + ket3.j
-        for tJ in max(Jmin_b, Jmin_k):2:min(Jmax_b, Jmax_k)
-            if abs(bra1.jz + bra2.jz + bra3.jz) > tJ
-                continue
-            end
-            if abs(ket1.jz + ket2.jz + ket3.jz) > tJ
-                continue
-            end
-            return true
-        end
-    end
-    return false
+    !iszero(total)
 end
 
-# function Jbracket_check(bra1::Orbit_nljjztz, bra2::Orbit_nljjztz,
-#                        ket1::Orbit_nljjztz, ket2::Orbit_nljjztz;
-#                        same_species::Bool=true, verbose::Bool=false)
-#     Jmin_b = abs(bra1.j - bra2.j)
-#     Jmax_b = bra1.j + bra2.j
-#     Jmin_k = abs(ket1.j - ket2.j)
-#     Jmax_k = ket1.j + ket2.j
-#     Jbra = Jmin_b:2:Jmax_b
-#     Jket = Jmin_k:2:Jmax_k
-#     Jbra_list = collect(Jbra)
-#     Jket_list = collect(Jket)
-#     if same_species
-#         Jbra_list = [tJ for tJ in Jbra_list if (tJ ÷ 2 % 2 == 0) || !(bra1.n == bra2.n && bra1.l == bra2.l && bra1.j == bra2.j && bra1.tz == bra2.tz)]
-#         Jket_list = [tJ for tJ in Jket_list if (tJ ÷ 2 % 2 == 0) || !(ket1.n == ket2.n && ket1.l == ket2.l && ket1.j == ket2.j && ket1.tz == ket2.tz)]
-#     end
-#     Jpossible = intersect(Set(Jbra_list), Set(Jket_list))
-#     Jpossible = [tJ for tJ in Jpossible if abs(bra1.jz + bra2.jz) <= tJ && abs(ket1.jz + ket2.jz) <= tJ]
-#     return !isempty(Jpossible)
-# end
+function allowed_three_body_Js(a::Orbit_nljjztz, b::Orbit_nljjztz, c::Orbit_nljjztz)
+    # Couple an identical-orbit pair first, regardless of single-particle order.
+    if !same_orbit(a, b)
+        if same_orbit(a, c)
+            b, c = c, b
+        elseif same_orbit(b, c)
+            a, b, c = b, c, a
+        end
+    end
+    identical_pair = same_orbit(a, b)
+    identical_three = identical_pair && same_orbit(a, c)
+    kind = identical_three ? 2 : Int(identical_pair)
+    get!(triple_Js_per_thread(), (a.j, a.jz, b.j, b.jz, c.j, c.jz, kind)) do
+        Js = Int[]
+        for J12 in allowed_pair_Js(a, b)
+            M12 = a.jz + b.jz
+            for J in abs(J12-c.j):2:(J12+c.j)
+                J in Js && continue
+                if identical_three
+                    antisymmetric_three_cg_nonzero(a, b, c, J12, J) || continue
+                else
+                    iszero(cg_racah_sum(J12, M12, c.j, c.jz, J)) && continue
+                end
+                push!(Js, J)
+            end
+        end
+        sort!(Js)
+    end
+end
 
+function Jbracket_check_3body(bra1, bra2, bra3, ket1, ket2, ket3)
+    bra1.jz + bra2.jz + bra3.jz == ket1.jz + ket2.jz + ket3.jz || return false
+    iseven(bra1.l + bra2.l + bra3.l + ket1.l + ket2.l + ket3.l) || return false
+    # J12 may differ between bra and ket; only the total J is conserved.
+    common_J(allowed_three_body_Js(bra1, bra2, bra3),
+             allowed_three_body_Js(ket1, ket2, ket3))
+end
+
+function Jbracket_check_3body_T3(bra1::Orbit_nljjztz, bra2::Orbit_nljjztz, bra3::Orbit_nljjztz,
+                                ket1::Orbit_nljjztz, ket2::Orbit_nljjztz, ket3::Orbit_nljjztz;
+                                verbose::Bool=false)
+    bra1.tz == bra2.tz == bra3.tz == ket1.tz == ket2.tz == ket3.tz || return false
+    Jbracket_check_3body(bra1, bra2, bra3, ket1, ket2, ket3)
+end
+
+# Scalar one-body transitions, including the spectator-I part of contractions.
+# All higher-body counters below keep spectator Zs, so these are counted once.
+function possible_1b_terms(num_of_Hterms, msps_p, msps_n, Z, N, io, write_pauli;
+                           emin::Int=0, emax::Int=100)
+    n_qubits = length(msps_p) + length(msps_n)
+    count = 0
+    for (msps, particles, offset) in ((msps_p, Z, 0), (msps_n, N, length(msps_p)))
+        particles < 1 && continue
+        for i in eachindex(msps), j in (i+1):length(msps)
+            a, b = msps[i], msps[j]
+            emin <= a.e <= emax && emin <= b.e <= emax || continue
+            a.l == b.l && a.j == b.j && a.jz == b.jz && a.tz == b.tz || continue
+            count += 2
+            if write_pauli
+                for xy in ('X', 'Y')
+                    chars = fill('I', n_qubits)
+                    chars[(i+offset+1):(j+offset-1)] .= 'Z'
+                    chars[i+offset] = chars[j+offset] = xy
+                    println(io, "1b: ", String(reverse(chars)))
+                end
+            end
+        end
+    end
+    println("# of off-diagonal 1b terms: ", count)
+    num_of_Hterms + count
+end
+
+# Count-only kernels. Keep coupled states, never complete Pauli strings or all
+# Hamiltonian candidates. The explicit-string routines remain available below.
+struct CoupledPair{T}
+    i::Int32
+    j::Int32
+    Jmask::T
+end
+
+struct CoupledTriple{T}
+    i::Int32
+    j::Int32
+    k::Int32
+    Jmask::T
+end
+
+angular_mask_type(maxJ::Int) = maxJ < 64 ? UInt64 : maxJ < 128 ? UInt128 : BigInt
+function angular_mask(Js, ::Type{T}) where {T}
+    mask = zero(T)
+    for J in Js
+        mask |= one(T) << J
+    end
+    mask
+end
+
+function count_diag_terms(msps_p, msps_n, e3max, Z, N, is_3NF)
+    rank = is_3NF ? 3 : 2
+    np, nn = length(msps_p), length(msps_n)
+    counts = zeros(BigInt, rank+1)
+    maxe = maximum(s.e for s in Iterators.flatten((msps_p,msps_n)); init=0)
+    if !is_3NF || e3max >= rank*maxe
+        for r in 0:rank, p in 0:r
+            p <= Z && r-p <= N || continue
+            counts[r+1] += binomial(big(np),p)*binomial(big(nn),r-p)
+        end
+    else
+        e3max >= 0 || throw(ArgumentError("e3max must be nonnegative"))
+        # Coefficients of product_i (1 + x*y^e_i), truncated at rank and e3max.
+        function energy_counts(msps)
+            dp = zeros(BigInt, rank+1, e3max+1)
+            dp[1,1] = 1
+            for s in msps
+                for r in rank:-1:1, e in e3max:-1:s.e
+                    dp[r+1,e+1] += dp[r,e-s.e+1]
+                end
+            end
+            dp
+        end
+        dp, dn = energy_counts(msps_p), energy_counts(msps_n)
+        for r in 0:rank, p in 0:r
+            p <= Z && r-p <= N || continue
+            for ep in 0:e3max, en in 0:(e3max-ep)
+                counts[r+1] += dp[p+1,ep+1]*dn[r-p+1,en+1]
+            end
+        end
+    end
+    counts
+end
+
+function coupled_pair_channels(msps_a, msps_b, same_species, emin, emax, ::Type{T}) where {T}
+    channels = Dict{Tuple{Int,Int},Vector{CoupledPair{T}}}()
+    for i in eachindex(msps_a), j in (same_species ? i+1 : 1):length(msps_b)
+        a, b = msps_a[i], msps_b[j]
+        emin <= a.e <= emax && emin <= b.e <= emax || continue
+        mask = angular_mask(allowed_pair_Js(a,b; antisymmetrize=same_species),T)
+        iszero(mask) && continue
+        group = get!(channels,(a.jz+b.jz,(a.l+b.l)&1)) do
+            CoupledPair{T}[]
+        end
+        push!(group,CoupledPair{T}(i,j,mask))
+    end
+    collect(values(channels))
+end
+
+# In each channel the states are lexicographically ordered. Every equivalent
+# partition has the same smallest first-species index, so deduplication is local.
+function first_index_runs(groups, nfirst)
+    runs = [Tuple{Int,Int,Int}[] for _ in 1:nfirst]
+    for (g,states) in enumerate(groups)
+        lo = 1
+        while lo <= length(states)
+            i = states[lo].i
+            hi = lo
+            while hi < length(states) && states[hi+1].i == i
+                hi += 1
+            end
+            push!(runs[i],(g,lo,hi))
+            lo = hi+1
+        end
+    end
+    runs
+end
+
+@inline function sorted_four(a::Int, b::Int, c::Int, d::Int)
+    a > b && ((a,b)=(b,a)); c > d && ((c,d)=(d,c))
+    a > c && ((a,c)=(c,a)); b > d && ((b,d)=(d,b))
+    b > c && ((b,c)=(c,b))
+    (a,b,c,d)
+end
+
+function count_pair_channels(groups::Vector{Vector{CoupledPair{T}}}, nfirst, same_species) where {T}
+    runs = first_index_runs(groups,nfirst)
+    workers = min(Threads.nthreads(),max(1,nfirst))
+    counts = zeros(Int128,workers)
+    @threads for worker in 1:workers
+        seen = Set{UInt64}()
+        total = Int128(0)
+        for first in worker:workers:nfirst
+            empty!(seen)
+            for (g,lo,hi) in runs[first]
+                states = groups[g]
+                for ai in lo:hi, bi in (ai+1):length(states)
+                    a, b = states[ai],states[bi]
+                    iszero(a.Jmask & b.Jmask) && continue
+                    i,j,k,l = Int(a.i),Int(a.j),Int(b.i),Int(b.j)
+                    if same_species
+                        i,j,k,l = sorted_four(i,j,k,l)
+                        key = encode_4(i,j,k,l)
+                        nxy = (i<j<k<l) ? 4 : 2
+                    else
+                        key = encode_4(i,k,min(j,l),max(j,l))
+                        nxy = 2*(i!=k)+2*(j!=l)
+                    end
+                    key in seen && continue
+                    push!(seen,key)
+                    total += 1 << (nxy-1)
+                end
+            end
+        end
+        counts[worker] = total
+    end
+    sum(counts)
+end
+
+function count_2b_terms(msps_a, msps_b; same_species=true, emin=0, emax=100)
+    max(length(msps_a),length(msps_b)) <= typemax(UInt16) ||
+        throw(ArgumentError("packed orbital indices require at most 65535 states per species"))
+    maxJ = maximum(s.j for s in msps_a; init=0)+maximum(s.j for s in msps_b; init=0)
+    T = angular_mask_type(maxJ)
+    groups = coupled_pair_channels(msps_a,msps_b,same_species,emin,emax,T)
+    count_pair_channels(groups,length(msps_a),same_species)
+end
+
+function ppn_channels(msps_p, msps_n, emin, emax, e3min, e3max, ::Type{T}) where {T}
+    channels = [Dict{Tuple{Int,Int},Vector{CoupledPair{T}}}() for _ in msps_n]
+    for k in eachindex(msps_n)
+        c = msps_n[k]
+        emin <= c.e <= emax || continue
+        for i in eachindex(msps_p), j in (i+1):length(msps_p)
+            a,b = msps_p[i],msps_p[j]
+            emin <= a.e <= emax && emin <= b.e <= emax || continue
+            e3min <= a.e+b.e+c.e <= e3max || continue
+            mask = angular_mask(allowed_three_body_Js(a,b,c),T)
+            iszero(mask) && continue
+            group = get!(channels[k],(a.jz+b.jz+c.jz,(a.l+b.l+c.l)&1)) do
+                CoupledPair{T}[]
+            end
+            push!(group,CoupledPair{T}(i,j,mask))
+        end
+    end
+    channels
+end
+
+function count_ppn_channels(channels::Vector{Dict{Tuple{Int,Int},Vector{CoupledPair{T}}}}) where {T}
+    n = length(channels)
+    pairs = [(i,j) for i in 1:n for j in i:n]
+    workers = min(Threads.nthreads(),max(1,length(pairs)))
+    counts = zeros(Int128,workers)
+    @threads for worker in 1:workers
+        seen = Set{UInt64}()
+        total = Int128(0)
+        for pairidx in worker:workers:length(pairs)
+            ni,nj = pairs[pairidx]
+            empty!(seen)
+            for (key,bra) in channels[ni]
+                ket = get(channels[nj],key,nothing)
+                isnothing(ket) && continue
+                for ai in eachindex(bra), bi in (ni==nj ? ai+1 : 1):length(ket)
+                    a,b = bra[ai],ket[bi]
+                    iszero(a.Jmask & b.Jmask) && continue
+                    i,j,k,l = sorted_four(Int(a.i),Int(a.j),Int(b.i),Int(b.j))
+                    support = encode_4(i,j,k,l)
+                    support in seen && continue
+                    push!(seen,support)
+                    nxy_p = i<j<k<l ? 4 : (i==j && k==l) ? 0 : 2
+                    total += 1 << (nxy_p+2*(ni!=nj)-1)
+                end
+            end
+        end
+        counts[worker] = total
+    end
+    sum(counts)
+end
+
+function count_3b_ppn_terms(msps_p, msps_n; emin=0, emax=100, e3min=0, e3max=20)
+    length(msps_p) <= typemax(UInt16) || throw(ArgumentError("too many proton states for packed indices"))
+    maxJ = 2*maximum(s.j for s in msps_p;init=0)+maximum(s.j for s in msps_n;init=0)
+    T = angular_mask_type(maxJ)
+    channels = ppn_channels(msps_p,msps_n,emin,emax,e3min,e3max,T)
+    count_ppn_channels(channels)
+end
+
+function ppp_channels(msps, emin, emax, e3min, e3max, ::Type{T}) where {T}
+    channels = Dict{Tuple{Int,Int},Vector{CoupledTriple{T}}}()
+    for i in eachindex(msps), j in (i+1):length(msps), k in (j+1):length(msps)
+        a,b,c = msps[i],msps[j],msps[k]
+        all(s -> emin <= s.e <= emax,(a,b,c)) || continue
+        e3min <= a.e+b.e+c.e <= e3max || continue
+        mask = angular_mask(allowed_three_body_Js(a,b,c),T)
+        iszero(mask) && continue
+        group = get!(channels,(a.jz+b.jz+c.jz,(a.l+b.l+c.l)&1)) do
+            CoupledTriple{T}[]
+        end
+        push!(group,CoupledTriple{T}(i,j,k,mask))
+    end
+    collect(values(channels))
+end
+
+# Merge two sorted triples into a 96-bit multiset key; duplicates are spectators.
+@inline function triple_support(a,b)
+    x = (a.i,a.j,a.k)
+    y = (b.i,b.j,b.k)
+    i = j = 1
+    key = UInt128(0)
+    common = 0
+    while i <= 3 || j <= 3
+        if j > 3 || (i <= 3 && x[i] < y[j])
+            key = (key << 16) | UInt128(x[i]); i += 1
+        elseif i > 3 || y[j] < x[i]
+            key = (key << 16) | UInt128(y[j]); j += 1
+        else
+            key = (key << 16) | UInt128(x[i])
+            key = (key << 16) | UInt128(y[j])
+            i += 1; j += 1; common += 1
+        end
+    end
+    key, 6-2common
+end
+
+function count_ppp_channels(groups::Vector{Vector{CoupledTriple{T}}}, nfirst) where {T}
+    runs = first_index_runs(groups,nfirst)
+    workers = min(Threads.nthreads(),max(1,nfirst))
+    counts = zeros(Int128,workers)
+    @threads for worker in 1:workers
+        seen = Set{UInt128}()
+        total = Int128(0)
+        for first in worker:workers:nfirst
+            empty!(seen)
+            for (g,lo,hi) in runs[first]
+                states = groups[g]
+                for ai in lo:hi, bi in (ai+1):length(states)
+                    a,b = states[ai],states[bi]
+                    iszero(a.Jmask & b.Jmask) && continue
+                    support,nxy = triple_support(a,b)
+                    support in seen && continue
+                    push!(seen,support)
+                    total += 1 << (nxy-1)
+                end
+            end
+        end
+        counts[worker] = total
+    end
+    sum(counts)
+end
+
+function count_3b_ppp_terms(msps; emin=0, emax=100, e3min=0, e3max=20)
+    length(msps) <= typemax(UInt16) || throw(ArgumentError("too many states for packed indices"))
+    T = angular_mask_type(3*maximum(s.j for s in msps;init=0))
+    groups = ppp_channels(msps,emin,emax,e3min,e3max,T)
+    count_ppp_channels(groups,length(msps))
+end
 
 function generate_JW_endoded_NN_T1(
                       Nchunk::Int,
@@ -707,6 +1067,7 @@ function possible_2b_T1_terms!(Measurement_Basis,
                                emin::Int=0, emax::Int=100,                               
                                symmfactor::Int=1,
                                pp_bucket_mod::Int=1,
+                               use_fast_count::Bool=true,
                                ) 
 
     println("Processing pp-channel ...")
@@ -716,6 +1077,13 @@ function possible_2b_T1_terms!(Measurement_Basis,
 
     if pp_bucket_mod < 1
         error("pp_bucket_mod must be >= 1")
+    end
+
+    if use_fast_count && !write_pauli && !count_Ppattern && !count_gates_during_process && debug_mode == 0
+        nterms = count_2b_terms(msps_p,msps_p; emin,emax)
+        total = num_of_Hterms + nterms*symmfactor
+        println("# of pp terms: $(nterms) num_of_Hterms so far: ",total)
+        return total
     end
 
     num_of_T1terms = 0 
@@ -922,6 +1290,8 @@ function loop_over_pp_in_ppn!(ibra_n::Int, iket_n::Int,
                         continue
                     end
 
+                    Jbracket_check_3body(bra1, bra2, bra_n, ket1, ket2, ket_n) || continue
+
                     i, j, k, l = sort((ibra_1, ibra_2, iket_1, iket_2))
                     tkey = pp_pattern = encode_4(i, j, k, l)
                                   
@@ -1105,12 +1475,18 @@ function possible_2b_pn_terms_streaming!(num_of_Hterms,
                                          write_pauli::Bool;
                                          emin::Int=0, emax::Int=100,
                                          symmfactor::Int=1,
-                                         pn_bucket_mod::Int=1)
+                                         pn_bucket_mod::Int=1,
+                                         use_fast_count::Bool=true)
     n_qubits_p = length(msps_p)
     n_qubits_n = length(msps_n)
 
     if pn_bucket_mod < 1
         error("pn_bucket_mod must be >= 1")
+    end
+
+    if use_fast_count && !write_pauli
+        nterms = count_2b_terms(msps_p,msps_n; same_species=false,emin,emax)
+        return num_of_Hterms + nterms*symmfactor, nterms
     end
 
     local_set = Set{PauliMask{Nchunk}}()
@@ -1195,13 +1571,19 @@ function possible_3b_terms_parallel(Measurement_Basis,
                                     debug_mode::Int;
                                     emin::Int=0, emax::Int=100,
                                     e3min::Int=0, e3max::Int=20,
-                                    symfactor::Int=1)
+                                    symfactor::Int=1,
+                                    use_fast_count::Bool=true)
     n_qubits_p = length(msps_p)
     n_qubits_n = length(msps_n)
     n_qubits = n_qubits_p + n_qubits_n
 
     if Z >= 3
         println("Processing ppp channel ... ")
+        if use_fast_count && !write_pauli && debug_mode == 0
+            nterms = count_3b_ppp_terms(msps_p; emin,emax,e3min,e3max)
+            println("ppp done. #unique pauli terms = $(nterms)")
+            return num_of_Hterms + nterms*symfactor
+        end
         args = generate_ppp_args(msps_p, emin, emax, e3min, e3max, n_qubits)
         println(" Total #ppp tasks: $(length(args))")
         plock = Threads.SpinLock()
@@ -1752,80 +2134,41 @@ end
 
 
 """
-Julia code to estimate T-gate counts for nuclear shell model Hamiltonians.
+    count_hamiltonian_terms(config::CountConfig; verbose=false, use_fast_count=true)
 
-This code generates all possible Pauli term patterns arising from
-Jordan-Wigner transformed nuclear shell model Hamiltonians,
-including NN (either valence or no-core) and 3NF interactions.
+Return distinct Jordan-Wigner operator-pattern counts, including the identity.
+The same single-particle space is used for protons and neutrons, with all NN
+and (when requested) 3N channels included. No particle-number projection or
+interaction-specific coefficient cancellation is applied. Use `e3max` to
+truncate 3N matrix elements; NN terms retain the full active space.
 
-One can specify emax (maximum single-particle energy level), vemax (maximum valence energy level),
-and whether to include 3NF terms (is_3NF).
-
-Key assumptions behind our T-count estimates:
-- Each unique Pauli term is counted once toward the total T-count,
-  even if it appears multiple times in the Hamiltonian with different coefficients.
-- Exponential of each Pauli term is implemented by the ordinary method:
-  basis change (single-qubit unitaries) + Rz + basis change back.
-  If you have terms like X_0 Y_2 X_5, you will get 
-  basis change (on qubits 0,2,5) + Rz + basis change back + CX chains (6 in total).
-- Single Trotter step is assumed for the entire Hamiltonian.
-- Any compilation optimizations (e.g., term cancellations across Trotter steps)
-  are not considered in this estimation.
-- "Symmetric modelspaces" are assumed, i.e., proton and neutron modelspaces
-  have the same emax/vemax settings.
-- Regarding T-gate controlled Unitary operations:
-    - Single Toffoli gate decomposed into 4 T-gates.
-    - Ry gate decomposed into 100 T-gates. This could be further reduced, but we assume
-      angles are arbitrary here.
-- Note that a small portion of terms may be double-counted in this estimation,
-  such as ones cancelling out exactly due to symmetry.
-
-## Augments
-- `debug_mode`: 0=false, 1=> storing all terms to be measured by the MeasBasisGroup
+The default fast path does not materialize Pauli strings. `use_fast_count=false`
+is intended only for small-space comparisons with the reference enumeration.
 """
-function main(debug_mode::Int = 0)
+function count_hamiltonian_terms(config::CountConfig; verbose=false, use_fast_count=true)
+    if verbose
+        return _count_hamiltonian_terms(config; use_fast_count)
+    end
+    redirect_stdout(devnull) do
+        _count_hamiltonian_terms(config; use_fast_count)
+    end
+end
 
+function _count_hamiltonian_terms(config::CountConfig; debug_mode::Int=0,
+                                  use_fast_count=true, write_pauli=false,
+                                  count_Ppattern=false, count_gates_during_process=false)
     to = TimerOutput()
-    
-    ## Parameterscd
-    emax_specified = 10
-
-    is_3NF = !true
-    count_Ppattern = !true
-    
-    ## If you want to write out Pauli strings set write_pauli = true
-    write_pauli = !true
-    if write_pauli && ((is_3NF && emax_specified > 2) || emax_specified >= 3)
-        error("Currently, write_pauli option with emax > 2 for 3NF and emax > 3 for 2NF are not recommended")
-        write_pauli = false
+    params = model_space_parameters(config)
+    (; no_core, emax, e3min, e3max, is_3NF) = params
+    vemin, vemax = params.emin, params.emax_active
+    valence_space = config.valence_space
+    if write_pauli && ((is_3NF && emax > 2) || emax >= 3)
+        throw(ArgumentError("Pauli-string output is restricted to small spaces"))
     end
-
-    # Since the number of T-gates could be counted by the number of encoded Pauli terms,
-    # one usually does not need to count the gate-counts during the process.
-    # However, if you want to debug the counting process, one can choose to count gates
-    # during the process by setting count_gates_during_process = true.
-    count_gates_during_process = false
-    Tgate_per_Rz = 100 # T-gate count per Rz gate ~ 1.e-10 tolerance
-            
-    ## Specify nucleus. This is only used to limit interaction channels.
-    ## You should be aware of nn, nnp, and nnn part are not explicitly considered in this code,
-    ## If you want to nn, nnp, nnn channels, please evaluate them by counting pp/ppn/ppp and then read them as nn, nnp, nnn.
-    ## Do not specify like Z, N = (1, 2) to count "nn + pn + pnn". Try (2,1) instead.
-    Z, N = (3, 3)    
-    #Z, N = (1, 1)
-    #Z, N = (2, 1)
-    #Z, N = (2, 1) 
-    valence_space = ""  # e.g., "p", "sd", "pf", "sdpf", etc.; empty string for no-core
-    
-    ## Define model space parameters
-    no_core = ifelse(valence_space=="", true, false)
-    emax, vemin, vemax, e3min, e3max = ncsm_model_spaces(emax_specified, is_3NF)
-    if !no_core
-        emax, vemin, vemax, e3min, e3max, is_3NF = valence_model_spaces(valence_space)
-    end
+    count_only = use_fast_count && !write_pauli && !count_Ppattern && !count_gates_during_process && debug_mode == 0
+    # Include all channels; these values do not select a fixed-particle sector.
+    Z, N = (3, 3)
     io = select_io(write_pauli, no_core, emax, e3max, valence_space)
-
-    #e3max = emax_specified * 2
 
     ## Defining model space
     msps_p, msps_n = count_msps(emax, vemin, vemax)
@@ -1843,21 +2186,37 @@ function main(debug_mode::Int = 0)
     Measurement_Basis = Dict{NTuple{4, Int}, Vector{MeasBasisGroup{Nchunk}}}()
 
     ## ==== diagonal (I, Z,...) contributions from any channals =====
-    diag_terms = generate_diag_terms(msps_p, msps_n, emax, e3max, Z, N, is_3NF)
-    all_diag = Set{String}()
-    for k in keys(diag_terms)
-        union!(all_diag, diag_terms[k])
+    if count_only
+        diag_counts = count_diag_terms(msps_p,msps_n,e3max,Z,N,is_3NF)
+        num_of_diag_terms = sum(diag_counts)
+        num_of_Hterms += num_of_diag_terms
+        for (i,nterms) in enumerate(diag_counts)
+            println(" #diag terms with $(i-1) Z: $(nterms)")
+        end
+        println("[diag]: # of terms (total): $num_of_Hterms")
+    else
+        diag_terms = generate_diag_terms(msps_p, msps_n, emax, e3max, Z, N, is_3NF)
+        all_diag = Set{String}()
+        for k in keys(diag_terms)
+            union!(all_diag, diag_terms[k])
+        end
+        if count_Ppattern
+            update_MeasBasisGroup!(Measurement_Basis, all_diag, n_qubits)
+            println("group after diag terms: ", length(Measurement_Basis), " measurement basis groups")
+        end
+        write_pauli_terms(io, all_diag; label="diag: ")
+        if count_gates_during_process
+            Tcounts_add_sofar!(all_diag, vect_Tops)
+        end
+        num_of_Hterms += sum(length(diag_terms[k]) for k in keys(diag_terms))
+        println("[diag]: # of terms (total): $num_of_Hterms")
+
+        num_of_diag_terms = length(all_diag)
     end
-    if count_Ppattern
-        update_MeasBasisGroup!(Measurement_Basis, all_diag, n_qubits)
-        println("group after diag terms: ", length(Measurement_Basis), " measurement basis groups")
-    end    
-    write_pauli_terms(io, all_diag; label="diag: ")
-    if count_gates_during_process
-        Tcounts_add_sofar!(all_diag, vect_Tops)
-    end
-    num_of_Hterms += sum(length(diag_terms[k]) for k in keys(diag_terms))
-    println("[diag]: # of terms (total): $num_of_Hterms")
+
+    ## ==== off-diagonal one-body transitions =====
+    num_of_Hterms = possible_1b_terms(num_of_Hterms, msps_p, msps_n, Z, N, io, write_pauli;
+                                    emin=vemin, emax=vemax)
 
     ## ==== 2NF terms pp / nn =====
     if Z >= 2 || N >= 2
@@ -1867,7 +2226,7 @@ function main(debug_mode::Int = 0)
                                                   msps_p, msps_n, to, io, write_pauli,
                                                   Nchunk, is_3NF, count_Ppattern,
                                                   count_gates_during_process, debug_mode; 
-                                                  emin=vemin, emax=vemax, symmfactor=symfactor_2NF)
+                                                  emin=vemin, emax=vemax, symmfactor=symfactor_2NF, use_fast_count=count_only)
         end
     end
 
@@ -1878,7 +2237,7 @@ function main(debug_mode::Int = 0)
             num_of_Hterms, num_of_pn_terms = possible_2b_pn_terms_streaming!(
                 num_of_Hterms,
                 msps_p, msps_n, to, io, Nchunk, write_pauli;
-                emin=vemin, emax=vemax
+                emin=vemin, emax=vemax, use_fast_count=count_only
             )
             println("[diag+NN]: pn terms $(num_of_pn_terms), # of terms (total): $num_of_Hterms")
         end
@@ -1888,67 +2247,72 @@ function main(debug_mode::Int = 0)
     if is_3NF && Z >= 2 && N >= 1
         @timeit to "3NF (ppn)" begin
             symfactor_ppn = ifelse(Z >= 2 && N >=2, 2, 1)
-            @timeit to "gen.args" res_diag_n, res_nond_n = gen_ppn_tasks(msps_p, msps_n, vemin, vemax, e3min, e3max)
-            plock = ReentrantLock()
-            println("---\n\nProcessing ppn channel... tasks: $(length(res_diag_n)+length(res_nond_n)) ($(length(res_diag_n)) diag + $(length(res_nond_n)) nondiag)")
-            num_of_Hterms_ppn = 0
-            #@timeit to "diag_n" @threads for task in collect(keys(res_diag_n))
+            if count_only
+                num_of_Hterms_ppn = count_3b_ppn_terms(msps_p,msps_n;
+                    emin=vemin,emax=vemax,e3min=e3min,e3max=e3max)
+            else
+                @timeit to "gen.args" res_diag_n, res_nond_n = gen_ppn_tasks(msps_p, msps_n, vemin, vemax, e3min, e3max)
+                plock = ReentrantLock()
+                println("---\n\nProcessing ppn channel... tasks: $(length(res_diag_n)+length(res_nond_n)) ($(length(res_diag_n)) diag + $(length(res_nond_n)) nondiag)")
+                num_of_Hterms_ppn = 0
+                #@timeit to "diag_n" @threads for task in collect(keys(res_diag_n))
 
-            xp = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
-            zp = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
-            xn = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
-            zn = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
+                xp = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
+                zp = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
+                xn = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
+                zn = MVector{Nchunk, UInt64}(zeros(UInt64, Nchunk))
 
-            @timeit to "diag_n" for task in collect(keys(res_diag_n))
-                local_arr = String[ ]
-                zmask = BitVector(falses(n_qubits_n))
-                num_local_terms = 0
-                for (pp_pattern, n_pattern) in res_diag_n[task]    
-                    pp_idxs = decode_4(pp_pattern)
-                    n_idxs = decode_2(n_pattern)
-                    XY_pattern_4 = ifelse(n_idxs[1] == n_idxs[2], XY_patterns_ppn_4, XY_patterns_T1_4)
-                    num_local_terms += _worker_job_ppn!(local_arr, XY_pattern_4, pp_idxs, n_idxs, xp, zp, xn, zn, zmask,
-                                                        n_qubits_p, n_qubits_n, to, write_pauli)
+                @timeit to "diag_n" for task in collect(keys(res_diag_n))
+                    local_arr = String[ ]
+                    zmask = BitVector(falses(n_qubits_n))
+                    num_local_terms = 0
+                    for (pp_pattern, n_pattern) in res_diag_n[task]
+                        pp_idxs = decode_4(pp_pattern)
+                        n_idxs = decode_2(n_pattern)
+                        XY_pattern_4 = ifelse(n_idxs[1] == n_idxs[2], XY_patterns_ppn_4, XY_patterns_T1_4)
+                        num_local_terms += _worker_job_ppn!(local_arr, XY_pattern_4, pp_idxs, n_idxs, xp, zp, xn, zn, zmask,
+                                                            n_qubits_p, n_qubits_n, to, write_pauli)
+                    end
+                    if num_local_terms == 0
+                        continue
+                    end
+                    num_of_Hterms_ppn += num_local_terms
+                    # lock(plock) do
+                    #     if count_Ppattern
+                    #         update_MeasBasisGroup!(Measurement_Basis, local_set, n_qubits)
+                    #     end
+                    #     if count_gates_during_process
+                    #         vect_Tops .+= local_vect
+                    #     end
+                    #     if io != stdout
+                    #         write_pauli_terms(io, local_set; label="ppn: ")
+                    #     end
+                    # end
                 end
-                if num_local_terms == 0
-                    continue
-                end
-                num_of_Hterms_ppn += num_local_terms
-                # lock(plock) do
-                #     if count_Ppattern
-                #         update_MeasBasisGroup!(Measurement_Basis, local_set, n_qubits)
-                #     end
-                #     if count_gates_during_process
-                #         vect_Tops .+= local_vect
-                #     end
-                #     if io != stdout
-                #         write_pauli_terms(io, local_set; label="ppn: ")
-                #     end
-                # end
-            end
 
-            #@timeit to "nondiag_n" @threads for task in collect(keys(res_nond_n))
-            @timeit to "nondiag_n" for task in collect(keys(res_nond_n))
-                local_arr = String[ ]
-                zmask = BitVector(falses(n_qubits_n))
-                num_local_terms = 0
-                for (pp_pattern, n_pattern) in res_nond_n[task]
-                    pp_idxs = decode_4(pp_pattern)
-                    n_idxs = decode_2(n_pattern)
-                    XY_pattern_4 = ifelse(n_idxs[1] == n_idxs[2], XY_patterns_ppn_4, XY_patterns_T1_4)
-                    num_local_terms += _worker_job_ppn!(local_arr, XY_pattern_4, pp_idxs, n_idxs, xp, zp, xn, zn, 
-                                                        zmask, n_qubits_p, n_qubits_n, to, write_pauli)
+                #@timeit to "nondiag_n" @threads for task in collect(keys(res_nond_n))
+                @timeit to "nondiag_n" for task in collect(keys(res_nond_n))
+                    local_arr = String[ ]
+                    zmask = BitVector(falses(n_qubits_n))
+                    num_local_terms = 0
+                    for (pp_pattern, n_pattern) in res_nond_n[task]
+                        pp_idxs = decode_4(pp_pattern)
+                        n_idxs = decode_2(n_pattern)
+                        XY_pattern_4 = ifelse(n_idxs[1] == n_idxs[2], XY_patterns_ppn_4, XY_patterns_T1_4)
+                        num_local_terms += _worker_job_ppn!(local_arr, XY_pattern_4, pp_idxs, n_idxs, xp, zp, xn, zn,
+                                                            zmask, n_qubits_p, n_qubits_n, to, write_pauli)
+                    end
+                    num_of_Hterms_ppn += num_local_terms
+                    # lock(plock) do
+                    #     vect_Tops .+= local_vect
+                    #     if count_Ppattern
+                    #         update_MeasBasisGroup!(Measurement_Basis, local_set, n_qubits)
+                    #     end
+                    #     if io != stdout
+                    #         write_pauli_terms(io, local_set; label="ppn: ")
+                    #     end
+                    # end
                 end
-                num_of_Hterms_ppn += num_local_terms
-                # lock(plock) do
-                #     vect_Tops .+= local_vect
-                #     if count_Ppattern
-                #         update_MeasBasisGroup!(Measurement_Basis, local_set, n_qubits)
-                #     end
-                #     if io != stdout
-                #         write_pauli_terms(io, local_set; label="ppn: ")
-                #     end
-                # end
             end
             num_of_Hterms += num_of_Hterms_ppn * symfactor_ppn
             println("[diag+NN+ppn]: # of ppn terms $(num_of_Hterms_ppn), # of terms (total): $num_of_Hterms")
@@ -1963,34 +2327,12 @@ function main(debug_mode::Int = 0)
             num_of_Hterms_total = possible_3b_terms_parallel(Measurement_Basis, Nchunk, vect_Tops, num_of_Hterms,
                                                             Z, N, msps_p, msps_n, to, io, write_pauli, debug_mode;
                                                             emin=vemin, emax=vemax,
-                                                            e3min=e3min, e3max=e3max, symfactor=symfactor)
+                                                            e3min=e3min, e3max=e3max, symfactor=symfactor, use_fast_count=count_only)
             println("[NN+3NF]:", vect_Tops, " # of terms (ppp): $(div(num_of_Hterms_total-num_of_Hterms, symfactor)), total: $num_of_Hterms_total")
             num_of_Hterms = num_of_Hterms_total
         end
     end
 
-
-    dict_Tops = Dict{String,BigInt}("u"=>vect_Tops[1], "cx"=>vect_Tops[2], "T-estimate"=>vect_Tops[3])
-    if !count_gates_during_process
-        dict_Tops["T-estimate"] = (num_of_Hterms-1)*2 * Tgate_per_Rz
-    end
-
-    println("=== T-gate estimates for various algorithms ===")
-    single_T = get(dict_Tops, "T-estimate", 0)
-    Nq = n_qubits
-    Na = 10
-    fac = 2^Na - 1
-    println(@sprintf("T-estimate (QPE; Nq=%d, Na=%d):  %8.1e", Nq, Na, fac * single_T))
-
-    Niter = 50
-    Ncirq = num_of_Hterms
-    fac2 = Ncirq * Niter * (Niter^2 + Niter)
-    println(@sprintf("T-estimate (QKrylov; Niter=%d, Ncirq=%d):  %8.1e", Niter, Ncirq, big(fac2) * single_T))
-
-    Niter = 50
-    fac3 = Niter * (Niter + 1)
-    println(@sprintf("T-estimate (ODMD; Niter=%d):  %8.1e", Niter, fac3 * single_T))
-    print("Nh: ", num_of_Hterms, "   ")
 
      if count_Ppattern
         if N >= 2 
@@ -2035,13 +2377,93 @@ function main(debug_mode::Int = 0)
         println("  of which diag: $num_d, T1-like: $num_T1, pn-like: $num_pn")
     end
 
-    println("\n\n")
-    show(to);print("\n")
+    show(to); println()
+    write_pauli && close(io)
+    interaction_type = no_core ? (is_3NF ? "NN3NF" : "NN") : "valence NN"
+    modelspace = no_core ? (is_3NF ? "$(emax)_$(2emax)_$(e3max)" : "emax=$(emax)") : valence_space
+    return (; interaction_type, modelspace, nqubits=n_qubits,
+            nterms=BigInt(num_of_Hterms), izterms=BigInt(num_of_diag_terms),
+            emin=vemin, emax, e2max=2emax, e3max=is_3NF ? e3max : nothing)
+end
 
+# Retain the interactive, single-space diagnostic entry point.
+main(debug_mode::Int=0) = _count_hamiltonian_terms(CountConfig(); debug_mode)
+
+const COUNT_TSV_COLUMNS = ["Interaction-type", "modelspace", "Nq",
+    "T-estimates-controlled", "Num of Hterms", "IZterms", "emin", "emax", "e2max", "e3max",
+    "count_kind", "identity_included", "source_sha256", "julia_version", "threads", "Tgates_per_Rz"]
+
+function validate_count_results(results)
+    isempty(results) && throw(ArgumentError("No model spaces were requested"))
+    seen = Set{Tuple{String,String}}()
+    for r in results
+        key = (r.interaction_type, r.modelspace)
+        key in seen && throw(ArgumentError("Duplicate model space: $key"))
+        push!(seen, key)
+        all(x -> x isa Integer, (r.nqubits, r.nterms, r.izterms)) ||
+            throw(ArgumentError("Counts must be integers: $key"))
+        1 <= r.izterms <= r.nterms && r.nqubits > 0 ||
+            throw(ArgumentError("Inconsistent term counts: $key"))
+        nq = big(r.nqubits)
+        nn_diag = 1 + nq + binomial(nq, 2)
+        full_diag = nn_diag + (isnothing(r.e3max) ? 0 : binomial(nq, 3))
+        if isnothing(r.e3max) || r.e3max == 3r.emax
+            r.izterms == full_diag || error("Full-space diagonal count mismatch: $key")
+        else
+            nn_diag <= r.izterms <= full_diag || error("Truncated diagonal count mismatch: $key")
+        end
+    end
+    return results
+end
+
+"""Write a complete, validated TSV using a temporary file in the same directory.
+The legacy T column is 2*(N_H-1)*100 for one controlled Trotter step; algorithm
+costs and rotation-precision choices are evaluated in the analysis notebook.
+"""
+function write_count_tsv(results, output_path::AbstractString=OUTPUT_TSV)
+    validate_count_results(results)
+    source_sha256 = bytes2hex(open(sha256, @__FILE__))
+    path = abspath(output_path)
+    mkpath(dirname(path))
+    temp_path, io = mktemp(dirname(path))
+    try
+        println(io, join(COUNT_TSV_COLUMNS, '\t'))
+        for r in results
+            values = (r.interaction_type, r.modelspace, r.nqubits,
+                2big(LEGACY_TGATES_PER_RZ)*(r.nterms-1), r.nterms, r.izterms,
+                r.emin, r.emax, r.e2max, isnothing(r.e3max) ? "" : r.e3max,
+                "symmetry_structural", true, source_sha256, VERSION, nthreads(), LEGACY_TGATES_PER_RZ)
+            println(io, join(values, '\t'))
+        end
+        close(io)
+        # Same-filesystem rename replaces the old file only after a successful write.
+        Base.Filesystem.rename(temp_path, path)
+    finally
+        isopen(io) && close(io)
+        ispath(temp_path) && rm(temp_path)
+    end
+    return path
+end
+
+"""Count every configured space in one process, then replace the TSV on success."""
+function export_counts(configs=configured_spaces(); output_path=OUTPUT_TSV, progress=true)
+    isempty(configs) && throw(ArgumentError("No model spaces were requested"))
+    foreach(model_space_parameters, configs)  # Reject invalid settings before counting.
+    results = map(configs) do config
+        started = time_ns()
+        result = count_hamiltonian_terms(config)
+        if progress
+            @printf(stderr, "%s %-10s Nq=%4d N_H=%s IZ=%s (%.2f s)\n",
+                    result.interaction_type, result.modelspace, result.nqubits,
+                    string(result.nterms), string(result.izterms), (time_ns()-started)/1e9)
+        end
+        result
+    end
+    path = write_count_tsv(results, output_path)
+    progress && println(stderr, "Wrote $(length(results)) model spaces to $path")
+    return results
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    main()
-    #@profilehtml main()
+    export_counts()
 end
-

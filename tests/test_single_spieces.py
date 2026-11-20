@@ -51,8 +51,8 @@ def test_pshell_ckpot_lowest_filling(Eref=-18.69821):
 def test_NCSM_NN3N_Hamil():
 
     emax = e3max = 1
-    fn_snt = int_dir + f"TwBME-HO_NN-only_N3LO_EM500_srg1.8_hw20_emax{emax}_e2max{emax*2}.kshell.snt"
-    fn_3NF = int_dir + "ThBME_lnl_ms1_2_1.readable.txt"    
+    fn_snt = int_dir + f"TwBME-HO_NN-only_N3LO_EM500_srg2.0_hw20_emax{emax}_e2max{emax*2}.kshell.snt"
+    fn_3NF = int_dir + "ThBME_srg2.0_ramp40-5-36-7-32-9-28-11-24_N3LO_EM500_c1_-0.81_c3_-3.2_c4_5.4_cD_0.7_cE_-0.06_LNL2_650_500_IS_hw20from30_ms1_2_1.me3j.gz"
     
     nuc = "3n"
     Z = 0
@@ -73,7 +73,10 @@ def test_NCSM_NN3N_Hamil():
 
     obj_Diag = Diagonalize_Hamiltonian(H_mapped, hamil, Z, N, target_parity, hamil.core_p, hamil.core_n)
     Ens_exact = obj_Diag["evals"]
-    Href = [24.61611688, 28.81430013, 40.29680743, 41.36242406, 41.46721527, 42.64558134, 49.64463354]
+    Href = [
+        24.61348634, 28.91943721, 40.30246349, 41.36536075,
+        41.50407100, 42.68053007, 49.77167448,
+    ]
     Jref = [1.5, 0.5, 1.5, 2.5, 0.5, 1.5, 1.5]
 
     assert np.allclose(np.sort(Ens_exact), np.sort(Href))

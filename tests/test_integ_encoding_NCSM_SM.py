@@ -86,8 +86,9 @@ def test_valence_16O(filename_snt=int_dir+"ckpot.snt",
     print("E_meas: ", E_meas)
     assert abs(E_meas - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_meas}"
     
-def test_ncsm_2n_emax0(Eref=5.90409, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg1.8_hw20_emax0_e2max0.kshell.snt"):
-    print("\nTesting NCSM hamiltonian for 2n in the 0p-shell. Now using EM500 hw20 SRG(1.8) emax=0.")
+# NCSM references below use SRG 2.0, with energies in MeV.
+def test_ncsm_2n_emax0(Eref=5.88041872, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg2.0_hw20_emax0_e2max0.kshell.snt"):
+    print("\nTesting NCSM hamiltonian for 2n in the 0s shell. Now using EM500 hw20 SRG(2.0) emax=0.")
     Z = 0
     N = 2
     hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, verbose=False)
@@ -108,8 +109,8 @@ def test_ncsm_2n_emax0(Eref=5.90409, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO
     print("E_meas: ", E_meas)
     assert abs(E_meas - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_meas}"
 
-def test_ncsm_4He_emax0(Eref=-22.99767, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg1.8_hw20_emax0_e2max0.kshell.snt"):
-    print("\nTesting NCSM hamiltonian for 4He in the 0p-shell. Now using EM500 hw20 SRG(1.8) emax=0.")
+def test_ncsm_4He_emax0(Eref=-21.01752966, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg2.0_hw20_emax0_e2max0.kshell.snt"):
+    print("\nTesting NCSM hamiltonian for 4He in the 0s shell. Now using EM500 hw20 SRG(2.0) emax=0.")
     Z = proton_number = 2
     N = neutron_number = 2
     hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, verbose=False)
@@ -131,8 +132,8 @@ def test_ncsm_4He_emax0(Eref=-22.99767, filename_snt=int_dir+"TwBME-HO_NN-only_N
     print("E_meas: ", E_meas)
     assert abs(E_meas - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_meas}"
 
-def test_ncsm_16O_emax1(Eref=-148.36879, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg1.8_hw20_emax1_e2max2.kshell.snt"):
-    print("\nTesting NCSM hamiltonian for 16O in the 0p-shell. Now using EM500 hw20 SRG(1.8) emax=1.")
+def test_ncsm_16O_emax1(Eref=-131.41511746, filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg2.0_hw20_emax1_e2max2.kshell.snt"):
+    print("\nTesting NCSM hamiltonian for 16O in the 0s and 0p shells. Now using EM500 hw20 SRG(2.0) emax=1.")
     Z = proton_number = 8
     N = neutron_number = 8
     hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, verbose=False)
@@ -156,11 +157,11 @@ def test_ncsm_16O_emax1(Eref=-148.36879, filename_snt=int_dir+"TwBME-HO_NN-only_
     results = job.result()
     E_meas = results[0].data.evs
     print("E_meas: ", E_meas)
-    assert abs(E_meas - -148.36879) < 1e-5, f"Expected energy: -22.99767, got: {E_meas}"
+    assert abs(E_meas - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_meas}"
 
-def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565, 
-                              filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg1.8_hw20_emax1_e2max2.kshell.snt",
-                              fn_3NF=int_dir+"ThBME_lnl_ms1_2_1.readable.txt"):
+def test_ncsm_16O_emax1_NN3NF(Eref=-114.88364625,
+                              filename_snt=int_dir+"TwBME-HO_NN-only_N3LO_EM500_srg2.0_hw20_emax1_e2max2.kshell.snt",
+                              fn_3NF=int_dir+"ThBME_srg2.0_ramp40-5-36-7-32-9-28-11-24_N3LO_EM500_c1_-0.81_c3_-3.2_c4_5.4_cD_0.7_cE_-0.06_LNL2_650_500_IS_hw20from30_ms1_2_1.me3j.gz"):
     emax = 1
     Z = proton_number  = N = neutron_number = 8
     hamil = Hamiltonian(filename_snt, Z, N, ncsm=True, verbose=False, emax_truncate=emax,
@@ -170,7 +171,7 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     Hdict_M = hamil.get_mscheme_H(opform=True)
     print("mapping_opform...")
     H_1b_p, H_1b_n, H_jz_p, H_jz_n, H_pp, H_nn, H_pn, H_3b = hamil.mapping_opform(mapping_method)
-    print("2NF done!")
+    print("NN+3NF mapping done!")
     Hamil_NCSM_NN = H_1b_p + H_1b_n
     if Z >= 2:
         Hamil_NCSM_NN += H_pp
@@ -179,10 +180,7 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     if Z >= 1 and N >= 1:
         Hamil_NCSM_NN += H_pn
 
-    print("set_mscheme_3NF...")
-    hamil.set_mscheme_3NF()
-    print("mapping_3NF_Mscheme...")
-    H_3b = hamil.mapping_3NF_Mscheme()
+    # mapping_opform() already returns H_3b.
 
     n_qubits = hamil.n_qubits
     proton_qubits = list(range(0, hamil.n_qubits_p))
@@ -201,5 +199,11 @@ def test_ncsm_16O_emax1_NN3NF(Eref=-131.83565,
     print("E_1b: ", E_1b, "<pp>", E_pp, "<nn>", E_nn, "<pn>", E_pn, "<3b>", E_3n)
     print("# of paulis in H2b/H3b:", len(Hamil_NCSM_NN.paulis), len(H_3b.paulis))
     print("")
+    # Every mode is occupied, so the direct three-body expectation is the
+    # sum of canonical diagonal matrix elements, without a 1/36 factor.
+    E_3n_direct = sum(float(value) for key, value in hamil.v3b_Mscheme.items()
+                      if key[:3] == key[3:])
+    assert E_3n == pytest.approx(E_3n_direct, rel=0.0, abs=1e-8)
+    assert E_3n == pytest.approx(16.53147120976073, rel=0.0, abs=1e-8)
     assert abs(E_total - Eref) < 1e-5, f"Expected energy: {Eref}, got: {E_total}"
 

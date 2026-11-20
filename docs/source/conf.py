@@ -3,6 +3,7 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import sys
+import tomllib
 import os
 from pathlib import Path
 sys.path.insert(0, str(Path('..', 'src').resolve()))
@@ -14,7 +15,8 @@ sys.path.insert(0, str(Path('..', 'src').resolve()))
 project = 'NuQuLib'
 copyright = '2026, Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi'
 author = 'Sota Yoshida, Ermal Rrapaj, Takayuki Miyagi'
-release = '0.1.0'
+with (Path(__file__).resolve().parents[2] / "pyproject.toml").open("rb") as project_file:
+    release = tomllib.load(project_file)["project"]["version"]
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
