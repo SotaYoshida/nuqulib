@@ -10,7 +10,7 @@ using StaticArrays
 
 # Edit these settings, then run: julia --threads=2 misc/counting_Hamiltonian_terms.jl
 # The batch counts operator patterns, not nonzero coefficients of a specific interaction.
-const VALENCE_SPACES = ["p", "sd", "pf", "psd", "sdpf", "pfsdg"]
+const VALENCE_SPACES = ["p", "sd", "pf", "psd", "sdpf", "sdpfsdg"]
 const NN_EMAX_VALUES = 0:10
 const NN3N_EMAX_VALUES = 1:4
 e3max_for(emax) = 3 * emax
