@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.diagonalization - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.diagonalization - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,10 +225,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.diagonalization</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Functions to diagonalize nuclear Hamiltonians</span>
+<span></span><span class="sd">"""Functions to diagonalize nuclear Hamiltonians</span>
 
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.quantum_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparsePauliOp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.nuclear_hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hamiltonian</span>
@@ -244,7 +244,7 @@
 <span class="n">Pauli_X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
 <span class="n">Pauli_Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
 <span class="n">Pauli_Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-<span class="n">pauli_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="n">Pauli_I</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">Pauli_X</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">Pauli_Y</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="n">Pauli_Z</span><span class="p">}</span>
+<span class="n">pauli_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'I'</span><span class="p">:</span> <span class="n">Pauli_I</span><span class="p">,</span> <span class="s1">'X'</span><span class="p">:</span> <span class="n">Pauli_X</span><span class="p">,</span> <span class="s1">'Y'</span><span class="p">:</span> <span class="n">Pauli_Y</span><span class="p">,</span> <span class="s1">'Z'</span><span class="p">:</span> <span class="n">Pauli_Z</span><span class="p">}</span>
 
 <div class="viewcode-block" id="Diagonalize_Hamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.Diagonalize_Hamiltonian">[docs]</a>
@@ -257,9 +257,9 @@
         <span class="n">Nc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">calc_J2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">use_basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NPM&quot;</span><span class="p">,</span>
+        <span class="n">use_basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"NPM"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Diagonalize a mapped Hamiltonian in a particle-number projected basis.</span>
+<span class="w">    </span><span class="sd">"""Diagonalize a mapped Hamiltonian in a particle-number projected basis.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        Hamil_mapped (SparsePauliOp): Qubit Hamiltonian to diagonalize.</span>
@@ -274,21 +274,21 @@
 <span class="sd">            values in the eigenvectors.</span>
 <span class="sd">        verbose (bool, optional): If True, print basis and diagonalization</span>
 <span class="sd">            details.</span>
-<span class="sd">        use_basis (str, optional): Basis projection mode. ``&quot;NPM&quot;`` fixes</span>
-<span class="sd">            particle number, parity, and M; ``&quot;NP&quot;`` fixes particle number and</span>
+<span class="sd">        use_basis (str, optional): Basis projection mode. ``"NPM"`` fixes</span>
+<span class="sd">            particle number, parity, and M; ``"NP"`` fixes particle number and</span>
 <span class="sd">            parity; any other value uses the full computational basis.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: Diagonalization results, including basis, projected Hamiltonian,</span>
 <span class="sd">        eigenvalues, eigenvectors, and optionally ``J^2`` data.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">target_parity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parity should be ±1&quot;</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">target_parity</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"parity should be ±1"</span>
     <span class="n">n_qubit_p</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits_p</span>
     <span class="n">n_qubit_n</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">n_qubits_n</span>
     <span class="n">Mtot</span> <span class="o">=</span> <span class="p">(</span><span class="n">Z</span><span class="o">+</span><span class="n">N</span><span class="o">-</span><span class="n">Zc</span><span class="o">-</span><span class="n">Nc</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Z = </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">, N = </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">, Zc = </span><span class="si">{</span><span class="n">Zc</span><span class="si">}</span><span class="s2">, Nc = </span><span class="si">{</span><span class="n">Nc</span><span class="si">}</span><span class="s2">, Mtot = </span><span class="si">{</span><span class="n">Mtot</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="c1"># For neutron-only cases, we can treat them as &quot;protons&quot; in the code by swapping Z/N and setting N to zero.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Z = </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">, N = </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">, Zc = </span><span class="si">{</span><span class="n">Zc</span><span class="si">}</span><span class="s2">, Nc = </span><span class="si">{</span><span class="n">Nc</span><span class="si">}</span><span class="s2">, Mtot = </span><span class="si">{</span><span class="n">Mtot</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># For neutron-only cases, we can treat them as "protons" in the code by swapping Z/N and setting N to zero.</span>
     <span class="c1"># This allows us to reuse the same basis generation and Hamiltonian construction logic without needing separate code paths for neutron-only systems.</span>
     <span class="k">if</span> <span class="n">hamil</span><span class="o">.</span><span class="n">single_spiecies</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>        
         <span class="n">Z</span> <span class="o">=</span> <span class="n">N</span>
@@ -296,37 +296,37 @@
         <span class="n">n_qubit_p</span><span class="p">,</span> <span class="n">n_qubit_n</span> <span class="o">=</span> <span class="n">n_qubit_n</span><span class="p">,</span> <span class="n">n_qubit_p</span>
 
     <span class="c1"># Generate the M-projected basis states and the corresponding Hamiltonian matrix in that basis</span>
-    <span class="k">if</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">&quot;NPM&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">"NPM"</span><span class="p">:</span>
         <span class="n">basis</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">fixed_N_P_M_basis</span><span class="p">(</span><span class="n">n_qubit_p</span><span class="p">,</span> <span class="n">n_qubit_n</span><span class="p">,</span> <span class="n">Z</span><span class="o">-</span><span class="n">Zc</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="n">Nc</span><span class="p">,</span>
                                          <span class="n">hamil</span><span class="o">.</span><span class="n">msps</span><span class="p">,</span> <span class="n">target_parity</span><span class="p">,</span> <span class="n">Mtot</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">&quot;NP&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">"NP"</span><span class="p">:</span>
         <span class="n">basis</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">fixed_N_P_basis</span><span class="p">(</span><span class="n">n_qubit_p</span><span class="p">,</span> <span class="n">n_qubit_n</span><span class="p">,</span> <span class="n">Z</span><span class="o">-</span><span class="n">Zc</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="n">Nc</span><span class="p">,</span> <span class="n">target_parity</span><span class="p">,</span> <span class="n">hamil</span><span class="o">.</span><span class="n">msps</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">basis</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n_qubit_p</span> <span class="o">+</span> <span class="n">n_qubit_n</span><span class="p">)))</span>
         <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basis</span><span class="p">)}</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total qubits (p+n): </span><span class="si">{</span><span class="n">n_qubit_p</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n_qubit_n</span><span class="si">}</span><span class="s2">, Protons: </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">, Neutrons: </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;basis generated </span><span class="si">{</span><span class="n">basis</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total qubits (p+n): </span><span class="si">{</span><span class="n">n_qubit_p</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n_qubit_n</span><span class="si">}</span><span class="s2">, Protons: </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">, Neutrons: </span><span class="si">{</span><span class="n">N</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"basis generated </span><span class="si">{</span><span class="n">basis</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">Hsub</span> <span class="o">=</span> <span class="n">Mprojected_hamiltonian</span><span class="p">(</span><span class="n">Hamil_mapped</span><span class="p">,</span> <span class="n">n_qubit_p</span><span class="p">,</span> <span class="n">n_qubit_n</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4000</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Large dimension in diagonalization:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;One may consider to use Krylov subspace methods.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Large dimension in diagonalization:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"One may consider to use Krylov subspace methods."</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Diagonalizing the Hamiltonian...&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Diagonalizing the Hamiltonian..."</span><span class="p">)</span>
     <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">Hsub</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">&quot;NPM&quot;</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dim. (N・M・P-projected; M=</span><span class="si">{</span><span class="n">Mtot</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="n">use_basis</span> <span class="o">==</span> <span class="s2">"NPM"</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dim. (N・M・P-projected; M=</span><span class="si">{</span><span class="n">Mtot</span><span class="si">}</span><span class="s2">):"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">))</span>
 
     <span class="c1"># Sort idxs by their contribution to ground state energy</span>
     <span class="n">idxs_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">evecs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;basis&quot;</span><span class="p">:</span> <span class="n">basis</span><span class="p">,</span>
-        <span class="s2">&quot;Hsub&quot;</span><span class="p">:</span> <span class="n">Hsub</span><span class="p">,</span>
-        <span class="s2">&quot;evals&quot;</span><span class="p">:</span> <span class="n">evals</span><span class="p">,</span>
-        <span class="s2">&quot;idxs_sorted&quot;</span><span class="p">:</span> <span class="n">idxs_sorted</span><span class="p">,</span>
-        <span class="s2">&quot;evecs&quot;</span><span class="p">:</span> <span class="n">evecs</span><span class="p">,</span>
-        <span class="s2">&quot;Mtot&quot;</span><span class="p">:</span> <span class="n">Mtot</span><span class="p">,</span>
+        <span class="s2">"basis"</span><span class="p">:</span> <span class="n">basis</span><span class="p">,</span>
+        <span class="s2">"Hsub"</span><span class="p">:</span> <span class="n">Hsub</span><span class="p">,</span>
+        <span class="s2">"evals"</span><span class="p">:</span> <span class="n">evals</span><span class="p">,</span>
+        <span class="s2">"idxs_sorted"</span><span class="p">:</span> <span class="n">idxs_sorted</span><span class="p">,</span>
+        <span class="s2">"evecs"</span><span class="p">:</span> <span class="n">evecs</span><span class="p">,</span>
+        <span class="s2">"Mtot"</span><span class="p">:</span> <span class="n">Mtot</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">if</span> <span class="n">calc_J2</span><span class="p">:</span>
         <span class="n">J2sub</span> <span class="o">=</span> <span class="n">total_angular_momentum_squared_matrix</span><span class="p">(</span>
@@ -334,9 +334,9 @@
         <span class="p">)</span>
         <span class="n">J2_expect</span> <span class="o">=</span> <span class="n">expectation_values</span><span class="p">(</span><span class="n">J2sub</span><span class="p">,</span> <span class="n">evecs</span><span class="p">)</span>
         <span class="n">J_values</span> <span class="o">=</span> <span class="n">angular_momentum_from_J2</span><span class="p">(</span><span class="n">J2_expect</span><span class="p">)</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;J2sub&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">J2sub</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;J2_expect&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">J2_expect</span>
-        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;Jvals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">J_values</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"J2sub"</span><span class="p">]</span> <span class="o">=</span> <span class="n">J2sub</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"J2_expect"</span><span class="p">]</span> <span class="o">=</span> <span class="n">J2_expect</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"Jvals"</span><span class="p">]</span> <span class="o">=</span> <span class="n">J_values</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
@@ -344,7 +344,7 @@
 <div class="viewcode-block" id="fixed_N_P_M_basis_neutron">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.fixed_N_P_M_basis_neutron">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fixed_N_P_M_basis_neutron</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">n_particles</span><span class="p">,</span> <span class="n">msps</span><span class="p">,</span> <span class="n">parity</span><span class="p">,</span> <span class="n">M_tot</span><span class="p">):</span> <span class="c1"># M is doubled</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate neutron-only basis states with fixed N, parity, and doubled M.</span>
+<span class="w">    </span><span class="sd">"""Generate neutron-only basis states with fixed N, parity, and doubled M.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n_qubits (int): Number of neutron qubits.</span>
@@ -355,7 +355,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[list[int], dict[int, int]]: Basis states and state-to-row index.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n_qubits</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">bit_count</span><span class="p">()</span> <span class="o">==</span> <span class="n">n_particles</span><span class="p">:</span>
@@ -370,8 +370,8 @@
                 <span class="n">parity_</span> <span class="o">*=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">msps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">l</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">Mz</span> <span class="o">==</span> <span class="n">M_tot</span> <span class="ow">and</span> <span class="n">parity_</span> <span class="o">==</span> <span class="n">parity</span><span class="p">:</span>
                 <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-                <span class="c1"># bitstr = format(s, f&#39;0{n_qubits}b&#39;)</span>
-                <span class="c1"># print(&quot;M(OK)?:&quot;, bitstr)</span>
+                <span class="c1"># bitstr = format(s, f'0{n_qubits}b')</span>
+                <span class="c1"># print("M(OK)?:", bitstr)</span>
     <span class="n">index</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basis</span><span class="p">)}</span>
     <span class="k">return</span> <span class="n">basis</span><span class="p">,</span> <span class="n">index</span></div>
 
@@ -380,7 +380,7 @@
 <div class="viewcode-block" id="Mprojected_hamiltonian_single">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.Mprojected_hamiltonian_single">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Mprojected_hamiltonian_single</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Project a single-species Pauli Hamiltonian onto a fixed basis.</span>
+<span class="w">    </span><span class="sd">"""Project a single-species Pauli Hamiltonian onto a fixed basis.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        hamiltonian (SparsePauliOp): Pauli Hamiltonian acting on one species.</span>
@@ -390,7 +390,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: Dense Hermitian Hamiltonian matrix in the projected basis.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
     <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">hamiltonian</span><span class="o">.</span><span class="n">coeffs</span>
@@ -414,11 +414,11 @@
                            <span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
                            <span class="n">basis</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                            <span class="n">index</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Build the M-projected Hamiltonian for a Hamiltonian whose Pauli strings may</span>
 <span class="sd">    act on protons, neutrons, or both. Treat proton and neutron parts independently</span>
 <span class="sd">    by padding shorter Pauli labels appropriately.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
     <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">hamiltonian</span><span class="o">.</span><span class="n">coeffs</span>
@@ -440,9 +440,9 @@
 <div class="viewcode-block" id="fixed_N_P_basis">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.fixed_N_P_basis">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fixed_N_P_basis</span><span class="p">(</span><span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_parity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msps</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate basis states with fixed proton number Z and neutron number N, without parity or M projection.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span><span class="p">)):</span>
         <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">bit_count</span><span class="p">()</span> <span class="o">==</span> <span class="n">Z</span> <span class="o">+</span> <span class="n">N</span><span class="p">:</span> <span class="c1"># A check</span>
@@ -472,10 +472,10 @@
                       <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
                       <span class="n">msps</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">parity</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                       <span class="n">M_tot</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span> 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate basis states with fixed proton number Z, neutron number N,</span>
 <span class="sd">    parity, and total M. Note that M is assumed to be doubled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span><span class="p">)):</span>
         <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">bit_count</span><span class="p">()</span> <span class="o">==</span> <span class="n">Z</span> <span class="o">+</span> <span class="n">N</span><span class="p">:</span> <span class="c1"># A check</span>
@@ -486,7 +486,7 @@
                 <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">Zcount</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;s </span><span class="si">{</span><span class="nb">format</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> has Zcount </span><span class="si">{</span><span class="n">Zcount</span><span class="si">}</span><span class="s2"> (target </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"s </span><span class="si">{</span><span class="nb">format</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="sa">f</span><span class="s1">'0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b'</span><span class="p">)</span><span class="si">}</span><span class="s2"> has Zcount </span><span class="si">{</span><span class="n">Zcount</span><span class="si">}</span><span class="s2"> (target </span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">Zcount</span> <span class="o">!=</span> <span class="n">Z</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -517,16 +517,16 @@
     <span class="n">msps</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="n">M_tot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the J^2 matrix in the fixed-M M-scheme basis.</span>
+<span class="w">    </span><span class="sd">"""Build the J^2 matrix in the fixed-M M-scheme basis.</span>
 
 <span class="sd">    The single-particle angular momenta in ``msps`` are assumed to use the</span>
 <span class="sd">    doubled convention: ``j=2J`` and ``jz=2M``.  The returned matrix is in</span>
 <span class="sd">    physical units, so an eigenstate with angular momentum J has eigenvalue</span>
 <span class="sd">    J(J+1).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">msps</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;n_qubits_p + n_qubits_n must match the number of single-particle states.&quot;</span>
+            <span class="s2">"n_qubits_p + n_qubits_n must match the number of single-particle states."</span>
         <span class="p">)</span>
 
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
@@ -540,7 +540,7 @@
         <span class="n">state_Mtot</span> <span class="o">=</span> <span class="n">_state_Mtot</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">msps</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">state_Mtot</span> <span class="o">!=</span> <span class="n">M_tot</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;All basis states must have fixed M_tot=</span><span class="si">{</span><span class="n">M_tot</span><span class="si">}</span><span class="s2">, but found </span><span class="si">{</span><span class="n">state_Mtot</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"All basis states must have fixed M_tot=</span><span class="si">{</span><span class="n">M_tot</span><span class="si">}</span><span class="s2">, but found </span><span class="si">{</span><span class="n">state_Mtot</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">M_tot</span> <span class="o">/</span> <span class="mf">2.0</span>
     <span class="n">diagonal_M_part</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="p">(</span><span class="n">M</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
@@ -568,11 +568,11 @@
 <div class="viewcode-block" id="expectation_values">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.expectation_values">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">expectation_values</span><span class="p">(</span><span class="n">operator_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return &lt;psi|O|psi&gt; for one state vector or column-wise state vectors.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Return &lt;psi|O|psi&gt; for one state vector or column-wise state vectors."""</span>
     <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">states</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">operator_matrix</span> <span class="o">@</span> <span class="n">states</span><span class="p">))</span>
-    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ij-&gt;j&quot;</span><span class="p">,</span> <span class="n">states</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span> <span class="n">operator_matrix</span> <span class="o">@</span> <span class="n">states</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">"ij,ij-&gt;j"</span><span class="p">,</span> <span class="n">states</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span> <span class="n">operator_matrix</span> <span class="o">@</span> <span class="n">states</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
 
 
@@ -580,7 +580,7 @@
 <div class="viewcode-block" id="angular_momentum_from_J2">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.angular_momentum_from_J2">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">angular_momentum_from_J2</span><span class="p">(</span><span class="n">J2_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert J(J+1) values to the corresponding effective J.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert J(J+1) values to the corresponding effective J."""</span>
     <span class="n">J2_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">J2_values</span><span class="p">))</span>
     <span class="n">J2_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">J2_values</span><span class="p">)</span>
     <span class="n">J2_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">J2_real</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">J2_real</span><span class="p">)</span>
@@ -591,7 +591,7 @@
 <div class="viewcode-block" id="apply_pauli_string_single">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.apply_pauli_string_single">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_pauli_string_single</span><span class="p">(</span><span class="n">pauli</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">complex</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply one Pauli string to an integer-encoded basis state.</span>
+<span class="w">    </span><span class="sd">"""Apply one Pauli string to an integer-encoded basis state.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        pauli (str): Pauli label ordered as a Qiskit label.</span>
@@ -600,20 +600,20 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[int, complex]: New basis state and accumulated phase.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">phase</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span>
     <span class="n">new_state</span> <span class="o">=</span> <span class="n">state</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pauli</span><span class="p">):</span>
         <span class="n">bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">state</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">n_qubits</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">&#39;I&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">'I'</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">&#39;Z&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">'Z'</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">phase</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">'X'</span><span class="p">:</span>
             <span class="n">new_state</span> <span class="o">^=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n_qubits</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="s1">'Y'</span><span class="p">:</span>
             <span class="n">new_state</span> <span class="o">^=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">n_qubits</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">))</span>
             <span class="n">phase</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">)</span>
 
@@ -623,7 +623,7 @@
 <div class="viewcode-block" id="apply_pauli_string_pn">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.diagonalization.apply_pauli_string_pn">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_pauli_string_pn</span><span class="p">(</span><span class="n">pauli</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a proton-neutron Pauli string to an integer-encoded basis state.</span>
+<span class="w">    </span><span class="sd">"""Apply a proton-neutron Pauli string to an integer-encoded basis state.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        pauli (str): Pauli label with neutron part followed by proton part.</span>
@@ -634,9 +634,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple[int, complex]: New combined state and accumulated phase.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">n_state</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span> <span class="o">&gt;&gt;</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span>
-    <span class="n">p_state</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n_qubits_p</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">n_state</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span> <span class="o">&gt;&gt;</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'0</span><span class="si">{</span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b'</span><span class="p">)</span>
+    <span class="n">p_state</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n_qubits_p</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="sa">f</span><span class="s1">'0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="si">}</span><span class="s1">b'</span><span class="p">)</span>
 
     <span class="n">pauli_on_n</span> <span class="o">=</span> <span class="n">pauli</span><span class="p">[:</span><span class="n">n_qubits_n</span><span class="p">]</span>
     <span class="n">pauli_on_p</span> <span class="o">=</span> <span class="n">pauli</span><span class="p">[</span><span class="n">n_qubits_n</span><span class="p">:]</span>
@@ -647,9 +647,9 @@
     <span class="n">phase</span> <span class="o">=</span> <span class="n">phase_p</span> <span class="o">*</span> <span class="n">phase_n</span>
 
     <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
-        <span class="n">ini_str</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span>
-        <span class="n">new_str</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">new_state</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">pauli</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">ini_str</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_str</span><span class="si">}</span><span class="s2"> phase: </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> &lt;= phase_p: </span><span class="si">{</span><span class="n">phase_p</span><span class="si">}</span><span class="s2">, phase_n: </span><span class="si">{</span><span class="n">phase_n</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ini_str</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b'</span><span class="p">)</span>
+        <span class="n">new_str</span> <span class="o">=</span> <span class="nb">format</span><span class="p">(</span><span class="n">new_state</span><span class="p">,</span> <span class="sa">f</span><span class="s1">'0</span><span class="si">{</span><span class="n">n_qubits_p</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">n_qubits_n</span><span class="si">}</span><span class="s1">b'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">pauli</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">ini_str</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_str</span><span class="si">}</span><span class="s2"> phase: </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2"> &lt;= phase_p: </span><span class="si">{</span><span class="n">phase_p</span><span class="si">}</span><span class="s2">, phase_n: </span><span class="si">{</span><span class="n">phase_n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">phase</span></div>
 
@@ -660,7 +660,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">selected_ci_sequential</span><span class="p">(</span><span class="n">basis_configs</span><span class="p">,</span> <span class="n">Hmat</span><span class="p">,</span> <span class="n">sampled_counts</span><span class="p">,</span> 
                            <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">add_per_iter</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> 
                            <span class="n">threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initial_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Selected CI: sequentially grow a subspace by adding configurations with the largest coupling to the current subspace.</span>
 
 <span class="sd">    Parameters</span>
@@ -670,7 +670,7 @@
 <span class="sd">    Hmat : np.ndarray</span>
 <span class="sd">        Full Hamiltonian matrix in basis_configs ordering.</span>
 <span class="sd">    sampled_counts : dict[str,int] | list[str] | list[int]</span>
-<span class="sd">        Sampled configurations. If dict, keys are bitstrings (&quot;0101...&quot;)</span>
+<span class="sd">        Sampled configurations. If dict, keys are bitstrings ("0101...")</span>
 <span class="sd">        and counts are their weights. If list, it can be bitstrings or indices.</span>
 <span class="sd">    max_iter : int</span>
 <span class="sd">        Number of selection iterations.</span>
@@ -687,7 +687,7 @@
 <span class="sd">        Selected subspace indices in basis_configs order (sequentially grown).</span>
 <span class="sd">    history : list[dict]</span>
 <span class="sd">        Iteration log with added counts and selected size.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis_configs</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampled_counts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">sampled_counts</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -708,7 +708,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">selected</span> <span class="o">=</span> <span class="p">[</span><span class="n">basis_configs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sampled_counts</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;sampled_counts must be dict or list-like&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"sampled_counts must be dict or list-like"</span><span class="p">)</span>
 
     <span class="c1"># unique &amp; keep order</span>
     <span class="n">selected</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">selected</span><span class="p">))</span>
@@ -745,7 +745,7 @@
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">picks</span><span class="p">:</span>
             <span class="n">selected_mask</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
-        <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;iter&quot;</span><span class="p">:</span> <span class="n">it</span><span class="p">,</span> <span class="s2">&quot;added&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">picks</span><span class="p">)),</span> <span class="s2">&quot;selected_size&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">selected_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())})</span>
+        <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"iter"</span><span class="p">:</span> <span class="n">it</span><span class="p">,</span> <span class="s2">"added"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">picks</span><span class="p">)),</span> <span class="s2">"selected_size"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">selected_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())})</span>
 
     <span class="k">return</span> <span class="n">selected</span><span class="p">,</span> <span class="n">history</span></div>
 
@@ -781,7 +781,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

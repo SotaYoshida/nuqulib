@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.myutils - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.myutils - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,12 +225,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.myutils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility functions for NuQuLib.</span>
+<span></span><span class="sd">"""Utility functions for NuQuLib.</span>
 
 <span class="sd">This module provides various utility functions for NuQuLib,</span>
 <span class="sd">including format conversions between different quantum computing</span>
 <span class="sd">frameworks, LaTeX formatting for nuclear notation, etc.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -244,27 +244,27 @@
 <div class="viewcode-block" id="latex_nuc">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.latex_nuc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">latex_nuc</span><span class="p">(</span><span class="n">nuc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert nuclear notation to LaTeX format.</span>
+<span class="w">    </span><span class="sd">"""Convert nuclear notation to LaTeX format.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        nuc (str): Nuclear notation string (e.g., &quot;6He&quot;, &quot;12C&quot;).</span>
+<span class="sd">        nuc (str): Nuclear notation string (e.g., "6He", "12C").</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        str: LaTeX formatted string with mass number as superscript.</span>
 <span class="sd">        </span>
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; latex_nuc(&quot;6He&quot;)</span>
-<span class="sd">        &#39;${}^{6}$He&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Anum</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">nuc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">^{&quot;</span> <span class="o">+</span> <span class="n">Anum</span> <span class="o">+</span> <span class="s2">&quot;}$&quot;</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Anum</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+<span class="sd">        &gt;&gt;&gt; latex_nuc("6He")</span>
+<span class="sd">        '${}^{6}$He'</span>
+<span class="sd">    """</span>
+    <span class="n">Anum</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\d+"</span><span class="p">,</span> <span class="n">nuc</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">"$</span><span class="si">{}</span><span class="s2">^{"</span> <span class="o">+</span> <span class="n">Anum</span> <span class="o">+</span> <span class="s2">"}$"</span> <span class="o">+</span> <span class="n">nuc</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Anum</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="read_QiskitPauli">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.read_QiskitPauli">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_QiskitPauli</span><span class="p">(</span><span class="n">ops_qiskit</span><span class="p">,</span> <span class="n">coeffs_qiskit</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Qiskit Pauli operators to PennyLane format.</span>
+<span class="w">    </span><span class="sd">"""Convert Qiskit Pauli operators to PennyLane format.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        ops_qiskit (list): List of Qiskit Pauli operator strings.</span>
@@ -274,7 +274,7 @@
 <span class="sd">        tuple: Tuple containing:</span>
 <span class="sd">            - coeffs (list[float]): List of float coefficients.</span>
 <span class="sd">            - obs (list): List of PennyLane operators.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">coeffs_qiskit</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ops_qiskit</span><span class="p">)):</span>
@@ -288,10 +288,10 @@
 <div class="viewcode-block" id="get_operator_from_QiskitStr">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.get_operator_from_QiskitStr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_operator_from_QiskitStr</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">qml</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">Operator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Qiskit Pauli string to a PennyLane operator.</span>
+<span class="w">    </span><span class="sd">"""Convert a Qiskit Pauli string to a PennyLane operator.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        pauli_str (str): Pauli string in Qiskit format (e.g., &quot;IXYZ&quot;).</span>
+<span class="sd">        pauli_str (str): Pauli string in Qiskit format (e.g., "IXYZ").</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        qml.operation.Operator: PennyLane operator corresponding to the Pauli string.</span>
@@ -300,34 +300,34 @@
 <span class="sd">        ValueError: If the Pauli string contains invalid characters.</span>
 <span class="sd">        </span>
 <span class="sd">    Note:</span>
-<span class="sd">        The function reverses the Pauli string to match PennyLane&#39;s qubit ordering.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        The function reverses the Pauli string to match PennyLane's qubit ordering.</span>
+<span class="sd">    """</span>
     <span class="n">pauli_str</span> <span class="o">=</span> <span class="n">pauli_str</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">n_qubits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">)</span>
-    <span class="n">nonI_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">]</span>
+    <span class="n">nonI_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"I"</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonI_idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">Identity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonI_idxs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">nonI_idxs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"X"</span><span class="p">:</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Y"</span><span class="p">:</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Z"</span><span class="p">:</span>
             <span class="n">op</span> <span class="o">=</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Pauli string: </span><span class="si">{</span><span class="n">pauli_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid Pauli string: </span><span class="si">{</span><span class="n">pauli_str</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonI_idxs</span><span class="p">)):</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">nonI_idxs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"X"</span><span class="p">:</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">op</span> <span class="o">@</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Y"</span><span class="p">:</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">op</span> <span class="o">@</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliY</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">pauli_str</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"Z"</span><span class="p">:</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">op</span> <span class="o">@</span> <span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Pauli string: </span><span class="si">{</span><span class="n">pauli_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid Pauli string: </span><span class="si">{</span><span class="n">pauli_str</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">op</span></div>
 
 
@@ -335,7 +335,7 @@
 <div class="viewcode-block" id="transform_pytket_counts_to_qiskit">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.transform_pytket_counts_to_qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform_pytket_counts_to_qiskit</span><span class="p">(</span><span class="n">counts_pytket</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert PyTKET measurement counts to Qiskit format.</span>
+<span class="w">    </span><span class="sd">"""Convert PyTKET measurement counts to Qiskit format.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        counts_pytket (dict): Dictionary of measurement outcomes from PyTKET.</span>
@@ -346,12 +346,12 @@
 <span class="sd">    Note:</span>
 <span class="sd">        PyTKET and Qiskit use different qubit ordering conventions.</span>
 <span class="sd">        This function reverses the bit string keys to convert between them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">counts_pytket</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">counts_pytket</span><span class="p">)</span>
     <span class="n">counts_qiskit</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">counts_pytket</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">new_key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">q_key</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_key</span><span class="p">)</span>
+        <span class="n">q_key</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_key</span><span class="p">)</span>
         <span class="n">counts_qiskit</span><span class="p">[</span><span class="n">q_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">return</span> <span class="n">counts_qiskit</span></div>
 
@@ -360,7 +360,7 @@
 <div class="viewcode-block" id="transform_qiskitOps_to_pennylane">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.transform_qiskitOps_to_pennylane">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">transform_qiskitOps_to_pennylane</span><span class="p">(</span><span class="n">Qiskit_Ops</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform Qiskit SparsePauliOp operator(s) to PennyLane format.</span>
+<span class="w">    </span><span class="sd">"""Transform Qiskit SparsePauliOp operator(s) to PennyLane format.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        Qiskit_Ops (SparsePauliOp): Qiskit sparse Pauli operator(s).</span>
@@ -369,7 +369,7 @@
 <span class="sd">        tuple: Tuple containing:</span>
 <span class="sd">            - coeffs (list[float]): List of float coefficients.</span>
 <span class="sd">            - obs (list): List of PennyLane operators.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ops_qiskit</span> <span class="o">=</span> <span class="n">Qiskit_Ops</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">Qiskit_Ops</span><span class="o">.</span><span class="n">coeffs</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -385,7 +385,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">write_out_pytketCircuits_from_Qiskit</span><span class="p">(</span>
     <span class="n">qc</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">QuantumCircuit</span><span class="p">],</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">circ_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a list of Qiskit circuits as PyTKET circuits to a numpy file.</span>
+<span class="w">    </span><span class="sd">"""Save a list of Qiskit circuits as PyTKET circuits to a numpy file.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        qc (list[QuantumCircuit]): List of Qiskit quantum circuits.</span>
@@ -394,16 +394,16 @@
 <span class="sd">            Defaults to empty strings if not provided.</span>
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
-<span class="sd">        The circuits are saved as a dictionary with &#39;circuit&#39; and &#39;name&#39; keys</span>
-<span class="sd">        using numpy&#39;s save function with pickle enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Mydict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;circuit&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+<span class="sd">        The circuits are saved as a dictionary with 'circuit' and 'name' keys</span>
+<span class="sd">        using numpy's save function with pickle enabled.</span>
+<span class="sd">    """</span>
+    <span class="n">Mydict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"circuit"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"name"</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="k">if</span> <span class="n">circ_names</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">circ_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qc</span><span class="p">))]</span>
+        <span class="n">circ_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qc</span><span class="p">))]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qc</span><span class="p">)):</span>
         <span class="n">tk_circ</span> <span class="o">=</span> <span class="n">qiskit_to_tk</span><span class="p">(</span><span class="n">qc</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-        <span class="n">Mydict</span><span class="p">[</span><span class="s2">&quot;circuit&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tk_circ</span><span class="p">)</span>
-        <span class="n">Mydict</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">circ_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">Mydict</span><span class="p">[</span><span class="s2">"circuit"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tk_circ</span><span class="p">)</span>
+        <span class="n">Mydict</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">circ_names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">Mydict</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
@@ -411,9 +411,9 @@
 <div class="viewcode-block" id="write_out_pytketCircuit_from_Qiskit">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.write_out_pytketCircuit_from_Qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">write_out_pytketCircuit_from_Qiskit</span><span class="p">(</span>
-    <span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">circ_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">qc</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span> <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">circ_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Save a single Qiskit circuit as PyTKET circuit to a numpy file.</span>
+<span class="w">    </span><span class="sd">"""Save a single Qiskit circuit as PyTKET circuit to a numpy file.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        qc (QuantumCircuit): Qiskit quantum circuit to convert and save.</span>
@@ -421,13 +421,13 @@
 <span class="sd">        circ_name (str, optional): Name for the circuit. Defaults to empty string.</span>
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
-<span class="sd">        The circuit is saved as a dictionary with &#39;circuit&#39; and &#39;name&#39; keys</span>
-<span class="sd">        using numpy&#39;s save function with pickle enabled.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        The circuit is saved as a dictionary with 'circuit' and 'name' keys</span>
+<span class="sd">        using numpy's save function with pickle enabled.</span>
+<span class="sd">    """</span>
     <span class="n">tk_circ</span> <span class="o">=</span> <span class="n">qiskit_to_tk</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
     <span class="n">MyDict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">MyDict</span><span class="p">[</span><span class="s2">&quot;circuit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tk_circ</span>
-    <span class="n">MyDict</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">circ_name</span>
+    <span class="n">MyDict</span><span class="p">[</span><span class="s2">"circuit"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tk_circ</span>
+    <span class="n">MyDict</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">circ_name</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">MyDict</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 
@@ -435,7 +435,7 @@
 <div class="viewcode-block" id="Orbit_nljjztz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nljjztz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nljjztz</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j, jz, tz quanta. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Single particle state in the model space with n, l, j, jz, tz quanta. """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">jz</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">tz</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">l</span>
@@ -449,7 +449,7 @@
 <div class="viewcode-block" id="Orbit_nljtz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nljtz">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nljtz</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j, tz quanta. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Single particle state in the model space with n, l, j, tz quanta. """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">tz</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">l</span>
@@ -461,7 +461,7 @@
 <div class="viewcode-block" id="Orbit_nlj">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.Orbit_nlj">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Orbit_nlj</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Single particle state in the model space with n, l, j quanta. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Single particle state in the model space with n, l, j quanta. """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">l</span> <span class="o">=</span> <span class="n">l</span>
@@ -473,7 +473,7 @@
 <div class="viewcode-block" id="get_spsidx_from_nljtz">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.get_spsidx_from_nljtz">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_spsidx_from_nljtz</span><span class="p">(</span><span class="n">single_particle_states</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">tz</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find a single-particle-state index from quantum numbers.</span>
+<span class="w">    </span><span class="sd">"""Find a single-particle-state index from quantum numbers.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        single_particle_states (list): Sequence of states with ``n``, ``l``,</span>
@@ -488,7 +488,7 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If no matching state exists.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sps</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">single_particle_states</span><span class="p">):</span>
         <span class="n">n_</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">n</span>
         <span class="n">l_</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">l</span>
@@ -496,14 +496,14 @@
         <span class="n">tz_</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">tz</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">n_</span> <span class="ow">and</span> <span class="n">l</span> <span class="o">==</span> <span class="n">l_</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">==</span> <span class="n">j_</span> <span class="ow">and</span> <span class="n">tz</span> <span class="o">==</span> <span class="n">tz_</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">idx</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single particle state with n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, l=</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2">, j=</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">, tz=</span><span class="si">{</span><span class="n">tz</span><span class="si">}</span><span class="s2"> not found in the model space.&quot;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Single particle state with n=</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">, l=</span><span class="si">{</span><span class="n">l</span><span class="si">}</span><span class="s2">, j=</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">, tz=</span><span class="si">{</span><span class="n">tz</span><span class="si">}</span><span class="s2"> not found in the model space."</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="count_msps">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.count_msps">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">count_msps</span><span class="p">(</span><span class="n">emax</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">vemin</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vemax</span><span class="p">:</span><span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Count the number of single particle states in the model space up to emax. &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Count the number of single particle states in the model space up to emax. """</span>
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">msps_p</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">msps_n</span> <span class="o">=</span> <span class="p">[]</span>
@@ -527,13 +527,13 @@
 
 <div class="viewcode-block" id="t_count">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.myutils.t_count">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">t_count</span><span class="p">(</span><span class="n">eps_tol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;ross-selinger&quot;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate T-count needed for single-qubit rotation synthesis.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">t_count</span><span class="p">(</span><span class="n">eps_tol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">"ross-selinger"</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Estimate T-count needed for single-qubit rotation synthesis.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        eps_tol (float, optional): Target synthesis error tolerance.</span>
 <span class="sd">        model (str, optional): Estimate model. Supported values are</span>
-<span class="sd">            ``&quot;ross-selinger&quot;`` and ``&quot;bocharov&quot;``.</span>
+<span class="sd">            ``"ross-selinger"`` and ``"bocharov"``.</span>
 <span class="sd">        precision: Deprecated compatibility argument; currently unused.</span>
 
 <span class="sd">    Returns:</span>
@@ -541,14 +541,14 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If ``eps_tol`` is non-positive or the model is unknown.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">eps_tol</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;precision must be positive, got </span><span class="si">{</span><span class="n">eps_tol</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;bocharov&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"precision must be positive, got </span><span class="si">{</span><span class="n">eps_tol</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">"bocharov"</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">1.149</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">eps_tol</span><span class="p">)</span> <span class="o">+</span> <span class="mf">9.2</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;ross-selinger&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">"ross-selinger"</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">eps_tol</span><span class="p">)))</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown rotation model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown rotation model: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -582,7 +582,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

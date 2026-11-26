@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.pairwise - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.pairwise - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,7 +225,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.pairwise</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Pairwise Hamiltonian utilities </span>
+<span></span><span class="sd">"""Pairwise Hamiltonian utilities </span>
 
 <span class="sd">This module provides utilities for constructing and manipulating pairwise Hamiltonians,</span>
 <span class="sd">which are often used in quantum computing and many-body physics.</span>
@@ -234,7 +234,7 @@
 
 <span class="sd">These utilities are designed to work with pairing Hamiltonians or</span>
 <span class="sd">pairwise representations of shell model (e.g., time-reversal pairs).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
@@ -257,7 +257,7 @@
     <span class="n">pn_system</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">only_monopole</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Read a file in the msnt format, snt format with explicit jz(m),</span>
 <span class="sd">    and return the dictionary of the Hamiltonian, single-particle states,</span>
 <span class="sd">    and dictionaries to convert between single-particle states and qubits.</span>
@@ -267,39 +267,39 @@
 <span class="sd">      and outputs will be used for systems consisting of </span>
 <span class="sd">      single species nucleons (either protons or neutrons).</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">pn_system</span><span class="p">:</span>
         <span class="n">neutron</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">Vfactor</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="k">if</span> <span class="n">massdep</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">A</span> <span class="o">&gt;</span> <span class="mi">16</span><span class="p">:</span>
         <span class="n">Vfactor</span> <span class="o">*=</span> <span class="p">(</span><span class="n">A</span> <span class="o">/</span> <span class="p">(</span><span class="n">Acore</span> <span class="o">+</span> <span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="n">pow_A</span><span class="p">)</span>
-    <span class="n">inp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">inp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
     <span class="n">inp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">Hamil</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">label</span> <span class="o">=</span> <span class="s2">""</span>
     <span class="n">p_sps</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">n_sps</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s2">&quot;num   n   l   j  tz   mz       SPE(MeV)&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;SPE&quot;</span>
+        <span class="k">if</span> <span class="s2">"num   n   l   j  tz   mz       SPE(MeV)"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">"SPE"</span>
             <span class="n">Hamil</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">continue</span>
-        <span class="k">if</span> <span class="s2">&quot;Vpp:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Vpp&quot;</span>
+        <span class="k">if</span> <span class="s2">"Vpp:"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">"Vpp"</span>
             <span class="n">Hamil</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">continue</span>
-        <span class="k">if</span> <span class="s2">&quot;Vnn:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Vnn&quot;</span>
+        <span class="k">if</span> <span class="s2">"Vnn:"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">"Vnn"</span>
             <span class="n">Hamil</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">continue</span>
-        <span class="k">if</span> <span class="s2">&quot;Vpn:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;Vpn&quot;</span>
+        <span class="k">if</span> <span class="s2">"Vpn:"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="s2">"Vpn"</span>
             <span class="n">Hamil</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">continue</span>
-        <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">&quot;SPE&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">label</span> <span class="o">==</span> <span class="s2">"SPE"</span><span class="p">:</span>
             <span class="n">tl</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="n">num</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">tz</span><span class="p">,</span> <span class="n">mz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">tl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
             <span class="n">SPE</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -346,13 +346,13 @@
         <span class="n">count_qubits</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p_sps&quot;</span><span class="p">,</span> <span class="n">p_sps</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;n_sps&quot;</span><span class="p">,</span> <span class="n">n_sps</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vpp&quot;</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vpp&quot;</span><span class="p">])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vnn&quot;</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vnn&quot;</span><span class="p">])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vpn&quot;</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vpn&quot;</span><span class="p">])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dict_sps_to_qubits&quot;</span><span class="p">,</span> <span class="n">Dict_sps_to_qubits</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dict_qubits_to_sps&quot;</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"p_sps"</span><span class="p">,</span> <span class="n">p_sps</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"n_sps"</span><span class="p">,</span> <span class="n">n_sps</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Vpp"</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vpp"</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Vnn"</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vnn"</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Vpn"</span><span class="p">,</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vpn"</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Dict_sps_to_qubits"</span><span class="p">,</span> <span class="n">Dict_sps_to_qubits</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Dict_qubits_to_sps"</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">Hamil</span><span class="p">,</span> <span class="n">p_sps</span><span class="p">,</span> <span class="n">n_sps</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">,</span> <span class="n">Dict_sps_to_qubits</span><span class="p">)</span></div>
 
@@ -363,7 +363,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">add_Vmonopole</span><span class="p">(</span>
     <span class="n">Hamil</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">neutron</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add monopole term to the Hamiltonian matrix.</span>
+<span class="w">    </span><span class="sd">"""Add monopole term to the Hamiltonian matrix.</span>
 
 <span class="sd">    This function calculates the monopole term of the Hamiltonian</span>
 <span class="sd">    based on the given configuration and the Hamiltonian data.</span>
@@ -378,31 +378,31 @@
 <span class="sd">        Dict_qubits_to_sps : Dictionary mapping qubits to single-particle states.</span>
 <span class="sd">        neutron (optional): If True, consider neutron interactions; otherwise, proton interactions.</span>
 <span class="sd">        verbose (optional): If True, print detailed information.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Monopole term: V_{ijij} N_i N_j</span>
-    <span class="n">target_H2b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vnn&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">neutron</span> <span class="k">else</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vpp&quot;</span><span class="p">]</span>
+    <span class="n">target_H2b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vnn"</span><span class="p">]</span> <span class="k">if</span> <span class="n">neutron</span> <span class="k">else</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vpp"</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">Nocc</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
     <span class="n">Vmono</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">for</span> <span class="n">idx_i_qubit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
         <span class="n">bit_i</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">idx_i_qubit</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">bit_i</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">bit_i</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">idxs_sps_i</span> <span class="o">=</span> <span class="n">Dict_qubits_to_sps</span><span class="p">[</span><span class="n">idx_i_qubit</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">idx_j_qubit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx_i_qubit</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">):</span>
             <span class="n">bit_j</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">idx_j_qubit</span><span class="p">]</span>
             <span class="n">idxs_sps_j</span> <span class="o">=</span> <span class="n">Dict_qubits_to_sps</span><span class="p">[</span><span class="n">idx_j_qubit</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">bit_j</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bit_j</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;qubit_i&quot;</span><span class="p">,</span>
+                    <span class="s2">"qubit_i"</span><span class="p">,</span>
                     <span class="n">idx_i_qubit</span><span class="p">,</span>
-                    <span class="s2">&quot;i_sps&quot;</span><span class="p">,</span>
+                    <span class="s2">"i_sps"</span><span class="p">,</span>
                     <span class="n">idxs_sps_i</span><span class="p">,</span>
-                    <span class="s2">&quot;qubit_j&quot;</span><span class="p">,</span>
+                    <span class="s2">"qubit_j"</span><span class="p">,</span>
                     <span class="n">idx_j_qubit</span><span class="p">,</span>
-                    <span class="s2">&quot;j_sps&quot;</span><span class="p">,</span>
+                    <span class="s2">"j_sps"</span><span class="p">,</span>
                     <span class="n">idxs_sps_j</span><span class="p">,</span>
                 <span class="p">)</span>
 
@@ -413,7 +413,7 @@
                         <span class="n">b</span> <span class="ow">in</span> <span class="n">idxs_sps_i</span> <span class="ow">and</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">idxs_sps_j</span>
                     <span class="p">):</span>
                         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;monohit: &quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s2">&quot;J=&quot;</span><span class="p">,</span> <span class="n">totJ</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">"monohit: "</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s2">"J="</span><span class="p">,</span> <span class="n">totJ</span><span class="p">,</span> <span class="s2">"V"</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
                         <span class="n">Vmono</span> <span class="o">+=</span> <span class="n">V</span>
     <span class="k">return</span> <span class="n">Vmono</span></div>
 
@@ -422,14 +422,14 @@
 <div class="viewcode-block" id="get_pairwise_Hamil">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairwise.get_pairwise_Hamil">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_pairwise_Hamil</span><span class="p">(</span><span class="n">Hamil</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">adopted_sps</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">neutron</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the pairwise Hamiltonian matrix elements.</span>
+<span class="w">    </span><span class="sd">"""Generate the pairwise Hamiltonian matrix elements.</span>
 
 <span class="sd">    This function constructs the one-body and two-body Hamiltonian matrices</span>
 <span class="sd">    based on the provided Hamiltonian data and pair-wise representation of single-particle states.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">pair_configs</span> <span class="o">=</span> <span class="n">get_possible_time_reversal_pairs</span><span class="p">(</span><span class="n">adopted_sps</span><span class="p">)</span>
-    <span class="n">target_H1b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;SPE&quot;</span><span class="p">]</span>
-    <span class="n">target_H2b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vnn&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">neutron</span> <span class="k">else</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vpp&quot;</span><span class="p">]</span>
+    <span class="n">target_H1b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"SPE"</span><span class="p">]</span>
+    <span class="n">target_H2b</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vnn"</span><span class="p">]</span> <span class="k">if</span> <span class="n">neutron</span> <span class="k">else</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vpp"</span><span class="p">]</span>
     <span class="n">nconfigs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pair_configs</span><span class="p">)</span>
     <span class="n">h1b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nconfigs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">h2b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nconfigs</span><span class="p">,</span> <span class="n">nconfigs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -452,7 +452,7 @@
                     <span class="ow">and</span> <span class="p">(</span><span class="n">c</span> <span class="ow">in</span> <span class="n">config_l</span><span class="p">)</span>
                     <span class="ow">and</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">config_l</span><span class="p">)</span>
                 <span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This must not occur!</span><span class="se">\n\n\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"This must not occur!</span><span class="se">\n\n\n\n</span><span class="s2">"</span><span class="p">)</span>
                     <span class="n">h2b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">V</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
                 <span class="n">h2b</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h2b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
@@ -471,7 +471,7 @@
     <span class="n">Dict_qubits_to_sps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate the Hamiltonian matrix in the many-body basis.</span>
+<span class="w">    </span><span class="sd">"""Evaluate the Hamiltonian matrix in the many-body basis.</span>
 
 <span class="sd">    Constructs the Hamiltonian matrix in the many-body basis explicitly,</span>
 <span class="sd">    and then computes its eigenvalues and eigenvectors.</span>
@@ -489,7 +489,7 @@
 <span class="sd">        tuple: Tuple containing:</span>
 <span class="sd">            - evals: Eigenvalues of the Hamiltonian matrix.</span>
 <span class="sd">            - evecs: Eigenvectors of the Hamiltonian matrix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">configs</span> <span class="o">=</span> <span class="n">generate_config_bitstr_list</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">)</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span>
     <span class="n">Hflat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -498,13 +498,13 @@
     <span class="k">for</span> <span class="n">idx_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
         <span class="n">config_i</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="n">idx_i</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">config_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">config_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">:</span>
                 <span class="n">Vmono</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">add_Vmonopole</span><span class="p">(</span><span class="n">Hamil</span><span class="p">,</span> <span class="n">config_i</span><span class="p">,</span> <span class="n">n_qubits</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">)</span>
                     <span class="o">/</span> <span class="n">Nocc</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">config_i</span><span class="p">,</span> <span class="s2">&quot;Vmono &quot;</span><span class="p">,</span> <span class="n">Vmono</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">config_i</span><span class="p">,</span> <span class="s2">"Vmono "</span><span class="p">,</span> <span class="n">Vmono</span><span class="p">)</span>
                 <span class="n">Hflat</span><span class="p">[</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h1b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">Vmono</span>
                 <span class="n">h2b_mono</span><span class="p">[</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">Vmono</span>
 
@@ -514,8 +514,8 @@
             <span class="n">diff</span> <span class="o">=</span> <span class="n">n_qubits</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">([</span><span class="n">config_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">config_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)])</span>
             <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">idxs_hit_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">config_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
-            <span class="n">idxs_hit_j</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">config_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
+            <span class="n">idxs_hit_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">config_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">]</span>
+            <span class="n">idxs_hit_j</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span> <span class="k">if</span> <span class="n">config_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"1"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">diff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs_hit_i</span><span class="p">:</span>
                     <span class="n">Hflat</span><span class="p">[</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h2b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span>
@@ -532,10 +532,10 @@
             <span class="n">H2b_flat</span><span class="p">[</span><span class="n">idx_j</span><span class="p">,</span> <span class="n">idx_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">H2b_flat</span><span class="p">[</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_j</span><span class="p">]</span>
     <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">Hflat</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hflat???&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Hflat???"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">Hflat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;evals_ Hflat!!&quot;</span><span class="p">,</span> <span class="n">evals</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"evals_ Hflat!!"</span><span class="p">,</span> <span class="n">evals</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span></div>
 
 
@@ -543,7 +543,7 @@
 <div class="viewcode-block" id="get_possible_time_reversal_pairs">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairwise.get_possible_time_reversal_pairs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_possible_time_reversal_pairs</span><span class="p">(</span><span class="n">sps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate all time-reversal pairs of single-particle states</span>
+<span class="w">    </span><span class="sd">"""Generate all time-reversal pairs of single-particle states</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        sps (dict): Dictionary of single-particle states, where keys are state identifiers</span>
@@ -552,7 +552,7 @@
 <span class="sd">    </span>
 <span class="sd">    Note:</span>
 <span class="sd">        sps should be a dictionary for a single species (either protons or neutrons).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">configs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">sps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">mz</span><span class="p">,</span> <span class="n">SPE</span> <span class="o">=</span> <span class="n">sps</span><span class="p">[</span><span class="n">tmp</span><span class="p">]</span>
@@ -563,7 +563,7 @@
             <span class="k">if</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="n">tmp_2</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pair orbits: &quot;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">tmp_2</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"pair orbits: "</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">tmp_2</span><span class="p">)</span>
             <span class="n">configs</span> <span class="o">+=</span> <span class="p">[[</span><span class="n">tmp</span><span class="p">,</span> <span class="n">tmp_2</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">configs</span></div>
 
@@ -572,13 +572,13 @@
 <div class="viewcode-block" id="generate_config_bitstr_list">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairwise.generate_config_bitstr_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_config_bitstr_list</span><span class="p">(</span><span class="n">Nq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generate a list of strings representing configurations of occupied qubits.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">config_list_int</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">),</span> <span class="n">Nocc</span><span class="p">):</span>
         <span class="n">config_list_int</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">([</span><span class="mi">2</span><span class="o">**</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">config</span><span class="p">])]</span>
-    <span class="n">config_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="si">:</span><span class="s2">0</span><span class="si">{</span><span class="n">Nq</span><span class="si">}</span><span class="s2">b</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">config_list_int</span><span class="p">]</span>
+    <span class="n">config_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">config</span><span class="si">:</span><span class="s2">0</span><span class="si">{</span><span class="n">Nq</span><span class="si">}</span><span class="s2">b</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">config_list_int</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">rev</span><span class="p">:</span>
         <span class="n">config_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">config</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">config_list</span><span class="p">]</span>
     <span class="n">config_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
@@ -590,7 +590,7 @@
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairwise.make_pw_hamil_qiskit">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_pw_hamil_qiskit</span><span class="p">(</span><span class="n">Hamil</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">h1b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                          <span class="n">Nq</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict_qubits_to_sps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the pairwise Hamiltonian in Qiskit format.</span>
+<span class="w">    </span><span class="sd">"""Construct the pairwise Hamiltonian in Qiskit format.</span>
 
 <span class="sd">    This function constructs the pair-wise Hamiltonian in the Qiskit format,</span>
 <span class="sd">    which includes single-particle-like terms, pair terms, and monopole terms.</span>
@@ -608,8 +608,8 @@
 <span class="sd">        Nq : Number of qubits (or orbitals).</span>
 <span class="sd">        Nocc : Number of occupied states.</span>
 <span class="sd">        Dict_qubits_to_sps : Dictionary mapping qubits to single-particle states.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">&quot;Vnn&quot;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">Hamil</span><span class="p">[</span><span class="s2">"Vnn"</span><span class="p">]</span>
     <span class="n">Vspe</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)}</span>
     <span class="n">Vmono</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">Vpair</span> <span class="o">=</span> <span class="p">{}</span>
@@ -650,16 +650,16 @@
     <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># single particle-like terms (e_i + Vii) * (I-Z)/2</span>
-    <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="n">Nq</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="n">Nq</span>
     <span class="n">coeff</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">Vspe</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">Vspe</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">Vspe</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span>
-        <span class="n">op</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">op</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
         <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span>
@@ -667,17 +667,17 @@
     <span class="c1">## pair terms (XX+YY)</span>
     <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">Vpair</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">tkey</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="n">Vpair</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span>
         <span class="n">opXX</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">opXX</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
-        <span class="n">opXX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
-        <span class="n">opXX</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opXX</span><span class="p">)</span>
+        <span class="n">opXX</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"X"</span>
+        <span class="n">opXX</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"X"</span>
+        <span class="n">opXX</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opXX</span><span class="p">)</span>
         <span class="n">opXX</span> <span class="o">=</span> <span class="n">opXX</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">opYY</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">opYY</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
-        <span class="n">opYY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
-        <span class="n">opYY</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opYY</span><span class="p">)</span>
+        <span class="n">opYY</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Y"</span>
+        <span class="n">opYY</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Y"</span>
+        <span class="n">opYY</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opYY</span><span class="p">)</span>
         <span class="n">opYY</span> <span class="o">=</span> <span class="n">opYY</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opXX</span><span class="p">)</span>
         <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
@@ -689,15 +689,15 @@
         <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">Vmono</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">coeff</span> <span class="o">=</span> <span class="n">Vmono</span><span class="p">[</span><span class="n">tkey</span><span class="p">]</span> <span class="o">/</span> <span class="mi">4</span>
             <span class="c1"># I term</span>
-            <span class="n">op_I</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="n">Nq</span>
+            <span class="n">op_I</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="n">Nq</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">op_I</span><span class="p">)</span>
             <span class="n">coeffs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">coeff</span>
 
             <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">tkey</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)]</span>
             <span class="n">op_Zi</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">op_Zi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
-            <span class="n">op_Zi</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_Zi</span><span class="p">)</span>
+            <span class="n">op_Zi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+            <span class="n">op_Zi</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_Zi</span><span class="p">)</span>
             <span class="n">op_Zi</span> <span class="o">=</span> <span class="n">op_Zi</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">op_Zi</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">op_Zi</span><span class="p">)</span>
@@ -707,8 +707,8 @@
                 <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span>
 
             <span class="n">op_Zj</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">op_Zj</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
-            <span class="n">op_Zj</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_Zj</span><span class="p">)</span>
+            <span class="n">op_Zj</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+            <span class="n">op_Zj</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_Zj</span><span class="p">)</span>
             <span class="n">op_Zj</span> <span class="o">=</span> <span class="n">op_Zj</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">op_Zj</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">op_Zj</span><span class="p">)</span>
@@ -718,9 +718,9 @@
                 <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="n">coeff</span><span class="p">)</span>
 
             <span class="n">op_ZiZj</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">op_ZiZj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
-            <span class="n">op_ZiZj</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
-            <span class="n">op_ZiZj</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_ZiZj</span><span class="p">)</span>
+            <span class="n">op_ZiZj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+            <span class="n">op_ZiZj</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Z"</span>
+            <span class="n">op_ZiZj</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_ZiZj</span><span class="p">)</span>
             <span class="n">op_ZiZj</span> <span class="o">=</span> <span class="n">op_ZiZj</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_ZiZj</span><span class="p">)</span>
             <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
@@ -734,12 +734,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_v0_pairs</span><span class="p">(</span><span class="n">msps_p</span><span class="p">:</span> <span class="n">Orbit_nljjztz</span><span class="p">,</span>
                  <span class="n">msps_n</span><span class="p">:</span> <span class="n">Orbit_nljjztz</span>
                  <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the list of time-reversal pairs with Jz=0&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get the list of time-reversal pairs with Jz=0"""</span>
     <span class="n">v0_pairs</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span> <span class="p">],</span> <span class="p">[</span> <span class="p">]</span> <span class="p">]</span>
-    <span class="k">for</span> <span class="n">pn</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;proton&quot;</span><span class="p">,</span> <span class="s2">&quot;neutron&quot;</span><span class="p">]:</span>
-        <span class="n">idx_pn</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">pn</span> <span class="o">==</span> <span class="s2">&quot;proton&quot;</span> <span class="k">else</span> <span class="mi">1</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--- </span><span class="si">{</span><span class="n">pn</span><span class="si">}</span><span class="s2"> pairs ---&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pn</span> <span class="o">==</span> <span class="s2">&quot;proton&quot;</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">pn</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"proton"</span><span class="p">,</span> <span class="s2">"neutron"</span><span class="p">]:</span>
+        <span class="n">idx_pn</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">pn</span> <span class="o">==</span> <span class="s2">"proton"</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"--- </span><span class="si">{</span><span class="n">pn</span><span class="si">}</span><span class="s2"> pairs ---"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pn</span> <span class="o">==</span> <span class="s2">"proton"</span><span class="p">:</span>
             <span class="n">msps</span> <span class="o">=</span> <span class="n">msps_p</span>
             <span class="n">ofst</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -790,7 +790,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

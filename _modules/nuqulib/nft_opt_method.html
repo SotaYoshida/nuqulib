@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.nft_opt_method - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.nft_opt_method - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,7 +225,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.nft_opt_method</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Nakanishi-Fujii-Todo (NFT) optimization method for VQE.</span>
+<span></span><span class="sd">"""Nakanishi-Fujii-Todo (NFT) optimization method for VQE.</span>
 
 <span class="sd">This module implements the Nakanishi-Fujii-Todo optimization algorithm</span>
 <span class="sd">for Variational Quantum Eigensolver (VQE) problems. The NFT method is</span>
@@ -234,7 +234,7 @@
 <span class="sd">the periodic structure on the parameter space.</span>
 
 <span class="sd">Ref: `KM.Nakanishi, K.Fujii, T.Todo, Phys. Rev. Research 2, 043158 (2020), &lt;https://doi.org/10.1103/PhysRevResearch.2.043158&gt;`_</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -243,14 +243,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_aer.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">Estimator</span> <span class="k">as</span> <span class="n">AerEstimator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize_scalar</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
-<span class="n">cols</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;deep&quot;</span><span class="p">)</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">"deep"</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.ansatz</span><span class="w"> </span><span class="kn">import</span> <span class="n">pair_ansatz_qiskit</span><span class="p">,</span> <span class="n">nucl_ansatz</span>
 
 
 <div class="viewcode-block" id="draw_DFT_curve">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.draw_DFT_curve">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">draw_DFT_curve</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">DFTcurve</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Draw DFT curve with measured points and minimum candidate.</span>
+<span class="w">    </span><span class="sd">"""Draw DFT curve with measured points and minimum candidate.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        xplot (array): X-axis values for plotting.</span>
@@ -259,12 +259,12 @@
 <span class="sd">        Es (array): Energy values at measurement points.</span>
 <span class="sd">        x_min (float): X-coordinate of minimum candidate.</span>
 <span class="sd">        y_min (float): Y-coordinate of minimum candidate.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">DFTcurve</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;DFT curve&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">spot</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Measured&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Candidate&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">DFTcurve</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"DFT curve"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">spot</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Measured"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">y_min</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"*"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Candidate"</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -274,7 +274,7 @@
 <div class="viewcode-block" id="eval_DFT_coeff">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.eval_DFT_coeff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">eval_DFT_coeff</span><span class="p">(</span><span class="n">Es</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate discrete Fourier transform coefficients.</span>
+<span class="w">    </span><span class="sd">"""Evaluate discrete Fourier transform coefficients.</span>
 <span class="sd">    </span>
 <span class="sd">    Computes DFT coefficients from energy measurements at specific points</span>
 <span class="sd">    to reconstruct the periodic energy landscape.</span>
@@ -286,7 +286,7 @@
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        array: DFT coefficients.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Es</span><span class="p">)</span>
     <span class="n">DFT_coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">idx_M</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
@@ -306,7 +306,7 @@
                 <span class="p">)</span>
     <span class="n">DFT_coef</span> <span class="o">/=</span> <span class="n">N</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Es</span><span class="p">)</span> <span class="o">-</span> <span class="n">DFT_coef</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-10</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Something wrong in DFT&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Something wrong in DFT"</span><span class="p">)</span>
         <span class="n">exit</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">DFT_coef</span></div>
 
@@ -315,7 +315,7 @@
 <div class="viewcode-block" id="func_DFT_coeff">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.func_DFT_coeff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">func_DFT_coeff</span><span class="p">(</span><span class="n">DFT_coef</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">theta_scale_for_DFT</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create function from DFT coefficients for energy landscape reconstruction.</span>
+<span class="w">    </span><span class="sd">"""Create function from DFT coefficients for energy landscape reconstruction.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        DFT_coef : DFT coefficients.</span>
@@ -323,7 +323,7 @@
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        function: Function that evaluates DFT curve at given parameter values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">DFTcurve</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">DFT_coef</span><span class="p">)):</span>
@@ -345,8 +345,8 @@
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.nft_opt_method.DiscreteFT">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">DiscreteFT</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Es</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
                <span class="n">spot</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> 
-               <span class="n">theta_scale_for_DFT</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;scipy&quot;</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform discrete Fourier transform optimization step.</span>
+               <span class="n">theta_scale_for_DFT</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">"scipy"</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="mf">1.0e-8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Perform discrete Fourier transform optimization step.</span>
 <span class="sd">    </span>
 <span class="sd">    Uses DFT to fit energy measurements and find optimal parameter value</span>
 <span class="sd">    by minimizing the reconstructed energy landscape.</span>
@@ -357,29 +357,29 @@
 <span class="sd">        spot (array): Parameter values where energies were measured.</span>
 <span class="sd">        theta_scale_for_DFT (float): Scaling factor for DFT.</span>
 <span class="sd">        verbose (bool): Whether to print debug information.</span>
-<span class="sd">        method (str, optional): Optimization method. Options: &quot;scipy&quot;, &quot;naive&quot;. </span>
-<span class="sd">                              Defaults to &quot;scipy&quot;.</span>
+<span class="sd">        method (str, optional): Optimization method. Options: "scipy", "naive". </span>
+<span class="sd">                              Defaults to "scipy".</span>
 <span class="sd">        eps (float, optional): Numerical precision parameter. Defaults to 1.0e-8.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: Tuple containing:</span>
 <span class="sd">            - new_theta (float): Optimal parameter value.</span>
 <span class="sd">            - y_min (float): Minimum energy value.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">N_duration</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Es</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
     <span class="n">DFT_coef</span> <span class="o">=</span> <span class="n">eval_DFT_coeff</span><span class="p">(</span><span class="n">Es</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">)</span>
     <span class="n">theta_current</span> <span class="o">=</span> <span class="n">spot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">xplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">theta_current</span><span class="p">,</span> <span class="n">theta_current</span> <span class="o">+</span> <span class="n">N_duration</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">1.0e-2</span><span class="p">)</span>
     <span class="n">DFTcurve</span> <span class="o">=</span> <span class="n">func_DFT_coeff</span><span class="p">(</span><span class="n">DFT_coef</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">)(</span><span class="n">xplot</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;scipy&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"scipy"</span><span class="p">:</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">minimize_scalar</span><span class="p">(</span>
             <span class="n">func_DFT_coeff</span><span class="p">(</span><span class="n">DFT_coef</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">),</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N_duration</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
-            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bounded&quot;</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">"bounded"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">x_min</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">x</span>
         <span class="n">y_min</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">fun</span>
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;naive&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"naive"</span><span class="p">:</span>
         <span class="n">idx_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">DFTcurve</span><span class="p">)</span>
         <span class="n">x_min</span> <span class="o">=</span> <span class="n">xplot</span><span class="p">[</span><span class="n">idx_min</span><span class="p">]</span>
         <span class="n">y_min</span> <span class="o">=</span> <span class="n">DFTcurve</span><span class="p">[</span><span class="n">idx_min</span><span class="p">]</span>
@@ -406,7 +406,7 @@
     <span class="n">proton_qubits</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">neutron_qubits</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate cost function for VQE optimization with NFT method.</span>
+<span class="w">    </span><span class="sd">"""Evaluate cost function for VQE optimization with NFT method.</span>
 <span class="sd">    </span>
 <span class="sd">    Computes the expectation value of the Hamiltonian for given parameters</span>
 <span class="sd">    using the specified ansatz and measurement method.</span>
@@ -417,7 +417,7 @@
 <span class="sd">        Nq (int): Number of qubits.</span>
 <span class="sd">        Nocc (int): Number of occupied orbitals.</span>
 <span class="sd">        method_ansatz (str): Ansatz method to use.</span>
-<span class="sd">        method_measure (str): Measurement method (&quot;statevector&quot; or &quot;Aer&quot;).</span>
+<span class="sd">        method_measure (str): Measurement method ("statevector" or "Aer").</span>
 <span class="sd">        pairinghamiltonian (bool, optional): Whether using pairing Hamiltonian. </span>
 <span class="sd">                                           Defaults to True.</span>
 <span class="sd">        proton_number (int, optional): Number of protons. Defaults to 0.</span>
@@ -430,7 +430,7 @@
 <span class="sd">        </span>
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If invalid measurement method is provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">pairinghamiltonian</span><span class="p">:</span>
         <span class="n">qc</span> <span class="o">=</span> <span class="n">pair_ansatz_qiskit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">Nq</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">,</span> <span class="n">method_ansatz</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -443,7 +443,7 @@
             <span class="n">params</span><span class="p">,</span>
             <span class="n">method_ansatz</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">method_measure</span> <span class="o">==</span> <span class="s2">&quot;statevector&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method_measure</span> <span class="o">==</span> <span class="s2">"statevector"</span><span class="p">:</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="n">StatevectorEstimator</span><span class="p">()</span>
         <span class="n">job</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="p">[</span>
@@ -456,7 +456,7 @@
         <span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
         <span class="n">E_meas</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">evs</span>
         <span class="k">return</span> <span class="n">E_meas</span>
-    <span class="k">elif</span> <span class="n">method_measure</span> <span class="o">==</span> <span class="s2">&quot;Aer&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method_measure</span> <span class="o">==</span> <span class="s2">"Aer"</span><span class="p">:</span>
         <span class="n">estimator</span> <span class="o">=</span> <span class="n">AerEstimator</span><span class="p">()</span>
         <span class="n">job</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="p">[</span>
@@ -470,7 +470,7 @@
         <span class="n">E_meas</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">E_meas</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;method_masure in cost_func should be statevector/Aer for now&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"method_masure in cost_func should be statevector/Aer for now"</span><span class="p">)</span></div>
 
 
 
@@ -494,7 +494,7 @@
     <span class="n">proton_qubits</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">neutron_qubits</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform one step of NFT method optimization</span>
+<span class="w">    </span><span class="sd">"""Perform one step of NFT method optimization</span>
 <span class="sd">    </span>
 <span class="sd">    Optimizes a single parameter using the NFT method by measuring energies</span>
 <span class="sd">    at periodic intervals and using DFT to find the optimal parameter value.</span>
@@ -508,7 +508,7 @@
 <span class="sd">        Nocc (int): Number of occupied orbitals.</span>
 <span class="sd">        method_ansatz (str): Ansatz method.</span>
 <span class="sd">        method_measure (str): Measurement method.</span>
-<span class="sd">        where_is_G_or_cG1 (list): List indicating gate types (&quot;G&quot; or &quot;cG1&quot;).</span>
+<span class="sd">        where_is_G_or_cG1 (list): List indicating gate types ("G" or "cG1").</span>
 <span class="sd">        which_Gate (int): Index of gate to optimize.</span>
 <span class="sd">        verbose (bool): Whether to print debug information.</span>
 <span class="sd">        pairinghamiltonian (bool, optional): Whether using pairing Hamiltonian.</span>
@@ -520,30 +520,30 @@
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        array: Updated parameter values with optimized parameter.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">params_</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="c1"># Making point to measure for Discrete Fourier Transformation</span>
-    <span class="k">if</span> <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;G&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"G"</span><span class="p">:</span>
         <span class="n">spot</span> <span class="o">=</span> <span class="p">[</span><span class="n">params_</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
         <span class="n">spot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spot</span><span class="p">)</span>
         <span class="n">theta_scale_for_DFT</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="k">elif</span> <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;cG1&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"cG1"</span><span class="p">:</span>
         <span class="n">spot</span> <span class="o">=</span> <span class="p">[</span><span class="n">params_</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">9</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)]</span>
         <span class="n">spot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">spot</span><span class="p">)</span>
         <span class="n">theta_scale_for_DFT</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;Encountered an unknown gate: &quot;</span><span class="p">,</span>
+            <span class="s2">"Encountered an unknown gate: "</span><span class="p">,</span>
             <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">],</span>
-            <span class="s2">&quot;something wrong!&quot;</span><span class="p">,</span>
+            <span class="s2">"something wrong!"</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;which_Gate&quot;</span><span class="p">,</span>
+            <span class="s2">"which_Gate"</span><span class="p">,</span>
             <span class="n">which_Gate</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">,</span>
+            <span class="s2">"type"</span><span class="p">,</span>
             <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">],</span>
-            <span class="s2">&quot;Current&quot;</span><span class="p">,</span>
+            <span class="s2">"Current"</span><span class="p">,</span>
             <span class="n">spot</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
 
@@ -570,8 +570,8 @@
     <span class="n">param_best</span><span class="p">,</span> <span class="n">ymin_estimated</span> <span class="o">=</span> <span class="n">DiscreteFT</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">spot</span><span class="p">,</span> <span class="n">theta_scale_for_DFT</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Emeasured&quot;</span><span class="p">,</span> <span class="n">Es</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;param_best&quot;</span><span class="p">,</span> <span class="n">param_best</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Emeasured"</span><span class="p">,</span> <span class="n">Es</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"param_best"</span><span class="p">,</span> <span class="n">param_best</span><span class="p">)</span>
 
     <span class="c1"># Find a minimum point</span>
     <span class="n">params_</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_best</span>
@@ -599,7 +599,7 @@
     <span class="n">proton_qubits</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">neutron_qubits</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optimize ansatz parameters with sequential NFT updates.</span>
+<span class="w">    </span><span class="sd">"""Optimize ansatz parameters with sequential NFT updates.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        it_max (int): Number of outer optimization sweeps.</span>
@@ -622,12 +622,12 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Iterable[float]: Optimized parameter vector.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">proton_number</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">proton_qubits</span> <span class="o">==</span> <span class="p">[])</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">neutron_number</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">neutron_qubits</span> <span class="o">==</span> <span class="p">[]</span>
     <span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;proton/neutron_number &gt; 0 requires proton/neutron_qubits to be set&quot;</span>
+            <span class="s2">"proton/neutron_number &gt; 0 requires proton/neutron_qubits to be set"</span>
         <span class="p">)</span>
     <span class="n">stag</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">params_opt</span> <span class="o">=</span> <span class="kc">None</span>
@@ -644,9 +644,9 @@
         <span class="n">proton_qubits</span><span class="o">=</span><span class="n">proton_qubits</span><span class="p">,</span>
         <span class="n">neutron_qubits</span><span class="o">=</span><span class="n">neutron_qubits</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimizing parameters...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Optimizing parameters..."</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">it_max</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;iteration </span><span class="si">%5d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">it</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"iteration </span><span class="si">%5d</span><span class="s2"> "</span> <span class="o">%</span> <span class="n">it</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">it</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">which_Gate</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">ngate</span><span class="p">,</span> <span class="n">ngate</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -686,11 +686,11 @@
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="n">which_Gate</span><span class="p">,</span>
                     <span class="n">params</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">],</span>
-                    <span class="s2">&quot;=&gt;&quot;</span><span class="p">,</span>
+                    <span class="s2">"=&gt;"</span><span class="p">,</span>
                     <span class="n">params_</span><span class="p">[</span><span class="n">which_Gate</span><span class="p">],</span>
-                    <span class="s2">&quot;E:&quot;</span><span class="p">,</span>
+                    <span class="s2">"E:"</span><span class="p">,</span>
                     <span class="n">E_prev</span><span class="p">,</span>
-                    <span class="s2">&quot;=&gt;&quot;</span><span class="p">,</span>
+                    <span class="s2">"=&gt;"</span><span class="p">,</span>
                     <span class="n">E_current</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">params_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -700,7 +700,7 @@
                 <span class="n">stag</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">stag</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;E_current </span><span class="si">%15.10f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">E_current</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"E_current </span><span class="si">%15.10f</span><span class="s2">"</span> <span class="o">%</span> <span class="n">E_current</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">stag</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">ngate</span><span class="p">:</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">params_opt</span><span class="p">,</span> <span class="n">E_best</span></div>
@@ -737,7 +737,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

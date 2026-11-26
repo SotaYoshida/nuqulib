@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Contributing to NuQuLib" href="contributing.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>API reference for NuQuLib - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>API reference for NuQuLib - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -161,7 +161,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -182,7 +182,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -1433,10 +1433,10 @@ coefficients:</p>
 
 <span class="n">op</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;_0 _1&quot;</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
-        <span class="s2">&quot;_1 _0&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
-        <span class="s2">&quot;_2 _3&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
-        <span class="s2">&quot;_3 _2&quot;</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+        <span class="s2">"_0 _1"</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+        <span class="s2">"_1 _0"</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+        <span class="s2">"_2 _3"</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+        <span class="s2">"_3 _2"</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="n">num_modes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1446,8 +1446,8 @@ coefficients:</p>
 If you have very restricted memory resources available, or would like to avoid the additional
 copy, the dictionary will be stored by reference if you disable <code class="docutils literal notranslate"><span class="pre">copy</span></code> like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">some_big_data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;_0 _1&quot;</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
-    <span class="s2">&quot;_1 _0&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+    <span class="s2">"_0 _1"</span><span class="p">:</span> <span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
+    <span class="s2">"_1 _0"</span><span class="p">:</span> <span class="o">-</span><span class="mf">.25</span><span class="n">j</span><span class="p">,</span>
     <span class="c1"># ...</span>
 <span class="p">}</span>
 
@@ -1468,7 +1468,7 @@ guaranteed to remain unaffected by such changes.</p>
 <p>As an alternative to the manual construction above, a more convenient way of initializing a
 <cite>MajoranaOp</cite> is, to construct it from an existing <cite>FermionicOp</cite>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit_nature.second_q.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">FermionicOp</span><span class="p">,</span> <span class="n">MajoranaOp</span>
-<span class="n">f_op</span> <span class="o">=</span> <span class="n">FermionicOp</span><span class="p">({</span><span class="s2">&quot;+_0 -_1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">f_op</span> <span class="o">=</span> <span class="n">FermionicOp</span><span class="p">({</span><span class="s2">"+_0 -_1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">m_op</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="o">.</span><span class="n">from_fermionic_op</span><span class="p">(</span><span class="n">f_op</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1489,14 +1489,14 @@ allowed character in the keys of the <code class="docutils literal notranslate">
 For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p_t</span> <span class="o">=</span> <span class="n">PolynomialTensor</span><span class="p">(</span>
     <span class="p">{</span>
-        <span class="s2">&quot;_&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-        <span class="s2">&quot;__&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+        <span class="s2">"_"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="s2">"__"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
     <span class="p">}</span>
 <span class="p">)</span>
 <span class="n">op</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="o">.</span><span class="n">from_polynomial_tensor</span><span class="p">(</span><span class="n">p_t</span><span class="p">)</span>
 
 <span class="c1"># op is then</span>
-<span class="n">MajoranaOp</span><span class="p">({</span><span class="s1">&#39;_0&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;_1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;_0 _0&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;_0 _1&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;_1 _0&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;_1 _1&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">MajoranaOp</span><span class="p">({</span><span class="s1">'_0'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'_1'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'_0 _0'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'_0 _1'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">'_1 _0'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">'_1 _1'</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Algebra</strong></p>
@@ -1504,30 +1504,30 @@ For example,</p>
 multiplication, operator multiplication, and adjoint.
 For example,</p>
 <p>Addition</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_0&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_0"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Sum</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">MajoranaOp</span><span class="p">({</span><span class="n">label</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;_0&quot;</span><span class="p">,</span> <span class="s2">&quot;_1&quot;</span><span class="p">,</span> <span class="s2">&quot;_2 _3&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">MajoranaOp</span><span class="p">({</span><span class="n">label</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"_0"</span><span class="p">,</span> <span class="s2">"_1"</span><span class="p">,</span> <span class="s2">"_2 _3"</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Scalar multiplication</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Operator multiplication</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op1</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_0 _1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">op2</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_0 _1 _2&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op1</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_0 _1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">op2</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_0 _1 _2"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">op1</span> <span class="o">@</span> <span class="n">op2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Tensor multiplication</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_0 _1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">op</span> <span class="o">=</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_0 _1"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">op</span> <span class="o">^</span> <span class="n">op</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Adjoint</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">&quot;_0 _1&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="n">j</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">adjoint</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MajoranaOp</span><span class="p">({</span><span class="s2">"_0 _1"</span><span class="p">:</span> <span class="mi">1</span><span class="n">j</span><span class="p">},</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">adjoint</span><span class="p">()</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -1908,8 +1908,8 @@ frameworks, LaTeX formatting for nuclear notation, etc.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">latex_nuc</span><span class="p">(</span><span class="s2">&quot;6He&quot;</span><span class="p">)</span>
-<span class="go">&#39;${}^{6}$He&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">latex_nuc</span><span class="p">(</span><span class="s2">"6He"</span><span class="p">)</span>
+<span class="go">'${}^{6}$He'</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2500,7 +2500,7 @@ using combinations.</p>
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuple_to_bitstring</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;|0101&gt;&#39;</span>
+<span class="go">'|0101&gt;'</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3545,12 +3545,12 @@ codes (KSHELL, NuHamil, NuclearToolkit.jl) and provides methods for:
 
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># For valence-space calculation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="s2">&quot;interaction.snt&quot;</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="s2">"interaction.snt"</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">H_dict</span> <span class="o">=</span> <span class="n">hamil</span><span class="o">.</span><span class="n">get_mscheme_H</span><span class="p">(</span><span class="n">opform</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># For NCSM with three-body forces</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="s2">&quot;ncsm_int.snt&quot;</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-<span class="gp">... </span>                    <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">&quot;3nf.me3j.gz&quot;</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span> <span class="o">=</span> <span class="n">Hamiltonian</span><span class="p">(</span><span class="s2">"ncsm_int.snt"</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="n">fn_3NF</span><span class="o">=</span><span class="s2">"3nf.me3j.gz"</span><span class="p">,</span> <span class="n">ncsm</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emax_truncate</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="rubric">References</p>
@@ -4315,8 +4315,8 @@ and <code class="docutils literal notranslate"><span class="pre">2</span></code>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span><span class="p">,</span> <span class="n">H_mapped</span><span class="p">,</span> <span class="n">p_qubits</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">get_Hamiltonian</span><span class="p">(</span><span class="s2">&quot;interaction.snt&quot;</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total qubits: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">p_qubits</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hamil</span><span class="p">,</span> <span class="n">H_mapped</span><span class="p">,</span> <span class="n">p_qubits</span><span class="p">,</span> <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">get_Hamiltonian</span><span class="p">(</span><span class="s2">"interaction.snt"</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total qubits: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">p_qubits</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5248,7 +5248,7 @@ for single excitations. The optimization uses Adam optimizer with 150 iterations
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=92734c54"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

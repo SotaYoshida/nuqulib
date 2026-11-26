@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.majoranaop - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.majoranaop - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -237,7 +237,7 @@
 <span class="c1"># copyright notice, and modified files need to carry a notice indicating</span>
 <span class="c1"># that they have been altered from the originals.</span>
 
-<span class="sd">&quot;&quot;&quot;The Majorana-particle Operator.&quot;&quot;&quot;</span>
+<span class="sd">"""The Majorana-particle Operator."""</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -259,7 +259,7 @@
 <div class="viewcode-block" id="MajoranaOp">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MajoranaOp</span><span class="p">(</span><span class="n">SparseLabelOp</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;N-mode Majorana operator.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""N-mode Majorana operator.</span>
 
 <span class="sd">    A ``MajoranaOp`` represents a weighted sum of Majorana fermion operator terms.</span>
 <span class="sd">    These terms are encoded as sparse labels, which are strings consisting of a space-separated list</span>
@@ -280,10 +280,10 @@
 
 <span class="sd">        op = MajoranaOp(</span>
 <span class="sd">            {</span>
-<span class="sd">                &quot;_0 _1&quot;: .25j,</span>
-<span class="sd">                &quot;_1 _0&quot;: -.25j,</span>
-<span class="sd">                &quot;_2 _3&quot;: -.25j,</span>
-<span class="sd">                &quot;_3 _2&quot;: .25j,</span>
+<span class="sd">                "_0 _1": .25j,</span>
+<span class="sd">                "_1 _0": -.25j,</span>
+<span class="sd">                "_2 _3": -.25j,</span>
+<span class="sd">                "_3 _2": .25j,</span>
 <span class="sd">            },</span>
 <span class="sd">            num_modes=4,</span>
 <span class="sd">        )</span>
@@ -295,8 +295,8 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        some_big_data = {</span>
-<span class="sd">            &quot;_0 _1&quot;: .25j,</span>
-<span class="sd">            &quot;_1 _0&quot;: -.25j,</span>
+<span class="sd">            "_0 _1": .25j,</span>
+<span class="sd">            "_1 _0": -.25j,</span>
 <span class="sd">            # ...</span>
 <span class="sd">        }</span>
 
@@ -309,7 +309,7 @@
 
 <span class="sd">    .. note::</span>
 
-<span class="sd">        It is the users&#39; responsibility, that in the above scenario, :code:`some_big_data` is not</span>
+<span class="sd">        It is the users' responsibility, that in the above scenario, :code:`some_big_data` is not</span>
 <span class="sd">        changed after initialization of the ``MajoranaOp``, since the operator contents are not</span>
 <span class="sd">        guaranteed to remain unaffected by such changes.</span>
 
@@ -321,7 +321,7 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        from qiskit_nature.second_q.operators import FermionicOp, MajoranaOp</span>
-<span class="sd">        f_op = FermionicOp({&quot;+_0 -_1&quot;: 1}, num_spin_orbitals=2)</span>
+<span class="sd">        f_op = FermionicOp({"+_0 -_1": 1}, num_spin_orbitals=2)</span>
 <span class="sd">        m_op = MajoranaOp.from_fermionic_op(f_op)</span>
 
 <span class="sd">    Note that each ``FerminonicOp``-term consisting of :math:`n` expressions will result in a</span>
@@ -347,14 +347,14 @@
 
 <span class="sd">        p_t = PolynomialTensor(</span>
 <span class="sd">            {</span>
-<span class="sd">                &quot;_&quot;: np.arange(1, 3),</span>
-<span class="sd">                &quot;__&quot;: np.arange(1, 5).reshape((2, 2)),</span>
+<span class="sd">                "_": np.arange(1, 3),</span>
+<span class="sd">                "__": np.arange(1, 5).reshape((2, 2)),</span>
 <span class="sd">            }</span>
 <span class="sd">        )</span>
 <span class="sd">        op = MajoranaOp.from_polynomial_tensor(p_t)</span>
 
 <span class="sd">        # op is then</span>
-<span class="sd">        MajoranaOp({&#39;_0&#39;: 1, &#39;_1&#39;: 2, &#39;_0 _0&#39;: 1, &#39;_0 _1&#39;: 2, &#39;_1 _0&#39;: 3, &#39;_1 _1&#39;: 4}, num_modes=2)</span>
+<span class="sd">        MajoranaOp({'_0': 1, '_1': 2, '_0 _0': 1, '_0 _1': 2, '_1 _0': 3, '_1 _1': 4}, num_modes=2)</span>
 
 <span class="sd">    **Algebra**</span>
 
@@ -366,45 +366,45 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      MajoranaOp({&quot;_1&quot;: 1}, num_modes=2) + MajoranaOp({&quot;_0&quot;: 1}, num_modes=2)</span>
+<span class="sd">      MajoranaOp({"_1": 1}, num_modes=2) + MajoranaOp({"_0": 1}, num_modes=2)</span>
 
 <span class="sd">    Sum</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      sum(MajoranaOp({label: 1}, num_modes=4) for label in [&quot;_0&quot;, &quot;_1&quot;, &quot;_2 _3&quot;])</span>
+<span class="sd">      sum(MajoranaOp({label: 1}, num_modes=4) for label in ["_0", "_1", "_2 _3"])</span>
 
 <span class="sd">    Scalar multiplication</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      0.5 * MajoranaOp({&quot;_1&quot;: 1}, num_modes=2)</span>
+<span class="sd">      0.5 * MajoranaOp({"_1": 1}, num_modes=2)</span>
 
 <span class="sd">    Operator multiplication</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      op1 = MajoranaOp({&quot;_0 _1&quot;: 1}, num_modes=3)</span>
-<span class="sd">      op2 = MajoranaOp({&quot;_0 _1 _2&quot;: 1}, num_modes=3)</span>
+<span class="sd">      op1 = MajoranaOp({"_0 _1": 1}, num_modes=3)</span>
+<span class="sd">      op2 = MajoranaOp({"_0 _1 _2": 1}, num_modes=3)</span>
 <span class="sd">      print(op1 @ op2)</span>
 
 <span class="sd">    Tensor multiplication</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      op = MajoranaOp({&quot;_0 _1&quot;: 1}, num_modes=2)</span>
+<span class="sd">      op = MajoranaOp({"_0 _1": 1}, num_modes=2)</span>
 <span class="sd">      print(op ^ op)</span>
 
 <span class="sd">    Adjoint</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">      MajoranaOp({&quot;_0 _1&quot;: 1j}, num_modes=2).adjoint()</span>
+<span class="sd">      MajoranaOp({"_0 _1": 1j}, num_modes=2).adjoint()</span>
 
 <span class="sd">    .. note::</span>
 
 <span class="sd">        Since Majorana operators are self-adjoined, the adjoint of a ``MajoranaOp`` is the original</span>
-<span class="sd">        operator with all strings reversed, e.g. :code:`&quot;_0 _1&quot;` becomes :code:`&quot;_1 _0&quot;` in the</span>
+<span class="sd">        operator with all strings reversed, e.g. :code:`"_0 _1"` becomes :code:`"_1 _0"` in the</span>
 <span class="sd">        example above, and coefficients become complex conjugated.</span>
 
 <span class="sd">    **Iteration**</span>
@@ -426,9 +426,9 @@
 <span class="sd">        methods:</span>
 
 <span class="sd">        - ``is_hermitian``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">_OPERATION_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(_\d+\s)*_\d+&quot;</span><span class="p">)</span>
+    <span class="n">_OPERATION_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(_\d+\s)*_\d+"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -438,7 +438,7 @@
         <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Args:</span>
 <span class="sd">            data: the operator data, mapping string-based keys to numerical values.</span>
 <span class="sd">            num_modes: the number of modes on which this operator acts.</span>
@@ -453,14 +453,14 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            QiskitNatureError: when an invalid key is encountered during validation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span> <span class="o">=</span> <span class="n">num_modes</span>
         <span class="c1"># if num_modes is None, it is set during _validate_keys</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="n">validate</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of Majorana modes required by this operator.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the number of Majorana modes required by this operator."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">max_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">term</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
             <span class="k">return</span> <span class="n">max_index</span> <span class="o">+</span> <span class="mi">1</span>
@@ -488,12 +488,12 @@
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="c1"># 0. explicitly allow the empty key</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="c1"># 1. validate overall key structure</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">MajoranaOp</span><span class="o">.</span><span class="n">_OPERATION_REGEX</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">QiskitNatureError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is not a valid MajoranaOp label.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">QiskitNatureError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is not a valid MajoranaOp label."</span><span class="p">)</span>
 
             <span class="c1"># 2. validate all indices against register length</span>
             <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
@@ -502,8 +502,8 @@
                     <span class="n">max_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">num_modes</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">QiskitNatureError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;The index, </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">, from the label, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, exceeds the number of &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;modes, </span><span class="si">{</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">.&quot;</span>
+                        <span class="sa">f</span><span class="s2">"The index, </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">, from the label, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, exceeds the number of "</span>
+                        <span class="sa">f</span><span class="s2">"modes, </span><span class="si">{</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">."</span>
                     <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">num_modes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -511,20 +511,20 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_polynomial_tensor_key</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">allowed_chars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_&quot;</span><span class="p">}</span>
+        <span class="n">allowed_chars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"_"</span><span class="p">}</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-</span> <span class="n">allowed_chars</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">QiskitNatureError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is invalid. PolynomialTensor keys may only consists of `_` &quot;</span>
-                    <span class="s2">&quot;characters, for them to be expandable into a MajoranaOp.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The key </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is invalid. PolynomialTensor keys may only consists of `_` "</span>
+                    <span class="s2">"characters, for them to be expandable into a MajoranaOp."</span>
                 <span class="p">)</span>
 
 <div class="viewcode-block" id="MajoranaOp.from_polynomial_tensor">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.from_polynomial_tensor">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_polynomial_tensor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">PolynomialTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a Majorana operator from a polynomial tensor.</span>
+<span class="w">        </span><span class="sd">"""Construct a Majorana operator from a polynomial tensor.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tensor (PolynomialTensor): Tensor whose keys contain only</span>
@@ -532,19 +532,19 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            MajoranaOp: Operator containing the tensor entries as sparse labels.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_validate_polynomial_tensor_key</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_TCoeff</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">tensor</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                 <span class="k">continue</span>
 
             <span class="n">mat</span> <span class="o">=</span> <span class="n">tensor</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-            <span class="n">empty_string_key</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># label format for Majorana is just &#39;_&lt;index&gt;&#39;</span>
+            <span class="n">empty_string_key</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># label format for Majorana is just '_&lt;index&gt;'</span>
             <span class="n">label_template</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">label_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">empty_string_key</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">mat</span><span class="o">.</span><span class="n">coord_iter</span><span class="p">():</span>
@@ -555,36 +555,36 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">data_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span>
 
-        <span class="k">return</span> <span class="s2">&quot;MajoranaOp(&quot;</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_str</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="sa">f</span><span class="s2">&quot;num_modes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">, &quot;</span> <span class="s2">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="s2">"MajoranaOp("</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">data_str</span><span class="si">}</span><span class="s2">, "</span> <span class="sa">f</span><span class="s2">"num_modes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">, "</span> <span class="s2">")"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">pre</span> <span class="o">=</span> <span class="s2">&quot;Majorana Operator</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="sa">f</span><span class="s2">&quot;number modes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">, number terms=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">+ &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2"> * ( </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> )&quot;</span> <span class="k">if</span> <span class="n">label</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="s2">"Majorana Operator</span><span class="se">\n</span><span class="s2">"</span> <span class="sa">f</span><span class="s2">"number modes=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_modes</span><span class="si">}</span><span class="s2">, number terms=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="s2">"  "</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">+ "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2"> * ( </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> )"</span> <span class="k">if</span> <span class="n">label</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">coeff</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">ret</span>
 
 <div class="viewcode-block" id="MajoranaOp.terms">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.terms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">terms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">_TCoeff</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Provides an iterator analogous to :meth:`items` but with the labels already split into</span>
+<span class="w">        </span><span class="sd">"""Provides an iterator analogous to :meth:`items` but with the labels already split into</span>
 <span class="sd">        pairs of operation characters and indices.</span>
 
 <span class="sd">        Yields:</span>
-<span class="sd">            A tuple with two items; the first one being a list of pairs of the form (&#39;&#39;, int)</span>
+<span class="sd">            A tuple with two items; the first one being a list of pairs of the form ('', int)</span>
 <span class="sd">            where the empty string is for compatibility with other :class:`SparseLabelOp` and</span>
 <span class="sd">            the integer corresponds to the mode index on which the operator gets applied; the second</span>
 <span class="sd">            item of the returned tuple is the coefficient of this term.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="p">([],</span> <span class="bp">self</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
                 <span class="k">continue</span>
-            <span class="c1">#   label.split() will return lbl = &#39;_&lt;index&gt;&#39; for each term</span>
+            <span class="c1">#   label.split() will return lbl = '_&lt;index&gt;' for each term</span>
             <span class="c1">#   lbl[1:] corresponds to the index</span>
-            <span class="n">terms</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">lbl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="n">terms</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">""</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">lbl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
             <span class="k">yield</span> <span class="p">(</span><span class="n">terms</span><span class="p">,</span> <span class="bp">self</span><span class="p">[</span><span class="n">label</span><span class="p">])</span></div>
 
 
@@ -592,7 +592,7 @@
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.from_terms">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_terms</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">terms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">_TCoeff</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct an operator from split label terms.</span>
+<span class="w">        </span><span class="sd">"""Construct an operator from split label terms.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            terms (Sequence): Sequence of ``(label_terms, coefficient)`` pairs,</span>
@@ -600,8 +600,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            MajoranaOp: Operator assembled from the provided terms.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">label</span><span class="p">):</span> <span class="n">value</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">}</span>
+<span class="sd">        """</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">label</span><span class="p">):</span> <span class="n">value</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">}</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
 
@@ -609,7 +609,7 @@
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.from_fermionic_op">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_fermionic_op</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">FermionicOp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">simplify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs the operator from a :class:`~.FermionicOp`.</span>
+<span class="w">        </span><span class="sd">"""Constructs the operator from a :class:`~.FermionicOp`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            op: the :class:`~.FermionicOp` to convert.</span>
@@ -617,28 +617,28 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The converted :class:`~.MajoranaOp`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>  <span class="c1"># type: dict[str, _TCoeff]</span>
         <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">terms</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">terms</span><span class="p">)):</span>
-                <span class="n">majorana_label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">majorana_label</span> <span class="o">=</span> <span class="s2">""</span>
                 <span class="n">coeff_power</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">term</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">terms</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">majorana_label</span><span class="p">:</span>
-                        <span class="n">majorana_label</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span>
+                        <span class="n">majorana_label</span> <span class="o">+=</span> <span class="s2">" "</span>
                     <span class="n">odd_index</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;&gt;</span> <span class="n">j</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span>
                     <span class="n">index</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">term</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span> <span class="o">+</span> <span class="n">odd_index</span>
                     <span class="k">if</span> <span class="n">odd_index</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">term</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">term</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"-"</span><span class="p">:</span>
                             <span class="n">coeff_power</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">coeff_power</span> <span class="o">+=</span> <span class="mi">3</span>
-                    <span class="n">majorana_label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">majorana_label</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
                 <span class="n">new_coeff</span> <span class="o">=</span> <span class="mi">1</span><span class="n">j</span><span class="o">**</span><span class="n">coeff_power</span> <span class="o">*</span> <span class="n">coeff</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="nb">len</span><span class="p">(</span><span class="n">terms</span><span class="p">))</span>
                 <span class="k">if</span> <span class="n">simplify</span><span class="p">:</span>
                     <span class="n">trms</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">trm</span> <span class="k">for</span> <span class="n">trm</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">MajoranaOp</span><span class="p">({</span><span class="n">majorana_label</span><span class="p">:</span> <span class="n">new_coeff</span><span class="p">})</span><span class="o">.</span><span class="n">terms</span><span class="p">())</span>
-                    <span class="n">majorana_label</span><span class="p">,</span> <span class="n">new_coeff</span> <span class="o">=</span> <span class="n">FermionicOp</span><span class="o">.</span><span class="n">_index_order</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="n">trms</span><span class="p">,</span> <span class="n">coeff</span><span class="o">=</span><span class="n">new_coeff</span><span class="p">)</span>
+                    <span class="n">majorana_label</span><span class="p">,</span> <span class="n">new_coeff</span> <span class="o">=</span> <span class="n">FermionicOp</span><span class="o">.</span><span class="n">_index_order</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="n">trms</span><span class="p">,</span> <span class="n">coeff</span><span class="o">=</span><span class="n">new_coeff</span><span class="p">)</span>
                     <span class="n">majorana_label</span><span class="p">,</span> <span class="n">new_coeff</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_simplify_label</span><span class="p">(</span><span class="n">majorana_label</span><span class="p">,</span> <span class="n">new_coeff</span><span class="p">)</span>
                 <span class="n">data</span><span class="p">[</span><span class="n">majorana_label</span><span class="p">]</span> <span class="o">+=</span> <span class="n">new_coeff</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">num_modes</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">op</span><span class="o">.</span><span class="n">num_spin_orbitals</span><span class="p">)</span></div>
@@ -652,7 +652,7 @@
 <div class="viewcode-block" id="MajoranaOp.compose">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.compose">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">MajoranaOp</span><span class="p">,</span> <span class="n">qargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">front</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compose this operator with another Majorana operator.</span>
+<span class="w">        </span><span class="sd">"""Compose this operator with another Majorana operator.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            other (MajoranaOp): Operator to compose with this one.</span>
@@ -662,10 +662,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            MajoranaOp: Composed operator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MajoranaOp</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unsupported operand type(s) for *: &#39;MajoranaOp&#39; and &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unsupported operand type(s) for *: 'MajoranaOp' and '</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">front</span><span class="p">:</span>
@@ -677,14 +677,14 @@
 <div class="viewcode-block" id="MajoranaOp.tensor">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.tensor">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">MajoranaOp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the tensor product of this operator with ``other``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the tensor product of this operator with ``other``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MajoranaOp.expand">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.expand">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">MajoranaOp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the reverse-order tensor product with ``other``.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the reverse-order tensor product with ``other``."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 
@@ -695,7 +695,7 @@
         <span class="n">new_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_TCoeff</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">label1</span><span class="p">,</span> <span class="n">cf1</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">terms2</span><span class="p">,</span> <span class="n">cf2</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">terms</span><span class="p">():</span>
-                <span class="n">new_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">label1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="n">shift</span><span class="si">}</span><span class="s1">&#39;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">terms2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">new_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label1</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">'_</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="n">shift</span><span class="si">}</span><span class="s1">'</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">terms2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">new_label</span> <span class="ow">in</span> <span class="n">new_data</span><span class="p">:</span>
                     <span class="n">new_data</span><span class="p">[</span><span class="n">new_label</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cf1</span> <span class="o">*</span> <span class="n">cf2</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -709,11 +709,11 @@
 <div class="viewcode-block" id="MajoranaOp.transpose">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.transpose">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy with every Majorana label string reversed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a copy with every Majorana label string reversed."""</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()))]</span> <span class="o">=</span> <span class="n">coeff</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">split</span><span class="p">()))]</span> <span class="o">=</span> <span class="n">coeff</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_instance</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
@@ -721,7 +721,7 @@
 <div class="viewcode-block" id="MajoranaOp.index_order">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.index_order">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">index_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to the equivalent operator with the terms of each label ordered by index.</span>
+<span class="w">        </span><span class="sd">"""Convert to the equivalent operator with the terms of each label ordered by index.</span>
 
 <span class="sd">        Returns a new operator (the original operator is not modified).</span>
 
@@ -737,7 +737,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The index ordered operator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>  <span class="c1"># type: dict[str, _TCoeff]</span>
         <span class="k">for</span> <span class="n">terms</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">():</span>
             <span class="c1"># index ordering is identical to FermionicOp, hence we call classmethod there:</span>
@@ -757,7 +757,7 @@
 <div class="viewcode-block" id="MajoranaOp.is_hermitian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.is_hermitian">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_hermitian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether the operator is hermitian.</span>
+<span class="w">        </span><span class="sd">"""Checks whether the operator is hermitian.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            atol: Absolute numerical tolerance. The default behavior is to use ``self.atol``.</span>
@@ -767,9 +767,9 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: Operator contains parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_parameterized</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;is_hermitian is not supported for operators containing parameters.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"is_hermitian is not supported for operators containing parameters."</span><span class="p">)</span>
         <span class="n">atol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atol</span> <span class="k">if</span> <span class="n">atol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">atol</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjoint</span><span class="p">())</span><span class="o">.</span><span class="n">simplify</span><span class="p">(</span><span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">coeff</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span> <span class="k">for</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">diff</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
@@ -778,7 +778,7 @@
 <div class="viewcode-block" id="MajoranaOp.simplify">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.majoranaop.MajoranaOp.simplify">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MajoranaOp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collapse duplicate Majorana labels and remove near-zero coefficients.</span>
+<span class="w">        </span><span class="sd">"""Collapse duplicate Majorana labels and remove near-zero coefficients.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            atol (float | None, optional): Absolute tolerance for removing</span>
@@ -786,7 +786,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            MajoranaOp: Simplified operator.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">atol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atol</span> <span class="k">if</span> <span class="n">atol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">atol</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>  <span class="c1"># type: dict[str, _TCoeff]</span>
@@ -814,7 +814,7 @@
                     <span class="n">coeff</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
                 <span class="n">new_label_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         <span class="n">new_label_list</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
-        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">index</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">new_label_list</span><span class="p">)),</span> <span class="n">coeff</span></div>
+        <span class="k">return</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">index</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">new_label_list</span><span class="p">)),</span> <span class="n">coeff</span></div>
 
 </pre></div>
         </article>
@@ -848,7 +848,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

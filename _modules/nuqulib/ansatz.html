@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.ansatz - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.ansatz - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,12 +225,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.ansatz</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Quantum ansatz circuits for nuclear simulations.</span>
+<span></span><span class="sd">"""Quantum ansatz circuits for nuclear simulations.</span>
 
 <span class="sd">This module provides various ansatz implementations for nuclear quantum simulations,</span>
 <span class="sd">including Hartree-Fock states (lowest-filling more precisely),</span>
 <span class="sd">Givens rotation-based circuits, and pair Unitary Coupled-Cluster Doubles (pUCCD).</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -252,11 +252,11 @@
         <span class="n">proton_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">neutron_qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">mapping_method</span><span class="o">=</span><span class="s2">&quot;JordanWigner&quot;</span><span class="p">,</span>
+        <span class="n">mapping_method</span><span class="o">=</span><span class="s2">"JordanWigner"</span><span class="p">,</span>
         <span class="n">Hamildict_opform</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
-        <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
+        <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">"./"</span>
     <span class="p">):</span>    
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a product-state ansatz by filling the last proton/neutron orbitals.</span>
+<span class="w">    </span><span class="sd">"""Construct a product-state ansatz by filling the last proton/neutron orbitals.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        proton_qubits (Iterable[int]): Qubit indices assigned to proton modes.</span>
@@ -264,19 +264,19 @@
 <span class="sd">        proton_number (int): Number of proton orbitals to occupy.</span>
 <span class="sd">        neutron_number (int): Number of neutron orbitals to occupy.</span>
 <span class="sd">        mapping_method (str, optional): Fermion-to-qubit mapping used to create</span>
-<span class="sd">            the occupation-flip Pauli strings. Defaults to ``&quot;JordanWigner&quot;``.</span>
+<span class="sd">            the occupation-flip Pauli strings. Defaults to ``"JordanWigner"``.</span>
 <span class="sd">        Hamildict_opform (dict, optional): Operator-form Hamiltonian dictionary</span>
-<span class="sd">            containing ``&quot;SPE&quot;`` entries for proton and neutron sectors.</span>
+<span class="sd">            containing ``"SPE"`` entries for proton and neutron sectors.</span>
 <span class="sd">        filepath (str | os.PathLike, optional): Base path used by mappings that</span>
 <span class="sd">            need to load or save mapper data.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        QuantumCircuit: Circuit preparing the naive filling configuration.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">N_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
-    <span class="n">P_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
-    <span class="n">n_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">N_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>  
-    <span class="n">p_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; -_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">P_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">N_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">'SPE'</span><span class="p">][</span><span class="s1">'n'</span><span class="p">]</span>
+    <span class="n">P_dict</span> <span class="o">=</span> <span class="n">Hamildict_opform</span><span class="p">[</span><span class="s1">'SPE'</span><span class="p">][</span><span class="s1">'p'</span><span class="p">]</span>
+    <span class="n">n_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" -_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">N_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>  
+    <span class="n">p_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" -_"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">P_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">]</span>
 
     <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_keys</span><span class="p">)</span>
     <span class="n">n_qubits_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_keys</span><span class="p">)</span>
@@ -286,14 +286,14 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proton_number</span><span class="p">):</span> 
         <span class="n">paulistr</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
             <span class="n">FermionicOp</span><span class="p">({</span><span class="n">p_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]:</span> <span class="mf">2.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_p</span><span class="p">),</span> 
-            <span class="n">n_qubits</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">P_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">&#39;_p&#39;</span><span class="p">,</span>
+            <span class="n">n_qubits</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">P_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">'_p'</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
         <span class="n">pauli_op</span> <span class="o">=</span> <span class="n">PauliGate</span><span class="p">(</span><span class="n">paulistr</span><span class="p">)</span>
         <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pauli_op</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)))</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neutron_number</span><span class="p">):</span>
         <span class="n">paulistr</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
             <span class="n">FermionicOp</span><span class="p">({</span><span class="n">n_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]:</span> <span class="mf">2.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_n</span><span class="p">),</span> 
-            <span class="n">n_qubits</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">N_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">&#39;_n&#39;</span><span class="p">,</span>
+            <span class="n">n_qubits</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">mapping_method</span><span class="p">,</span><span class="n">Hamildict_specified</span><span class="o">=</span><span class="n">N_dict</span><span class="p">,</span> <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="o">+</span><span class="s1">'_n'</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()</span>
         <span class="n">pauli_op</span> <span class="o">=</span> <span class="n">PauliGate</span><span class="p">(</span><span class="n">paulistr</span><span class="p">)</span>
         <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_op</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">pauli_op</span><span class="o">.</span><span class="n">num_qubits</span><span class="p">)))</span>
@@ -301,25 +301,25 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="n">direct_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> -_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">direct_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> -_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">if</span> <span class="n">direct_key</span> <span class="ow">in</span> <span class="n">spe_dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">spe_dict</span><span class="p">[</span><span class="n">direct_key</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">spe_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;-_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"+_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">"-_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">val</span>
-    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Diagonal SPE term not found for index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Diagonal SPE term not found for index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_entries</span><span class="p">(</span><span class="n">Hamiltonian_obj</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">is_proton</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
     <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">is_proton</span><span class="p">:</span>
-        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
+        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">'SPE'</span><span class="p">][</span><span class="s1">'p'</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits_p</span><span class="p">):</span>
             <span class="n">energy</span> <span class="o">=</span> <span class="n">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="n">msp</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">l</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">msp</span><span class="o">.</span><span class="n">jz</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">&#39;SPE&#39;</span><span class="p">][</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+        <span class="n">spe_dict</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span><span class="p">[</span><span class="s1">'SPE'</span><span class="p">][</span><span class="s1">'n'</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits_n</span><span class="p">):</span>
             <span class="n">energy</span> <span class="o">=</span> <span class="n">_diag_spe</span><span class="p">(</span><span class="n">spe_dict</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="n">msp</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">msps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_qubits_p</span><span class="p">]</span>
@@ -332,17 +332,17 @@
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">jz</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">jz</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">standalone</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                <span class="s2">&quot;plus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;minus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s2">&quot;single&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span>
+                <span class="s2">"plus"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"minus"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"single"</span><span class="p">:</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span>
             <span class="p">})</span>
             <span class="k">continue</span>
         <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">jz</span><span class="p">))</span>
-        <span class="n">slot</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;plus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;minus&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+        <span class="n">slot</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="s2">"plus"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"minus"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"single"</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
         <span class="k">if</span> <span class="n">jz</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">slot</span><span class="p">[</span><span class="s2">&quot;plus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">slot</span><span class="p">[</span><span class="s2">"plus"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">slot</span><span class="p">[</span><span class="s2">&quot;minus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">slot</span><span class="p">[</span><span class="s2">"minus"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
 
     <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
@@ -375,12 +375,12 @@
 
         <span class="n">options</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[])]</span>
 
-        <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;single&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">"single"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">"single"</span><span class="p">]</span>
             <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">minus</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;minus&quot;</span><span class="p">]</span>
-            <span class="n">plus</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;plus&quot;</span><span class="p">]</span>
+            <span class="n">minus</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">"minus"</span><span class="p">]</span>
+            <span class="n">plus</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">"plus"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">minus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">idx</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">minus</span>
                 <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">jz</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
@@ -433,7 +433,7 @@
     <span class="n">Mtot</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">return_idxs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constructs a lowest-filling ansatz circuit for protons and neutrons.</span>
+<span class="w">    </span><span class="sd">"""Constructs a lowest-filling ansatz circuit for protons and neutrons.</span>
 
 <span class="sd">    This function creates a quantum circuit by first preferring</span>
 <span class="sd">    zero-seniority (jz, -jz) pair fillings and then occupying additional</span>
@@ -452,15 +452,15 @@
 <span class="sd">        QuantumCircuit or tuple: A quantum circuit representing the</span>
 <span class="sd">        lowest-filling ansatz. If ``return_idxs`` is True, returns</span>
 <span class="sd">        ``(circuit, selected_p, selected_n)``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">_Mtot</span> <span class="o">=</span> <span class="p">(</span><span class="n">proton_number</span> <span class="o">+</span> <span class="n">neutron_number</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">Mtot</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Mtot</span>
     <span class="n">proton_qubits</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">proton_qubits</span>
     <span class="n">neutron_qubits</span> <span class="o">=</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">neutron_qubits</span>
 
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">"</span>
     <span class="k">if</span> <span class="n">Hamiltonian_obj</span><span class="o">.</span><span class="n">Hamildict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Hamiltonian.Hamildict is None. Cannot proceed with lowest_filling_ansatz.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Hamiltonian.Hamildict is None. Cannot proceed with lowest_filling_ansatz."</span><span class="p">)</span>
 
     <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span>
     <span class="n">n_qubits_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span>
@@ -480,7 +480,7 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">final_p</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">final_n</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to build DP tables for requested particle numbers.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unable to build DP tables for requested particle numbers."</span><span class="p">)</span>
 
     <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">m_p</span><span class="p">,</span> <span class="n">score_p</span> <span class="ow">in</span> <span class="n">final_p</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -509,7 +509,7 @@
 
     <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;No lowest-filling configuration satisfies total M=</span><span class="si">{</span><span class="n">_Mtot</span><span class="si">}</span><span class="s2"> with Z=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">, N=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"No lowest-filling configuration satisfies total M=</span><span class="si">{</span><span class="n">_Mtot</span><span class="si">}</span><span class="s2"> with Z=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">, N=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span>
 
     <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">m_p_best</span><span class="p">,</span> <span class="n">m_n_best</span> <span class="o">=</span> <span class="n">best</span>
@@ -537,12 +537,12 @@
     <span class="n">proton_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">neutron_number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HF&quot;</span><span class="p">,</span>
-    <span class="n">mapping_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;JordanWigner&quot;</span><span class="p">,</span>
-    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HF"</span><span class="p">,</span>
+    <span class="n">mapping_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"JordanWigner"</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="s2">"./"</span><span class="p">,</span>
     <span class="n">return_Gdict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct nuclear ansatz circuit for proton-neutron systems.</span>
+<span class="w">    </span><span class="sd">"""Construct nuclear ansatz circuit for proton-neutron systems.</span>
 <span class="sd">    </span>
 <span class="sd">    Creates quantum circuits for nuclear many-body states with separate</span>
 <span class="sd">    proton and neutron sectors. Supports Hartree-Fock initial states</span>
@@ -556,10 +556,10 @@
 <span class="sd">        proton_number (int): Number of protons.</span>
 <span class="sd">        neutron_number (int): Number of neutrons.</span>
 <span class="sd">        params (Iterable[float]): Variational parameters.</span>
-<span class="sd">        method (str, optional): Ansatz method. Options: &quot;HF&quot;, &quot;HF+Givens&quot;. </span>
-<span class="sd">                               Defaults to &quot;HF&quot;.</span>
+<span class="sd">        method (str, optional): Ansatz method. Options: "HF", "HF+Givens". </span>
+<span class="sd">                               Defaults to "HF".</span>
 <span class="sd">        mapping_method (str, optional): Fermion-to-qubit mapping used for the</span>
-<span class="sd">            initial filling state. Defaults to ``&quot;JordanWigner&quot;``.</span>
+<span class="sd">            initial filling state. Defaults to ``"JordanWigner"``.</span>
 <span class="sd">        filepath (str | os.PathLike, optional): Base path used by mappings that</span>
 <span class="sd">            need to load or save mapper data.</span>
 <span class="sd">        return_Gdict (bool, optional): Whether to return gate type dictionary. </span>
@@ -568,13 +568,13 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        QuantumCircuit or tuple: Quantum circuit representing the ansatz.</span>
 <span class="sd">                                If return_Gdict=True, returns (circuit, gate_dict).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">    """</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">proton_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Invalid proton_number=</span><span class="si">{</span><span class="n">proton_number</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">neutron_qubits</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">neutron_number</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"Invalid neutron_number=</span><span class="si">{</span><span class="n">neutron_number</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="n">n_qubits_p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">proton_qubits</span><span class="p">)</span>
     <span class="n">where_is_G_or_cG1</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HF&quot;</span><span class="p">:</span> <span class="c1"># more precisely, lowest filling</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"HF"</span><span class="p">:</span> <span class="c1"># more precisely, lowest filling</span>
         <span class="k">return</span> <span class="n">naive_filling_ansatz</span><span class="p">(</span>
                 <span class="n">proton_qubits</span><span class="o">=</span><span class="n">proton_qubits</span><span class="p">,</span>
                 <span class="n">neutron_qubits</span><span class="o">=</span><span class="n">neutron_qubits</span><span class="p">,</span>
@@ -584,7 +584,7 @@
                 <span class="n">Hamildict_opform</span><span class="o">=</span><span class="n">Hamildict_opform</span><span class="p">,</span>
                 <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HF+Givens&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"HF+Givens"</span><span class="p">:</span>
         <span class="n">ansatz</span> <span class="o">=</span> <span class="n">naive_filling_ansatz</span><span class="p">(</span>
             <span class="n">proton_qubits</span><span class="o">=</span><span class="n">proton_qubits</span><span class="p">,</span>
             <span class="n">neutron_qubits</span><span class="o">=</span><span class="n">neutron_qubits</span><span class="p">,</span>
@@ -603,14 +603,14 @@
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_qubits_p</span> <span class="o">-</span> <span class="n">proton_number</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                     <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_lowest</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                     <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">G_upper</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                         <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cG1_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cG1&quot;</span>
+                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"cG1"</span>
                         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># on neutron qubits</span>
@@ -622,7 +622,7 @@
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_lowest</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                     <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># c-G1</span>
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_lowest</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
@@ -631,13 +631,13 @@
                         <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">first_neutron_qubit</span><span class="p">:</span>
                             <span class="k">break</span>
                         <span class="n">ansatz</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cG1_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cG1&quot;</span>
+                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"cG1"</span>
                         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">return_Gdict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ansatz</span><span class="p">,</span> <span class="n">where_is_G_or_cG1</span>
         <span class="k">return</span> <span class="n">ansatz</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method for ansatz: &quot;</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid method for ansatz: "</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span></div>
 
 
 
@@ -647,13 +647,13 @@
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">Norb</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">Nocc</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;HF&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HF"</span><span class="p">,</span>
     <span class="n">return_Gdict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">decent_order</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">rotation_XXYY</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">idxs_hole_in</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct pairing model ansatz circuit using Qiskit.</span>
+<span class="w">    </span><span class="sd">"""Construct pairing model ansatz circuit using Qiskit.</span>
 <span class="sd">    </span>
 <span class="sd">    Creates quantum circuits for pairing Hamiltonian simulations using</span>
 <span class="sd">    Hartree-Fock states with optional Givens rotation enhancements.</span>
@@ -664,8 +664,8 @@
 <span class="sd">        params (Iterable[float]): Variational parameters for gates, mainly Givens rotations.</span>
 <span class="sd">        Norb (int): Number of orbitals (qubits).</span>
 <span class="sd">        Nocc (int): Number of occupied orbitals.</span>
-<span class="sd">        method (str, optional): Ansatz method. Options: &quot;HF&quot;, &quot;HF+Givens&quot;. </span>
-<span class="sd">                               Defaults to &quot;HF&quot;.</span>
+<span class="sd">        method (str, optional): Ansatz method. Options: "HF", "HF+Givens". </span>
+<span class="sd">                               Defaults to "HF".</span>
 <span class="sd">        return_Gdict (bool, optional): Whether to return gate type dictionary. </span>
 <span class="sd">                                      Defaults to False.</span>
 <span class="sd">        decent_order (bool, optional): Whether to use descending qubit ordering. </span>
@@ -682,16 +682,16 @@
 <span class="sd">        The circuit starts with Hartree-Fock state preparation (X gates on</span>
 <span class="sd">        occupied orbitals) followed by layer of Givens rotations,</span>
 <span class="sd">        which can be ragarded as excitations from the reference state.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">where_is_G_or_cG1</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">qc</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="n">Norb</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;HF&quot;</span> <span class="ow">in</span> <span class="n">method</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"HF"</span> <span class="ow">in</span> <span class="n">method</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">decent_order</span><span class="p">:</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">Norb</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HF+Givens&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"HF+Givens"</span><span class="p">:</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">turn</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">turn</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -699,13 +699,13 @@
                     <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                         <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                         <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">,</span> <span class="n">Norb</span><span class="p">):</span>
                         <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                         <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                        <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># c-G1</span>
                 <span class="k">if</span> <span class="n">decent_order</span><span class="p">:</span>
@@ -713,16 +713,16 @@
                         <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">G_upper</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                             <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cG1_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                            <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cG1&quot;</span>
+                            <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"cG1"</span>
                             <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span> <span class="o">-</span> <span class="n">turn</span><span class="p">,</span> <span class="n">Norb</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
                         <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">G_lower</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Norb</span><span class="p">):</span>
                             <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cG1_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">count</span><span class="p">]),</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
-                            <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cG1&quot;</span>
+                            <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">count</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"cG1"</span>
                             <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;pUCCD&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"pUCCD"</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">decent_order</span><span class="p">:</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">x</span><span class="p">(</span><span class="n">Norb</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
@@ -732,7 +732,7 @@
         <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">decent_order</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Norb</span> <span class="o">-</span> <span class="n">Nocc</span> <span class="o">+</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
                     <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -740,15 +740,15 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">G_lower</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span> <span class="o">-</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">Norb</span> <span class="o">-</span> <span class="n">cycle</span><span class="p">):</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">G_upper</span> <span class="o">=</span> <span class="n">G_lower</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]),</span> <span class="p">[</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">])</span>
                     <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="n">G_upper</span><span class="p">,</span> <span class="n">G_lower</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;pUCCD+all2all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"pUCCD+all2all"</span><span class="p">:</span>
         <span class="n">theta_idx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">decent_order</span><span class="p">,</span> <span class="s2">&quot;pUCCD+all2all should be decent order&quot;</span>
+        <span class="k">assert</span> <span class="n">decent_order</span><span class="p">,</span> <span class="s2">"pUCCD+all2all should be decent order"</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs_hole_in</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs_hole_in</span><span class="p">:</span>
@@ -757,7 +757,7 @@
             <span class="n">idxs_virt</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">idxs_virt</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">q_v</span> <span class="ow">in</span> <span class="n">idxs_virt</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">q_h</span> <span class="ow">in</span> <span class="n">idxs_hole_in</span><span class="p">:</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]),</span> <span class="p">[</span><span class="n">q_v</span><span class="p">,</span> <span class="n">q_h</span><span class="p">])</span>
                     <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
@@ -770,14 +770,14 @@
             <span class="n">idxs_virt</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">idxs_virt</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">q_v</span> <span class="ow">in</span> <span class="n">idxs_virt</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">q_h</span> <span class="ow">in</span> <span class="n">idxs_hole</span><span class="p">:</span>
-                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                    <span class="n">where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]),</span> <span class="p">[</span><span class="n">q_v</span><span class="p">,</span> <span class="n">q_h</span><span class="p">])</span>
                 <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="c1">## Additional 2-qubit rotation gates to diagonalize XX+YY term in the computational basis</span>
     <span class="k">if</span> <span class="n">rotation_XXYY</span> <span class="o">!=</span> <span class="p">[]:</span>  <span class="c1"># not empty</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rotation_XXYY</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rotation_XXYY should be a list of two qubits&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rotation_XXYY should be a list of two qubits"</span><span class="p">)</span>
         <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">rotation_XXYY</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">return_Gdict</span><span class="p">:</span>
@@ -793,45 +793,45 @@
     <span class="n">params</span><span class="p">,</span>
     <span class="n">Nq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">Nocc</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">type_of_ansatz</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;HF&quot;</span><span class="p">,</span>
-    <span class="n">observable</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Hamil&quot;</span><span class="p">,</span>
+    <span class="n">type_of_ansatz</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">"HF"</span><span class="p">,</span>
+    <span class="n">observable</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">"Hamil"</span><span class="p">,</span>
     <span class="n">return_Gdict</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">random_init_circ</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">idxs_hole_in</span><span class="o">=</span><span class="p">[],</span>
     <span class="n">combination_h_v</span><span class="o">=</span><span class="p">[],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct pairing model ansatz circuit using PennyLane.</span>
+<span class="w">    </span><span class="sd">"""Construct pairing model ansatz circuit using PennyLane.</span>
 
 <span class="sd">    This function is a counterpart of `pair_ansatz_qiskit` but uses PennyLane</span>
 <span class="sd">    and only supports pUCCD ansatze.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">local_where_is_G_or_cG1</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">!=</span> <span class="s2">&quot;pUCCD+all2all&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">!=</span> <span class="s2">"pUCCD+all2all"</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="p">(</span><span class="n">Nq</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
 
     <span class="n">theta_idx</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c1">## pUCCD ansatz in hard core boson formulation</span>
-    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">==</span> <span class="s2">&quot;pUCCD&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">==</span> <span class="s2">"pUCCD"</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span> <span class="o">-</span> <span class="n">Nocc</span> <span class="o">+</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-                <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                 <span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
                 <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">qml</span><span class="o">.</span><span class="n">SWAP</span><span class="p">(</span><span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">==</span> <span class="s2">&quot;pUCCD+all2all&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">type_of_ansatz</span> <span class="o">==</span> <span class="s2">"pUCCD+all2all"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        For devices with all-to-all connectivity, one can omit the SWAP gates in pUCCD ansatz above.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">idxs_hole</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">random_init_circ</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs_hole_in</span><span class="p">:</span>
                 <span class="n">qml</span><span class="o">.</span><span class="n">PauliX</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">combination_h_v</span><span class="p">)):</span>
                 <span class="n">q_h</span><span class="p">,</span> <span class="n">q_v</span> <span class="o">=</span> <span class="n">combination_h_v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                 <span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">q_v</span><span class="p">,</span> <span class="n">q_h</span><span class="p">])</span>
                 <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -843,7 +843,7 @@
                 <span class="n">idxs_virt</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">idxs_virt</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">q_v</span> <span class="ow">in</span> <span class="n">idxs_virt</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">q_h</span> <span class="ow">in</span> <span class="n">idxs_hole_in</span><span class="p">:</span>
-                        <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                        <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                         <span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">q_v</span><span class="p">,</span> <span class="n">q_h</span><span class="p">])</span>
                         <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
@@ -857,18 +857,18 @@
 
                 <span class="k">for</span> <span class="n">q_h</span> <span class="ow">in</span> <span class="n">idxs_hole</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">q_v</span> <span class="ow">in</span> <span class="n">idxs_virt</span><span class="p">:</span>
-                        <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;G&quot;</span>
+                        <span class="n">local_where_is_G_or_cG1</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"G"</span>
                         <span class="n">qml</span><span class="o">.</span><span class="n">SingleExcitation</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">theta_idx</span><span class="p">],</span> <span class="n">wires</span><span class="o">=</span><span class="p">[</span><span class="n">q_v</span><span class="p">,</span> <span class="n">q_h</span><span class="p">])</span>
                         <span class="n">theta_idx</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="k">if</span> <span class="n">return_Gdict</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">local_where_is_G_or_cG1</span>
-    <span class="k">if</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span> <span class="ow">or</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">&quot;ansatz&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">"Z"</span> <span class="ow">or</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">"ansatz"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">qnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">qml</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">qml</span><span class="o">.</span><span class="n">PauliZ</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nq</span><span class="p">)])</span>
-    <span class="k">elif</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">&quot;Hamil&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">observable</span> <span class="o">==</span> <span class="s2">"Hamil"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">qml</span><span class="o">.</span><span class="n">expval</span><span class="p">(</span><span class="n">Hamil_pl</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid observable: </span><span class="si">{</span><span class="n">observable</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid observable: </span><span class="si">{</span><span class="n">observable</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 
@@ -878,12 +878,12 @@
     <span class="n">qc_ansatz</span><span class="p">:</span> <span class="n">QuantumCircuit</span><span class="p">,</span>
     <span class="n">adopted</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">Nq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">methods_XXYY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Google&quot;</span><span class="p">,</span>
+    <span class="n">methods_XXYY</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Google"</span><span class="p">,</span>
     <span class="n">backend</span><span class="p">:</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">opt_level</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Generates quantum circuits to measure X_iX_j+Y_iY_j terms in the Hamiltonian.</span>
 
 <span class="sd">    Args:</span>
@@ -891,10 +891,10 @@
 <span class="sd">            rotations and measurements.</span>
 <span class="sd">        adopted (str):</span>
 <span class="sd">            String that indicates the simulator/device type.</span>
-<span class="sd">            Acceptable values are &quot;simNISQ&quot;/&quot;simFTQC&quot; and &quot;Real&quot;.</span>
+<span class="sd">            Acceptable values are "simNISQ"/"simFTQC" and "Real".</span>
 <span class="sd">        Nq (int): Number of qubits in the ansatz circuit.</span>
 <span class="sd">        methods_XXYY (str, optional): Circuit construction method. Currently</span>
-<span class="sd">            only ``&quot;Google&quot;`` is supported.</span>
+<span class="sd">            only ``"Google"`` is supported.</span>
 <span class="sd">        backend (optional): Backend used for transpilation when targeting a</span>
 <span class="sd">            real device or noisy simulation.</span>
 <span class="sd">        opt_level (int, optional): Qiskit transpiler optimization level.</span>
@@ -910,11 +910,11 @@
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    ValueError</span>
-<span class="sd">        If the provided methods_XXYY is not &quot;Google&quot;, which means that this function</span>
+<span class="sd">        If the provided methods_XXYY is not "Google", which means that this function</span>
 <span class="sd">        is designed for basis rotation (Givens rotation) to diagonalize XX+YY term in the computational basis.  </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">qc_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">methods_XXYY</span> <span class="o">==</span> <span class="s2">&quot;Google&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">methods_XXYY</span> <span class="o">==</span> <span class="s2">"Google"</span><span class="p">:</span>
         <span class="n">qc_list_for_draw</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">num_cycle</span> <span class="o">=</span> <span class="p">(</span><span class="n">Nq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
         <span class="n">idx_circuit</span> <span class="o">=</span> <span class="mi">0</span>
@@ -930,28 +930,28 @@
                         <span class="n">qc</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">i_start</span> <span class="o">=</span> <span class="n">Nq</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">eo_pair</span> <span class="k">if</span> <span class="n">Nq</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">Nq</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">eo_pair</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i_start</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">):</span>
-                    <span class="c1"># print(&quot;idx_circuit&quot;, idx_circuit, &quot;eo_pair&quot;, eo_pair, &quot;i&quot;, i)</span>
+                    <span class="c1"># print("idx_circuit", idx_circuit, "eo_pair", eo_pair, "i", i)</span>
                     <span class="n">qc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">G_gate</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
 
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                     <span class="n">qc_list_for_draw</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qc</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
                 <span class="n">qc</span><span class="o">.</span><span class="n">measure_all</span><span class="p">()</span>
                 <span class="n">qc</span> <span class="o">=</span> <span class="n">qc</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">reps</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">&quot;simNISQ&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">"simNISQ"</span><span class="p">:</span>
                     <span class="n">qc</span> <span class="o">=</span> <span class="n">transpile</span><span class="p">(</span><span class="n">qc</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">optimization_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">&quot;Real&quot;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">"Real"</span><span class="p">:</span>
                     <span class="n">pm</span> <span class="o">=</span> <span class="n">generate_preset_pass_manager</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
                     <span class="n">qc</span> <span class="o">=</span> <span class="n">pm</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">&quot;simFTQC&quot;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">adopted</span> <span class="o">==</span> <span class="s2">"simFTQC"</span><span class="p">:</span>
                     <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid adopted: </span><span class="si">{</span><span class="n">adopted</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid adopted: </span><span class="si">{</span><span class="n">adopted</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="n">qc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qc</span><span class="p">)</span>
                 <span class="n">idx_circuit</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">qc_list</span><span class="p">,</span> <span class="n">qc_list_for_draw</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid methods_XXYY: </span><span class="si">{</span><span class="n">methods_XXYY</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid methods_XXYY: </span><span class="si">{</span><span class="n">methods_XXYY</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qc_list</span></div>
 
 </pre></div>
@@ -986,7 +986,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

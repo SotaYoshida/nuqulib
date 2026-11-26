@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.pairing_hamiltonian - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.pairing_hamiltonian - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,7 +225,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.pairing_hamiltonian</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Pairing Hamiltonian implementation</span>
+<span></span><span class="sd">"""Pairing Hamiltonian implementation</span>
 
 <span class="sd">This module implements the pairing Hamiltonian, a simplified model used in nuclear physics,</span>
 <span class="sd">condensed matter physics, and quantum computing. The pairing Hamiltonian describes</span>
@@ -237,7 +237,7 @@
 <span class="sd">More detailed and efficient implementations can be found as a Julia package</span>
 <span class="sd">`PairingHamiltonians.jl &lt;https://github.com/SotaYoshida/PairingHamiltonians.jl&gt;`_</span>
 <span class="sd">by the same author.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
@@ -247,7 +247,7 @@
 <div class="viewcode-block" id="PairingHamiltonian">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PairingHamiltonian</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pairing Hamiltonian model for nuclear many-body systems.</span>
+<span class="w">    </span><span class="sd">"""Pairing Hamiltonian model for nuclear many-body systems.</span>
 <span class="sd">    </span>
 <span class="sd">    This class implements a pairing Hamiltonian with</span>
 <span class="sd">    single-particle energies with a fixed spacing</span>
@@ -267,7 +267,7 @@
 <span class="sd">        basis (list): List of basis states as orbital occupation tuples.</span>
 <span class="sd">        epsilon (list): Single-particle energies.</span>
 <span class="sd">        Hmat (numpy.ndarray): Hamiltonian matrix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">Nocc</span><span class="p">,</span> <span class="n">gval</span><span class="p">,</span> <span class="n">delta_eps</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span> <span class="o">=</span> <span class="n">Norb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Nocc</span> <span class="o">=</span> <span class="n">Nocc</span>
@@ -280,14 +280,14 @@
 <div class="viewcode-block" id="PairingHamiltonian.make_basis">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.make_basis">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate basis states for the pairing model.</span>
+<span class="w">        </span><span class="sd">"""Generate basis states for the pairing model.</span>
 <span class="sd">        </span>
 <span class="sd">        Creates all possible configurations of Nocc particles in Norb orbitals</span>
 <span class="sd">        using combinations.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            list: List of tuples representing occupied orbital configurations.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">basis</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">occ</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">Nocc</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">occ</span><span class="p">)</span>
@@ -298,14 +298,14 @@
 <div class="viewcode-block" id="PairingHamiltonian.eval_epsilon">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.eval_epsilon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate single-particle energies.</span>
+<span class="w">        </span><span class="sd">"""Calculate single-particle energies.</span>
 <span class="sd">        </span>
 <span class="sd">        Sets up a linear spacing of single-particle energies with</span>
 <span class="sd">        epsilon_i = 2 * i * delta_eps for orbital i.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            list: List of single-particle energies.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_eps</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">)]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span></div>
 
@@ -313,7 +313,7 @@
 <div class="viewcode-block" id="PairingHamiltonian.eval_Hmat">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.eval_Hmat">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_Hmat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the Hamiltonian matrix.</span>
+<span class="w">        </span><span class="sd">"""Construct the Hamiltonian matrix.</span>
 <span class="sd">        </span>
 <span class="sd">        Builds the Hamiltonian matrix in the many-body basis including:</span>
 
@@ -323,7 +323,7 @@
 <span class="sd">        </span>
 <span class="sd">        Returns:</span>
 <span class="sd">            numpy.ndarray: Hamiltonian matrix of size (dim, dim) where dim is the basis size.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Hmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">bra_idx</span><span class="p">,</span> <span class="n">bra</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">basis</span><span class="p">):</span>
@@ -347,7 +347,7 @@
 <div class="viewcode-block" id="PairingHamiltonian.diagonalize">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.diagonalize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">diagonalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Diagonalize the Hamiltonian matrix.</span>
+<span class="w">        </span><span class="sd">"""Diagonalize the Hamiltonian matrix.</span>
 <span class="sd">        </span>
 <span class="sd">        Performs exact diagonalization to find eigenvalues and eigenvectors</span>
 <span class="sd">        of the Hamiltonian matrix.</span>
@@ -356,16 +356,16 @@
 <span class="sd">            tuple: Tuple containing:</span>
 <span class="sd">                - evals (numpy.ndarray): Eigenvalues in ascending order.</span>
 <span class="sd">                - evecs (numpy.ndarray): Corresponding eigenvectors as columns.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">evals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Hmat</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;evals: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evals</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"evals: "</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evals</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evecs</span></div>
 
 
 <div class="viewcode-block" id="PairingHamiltonian.encoding">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.PairingHamiltonian.encoding">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode the Hamiltonian as Pauli operators for quantum computing.</span>
+<span class="w">        </span><span class="sd">"""Encode the Hamiltonian as Pauli operators for quantum computing.</span>
 <span class="sd">        </span>
 <span class="sd">        Maps the pairing Hamiltonian to a sum of Pauli operators suitable</span>
 <span class="sd">        for quantum algorithms. The encoding includes:</span>
@@ -379,22 +379,22 @@
 <span class="sd">            </span>
 <span class="sd">        Note:</span>
 <span class="sd">            The qubit ordering is reversed to match Qiskit conventions.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">SPEs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># I term</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">):</span>
             <span class="n">coeff</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">SPEs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gval</span><span class="p">)</span>
         <span class="n">obs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">op</span><span class="p">]</span>
         <span class="n">coeffs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">coeff</span><span class="p">]</span>
         <span class="c1"># -Zp term</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">):</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;Z&quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"Z"</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
             <span class="n">coeff</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">SPEs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gval</span><span class="p">)</span>
 
             <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -404,14 +404,14 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span><span class="p">):</span>
                 <span class="n">factor</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">gval</span> <span class="o">/</span> <span class="mi">2</span>
-                <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
-                <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;X&quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"X"</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"X"</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">obs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">op</span><span class="p">]</span>
                 <span class="n">coeffs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">factor</span><span class="p">]</span>
-                <span class="n">op</span> <span class="o">=</span> <span class="s2">&quot;I&quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="s2">"I"</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">Norb</span>
                 <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;Y&quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;Y&quot;</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="n">op</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"Y"</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"Y"</span> <span class="o">+</span> <span class="n">op</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
                 <span class="n">obs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">op</span><span class="p">]</span>
                 <span class="n">coeffs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">factor</span><span class="p">]</span>
 
@@ -423,7 +423,7 @@
 <div class="viewcode-block" id="tuple_to_bitstring">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.pairing_hamiltonian.tuple_to_bitstring">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">tuple_to_bitstring</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="n">Norb</span><span class="p">,</span> <span class="n">rev</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an orbital occupation tuple to bitstring notation.</span>
+<span class="w">    </span><span class="sd">"""Convert an orbital occupation tuple to bitstring notation.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        tup (tuple): Tuple of occupied orbital indices.</span>
@@ -432,19 +432,19 @@
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Bitstring representation in ket notation (e.g.,</span>
-<span class="sd">            ``&quot;|0110&gt;&quot;``).</span>
+<span class="sd">            ``"|0110&gt;"``).</span>
 <span class="sd">        </span>
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; tuple_to_bitstring((0, 2), 4, rev=True)</span>
-<span class="sd">        &#39;|0101&gt;&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        '|0101&gt;'</span>
+<span class="sd">    """</span>
     <span class="n">bitint</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tup</span><span class="p">:</span>
         <span class="n">bitint</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">**</span><span class="n">i</span>
     <span class="k">if</span> <span class="n">rev</span><span class="p">:</span>
-        <span class="n">bitstring</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">bitint</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;0</span><span class="si">{</span><span class="n">Norb</span><span class="si">}</span><span class="s2">b&quot;</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+        <span class="n">bitstring</span> <span class="o">=</span> <span class="s2">"|"</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">bitint</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"0</span><span class="si">{</span><span class="n">Norb</span><span class="si">}</span><span class="s2">b"</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"&gt;"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">bitstring</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">bitint</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;0</span><span class="si">{</span><span class="n">Norb</span><span class="si">}</span><span class="s2">b&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+        <span class="n">bitstring</span> <span class="o">=</span> <span class="s2">"|"</span> <span class="o">+</span> <span class="nb">format</span><span class="p">(</span><span class="n">bitint</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"0</span><span class="si">{</span><span class="n">Norb</span><span class="si">}</span><span class="s2">b"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"&gt;"</span>
     <span class="k">return</span> <span class="n">bitstring</span></div>
 
 </pre></div>
@@ -479,7 +479,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>

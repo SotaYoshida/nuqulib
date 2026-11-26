@@ -4,8 +4,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>nuqulib.encoding - NuQuLib 0.1.2 documentation</title>
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>nuqulib.encoding - NuQuLib 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">NuQuLib 0.1.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">NuQuLib 0.2.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -181,7 +181,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
   
-  <span class="sidebar-brand-text">NuQuLib 0.1.2 documentation</span>
+  <span class="sidebar-brand-text">NuQuLib 0.2.0 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -225,12 +225,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for nuqulib.encoding</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Quantum encoding utilities for nuclear Hamiltonians.</span>
+<span></span><span class="sd">"""Quantum encoding utilities for nuclear Hamiltonians.</span>
 
 <span class="sd">This module provides functions for mapping nuclear Hamiltonians to qubit operators</span>
 <span class="sd">using e.g., Jordan-Wigner,  and utilities for </span>
 <span class="sd">working with Pauli operators in different quantum computing frameworks.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -253,18 +253,18 @@
     <span class="n">Fermionic_op</span><span class="p">:</span> <span class="n">FermionicOp</span><span class="p">,</span>
     <span class="n">n_qubits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
     <span class="n">init_qubit</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;JordanWigner&quot;</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">"JordanWigner"</span><span class="p">,</span>
     <span class="n">Hamildict_specified</span><span class="p">:</span> <span class="nb">dict</span><span class="o">=</span><span class="p">{},</span>
-    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="o">=</span><span class="s2">"./"</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map fermionic operators to Pauli strings using specified encoding.</span>
+<span class="w">    </span><span class="sd">"""Map fermionic operators to Pauli strings using specified encoding.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        Fermionic_op (FermionicOp): Fermionic operator to be mapped.</span>
 <span class="sd">        n_qubits (int): Number of qubits for the mapping.</span>
 <span class="sd">        init_qubit (int): Starting index for qubits in the mapping.</span>
-<span class="sd">        method (str): Encoding method. Options: &quot;JordanWigner&quot;/&quot;JW&quot;/&quot;Jordan-Wigner&quot;</span>
-<span class="sd">                     or &quot;BravyiKitaev&quot;/&quot;BK&quot;/&quot;Bravyi-Kitaev&quot;.</span>
+<span class="sd">        method (str): Encoding method. Options: "JordanWigner"/"JW"/"Jordan-Wigner"</span>
+<span class="sd">                     or "BravyiKitaev"/"BK"/"Bravyi-Kitaev".</span>
 <span class="sd">        Hamildict_specified (dict): Dictionary of Hamiltonian terms in fermionic form.</span>
 <span class="sd">                     used in the special case, HATTMapper.</span>
 <span class="sd">        filepath (str|os.PathLike): File path for saving/loading mapper in the case of HATTMapper.</span>
@@ -278,36 +278,36 @@
 
 <span class="sd">    Note:</span>
 <span class="sd">        BravyiKitaev mapping has never been tested in this module.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;JordanWigner&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;JW&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Jordan-Wigner&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"JordanWigner"</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"JW"</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"Jordan-Wigner"</span><span class="p">:</span>
         <span class="n">mapper</span> <span class="o">=</span> <span class="n">JordanWignerMapper</span><span class="p">()</span>
 
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;BravyiKitaev&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;BK&quot;</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;Bravyi-Kitaev&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"BravyiKitaev"</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"BK"</span> <span class="ow">or</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"Bravyi-Kitaev"</span><span class="p">:</span>
         <span class="n">mapper</span> <span class="o">=</span> <span class="n">BravyiKitaevMapper</span><span class="p">()</span>
 
-    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HATTMapper&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"HATTMapper"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
             <span class="n">mapper</span> <span class="o">=</span> <span class="n">HATTMapper</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mapper</span> <span class="o">=</span> <span class="n">HATTMapper</span><span class="p">(</span><span class="n">FermionicOp</span><span class="p">(</span><span class="n">Hamildict_specified</span><span class="p">))</span>
             <span class="n">mapper</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid method for mapping: &quot;</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid method for mapping: "</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span>
     
     <span class="n">op_list</span><span class="o">=</span><span class="p">[]</span>
     <span class="n">qubit_op</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">Fermionic_op</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;qubit_op(before) </span><span class="si">{</span><span class="n">qubit_op</span><span class="si">}</span><span class="s2"> Hamildict_specified </span><span class="si">{</span><span class="n">Hamildict_specified</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"qubit_op(before) </span><span class="si">{</span><span class="n">qubit_op</span><span class="si">}</span><span class="s2"> Hamildict_specified </span><span class="si">{</span><span class="n">Hamildict_specified</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">qubit_op</span><span class="p">:</span>
         <span class="n">nqb</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">())</span>
         <span class="n">nleft</span><span class="o">=</span><span class="n">n_qubits</span><span class="o">-</span><span class="n">nqb</span><span class="o">-</span><span class="n">init_qubit</span>
         <span class="n">target_pauli</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">paulis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_label</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Qiskit ordering</span>
-        <span class="n">pauli_str</span> <span class="o">=</span> <span class="n">init_qubit</span><span class="o">*</span><span class="s1">&#39;I&#39;</span><span class="o">+</span><span class="n">target_pauli</span><span class="o">+</span><span class="n">nleft</span><span class="o">*</span><span class="s1">&#39;I&#39;</span>
+        <span class="n">pauli_str</span> <span class="o">=</span> <span class="n">init_qubit</span><span class="o">*</span><span class="s1">'I'</span><span class="o">+</span><span class="n">target_pauli</span><span class="o">+</span><span class="n">nleft</span><span class="o">*</span><span class="s1">'I'</span>
         <span class="n">pauli_str</span> <span class="o">=</span> <span class="n">pauli_str</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> 
         <span class="n">op_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SparsePauliOp</span><span class="p">(</span><span class="n">pauli_str</span><span class="p">,</span><span class="n">op</span><span class="o">.</span><span class="n">coeffs</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
     <span class="n">qubit_op</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">op_list</span><span class="p">)</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;qubit_op(after) </span><span class="si">{</span><span class="n">qubit_op</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"qubit_op(after) </span><span class="si">{</span><span class="n">qubit_op</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">qubit_op</span></div>
 
 
@@ -317,7 +317,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">task_pn_mapping</span><span class="p">(</span><span class="n">op_pn_key</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
                     <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">Hamildict_specified_n</span><span class="p">,</span>
                     <span class="n">filepath_p</span><span class="p">,</span> <span class="n">filepath_n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map one proton-neutron fermionic term to Pauli-label terms.</span>
+<span class="w">    </span><span class="sd">"""Map one proton-neutron fermionic term to Pauli-label terms.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        op_pn_key (tuple[str, str]): ``(proton_op, neutron_op)`` fermionic</span>
@@ -336,16 +336,16 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list[list]: Pauli labels and coefficients generated for this term.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">worker_list</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
     <span class="n">p_str</span><span class="p">,</span> <span class="n">n_str</span> <span class="o">=</span> <span class="n">op_pn_key</span>
     <span class="n">coeff_overall</span> <span class="o">=</span> <span class="n">op_pn</span><span class="p">[</span><span class="n">op_pn_key</span><span class="p">]</span>
     <span class="n">show_verbose</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;HATTMapper&quot;</span><span class="p">:</span>
-        <span class="n">n_cre</span><span class="p">,</span> <span class="n">n_ani</span> <span class="o">=</span> <span class="n">n_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
-        <span class="n">n_cre</span> <span class="o">=</span> <span class="s2">&quot;+_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_cre</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
-        <span class="n">n_ani</span> <span class="o">=</span> <span class="s2">&quot;-_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_ani</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">"HATTMapper"</span><span class="p">:</span>
+        <span class="n">n_cre</span><span class="p">,</span> <span class="n">n_ani</span> <span class="o">=</span> <span class="n">n_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
+        <span class="n">n_cre</span> <span class="o">=</span> <span class="s2">"+_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_cre</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+        <span class="n">n_ani</span> <span class="o">=</span> <span class="s2">"-_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_ani</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
         <span class="n">op_p</span> <span class="o">=</span> <span class="n">mapping_to_Pauli_string</span><span class="p">(</span>
             <span class="n">FermionicOp</span><span class="p">({</span><span class="n">p_str</span> <span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span> <span class="n">num_spin_orbitals</span><span class="o">=</span><span class="n">n_qubits_p</span><span class="p">),</span> \
             <span class="n">n_qubits_p</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">filepath_p</span><span class="p">)</span>
@@ -381,7 +381,7 @@
                                <span class="n">Hamildict_specified_n</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                                <span class="n">filepath_p</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
                                <span class="n">filepath_n</span><span class="p">:</span> <span class="nb">str</span><span class="o">|</span><span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map proton-neutron coupled Hamiltonians to Pauli operators.</span>
+<span class="w">    </span><span class="sd">"""Map proton-neutron coupled Hamiltonians to Pauli operators.</span>
 <span class="sd">    </span>
 <span class="sd">    This function handles the mapping of nuclear Hamiltonians that include</span>
 <span class="sd">    both proton and neutron sectors with their respective interactions.</span>
@@ -393,7 +393,7 @@
 <span class="sd">        op_pn (dict): Dictionary with (proton_str, neutron_str) keys and coefficient values.</span>
 <span class="sd">        n_qubits_p (int): Number of qubits for proton sector.</span>
 <span class="sd">        n_qubits_n (int): Number of qubits for neutron sector.</span>
-<span class="sd">        method (str): Encoding method (e.g., &quot;Jordan-Wigner&quot;, &quot;Bravyi-Kitaev&quot;).</span>
+<span class="sd">        method (str): Encoding method (e.g., "Jordan-Wigner", "Bravyi-Kitaev").</span>
 <span class="sd">        Hamildict_specified_p (dict): Dictionary of Hamiltonian terms in fermionic form for protons.</span>
 <span class="sd">        Hamildict_specified_n (dict): Dictionary of Hamiltonian terms in fermionic form for neutrons.</span>
 <span class="sd">        filepath_p (str|os.PathLike): File path for saving/loading proton mapper.</span>
@@ -401,17 +401,17 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        SparsePauliOp: Combined Pauli operator representing the full Hamiltonian.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mapping p-n Hamiltonian terms to Pauli strings using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">&quot;HATTMapper&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mapping p-n Hamiltonian terms to Pauli strings using </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">!=</span> <span class="s2">"HATTMapper"</span><span class="p">:</span>
         <span class="n">Hamildict_specified_p</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">Hamildict_specified_n</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">filepath_p</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
-        <span class="n">filepath_n</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
+        <span class="n">filepath_p</span> <span class="o">=</span> <span class="s2">"./"</span>
+        <span class="n">filepath_n</span> <span class="o">=</span> <span class="s2">"./"</span>
 
     <span class="n">nproc</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">&quot;fork&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">get_context</span><span class="p">(</span><span class="s2">"fork"</span><span class="p">)</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">nproc</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
         <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">starmap</span><span class="p">(</span>
             <span class="n">task_pn_mapping</span><span class="p">,</span> <span class="p">[(</span><span class="n">tkey</span><span class="p">,</span> <span class="n">op_pn</span><span class="p">,</span> <span class="n">n_qubits_p</span><span class="p">,</span> <span class="n">n_qubits_n</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span>
                                <span class="n">Hamildict_specified_p</span><span class="p">,</span> <span class="n">Hamildict_specified_n</span><span class="p">,</span>
@@ -425,7 +425,7 @@
             <span class="n">paulis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli</span><span class="p">)</span>
             <span class="n">coeffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paulis</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">([(</span><span class="s2">&quot;I&quot;</span><span class="o">*</span> <span class="p">(</span><span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">([(</span><span class="s2">"I"</span><span class="o">*</span> <span class="p">(</span><span class="n">n_qubits_p</span> <span class="o">+</span> <span class="n">n_qubits_n</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">SparsePauliOp</span><span class="o">.</span><span class="n">from_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">paulis</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">)))</span></div>
 
@@ -434,7 +434,7 @@
 <div class="viewcode-block" id="check_XXYYterm">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.check_XXYYterm">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_XXYYterm</span><span class="p">(</span><span class="n">hamiltonian_op_XXYY</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that XX and YY terms have identical coefficients.</span>
+<span class="w">    </span><span class="sd">"""Check that XX and YY terms have identical coefficients.</span>
 <span class="sd">    </span>
 <span class="sd">    In pairing or pair-wise Hamiltonians, the XX and YY terms should have the same coefficient.</span>
 <span class="sd">    This function validates this constraint for debugging and verification.</span>
@@ -447,21 +447,21 @@
 <span class="sd">        </span>
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: If XX and YY terms have different coefficients.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ops</span> <span class="o">=</span> <span class="n">hamiltonian_op_XXYY</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs</span> <span class="o">=</span> <span class="n">hamiltonian_op_XXYY</span><span class="o">.</span><span class="n">coeffs</span>
     <span class="k">for</span> <span class="n">idx_op</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ops</span><span class="p">):</span>
-        <span class="n">idx_XX</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">op</span><span class="p">))</span> <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">]</span>
+        <span class="n">idx_XX</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">op</span><span class="p">))</span> <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">"X"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">idx_XX</span> <span class="o">==</span> <span class="p">[]:</span>
             <span class="k">continue</span>
         <span class="n">coeff_XX</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">idx_op</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">idx_op2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ops</span><span class="p">)):</span>
             <span class="n">op2</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">idx_op2</span><span class="p">]</span>
-            <span class="n">idx_YY</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">op2</span><span class="p">))</span> <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">]</span>
+            <span class="n">idx_YY</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">op2</span><span class="p">))</span> <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="s2">"Y"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">idx_XX</span> <span class="o">==</span> <span class="n">idx_YY</span> <span class="o">!=</span> <span class="p">[]:</span>
                 <span class="n">coeff_YY</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">idx_op2</span><span class="p">]</span>
                 <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coeff_XX</span> <span class="o">-</span> <span class="n">coeff_YY</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s2">&quot;The XX and YY terms should have the same coefficient.&quot;</span>
+                    <span class="s2">"The XX and YY terms should have the same coefficient."</span>
                 <span class="p">)</span>
                 <span class="k">break</span>
     <span class="k">return</span> <span class="kc">True</span></div>
@@ -471,7 +471,7 @@
 <div class="viewcode-block" id="separate_Hamil_terms">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.separate_Hamil_terms">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">separate_Hamil_terms</span><span class="p">(</span><span class="n">hamiltonian_op</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Separate Hamiltonian, pairing or pair-wise ones, into diagonal and XX+YY terms.</span>
+<span class="w">    </span><span class="sd">"""Separate Hamiltonian, pairing or pair-wise ones, into diagonal and XX+YY terms.</span>
 <span class="sd">    </span>
 <span class="sd">    This function partitions a Hamiltonian operator into terms that are diagonal</span>
 <span class="sd">    in the computational basis (I and Z terms) and off-diagonal XX+YY terms.</span>
@@ -489,7 +489,7 @@
 <span class="sd">    Note:</span>
 <span class="sd">        This function validates that XX and YY terms have matching coefficients</span>
 <span class="sd">        and assumes real coefficients.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ops_all</span> <span class="o">=</span> <span class="n">hamiltonian_op</span><span class="o">.</span><span class="n">paulis</span>
     <span class="n">coeffs_all</span> <span class="o">=</span> <span class="n">hamiltonian_op</span><span class="o">.</span><span class="n">coeffs</span>
     <span class="n">ops_diag</span> <span class="o">=</span> <span class="p">[]</span>
@@ -500,7 +500,7 @@
         <span class="n">op</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ops_all</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">coeffs_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span> <span class="o">&lt;</span> <span class="mf">1e-10</span>
         <span class="n">coeff</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">coeffs_all</span><span class="p">[</span><span class="n">idx</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;X&quot;</span> <span class="ow">in</span> <span class="n">op</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;Y&quot;</span> <span class="ow">in</span> <span class="n">op</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">"X"</span> <span class="ow">in</span> <span class="n">op</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">"Y"</span> <span class="ow">in</span> <span class="n">op</span><span class="p">):</span>
             <span class="n">ops_XXYY</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
             <span class="n">coeffs_XXYY</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coeff</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -517,23 +517,23 @@
 <div class="viewcode-block" id="qps_from_sparsepauliop">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.qps_from_sparsepauliop">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">qps_from_sparsepauliop</span><span class="p">(</span><span class="n">paulis</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert SparsePauliOp Pauli strings to PyTKET QubitPauliString.</span>
+<span class="w">    </span><span class="sd">"""Convert SparsePauliOp Pauli strings to PyTKET QubitPauliString.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        paulis (str): Pauli string (e.g., &quot;IXYZ&quot;).</span>
+<span class="sd">        paulis (str): Pauli string (e.g., "IXYZ").</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        QubitPauliString: PyTKET QubitPauliString representation.</span>
 <span class="sd">        </span>
 <span class="sd">    Note:</span>
-<span class="sd">        Identity operators are automatically filtered out as they don&#39;t</span>
+<span class="sd">        Identity operators are automatically filtered out as they don't</span>
 <span class="sd">        contribute to the QubitPauliString representation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">pauli_sym</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;I&quot;</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">Z</span><span class="p">}</span>
+<span class="sd">    """</span>
+    <span class="n">pauli_sym</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"I"</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="s2">"X"</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="s2">"Y"</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="s2">"Z"</span><span class="p">:</span> <span class="n">Pauli</span><span class="o">.</span><span class="n">Z</span><span class="p">}</span>
     <span class="n">qlist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">plist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paulis</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">&quot;I&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="s2">"I"</span><span class="p">:</span>
             <span class="n">qlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="n">q</span><span class="p">))</span>
             <span class="n">plist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pauli_sym</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">QubitPauliString</span><span class="p">(</span><span class="n">qlist</span><span class="p">,</span> <span class="n">plist</span><span class="p">)</span></div>
@@ -543,9 +543,9 @@
 <div class="viewcode-block" id="qpo_from_sparsepauliop">
 <a class="viewcode-back" href="../../nuqulib.html#nuqulib.encoding.qpo_from_sparsepauliop">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">qpo_from_sparsepauliop</span><span class="p">(</span><span class="n">sp_op</span><span class="p">:</span> <span class="n">SparsePauliOp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QubitPauliOperator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert Qiskit SparsePauliOp to PyTKET QubitPauliOperator.</span>
+<span class="w">    </span><span class="sd">"""Convert Qiskit SparsePauliOp to PyTKET QubitPauliOperator.</span>
 <span class="sd">    </span>
-<span class="sd">    This function converts Qiskit&#39;s SparsePauliOp representation to PyTKET&#39;s</span>
+<span class="sd">    This function converts Qiskit's SparsePauliOp representation to PyTKET's</span>
 <span class="sd">    QubitPauliOperator format, with automatic reversal of qubit ordering</span>
 <span class="sd">    to match PyTKET conventions.</span>
 <span class="sd">    </span>
@@ -559,7 +559,7 @@
 <span class="sd">        This code is based on PyTKET documentation but modified to handle</span>
 <span class="sd">        qubit ordering differences between Qiskit and PyTKET.</span>
 <span class="sd">        `Original reference &lt;https://docs.quantinuum.com/systems/trainings/knowledge_articles/Quantinuum_high_energy_physics_experiment.html&gt;`_</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">tk_op</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">complex</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">coeff</span> <span class="ow">in</span> <span class="n">sp_op</span><span class="o">.</span><span class="n">to_list</span><span class="p">():</span>
         <span class="n">term</span> <span class="o">=</span> <span class="n">term</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -599,7 +599,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
